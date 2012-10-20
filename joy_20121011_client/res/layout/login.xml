@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:background="#333333"
+    >
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/title" 
+    android:background="@drawable/title"
+    >
+<TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/denglu"
+     android:layout_centerInParent="true"
+     android:textSize="20sp"		
+	android:textColor="@color/white" /> 
+
+<RelativeLayout 
+    android:onClick="Btn_login_goback"
+    android:layout_alignParentLeft="true"
+    android:layout_marginLeft="10dp"
+    android:layout_width="64dp"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:background="@drawable/btn_top_left"
+    >
+ <TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/back"
+     android:layout_alignParentRight="true"
+     android:layout_marginRight="12dp"
+     android:textSize="15sp"		
+     android:layout_centerVertical="true"
+	android:textColor="@color/white" />   
+</RelativeLayout>
+</RelativeLayout>
+
+
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_below="@id/title"
+    >
+
+<TextView
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:text="@string/canloginstr"
+    android:textSize="15sp"
+    android:textColor="@color/white" 
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="15dp"
+    />
+<LinearLayout 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_marginTop="10dp"
+    >
+	<LinearLayout 
+	    android:layout_width="wrap_content" 
+   		android:layout_height="wrap_content"
+   		android:orientation="vertical"
+    	android:gravity="center"
+	    >
+ 	 <Button 
+	 android:id="@+id/Sina_weibo"
+	 android:layout_width="150px" 
+     android:layout_height="150px"
+     android:layout_alignParentLeft="true"
+     android:layout_centerVertical="true"
+     android:layout_marginLeft="5dp"
+     android:text="@string/Sina_str"
+	 />
+	 <TextView 
+	 android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
+     android:layout_alignParentLeft="true"
+     android:layout_centerVertical="true"
+     android:textColor="@color/white" 
+     android:layout_marginLeft="5dp"
+     android:text="@string/Sina_str"
+	 />
+	</LinearLayout>
+	
+	<LinearLayout 
+	    android:layout_width="wrap_content" 
+   		android:layout_height="wrap_content"
+   		android:orientation="vertical"
+    	android:gravity="center"
+	>
+	 <Button 
+	 android:id="@+id/QQ_weibo"
+	 android:layout_width="150px" 
+     android:layout_height="150px"
+     android:layout_alignParentRight="true"
+     android:gravity="center"
+     android:layout_centerVertical="true"
+     android:layout_marginRight="5dp"
+     android:text="@string/QQ_str"
+	 />
+	 <TextView 
+	 android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
+     android:layout_alignParentRight="true"
+     android:gravity="center"
+     android:layout_centerVertical="true"
+     android:layout_marginRight="5dp"
+     android:textColor="@color/white" 
+     android:text="@string/QQ_str"
+	/>
+	</LinearLayout>
+</LinearLayout>
+	<EditText 
+	    android:id="@+id/login_user_edit"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/login_top_layout"
+	    android:textColor="#000"
+	    android:textSize="15sp"
+	    android:layout_marginTop="25dp"
+	    android:layout_marginLeft="20dp"
+	    android:layout_marginRight="20dp"
+	    android:singleLine="true"
+	    android:hint="@string/loginemail"/>
+	<EditText 
+	    android:id="@+id/login_passwd_edit"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/login_user_edit"
+	    android:textColor="#000"
+	    android:textSize="15sp"
+	    android:layout_marginTop="25dp"
+	    android:layout_marginLeft="20dp"
+	    android:layout_marginRight="20dp"
+	    android:password="true"
+	    android:singleLine="true"
+	    android:hint="@string/password"/>
+</LinearLayout>
+	<Button
+	 android:id="@+id/goin"
+	 android:layout_width="fill_parent" 
+     android:layout_height="wrap_content"
+     android:layout_alignParentBottom="true"
+     android:background="@drawable/btn_longbt"
+     android:text="@string/denglu"
+    android:textColor="@color/white"
+    android:textSize="20sp"
+	 />
+</RelativeLayout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<sqq.ScrollViewPull.widget.TryRefreshableView
+  		xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/trymyRV"
+  android:orientation="vertical"
+  android:focusable="true"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+     
+<sqq.ScrollViewPull.widget.TryPullToRefreshScrollView
+	android:id="@+id/trymySv"
+    android:layout_width="fill_parent"   
+    android:layout_height="fill_parent"  
+
+    android:focusable="true"
+>  
+<LinearLayout   android:orientation="vertical"    android:layout_width="fill_parent"
+			android:gravity="center"
+   	 android:layout_height="fill_parent" android:id="@+id/linear_root">
+   	 <TextView
+        android:id="@+id/sv_text"
+        android:textStyle="bold"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="top"	
+        
+        android:gravity="top"
+        />
+   	 <RelativeLayout
+  android:layout_width="fill_parent"
+    android:layout_height="50dip"
+    android:paddingBottom="15dip"
+    android:gravity="center"
+	android:layout_alignParentBottom="true"
+    android:id="@+id/tryrefresh_footer"
+
+    >
+    <TextView
+        android:id="@+id/tryrefresh_footer_text"
+        android:text="@string/pull_to_refresh_footer_pull_label"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold"
+        android:paddingTop="5dip"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"	
+        android:gravity="center"
+        />
+</RelativeLayout>
+   	 </LinearLayout>
+
+</sqq.ScrollViewPull.widget.TryPullToRefreshScrollView>  
+
+   </sqq.ScrollViewPull.widget.TryRefreshableView>
+

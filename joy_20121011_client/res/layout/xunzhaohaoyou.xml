@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" 
+        android:background="#333333">
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:layout_alignParentTop="true"
+    android:id="@+id/xunzhaohaoyou_lin"
+    android:background="@drawable/title"
+    >
+<TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/xunzhaohaoyou"
+     android:layout_centerInParent="true"
+     android:textSize="20sp"		
+	android:textColor="@color/white" /> 
+
+<RelativeLayout 
+    android:layout_alignParentLeft="true"
+    android:layout_marginLeft="10dp"
+    android:layout_width="64dp"
+    android:layout_height="wrap_content"
+    android:onClick="Btnback"
+    android:layout_centerVertical="true"
+    android:background="@drawable/btn_top_left"
+    >
+ <TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/back"
+     android:layout_alignParentRight="true"
+     android:layout_marginRight="12dp"
+     android:textSize="15sp"		
+     android:layout_centerVertical="true"
+	android:textColor="@color/white" />   
+</RelativeLayout>
+</RelativeLayout>
+
+<RelativeLayout      				    
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:onClick="Btndaren"
+            android:background="@drawable/preference_single_item" >
+            <TextView
+        		android:layout_width="wrap_content" 
+        		android:layout_height="wrap_content"
+        		android:layout_alignParentLeft="true"
+        		android:layout_centerVertical="true"
+        		android:padding="8dp" 
+        		android:text="@string/darentuijian"
+        		android:textSize="17sp"		
+				android:textColor="@color/black" /> 
+			<ImageView
+            	android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"        	     	
+        		android:scaleType="matrix"
+        		android:layout_centerVertical="true"
+        		android:layout_alignParentRight="true"
+        		android:src="@drawable/mm_submenu" />      					
+   		</RelativeLayout>
+   		
+<RelativeLayout      				    
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:onClick="Btnsina"
+            android:background="@drawable/preference_first_item" >
+            <TextView
+        		android:layout_width="wrap_content" 
+        		android:layout_height="wrap_content"
+        		android:layout_alignParentLeft="true"
+        		android:layout_centerVertical="true"
+        		android:padding="8dp" 
+        		android:text="@string/sinafirend"
+        		android:textSize="17sp"		
+				android:textColor="@color/black" /> 
+			<ImageView
+            	android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"        	     	
+        		android:scaleType="matrix"
+        		android:layout_centerVertical="true"
+        		android:layout_alignParentRight="true"
+        		android:src="@drawable/mm_submenu" />      					
+   		</RelativeLayout>
+   		
+<RelativeLayout      				    
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:onClick="Btntengxun"
+            android:background="@drawable/preference_item" >
+            <TextView
+        		android:layout_width="wrap_content" 
+        		android:layout_height="wrap_content"
+        		android:layout_alignParentLeft="true"
+        		android:layout_centerVertical="true"
+        		android:padding="8dp" 
+        		android:text="@string/tengxunfirend"
+        		android:textSize="17sp"		
+				android:textColor="@color/black" /> 
+			<ImageView
+            	android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"        	     	
+        		android:scaleType="matrix"
+        		android:layout_centerVertical="true"
+        		android:layout_alignParentRight="true"
+        		android:src="@drawable/mm_submenu" />      					
+   		</RelativeLayout>
+   		
+<RelativeLayout      				    
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:onClick="Btntongxunlu"
+            android:background="@drawable/preference_last_item" >
+            <TextView
+        		android:layout_width="wrap_content" 
+        		android:layout_height="wrap_content"
+        		android:layout_alignParentLeft="true"
+        		android:layout_centerVertical="true"
+        		android:padding="8dp" 
+        		android:text="@string/tongxunlufirend"
+        		android:textSize="17sp"		
+				android:textColor="@color/black" /> 
+			<ImageView
+            	android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"        	     	
+        		android:scaleType="matrix"
+        		android:layout_centerVertical="true"
+        		android:layout_alignParentRight="true"
+        		android:src="@drawable/mm_submenu" />      					
+   		</RelativeLayout>
+
+
+</LinearLayout>

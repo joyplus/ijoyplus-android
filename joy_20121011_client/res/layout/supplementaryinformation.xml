@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:background="#333333"
+    >
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    >
+<RelativeLayout
+    android:layout_width="fill_parent"
+  	android:layout_height="wrap_content"
+  	android:id="@+id/title" 
+  	android:background="@color/blue"
+  	android:gravity="center_vertical" 
+    >
+<TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/person_imformation"
+     android:layout_centerInParent="true"
+     android:textSize="20sp"		
+	android:textColor="@color/white" /> 
+<Button 
+	 android:id="@+id/finish"
+	 android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
+     android:layout_alignParentRight="true"
+     android:layout_centerVertical="true"
+     android:layout_marginRight="5dp"
+     android:text="完成"
+	/>
+</RelativeLayout>
+<TextView
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:text="@string/imformation"
+    android:textSize="15sp"
+    android:textColor="@color/white" 
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="15dp"
+    />
+	<EditText 
+	    android:id="@+id/imformation_name"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:textColor="#000"
+	    android:textSize="15sp"
+	    android:layout_marginTop="25dp"
+	    android:layout_marginLeft="20dp"
+	    android:layout_marginRight="20dp"
+	    android:singleLine="true"
+	    android:hint="@string/imformation_name"/>
+	<EditText 
+	    android:id="@+id/imformation_email"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/imformation_name"
+	    android:textColor="#000"
+	    android:textSize="15sp"
+	    android:layout_marginTop="25dp"
+	    android:layout_marginLeft="20dp"
+	    android:layout_marginRight="20dp"
+	    android:singleLine="true"
+	    android:hint="@string/imformation_email"/>
+	<EditText 
+	    android:id="@+id/imformation_password"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/imformation_name"
+	    android:textColor="#000"
+	    android:textSize="15sp"
+	    android:layout_marginTop="25dp"
+	    android:layout_marginLeft="20dp"
+	    android:layout_marginRight="20dp"
+	    android:password="true"
+	    android:singleLine="true"
+	    android:hint="@string/imformation_password"/>
+</LinearLayout>
+</RelativeLayout>

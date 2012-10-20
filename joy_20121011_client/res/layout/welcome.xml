@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:background="#333333"
+    >
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="50dp"
+    android:orientation="horizontal" 
+    android:layout_alignParentTop="true"
+    android:id="@+id/welcome_lin"
+    android:background="@drawable/title"
+    >
+<TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/yue"
+     android:layout_centerInParent="true"
+     android:textSize="20sp"		
+	android:textColor="@color/white" /> 
+</RelativeLayout>
+
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/welcome_lin"
+    android:id="@+id/welcome_rel"
+    >
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:layout_alignParentTop="true"
+    android:gravity="center"
+    >
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/welcome_dianying" 
+    android:text="@string/dianying"
+    android:textColor="@color/white"
+    android:background="@drawable/btn_topleft"
+    android:layout_weight="1"
+    />
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/welcome_juji" 
+    android:text="@string/juji"
+    android:textColor="@color/white"
+    android:background="@drawable/btn_topbar"
+    android:layout_weight="1"
+    />
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/welcome_zongyi" 
+    android:text="@string/zongyi"
+    android:textColor="@color/white"
+    android:background="@drawable/btn_topbar"
+    android:layout_weight="1"
+    />
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/welcome_shipin" 
+    android:text="@string/shipin"
+    android:textColor="@color/white"
+    android:background="@drawable/btn_topright"
+    android:layout_weight="1"
+    />
+</LinearLayout>
+</RelativeLayout>
+
+
+
+ <Button
+     android:layout_alignParentBottom="true"
+     android:layout_marginBottom="3dp"
+     android:id="@+id/welcome_denglu"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" 
+    android:onClick="Btndenglu"
+    android:text="@string/denglu"
+    android:textColor="@color/white"
+    android:textSize="20sp"
+    android:background="@drawable/btn_longbt"
+     />
+
+<com.joy.view.PullToRefreshView
+    android:id="@+id/welcome_main_pull_refresh_view"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" 
+    android:layout_below="@id/welcome_rel"
+    android:layout_above="@id/welcome_denglu"
+    android:orientation="vertical">
+<ScrollView
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:fadingEdge="none"
+    android:scrollbars="none">
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_weight="1" 
+    android:id="@+id/welcome_linearlayout1"/>
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_weight="1" 
+    android:id="@+id/welcome_linearlayout2"/>
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_weight="1" 
+    android:id="@+id/welcome_linearlayout3"
+    />
+</LinearLayout>
+</ScrollView>
+</com.joy.view.PullToRefreshView>
+</RelativeLayout>

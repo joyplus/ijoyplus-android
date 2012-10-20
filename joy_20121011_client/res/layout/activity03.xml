@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:background="#333333"
+    >
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:layout_alignParentTop="true"
+    android:id="@+id/act03_lin"
+    android:background="@drawable/title"
+    >
+<TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/dongtaitixing"
+     android:layout_centerInParent="true"
+     android:textSize="20sp"		
+	android:textColor="@color/white" /> 
+<Button
+    android:layout_alignParentRight="true"
+    android:layout_marginRight="10dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:id="@+id/act03_xiaoxi" 
+    android:text="@string/xiaoxi"
+    android:layout_centerVertical="true"
+    android:onClick="Btn_goxiaoxi"
+    android:background="@drawable/btn_top_right"
+    android:textColor="@color/white"
+    android:textSize="15sp"
+    />
+</RelativeLayout>
+<com.joy.view.PullToRefreshView
+    android:id="@+id/act03_main_pull_refresh_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_below="@id/act03_lin"
+    >
+<ListView 
+    android:id="@+id/act03_listview"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fadingEdge="none"
+    android:cacheColorHint="#00000000"
+    android:divider="@color/white"
+    android:dividerHeight="1dp"
+    android:scrollbars="none"
+    >
+</ListView>
+</com.joy.view.PullToRefreshView>
+</RelativeLayout>

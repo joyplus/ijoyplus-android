@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    >
+<RelativeLayout
+    android:layout_width="fill_parent"
+  	android:layout_height="wrap_content"
+  	android:id="@+id/title" 
+  	android:background="@color/blue"
+  	android:gravity="center_vertical" 
+    >
+<TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/all_reply"
+     android:layout_centerInParent="true"
+     android:textSize="20sp"		
+	android:textColor="@color/white" /> 
+	<Button 
+	 android:id="@+id/login_goback"
+	 android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
+     android:layout_alignParentLeft="true"
+     android:layout_centerVertical="true"
+     android:layout_marginLeft="5dp"
+     android:text="@string/goback"
+	/> 
+</RelativeLayout>
+<LinearLayout
+    		 android:id="@+id/reply_layout"
+	         android:layout_width="fill_parent"
+		     android:layout_height="wrap_content"
+		     android:layout_alignParentBottom="true"
+		     android:gravity="center"
+		     android:orientation="horizontal"
+	        >
+	        <EditText 
+			    android:id="@+id/reply_edit"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:textColor="#000"
+			    android:textSize="15sp"
+			    android:singleLine="true"
+			    android:layout_weight="1"
+			    />
+	        <Button
+	            android:id="@+id/reply_button"
+	            android:text="回复" 
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            />
+	    </LinearLayout>
+	    <ScrollView 
+	        android:id="@+id/reply_listview"
+	        android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+	        android:layout_above="@id/reply_layout"
+	        android:layout_below="@id/title"
+	        android:scrollbars="none"
+			android:fadingEdge="none"
+	        >
+	        <LinearLayout
+	             android:id="@+id/reply_linearlayout"
+	             android:layout_width="fill_parent"
+			     android:layout_height="fill_parent"
+			     android:orientation="vertical"
+	            >
+	            
+	        </LinearLayout>
+	    </ScrollView>
+</RelativeLayout>
