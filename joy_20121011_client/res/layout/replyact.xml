@@ -7,8 +7,7 @@
     android:layout_width="fill_parent"
   	android:layout_height="wrap_content"
   	android:id="@+id/title" 
-  	android:background="@color/blue"
-  	android:gravity="center_vertical" 
+  	android:background="@drawable/title"
     >
 <TextView
      android:layout_width="wrap_content" 
@@ -17,21 +16,32 @@
      android:layout_centerInParent="true"
      android:textSize="20sp"		
 	android:textColor="@color/white" /> 
-	<Button 
-	 android:id="@+id/login_goback"
-	 android:layout_width="wrap_content" 
-     android:layout_height="wrap_content"
-     android:layout_alignParentLeft="true"
-     android:layout_centerVertical="true"
-     android:layout_marginLeft="5dp"
-     android:text="@string/goback"
-	/> 
+	 <RelativeLayout 
+		    android:id="@+id/login_goback"
+		    android:layout_alignParentLeft="true"
+		    android:layout_marginLeft="10dp"
+		    android:layout_width="64dp"
+		    android:layout_height="wrap_content"
+		    android:layout_centerVertical="true"
+		    android:background="@drawable/btn_top_left"
+    >
+		 <TextView
+		     android:layout_width="wrap_content" 
+		     android:layout_height="wrap_content" 
+		     android:text="@string/goback"
+		     android:layout_alignParentRight="true"
+		     android:layout_marginRight="12dp"
+		     android:textSize="15sp"		
+		     android:layout_centerVertical="true"
+			 android:textColor="@color/white" />   
+	</RelativeLayout>
 </RelativeLayout>
 <LinearLayout
     		 android:id="@+id/reply_layout"
 	         android:layout_width="fill_parent"
 		     android:layout_height="wrap_content"
 		     android:layout_alignParentBottom="true"
+		     android:layout_marginBottom="5sp"
 		     android:gravity="center"
 		     android:orientation="horizontal"
 	        >
@@ -39,16 +49,20 @@
 			    android:id="@+id/reply_edit"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
-			    android:textColor="#000"
+			    android:background="@drawable/editbg"
 			    android:textSize="15sp"
+			    android:paddingLeft="10dp"
+			    android:textColor="@color/white"
 			    android:singleLine="true"
 			    android:layout_weight="1"
 			    />
 	        <Button
 	            android:id="@+id/reply_button"
-	            android:text="回复" 
+	            android:text="@string/reply" 
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
+	            android:background="@drawable/btn_sousuo"
+	            android:textColor="@color/white"
 	            />
 	    </LinearLayout>
 	    <ScrollView 

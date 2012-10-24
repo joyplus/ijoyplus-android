@@ -44,16 +44,16 @@ public class JoyActivity extends TabActivity implements OnClickListener{
 		setupIntent();
 		prepareView();
 		//设置第三方标签的唯一值，用于获取第三放好友列表等功能
-		if (getThird_AccessToken.getAccessToken().trim().length()==0) {
-			String url = getThird_AccessToken.getVerificationCode();
-	    	Uri uri = Uri.parse(url);
-	    	//匹配验证码
-			String oauth_verifier = uri.getQueryParameter("oauth_verifier");
-			OAuth.getInstance().setOauthVerifier(oauth_verifier);
-			getThird_AccessToken.setAccessToken(OAuth.getInstance().getAccessToken());
-		}
-		getThird_AccessToken.SaveAccessToken();
-		System.out.println("AccessToken=====>"+getThird_AccessToken.getAccessToken());
+//		if (getThird_AccessToken.getAccessToken().trim().length()==0) {
+//			String url = getThird_AccessToken.getVerificationCode();
+//	    	Uri uri = Uri.parse(url);
+//	    	//匹配验证码
+//			String oauth_verifier = uri.getQueryParameter("oauth_verifier");
+//			OAuth.getInstance().setOauthVerifier(oauth_verifier);
+//			getThird_AccessToken.setAccessToken(OAuth.getInstance().getAccessToken());
+//		}
+//		getThird_AccessToken.SaveAccessToken();
+//		System.out.println("AccessToken=====>"+getThird_AccessToken.getAccessToken());
     }
     private void prepareView() {
 		mBut1 = (ImageView) findViewById(R.id.imageView1);

@@ -13,6 +13,7 @@ import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -121,7 +122,9 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
         return listItems;
     }
 	public void Btn_sousuojieguo_back(View v){
-		finish();
+		Intent intent=new Intent();
+		intent.setClass(context, Sousuo.class);
+		startActivity(intent);
 	}
 	@Override
 	public void onFooterRefresh(PullToRefreshView view) {

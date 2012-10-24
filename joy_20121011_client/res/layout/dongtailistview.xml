@@ -2,6 +2,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content">
+    
+<!-- <RelativeLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/black"
+    android:id="@+id/dongtailistview_tou"
+    >
+    <TextView
+        android:id="@+id/dongtailistview_data"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:text="data"
+        android:textSize="15sp" 
+        android:layout_marginLeft="20dp"
+        />
+</RelativeLayout> -->
+    
     <ImageView 
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
@@ -9,6 +27,8 @@
         android:id="@+id/dongtailistview_head" 
         android:layout_marginLeft="10dp"
         android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:focusable="true"
         />
     <LinearLayout 
         android:layout_height="wrap_content"
@@ -17,6 +37,7 @@
         android:orientation="vertical"
         android:layout_marginLeft="20dp"
         android:id="@+id/dongtailistview_line"
+        android:layout_marginTop="10dp"
         >
     <TextView 
         android:layout_height="wrap_content"
@@ -55,6 +76,15 @@
         android:visibility="gone"
         />
     </LinearLayout>
+<!-- <RelativeLayout 
+    	android:layout_height="60dp"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="15dp"
+        android:layout_toRightOf="@id/dongtailistview_line"
+        android:layout_alignParentBottom="true"
+    >
+    
 <TextView 
         android:id="@+id/dongtailistview_how" 
     	android:layout_height="wrap_content"
@@ -64,6 +94,21 @@
         android:text="how"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:focusable="true"
+    />
+</RelativeLayout> -->
+<TextView 
+        android:id="@+id/dongtailistview_how" 
+    	android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="18sp" 
+        android:textColor="@color/grey"
+        android:text="how"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"
         android:focusable="true"
     />
 </RelativeLayout>  

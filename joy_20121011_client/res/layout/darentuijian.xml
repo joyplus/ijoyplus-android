@@ -29,27 +29,37 @@
     android:layout_centerVertical="true"
     android:textColor="@color/white"
     />
-<Button
+
+<RelativeLayout 
     android:layout_alignParentLeft="true"
     android:layout_marginLeft="10dp"
-    android:layout_width="wrap_content"
+    android:layout_width="64dp"
     android:layout_height="wrap_content"
-    android:id="@+id/darentuijian_back" 
-    android:text="@string/back"
+    android:id="@+id/darentuijian_back"
     android:layout_centerVertical="true"
     android:background="@drawable/btn_top_left"
-    android:textColor="@color/white"
-    />
+    >
+ <TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/back"
+     android:layout_alignParentRight="true"
+     android:layout_marginRight="12dp"
+     android:textSize="15sp"		
+     android:layout_centerVertical="true"
+	android:textColor="@color/white" />   
+</RelativeLayout>
 </RelativeLayout>
 <Button
     android:layout_alignParentBottom="true"
+    android:layout_marginBottom="5dp"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:id="@+id/darentuijian_guanzhu" 
     android:text="@string/guanzhuall"
-    android:background="@drawable/btn_longbt"
     android:textColor="@color/white"
     android:textSize="20sp"
+    android:background="@drawable/btn_guanzhuall"
     />
 <com.joy.view.PullToRefreshView_foot
     android:id="@+id/darentuijian_main_pull_refresh_view"

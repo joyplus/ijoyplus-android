@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.BitmapZoom;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.SearchAdapter;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
@@ -15,6 +18,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,6 +34,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,19 +74,34 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 			"删除",
 			"回复"
 			};
-	private int page_count = 6;
+	private String time[] = {
+			"12:34",
+			"11:34",
+			"07:14",
+			"02:14",
+			"22:00",
+			"21:04",
+			"20:50",
+			"14:06",
+			"10:11"
+			};
+	private int page_count = 3;
 	private int current_page = 0;
     private int index =0;
-    SearchAdapter adapter;
+    Bitmap BigBitmap;
     PullToRefreshView mPullToRefreshView;
+    AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
     ViewHolder	holder;
+    MyAdapter adapter;
     List<Map<String, Object>> listItems=new ArrayList<Map<String, Object>>();
     final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case 100:
-				
+				listItems=getListItems(++current_page, page_count);
+				adapter.notifyDataSetChanged();
+				listView.setSelection(listView.getCount()-1);
 				break;
 			case 200:
 				
@@ -99,33 +119,25 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 		mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
 		listView=(ListView)findViewById(R.id.act03_listview);
-		listItems=getListItems();
+		listItems=getListItems(current_page, page_count);
 		
-		MyAdapter adapter=new MyAdapter(context);
+		adapter=new MyAdapter(context);
 		listView.setAdapter(adapter); 
-		listView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				
-			}
-		});
 		
 		
 		
 	}
-	private List<Map<String, Object>> getListItems() {
-        for(int i = 0; i < how.length; i++) {
+	private List<Map<String, Object>> getListItems(int pageindex, int pagecount) {
+        for(int i = index; i < pagecount * (pageindex + 1)&&i<images.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>(); 
-            map.put("head", R.drawable.ic_launcher);
+            map.put("head", R.drawable.head);
             map.put("who", "谁"+(i+1));
             map.put("what", "干什么"+(i+1));
-            map.put("img", R.drawable.ic_launcher);
-            map.put("time", "时间"+(i+1));
+            map.put("img", images[i]);
+            map.put("time", time[i]);
             map.put("how", how[i]);
             listItems.add(map);
-//            index++;
+            index++;
         }    
         return listItems;
     }
@@ -183,7 +195,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 		}, 1000);
 	}
 	public final class ViewHolder{
-		public ImageView img;
+		public ImageView head;
 		public TextView title;
 		public TextView info;
 		public ImageView img1;
@@ -218,7 +230,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 			if(convertView == null){
 				holder = new ViewHolder();
 				convertView = mInflater.inflate(R.layout.dongtailistview, null);
-				holder.img = (ImageView)convertView.findViewById(R.id.dongtailistview_head);
+				holder.head = (ImageView)convertView.findViewById(R.id.dongtailistview_head);
 				holder.title = (TextView)convertView.findViewById(R.id.dongtailistview_who);
 				holder.info = (TextView)convertView.findViewById(R.id.dongtailistview_what);
 				holder.img1 = (ImageView)convertView.findViewById(R.id.dongtailistview_img);
@@ -230,27 +242,52 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				holder = (ViewHolder)convertView.getTag();
 			}
 			
-			
-				holder.img.setBackgroundResource((Integer)listItems.get(position).get("head"));
-				holder.title.setText((String)listItems.get(position).get("who"));
-				holder.info.setText((String)listItems.get(position).get("what"));
+			holder.head.setBackgroundResource((Integer)listItems.get(position).get("head"));
+			holder.head.setTag((position+1));
+			holder.head.setOnClickListener(new View.OnClickListener() {
 				
-				holder.img1.setBackgroundResource((Integer)listItems.get(position).get("img"));
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(context, v.getTag()+"", Toast.LENGTH_SHORT).show();
+				}
+			});
+			holder.title.setText((String)listItems.get(position).get("who"));
+			holder.info.setText((String)listItems.get(position).get("what"));
+				
+//				holder.img1.setBackgroundResource((Integer)listItems.get(position).get("img"));
+				
+				Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.img1, (String)listItems.get(position).get("img"), new ImageCallBack() {
+					
+					public void imageLoad(ImageView imageView, Bitmap bitmap) {
+						BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
+						imageView.setImageBitmap(BigBitmap);
+					}
+				});
+				if (bitmap!=null) {
+					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
+					holder.img1.setImageBitmap(BigBitmap);
+				}
+				else {
+					holder.img1.setImageResource(R.drawable.pic_bg);
+				}
+				
+				
+				
 				holder.time.setText((String)listItems.get(position).get("time"));
 				holder.viewBtn.setText((String)listItems.get(position).get("how"));
+				holder.viewBtn.setTag((String)listItems.get(position).get("how"));
 				
 				holder.viewBtn.setOnClickListener(new View.OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
-						System.out.println("position===>"+position);
-						if (holder.viewBtn.getText().equals("删除")) {
+						System.out.println("v.getTag();===>"+v.getTag());
+						if (v.getTag().equals("删除")) {
 							listItems.remove(position);
-							System.out.println("listItems====>"+listItems.toString());
 							MyAdapter.this.notifyDataSetChanged();
 							Toast.makeText(context, "删除", Toast.LENGTH_SHORT).show();
 						}
-						else if (holder.viewBtn.getText().equals("回复")) {
+						else if (v.getTag().equals("回复")) {
 							Toast.makeText(context, "回复", Toast.LENGTH_SHORT).show();
 						}
 						

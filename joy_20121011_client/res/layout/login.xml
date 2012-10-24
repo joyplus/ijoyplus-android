@@ -42,7 +42,7 @@
 
 <LinearLayout 
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_below="@id/title"
     >
@@ -51,7 +51,7 @@
     android:layout_width="wrap_content" 
     android:layout_height="wrap_content"
     android:text="@string/canloginstr"
-    android:textSize="15sp"
+    android:textSize="18sp"
     android:textColor="@color/white" 
     android:layout_marginTop="10dp"
     android:layout_marginLeft="15dp"
@@ -68,15 +68,16 @@
    		android:layout_height="wrap_content"
    		android:orientation="vertical"
     	android:gravity="center"
+    	android:layout_weight="1"
 	    >
  	 <Button 
 	 android:id="@+id/Sina_weibo"
-	 android:layout_width="150px" 
-     android:layout_height="150px"
+	 android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
      android:layout_alignParentLeft="true"
      android:layout_centerVertical="true"
      android:layout_marginLeft="5dp"
-     android:text="@string/Sina_str"
+     android:background="@drawable/btn_sina"
 	 />
 	 <TextView 
 	 android:layout_width="wrap_content" 
@@ -85,6 +86,7 @@
      android:layout_centerVertical="true"
      android:textColor="@color/white" 
      android:layout_marginLeft="5dp"
+     android:layout_marginTop="10dp"
      android:text="@string/Sina_str"
 	 />
 	</LinearLayout>
@@ -94,16 +96,17 @@
    		android:layout_height="wrap_content"
    		android:orientation="vertical"
     	android:gravity="center"
+    	android:layout_weight="1"
 	>
 	 <Button 
 	 android:id="@+id/QQ_weibo"
-	 android:layout_width="150px" 
-     android:layout_height="150px"
+	 android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
      android:layout_alignParentRight="true"
      android:gravity="center"
      android:layout_centerVertical="true"
      android:layout_marginRight="5dp"
-     android:text="@string/QQ_str"
+     android:background="@drawable/btn_qq"
 	 />
 	 <TextView 
 	 android:layout_width="wrap_content" 
@@ -114,21 +117,39 @@
      android:layout_marginRight="5dp"
      android:textColor="@color/white" 
      android:text="@string/QQ_str"
+     android:layout_marginTop="10dp"
 	/>
 	</LinearLayout>
 </LinearLayout>
+		
+	<TextView 
+	    android:id="@+id/text"
+	    android:layout_height="wrap_content"
+	    android:layout_width="fill_parent"
+	    android:text="帐号登录"
+	    android:textColor="@color/white"
+	    android:textSize="18sp"
+	    android:layout_below="@+id/login_top_layout"
+	     android:layout_marginTop="30dp"
+	    android:layout_marginLeft="30dp"
+	    android:layout_marginRight="20dp"
+	    />
+
 	<EditText 
 	    android:id="@+id/login_user_edit"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@+id/login_top_layout"
+	    android:layout_below="@+id/text"
 	    android:textColor="#000"
 	    android:textSize="15sp"
-	    android:layout_marginTop="25dp"
-	    android:layout_marginLeft="20dp"
-	    android:layout_marginRight="20dp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	     android:layout_marginTop="5dp"
 	    android:singleLine="true"
-	    android:hint="@string/loginemail"/>
+	    android:paddingLeft="10dp"
+	    android:paddingRight="10dp"
+	    android:hint="@string/loginemail"
+	    android:background="@drawable/ic_preference_first_normal"/>
 	<EditText 
 	    android:id="@+id/login_passwd_edit"
 	    android:layout_width="fill_parent"
@@ -136,12 +157,14 @@
 	    android:layout_below="@+id/login_user_edit"
 	    android:textColor="#000"
 	    android:textSize="15sp"
-	    android:layout_marginTop="25dp"
-	    android:layout_marginLeft="20dp"
-	    android:layout_marginRight="20dp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
 	    android:password="true"
 	    android:singleLine="true"
-	    android:hint="@string/password"/>
+	    android:hint="@string/password"
+	    android:paddingLeft="10dp"
+	    android:paddingRight="10dp"
+	    android:background="@drawable/ic_preference_last_normal"/>
 </LinearLayout>
 	<Button
 	 android:id="@+id/goin"
@@ -152,5 +175,6 @@
      android:text="@string/denglu"
     android:textColor="@color/white"
     android:textSize="20sp"
+    android:layout_marginBottom="5dp"
 	 />
 </RelativeLayout>

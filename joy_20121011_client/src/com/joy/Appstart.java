@@ -18,6 +18,7 @@ public class Appstart extends Activity {
 		new Handler().postDelayed(new Runnable(){
 			@Override
 			public void run(){
+				Tools.creat("joy/ijoyplus");
 				Intent intent = new Intent (Appstart.this,Welcome.class);			
 				startActivity(intent);			
 				Appstart.this.finish();

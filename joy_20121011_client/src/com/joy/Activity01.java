@@ -36,11 +36,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.joy.Tools.AsyncImageLoader;
-import com.joy.Tools.AsyncImageLoader.ImageCallback;
+import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.ImageAndText;
 import com.joy.Tools.Tools;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
 import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
@@ -60,6 +60,8 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
     Context context;
     int selectIndex=1;
     Bitmap BigBitmap;
+    GetThird_AccessToken getThird_AccessToken;
+    String where="where_1_1";
 	private String images_dianying[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
@@ -104,7 +106,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
-	AsyncImageLoader asyncImageLoader;
+	AsyncBitmapLoader asyncBitmapLoader;
 	final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -129,7 +131,8 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity01);
 		context=this;
-		asyncImageLoader=new AsyncImageLoader();
+		getThird_AccessToken=(GetThird_AccessToken)getApplicationContext();
+		asyncBitmapLoader=new AsyncBitmapLoader();
 		list=new ArrayList<String>();
 		mPullToRefreshView = (PullToRefreshView)findViewById(R.id.act01_main_pull_refresh_view);
 		mPullToRefreshView.setOnHeaderRefreshListener(this);
@@ -146,6 +149,8 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
         linearLayout2 = (LinearLayout)findViewById(R.id.act01_linearlayout2);
         linearLayout3 = (LinearLayout)findViewById(R.id.act01_linearlayout3);
         linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/3;
+        
+        images_dianying=SetSaveData(where, images_dianying);
         addBitmaps(current_page, page_count,images_dianying);
 		
         btn_dianying.setOnClickListener(new OnClickListener() {
@@ -153,6 +158,8 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			@Override
 			public void onClick(View v) {
 				selectIndex=1;
+				String where="where_1_1";
+		        images_dianying=SetSaveData(where, images_dianying);
 				btn_dianying.setBackgroundResource(R.drawable.topleft1);
 				btn_juji.setBackgroundResource(R.drawable.topbarmid);
 				btn_zongyi.setBackgroundResource(R.drawable.topbarmid);
@@ -175,6 +182,8 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			@Override
 			public void onClick(View v) {
 				selectIndex=2;
+				String where="where_1_2";
+				images_juji=SetSaveData(where, images_juji);
 				btn_dianying.setBackgroundResource(R.drawable.topleft);
 				btn_juji.setBackgroundResource(R.drawable.topbarmid1);
 				btn_zongyi.setBackgroundResource(R.drawable.topbarmid);
@@ -197,6 +206,8 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			@Override
 			public void onClick(View v) {
 				selectIndex=3;
+				String where="where_1_3";
+				images_zongyi=SetSaveData(where, images_zongyi);
 				btn_dianying.setBackgroundResource(R.drawable.topleft);
 				btn_juji.setBackgroundResource(R.drawable.topbarmid);
 				btn_zongyi.setBackgroundResource(R.drawable.topbarmid1);
@@ -220,6 +231,8 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			@Override
 			public void onClick(View v) {
 				selectIndex=4;
+				String where="where_1_4";
+				images_shipin=SetSaveData(where, images_shipin);
 				btn_dianying.setBackgroundResource(R.drawable.topleft);
 				btn_juji.setBackgroundResource(R.drawable.topbarmid);
 				btn_zongyi.setBackgroundResource(R.drawable.topbarmid);
@@ -259,7 +272,18 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
     				RelativeLayout rll = (RelativeLayout)view.findViewById(R.id.RelativeLayout02);
     				ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
-    				setimage(imageView, list.get(index));
+    				Bitmap bitmap=setImage(imageView, list.get(index));
+    				if (bitmap==null) {
+    					imageView.setImageResource(R.drawable.pic_bg);
+					}
+    				else {
+    					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    					imageView.setImageBitmap(BigBitmap);
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+                        layoutParams.setMargins(4, 1, 4, 1);
+                        imageView.setLayoutParams(layoutParams);
+    					imageView.setImageBitmap(bitmap);
+					}
     				textView.setText("第"+(index+1)+"张");
     				imageView.setOnClickListener(new OnClickListener() {
 						
@@ -312,6 +336,47 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			System.out.println(e.toString());
 		}
     }
+	public Bitmap setImage(ImageView imageView,String URL){
+		return asyncBitmapLoader.loadBitmap(imageView, URL, new ImageCallBack() {
+			
+			@Override
+			public void imageLoad(ImageView imageView, Bitmap bitmap) {
+				if (bitmap!=null) {
+					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+					imageView.setImageBitmap(BigBitmap);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+                    layoutParams.setMargins(4, 1, 4, 1);
+                    imageView.setLayoutParams(layoutParams);
+				}
+            	else {
+            		imageView.setImageResource(R.drawable.pic_bg);
+				}
+			}
+		});
+	}
+	public String[] SetSaveData(String where,String URL[]){
+		if (Tools.isNetworkAvailable(context)==false) {
+        	getThird_AccessToken.GetImageName(where);
+        	String Img_Name=getThird_AccessToken.getIMG_Name();
+        	URL=Tools.Split(Img_Name, "$URL$");
+		}
+		else {
+			int a=0;
+			String iMG_Name="";
+			for (int i = 0; i < URL.length; i++) {
+				if (a==0) {
+					iMG_Name+=URL[i];
+					a=1;
+				}
+				else {
+					iMG_Name+="$URL$"+URL[i];
+				}
+			}
+			getThird_AccessToken.setIMG_Name(iMG_Name);
+			getThird_AccessToken.SaveImageName(where);
+		}
+		return URL;
+	}
 	@Override
 	public void onFooterRefresh(PullToRefreshView view) {
 		mPullToRefreshView.postDelayed(new Runnable() {
@@ -334,25 +399,6 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 				mPullToRefreshView.onHeaderRefreshComplete();
 			}
 		},1000);
-	}
-	public void setimage(final ImageView v, String url){
-		asyncImageLoader.loadDrawable(url, new ImageCallback() {
-			
-			@Override
-			public void imageLoaded(Drawable imageDrawable) {
-				if (imageDrawable!=null&&imageDrawable.getIntrinsicWidth()>0) {
-					BitmapDrawable bd = (BitmapDrawable) imageDrawable;
-                	Bitmap bm = bd.getBitmap();
-                	BigBitmap = BitmapZoom.bitmapZoomByWidth(bm, linearlayoutWidth);
-                    v.setImageBitmap(BigBitmap);
-                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
-                    layoutParams.setMargins(4, 1, 4, 1);
-                    v.setLayoutParams(layoutParams);
-				}else {
-					v.setImageResource(R.drawable.pic_bg);
-				}
-			}
-		});
 	}
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {

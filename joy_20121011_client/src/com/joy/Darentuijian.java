@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.joy.Tools.AsyncImageLoader;
+import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.BitmapZoom;
-import com.joy.Tools.AsyncImageLoader.ImageCallback;
+import com.joy.Tools.Tools;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
 
@@ -32,7 +33,8 @@ import android.widget.Toast;
 
 public class Darentuijian extends Activity implements OnFooterRefreshListener{
 	Context context;
-	Button btn_allguanzhu,btn_xiayibu,btn_back;
+	Button btn_allguanzhu,btn_xiayibu;
+	RelativeLayout btn_back;;
 	private  LinearLayout linearLayout1 = null;
     private  LinearLayout linearLayout2 = null;
     private  LinearLayout linearLayout3 = null;
@@ -56,13 +58,13 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 			"http://www.85flash.com/Files/BeyondPic/2006-8/1/068118181319408.gif"
 			};
 	PullToRefreshView_foot mPullToRefreshView;
-	AsyncImageLoader asyncImageLoader;
+	AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
 	final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case 1500:
-				addBitmaps(++current_page, page_count);
+				addBitmaps(++current_page, page_count,images);
 				break;
 			}
 		}
@@ -74,8 +76,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 		getThird_AccessToken=(GetThird_AccessToken)getApplicationContext();
 		context = this;
 		list=new ArrayList<String>();
-		list=Arrays.asList(images);
-		asyncImageLoader=new AsyncImageLoader();
+		
 		mPullToRefreshView = (PullToRefreshView_foot)findViewById(R.id.darentuijian_main_pull_refresh_view);
         mPullToRefreshView.setOnFooterRefreshListener(this);
         
@@ -84,7 +85,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
         linearLayout3 = (LinearLayout)findViewById(R.id.darentuijian_linearlayout3);
         linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/3;
         
-        btn_back=(Button)findViewById(R.id.darentuijian_back);
+        btn_back=(RelativeLayout)findViewById(R.id.darentuijian_back);
         btn_allguanzhu=(Button)findViewById(R.id.darentuijian_guanzhu);
         btn_xiayibu=(Button)findViewById(R.id.darentuijian_xiayibu);
         if (getThird_AccessToken.getActivitytype().equals("1")) {
@@ -93,8 +94,9 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
         else if (getThird_AccessToken.getActivitytype().equals("2")) {
 			btn_xiayibu.setVisibility(View.GONE);
 		}
-        addBitmaps(current_page, page_count);
         
+        images=SetSaveData("where_daren", images);
+        addBitmaps(current_page, page_count,images);
         btn_xiayibu.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -121,17 +123,40 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 		});
 	}
 
-	private void addBitmaps(int pageindex, int pagecount){
+	private void addBitmaps(int pageindex, int pagecount,String img[]){
+		list=Arrays.asList(img);
 		LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     	try {
-    		for(int i = index; i < pagecount * (pageindex + 1)&&i<images.length; i++){
+    		for(int i = index; i < pagecount * (pageindex + 1)&&i<img.length; i++){
     			try {
     				final View view=inflater.inflate(R.layout.darenview, null);
     				RelativeLayout rll = (RelativeLayout)view. findViewById(R.id.RelativeLayout03);
     				ImageView imageView = (ImageView)view.findViewById(R.id.darenview_image);
     				TextView textView = (TextView)view.findViewById(R.id.darenview_text);
     				Button button=(Button)view.findViewById(R.id.darenview_button);
-    				setViewImage(imageView, list.get(index));
+    				Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, list.get(index), new ImageCallBack() {  
+  	                  
+    	                @Override  
+    	                public void imageLoad(ImageView imageView, Bitmap bitmap) {  
+    	                	Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+        					imageView.setImageBitmap(bitmap2);
+                            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
+                            layoutParams.setMargins(4, 1, 4, 1);
+                            imageView.setLayoutParams(layoutParams);
+        					imageView.setImageBitmap(bitmap);
+    	                }  
+    	            });  
+    				if (bitmap==null) {
+    					imageView.setImageResource(R.drawable.pic_bg);
+					}
+    				else {
+    					Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    					imageView.setImageBitmap(bitmap2);
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
+                        layoutParams.setMargins(4, 1, 4, 1);
+                        imageView.setLayoutParams(layoutParams);
+    					imageView.setImageBitmap(bitmap);
+					}
     				textView.setText("第"+(index+1)+"张");
     				button.setId(index*100);
     				imageView.setOnClickListener(new OnClickListener() {
@@ -179,26 +204,32 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 			System.out.println(e.toString());
 		}
     }
-	public void setViewImage(final ImageView v, String url) {
-    	asyncImageLoader.loadDrawable(url, new ImageCallback() {
-			
-			@Override
-			public void imageLoaded(Drawable imageDrawable) {
-				if(imageDrawable!=null && imageDrawable.getIntrinsicWidth()>0 ) {
-	            	BitmapDrawable bd = (BitmapDrawable) imageDrawable;
-	            	Bitmap bm = bd.getBitmap();
-	            	bitmap2 = BitmapZoom.bitmapZoomByWidth(bm, linearlayoutWidth);
-	                v.setImageBitmap(bitmap2);
-	                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
-	                layoutParams.setMargins(4, 1, 4, 1);
-	                v.setLayoutParams(layoutParams);
-	            }
-	            else {
-					v.setImageResource(R.drawable.pic_bg);
+	public String[] SetSaveData(String where,String URL[]){
+		if (Tools.isNetworkAvailable(context)==false) {
+        	getThird_AccessToken.GetImageName(where);
+        	String Img_Name=getThird_AccessToken.getIMG_Name();
+        	URL=Tools.Split(Img_Name, "$URL$");
+        	for (int i = 0; i < URL.length; i++) {
+				System.out.println("URL==>"+URL[i]);
+			}
+		}
+		else {
+			int a=0;
+			String iMG_Name="";
+			for (int i = 0; i < URL.length; i++) {
+				if (a==0) {
+					iMG_Name+=URL[i];
+					a=1;
+				}
+				else {
+					iMG_Name+="$URL$"+URL[i];
 				}
 			}
-		});
-    }
+			getThird_AccessToken.setIMG_Name(iMG_Name);
+			getThird_AccessToken.SaveImageName(where);
+		}
+		return URL;
+	}
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 			if (getThird_AccessToken.getActivitytype().equals("2")) {

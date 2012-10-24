@@ -34,7 +34,8 @@ import android.widget.Toast;
 public class ReplyActivity extends Activity{
 	Context context;
 	EditText reply_editText;
-	Button reply_button,login_goback;
+	Button reply_button;
+	RelativeLayout login_goback;
 	ScrollView reply_listview;
 	SimpleAdapter adapter;
 	LinearLayout reply_linearlayout;
@@ -52,7 +53,7 @@ public class ReplyActivity extends Activity{
         reply_listview = (ScrollView) findViewById(R.id.reply_listview);
         reply_linearlayout = (LinearLayout) findViewById(R.id.reply_linearlayout);
         into_listContent();
-        login_goback = (Button) findViewById(R.id.login_goback);
+        login_goback = (RelativeLayout) findViewById(R.id.login_goback);
         login_goback.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -142,11 +143,18 @@ public class ReplyActivity extends Activity{
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
     	switch(keyCode){
         case KeyEvent.KEYCODE_BACK:
-        	if (reply_editText.hasFocus()) {
-        		reply_editText.setFocusable(false);
-        		reply_editText.setFocusableInTouchMode(false);  
-        		reply_editText.requestFocus(); 
-        	}
+//        	if (reply_editText.hasFocus()) {
+//        		reply_editText.setFocusable(false);
+//        		reply_editText.setFocusableInTouchMode(false);  
+//        		reply_editText.requestFocus(); 
+//        	}
+//        	else
+//        	{
+        		Intent intent = new Intent();
+				intent.setClass(context, DetailActivity.class);
+				startActivity(intent);
+				finish();
+ //       	}
         	break;
     	}
         return true;

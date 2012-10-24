@@ -23,15 +23,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 
+import com.joy.Login_Activity.AuthReceiver;
 import com.joy.Tools.*;
 
 import com.joy.DetailActivity;
 import com.joy.GetThird_AccessToken;
+import com.joy.Login_Activity;
 import com.joy.R;
+import com.joy.SupplementaryInformation;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.MyEditText;
 import com.joy.weibo.net.AsyncWeiboRunner.RequestListener;
+import com.tencent.tauth.TAuthView;
 import com.tencent.tauth.TencentOpenAPI;
+import com.tencent.tauth.bean.OpenId;
 import com.tencent.tauth.http.Callback;
 import com.tencent.tauth.http.TDebug;
 
@@ -39,9 +44,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -57,6 +64,7 @@ import android.text.InputType;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -89,7 +97,8 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     private Button share_pinglun,xinlang_button,qq_button;
     private MyEditText fx_pl_edit;
     private FrameLayout mPiclayout;
-
+    private static final String SINA_CONSUMER_KEY = "3069972161";// 替换为开发者的appkey，例如"1646212960";
+	private static final String SINA_CONSUMER_SECRET = "eea5ede316c6a283c6bae57e52c9a877";
     private String mPicPath = "";
     private String mContent = "";
     private String mAccessToken = "";
@@ -97,7 +106,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     Dialog dialog;
     Context context;
     int sina_choice,qq_choice;
-    public String mAppid = "222222";//申请时分配的appid
+    public String mAppid = "222222",mOpenId;//申请时分配的appid
     public static final String EXTRA_WEIBO_CONTENT = "com.weibo.android.content";
     public static final String EXTRA_PIC_URI = "com.weibo.android.pic.uri";
     public static final String EXTRA_ACCESS_TOKEN = "com.weibo.android.accesstoken";
@@ -106,11 +115,15 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     public static final int WEIBO_MAX_LENGTH = 120;
     GetThird_AccessToken getThird_AccessToken;
     int linearlayout_width = 0;
+    int QQ_SS_Count = 0;
+    private AuthReceiver receiver;
+	private String scope = "get_user_info,get_user_profile,add_share,add_topic,list_album,upload_pic,add_album";//授权范围
+	private static final String CALLBACK = "auth://tauth.qq.com/";
     final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			switch (msg.getData().getInt("msg")) {
 			case 1:
-				dialog.dismiss();
+				share_pinglun.setEnabled(true);
 				break;
 			}
 		}
@@ -123,25 +136,44 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
         linearlayout_width =  getWindowManager().getDefaultDisplay().getWidth()/3;
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
         Intent in = this.getIntent();
-        mPicPath = in.getStringExtra(EXTRA_PIC_URI);
-        mContent = in.getStringExtra(EXTRA_WEIBO_CONTENT);
-        mAccessToken = in.getStringExtra(EXTRA_ACCESS_TOKEN);
-        System.out.println("mAccessToken====>"+mAccessToken);
-        mTokenSecret = in.getStringExtra(EXTRA_TOKEN_SECRET);
-        System.out.println("mTokenSecret====>"+mTokenSecret);
-        AccessToken accessToken = new AccessToken(mAccessToken, mTokenSecret);
-        Weibo weibo = Weibo.getInstance();
-        weibo.setAccessToken(accessToken);
-
-        Button login_goback = (Button) this.findViewById(R.id.login_goback);
-        login_goback.setOnClickListener(this);
-        share_pinglun = (Button) this.findViewById(R.id.share_pinglun);
-        share_pinglun.setText(getThird_AccessToken.getButton_Name());
-        share_pinglun.setOnClickListener(this);
         xinlang_button = (Button) findViewById(R.id.xinlang_button);
         xinlang_button.setOnClickListener(this);
         qq_button = (Button) findViewById(R.id.qq_button);
         qq_button.setOnClickListener(this);
+        //获取新浪上传的一切值
+        if (Weibo.getInstance().getAccessToken()!=null)
+        {
+        	System.out.println(getString(R.string.sinawb));
+        	mPicPath = in.getStringExtra(EXTRA_PIC_URI);
+        	mContent = in.getStringExtra(EXTRA_WEIBO_CONTENT);
+        	mAccessToken = in.getStringExtra(EXTRA_ACCESS_TOKEN);
+        	mTokenSecret = in.getStringExtra(EXTRA_TOKEN_SECRET);
+        	xinlang_button.setBackgroundResource(R.drawable.synchronous_sina_true);
+        	sina_choice = 1;
+        	AccessToken accessToken = new AccessToken(mAccessToken, mTokenSecret);
+        	Weibo weibo = Weibo.getInstance();
+        	weibo.setAccessToken(accessToken);
+        }
+        else if (getThird_AccessToken.getQQ_Token().trim().length()!=0){
+        	qq_button.setBackgroundResource(R.drawable.synchronous_qq_true);
+        	qq_choice = 1;
+        	mContent = getString(R.string.pleaseenter);
+        	mPicPath = in.getStringExtra(EXTRA_PIC_URI);
+        }
+        else
+        {
+        	sina_choice = 0;
+        	qq_choice = 0;
+        	mContent = getString(R.string.pleaseenter);
+        	mPicPath = in.getStringExtra(EXTRA_PIC_URI);
+        }
+      //获取新浪上传的一切值
+        RelativeLayout login_goback = (RelativeLayout) this.findViewById(R.id.login_goback);
+        login_goback.setOnClickListener(this);
+        share_pinglun = (Button) this.findViewById(R.id.share_pinglun);
+        share_pinglun.setText(getThird_AccessToken.getButton_Name());
+        share_pinglun.setOnClickListener(this);
+        
         mTextNum = (TextView) this.findViewById(R.id.tv_text_limit);
         title_text = (TextView) findViewById(R.id.title_text);
         title_text.setText(getThird_AccessToken.getButton_Name());
@@ -185,12 +217,12 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
                     if (share_pinglun.isEnabled())
                         share_pinglun.setEnabled(false);
                 }
-                mTextNum.setText("还可以输入"+len+"字");
+                mTextNum.setText(getString(R.string.canenter)+len+getString(R.string.word));
             }
         });
         fx_pl_edit.setText(mContent);
     }
-
+    //界面按键响应做的事情
     @Override
     public void onClick(View v) {
         int viewId = v.getId();
@@ -202,28 +234,65 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
             finish();
         } else if (viewId == R.id.share_pinglun) {
         	share_pinglun.setEnabled(false);
+        	if (qq_choice==0&&sina_choice==0) {
+        		share_pinglun.setEnabled(true);
+        		Toast.makeText(context, getString(R.string.send_sucess), Toast.LENGTH_SHORT).show();
+        		return;
+        	}
         	dialog = ProgressDialog.show(context,getString(R.string.tishi),getString(R.string.wait));
         	new Thread(new uploadThread()).start();
+        		
         } else if (viewId == R.id.xinlang_button) {
         	if (sina_choice == 0) {
-        		xinlang_button.setTextColor(R.color.red);
-        		sina_choice = 1;
+        		Token tk = Weibo.getInstance().getAccessToken();
+//        		if (tk == null) {
+//        			tk = getThird_AccessToken.getSinaToken();
+//        		}
+        		if (tk==null) {
+        			Weibo weibo = Weibo.getInstance();
+        			weibo.setupConsumerConfig(SINA_CONSUMER_KEY, SINA_CONSUMER_SECRET);
+        			// Oauth2.0
+        			// 隐式授权认证方式
+        			weibo.setRedirectUrl("http://www.sina.com");// 此处回调页内容应该替换为与appkey对应的应用回调页
+        			// 对应的应用回调页可在开发者登陆新浪微博开发平台之后，
+        			// 进入我的应用--应用详情--应用信息--高级信息--授权设置--应用回调页进行设置和查看，
+        			// 应用回调页不可为空
+        			weibo.authorize(ShareActivity.this,
+        					new AuthDialogListener());
+        		}
+        		else
+        		{
+        			sina_choice = 1;
+        			xinlang_button.setBackgroundResource(R.drawable.synchronous_sina_true);
+        		}
         	}
         	else
         	{
         		sina_choice = 0;
-        		xinlang_button.setTextColor(R.color.black);
+        		xinlang_button.setBackgroundResource(R.drawable.synchronous_sina_false);
         	}
         } else if (viewId == R.id.qq_button) {
         	if (qq_choice == 0) {
-        		qq_choice = 1;
-        		qq_button.setTextColor(R.color.red);
+        		String str_token = getThird_AccessToken.getQQ_Token().trim();
+//        		if (str_token.length()==0) {
+//        			str_token = getThird_AccessToken.getQQ_Token().trim();
+//        		}
+        		if (str_token.length()==0) {
+        			registerIntentReceivers();
+    				auth(mAppid, "_self");
+        		}
+        		else
+        		{
+        			qq_choice = 1;
+        			qq_button.setBackgroundResource(R.drawable.synchronous_qq_true);
+        		}
         	}
         	else
         	{
         		qq_choice = 0;
-        		qq_button.setTextColor(R.color.black);
+        		qq_button.setBackgroundResource(R.drawable.synchronous_qq_false);
         	}
+        	
         }
     }
 //新浪分享包含图片
@@ -266,12 +335,12 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     }
     //QQ分享包含图片
     public  void uploadPic(String path) {
-    	getThird_AccessToken.setlogin_where(getString(R.string.tencent));
-    	getThird_AccessToken.GetAccessToken();
-    	if (getThird_AccessToken.getAccessToken().length()==0) {
-    		Toast.makeText(context, getString(R.string.please_login), Toast.LENGTH_SHORT).show();
-			return;
-    	}
+//    	getThird_AccessToken.setlogin_where(getString(R.string.tencent));
+//    	getThird_AccessToken.GetAccessToken();
+//    	if (getThird_AccessToken.getAccessToken().length()==0) {
+//    		Toast.makeText(context, getString(R.string.please_login), Toast.LENGTH_SHORT).show();
+//			return;
+//    	}
 		Bundle bundle = null;
 		bundle = new Bundle();
 		File f = new File(path);
@@ -293,15 +362,15 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 		}
 		//发布照片所需要的
 		bundle.putByteArray("picture", buff);//必须.上传照片的文件名以及图片的内容（在发送请求时，图片内容以二进制数据流的形式发送，见下面的请求示例），注意照片名称不能超过30个字符。
-		bundle.putString("photodesc", "测试吸血鬼日记");//照片描述，注意照片描述不能超过200个字符。 
+		bundle.putString("photodesc", mContent);//照片描述，注意照片描述不能超过200个字符。 
 		//bundle.putString("title", "QQ登陆SDK：UploadPic测试" + System.currentTimeMillis() + ".png");//照片的命名，必须以.jpg, .gif, .png, .jpeg, .bmp此类后缀结尾。
 //		bundle.putString("albumid", "564546-asdfs-feawfe5545-45454");//相册id，不填则传到默认相册
 		//bundle.putString("comment", ("QQ登陆SDK：测试吸血鬼日记"));
 		bundle.putString("x", "0-360");//照片拍摄时的地理位置的经度。请使用原始数据（纯经纬度，0-360）。
 		bundle.putString("y", "0-360");//照片拍摄时的地理位置的纬度。请使用原始数据（纯经纬度，0-360）。
 		//取得QQ的AccessToken值和openid值
-		getThird_AccessToken.GetOpenID();
-		TencentOpenAPI.uploadPic(getThird_AccessToken.getAccessToken(), mAppid, getThird_AccessToken.getOpenID(), bundle, new Callback() {
+		//getThird_AccessToken.GetOpenID();
+		TencentOpenAPI.uploadPic(getThird_AccessToken.getQQ_Token(), mAppid, getThird_AccessToken.getOpenID(), bundle, new Callback() {
 			
 			@Override
 			public void onSuccess(final Object obj) {
@@ -310,7 +379,9 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 					@Override
 					public void run() {
 						dialog.dismiss();
-						Toast.makeText(ShareActivity.this, R.string.send_sucess, Toast.LENGTH_LONG).show();
+						qq_choice = 0;
+						qq_button.setBackgroundResource(R.drawable.synchronous_qq_false);
+						Toast.makeText(context, getString(R.string.send_sucess), Toast.LENGTH_LONG).show();
 					}
 				});
 			}
@@ -322,46 +393,52 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 					@Override
 					public void run() {
 						dialog.dismiss();
-						Toast.makeText(ShareActivity.this, R.string.send_failed, Toast.LENGTH_LONG).show();
+						Toast.makeText(context, getString(R.string.send_failed), Toast.LENGTH_LONG).show();
 					}
 				});
 			}
 		});
 	}
-    //分享不包含图片
+    //QQ分享不包含图片
     public void uploadQQ()
     {
     	//判断token值是否存在
-    	getThird_AccessToken.setlogin_where(getString(R.string.tencent));
-    	getThird_AccessToken.GetAccessToken();
-    	if (getThird_AccessToken.getAccessToken().length()==0) {
-    		Toast.makeText(context, getString(R.string.please_login), Toast.LENGTH_SHORT).show();
-			return;
-    	}
+//    	getThird_AccessToken.setlogin_where(getString(R.string.tencent));
+//    	getThird_AccessToken.GetAccessToken();
+//    	if (getThird_AccessToken.getAccessToken().length()==0) {
+//    		Toast.makeText(context, getString(R.string.please_login), Toast.LENGTH_SHORT).show();
+//			return;
+//    	}
 		//发布评论所需要的
 		Bundle bundle = null;
 		bundle = new Bundle();
-		bundle.putString("richtype", "2");//发布心情时引用的信息的类型。1表示图片； 2表示网页； 3表示视频。 
-	//	bundle.putString("richval", ("http://www.qq.com" + "#" + System.currentTimeMillis()));//发布心情时引用的信息的值。有richtype时必须有richval 
-		bundle.putString("con","测试！");//发布的心情的内容。
-		//bundle.putString("lbs_nm","广东省深圳市南山区高新科技园腾讯大厦");//地址文
+		//bundle.putString("richtype", "2");//发布心情时引用的信息的类型。1表示图片； 2表示网页； 3表示视频。 
+		//bundle.putString("richval", ("http://www.qq.com" + "#" + System.currentTimeMillis()));//发布心情时引用的信息的值。有richtype时必须有richval 
+		bundle.putString("con",mContent);//发布的心情的内容。
+	//	bundle.putString("lbs_nm","广东省深圳市南山区高新科技园腾讯大厦");//地址文
 	//	bundle.putString("lbs_x","0-360");//经度。请使用原始数据（纯经纬度，0-360）。
 	//	bundle.putString("lbs_y","0-360");//纬度。请使用原始数据（纯经纬度，0-360）。
 	//	bundle.putString("lbs_id","360");//地点ID。lbs_id与lbs_idnm通常一起使用，来明确标识一个地址。 
-		//bundle.putString("lbs_idnm","腾讯");//地点名称。lbs_id与lbs_idnm通常一起使用，来明确标识一个地址。
+	//	bundle.putString("lbs_idnm","腾讯");//地点名称。lbs_id与lbs_idnm通常一起使用，来明确标识一个地址。
 		
 		//取得QQ的AccessToken值和openid值
-		getThird_AccessToken.GetOpenID();
-		TencentOpenAPI.addTopic(getThird_AccessToken.getAccessToken(), mAppid, getThird_AccessToken.getOpenID(), bundle, new Callback() {
-			
+	//	getThird_AccessToken.GetOpenID();
+		TencentOpenAPI.addTopic(getThird_AccessToken.getQQ_Token(), mAppid, getThird_AccessToken.getOpenID(), bundle, new Callback() {
+			//因腾讯发表文字会连续调用2次返回，故我们只捕捉第2次的
 			@Override
 			public void onSuccess(final Object obj) {
 				runOnUiThread(new Runnable() {
 					
 					@Override
 					public void run() {
-						dialog.dismiss();
-						Toast.makeText(ShareActivity.this, R.string.send_sucess, Toast.LENGTH_LONG).show();
+						QQ_SS_Count++;
+						if (QQ_SS_Count==2) {
+							System.out.println("sucess");
+							dialog.dismiss();
+							qq_choice = 0;
+							qq_button.setBackgroundResource(R.drawable.synchronous_qq_false);
+							Toast.makeText(ShareActivity.this, getString(R.string.send_sucess), Toast.LENGTH_LONG).show();
+						}
 						//mActivity.showMessage("发表说说返回数据", obj.toString());
 					}
 				});
@@ -373,22 +450,38 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 					
 					@Override
 					public void run() {
-						dialog.dismiss();
-						Toast.makeText(ShareActivity.this, R.string.send_failed, Toast.LENGTH_LONG).show();
+						QQ_SS_Count++;
+						if (QQ_SS_Count==2) {
+							System.out.println("false");
+							dialog.dismiss();
+							Toast.makeText(ShareActivity.this, getString(R.string.send_failed), Toast.LENGTH_LONG).show();
+						}
 						//TDebug.msg(ret + ": " + msg, mActivity);
 					}
 				});
 			}
 		});
     }
+    //新浪成功或失败返回
     @Override
     public void onComplete(String response) {
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-            	dialog.dismiss();
-                Toast.makeText(ShareActivity.this, R.string.send_sucess, Toast.LENGTH_LONG).show();
+            	if (qq_choice == 1) {
+            		sina_choice = 0;
+            		xinlang_button.setBackgroundResource(R.drawable.synchronous_sina_false);
+            		new Thread(new uploadThread()).start();
+            	}
+            	else
+            	{
+            		dialog.dismiss();
+            		sina_choice = 0;
+            		xinlang_button.setBackgroundResource(R.drawable.synchronous_sina_false);
+            		System.out.println("sucess2");
+            		Toast.makeText(ShareActivity.this, getString(R.string.send_sucess), Toast.LENGTH_LONG).show();
+            	}
             }
         });
         share_pinglun.setEnabled(true);
@@ -408,6 +501,8 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
             @Override
             public void run() {
             	dialog.dismiss();
+            	System.out.println("false2");
+            	System.out.println(e.getMessage().toString());
                 Toast.makeText(
                         ShareActivity.this,
                         String.format(ShareActivity.this.getString(R.string.send_failed) + ":%s",
@@ -416,13 +511,6 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
         });
         share_pinglun.setEnabled(true);
 
-    }
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-    	switch(keyCode){
-        case KeyEvent.KEYCODE_BACK:
-        	break;
-    	}
-        return true;
     }
     //因有的机器点击评论或发送后有卡机的情况，故写一个线程控制
     class uploadThread implements Runnable
@@ -439,43 +527,244 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 				msg.setData(b);
 				handler.sendMessage(msg);
 			} catch (Exception e) {
+				System.out.println(1231231);
 				dialog.dismiss();
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}     // sleep 1000ms   
 		}
     }
-    //单击分享或评论后所做的事情
+    //单击分享或评论后所做的事情（目前只有新浪）
     void doShare()
     {
-    	Weibo weibo = Weibo.getInstance();
-        try {
-        	
-            if (!TextUtils.isEmpty((String) (weibo.getAccessToken().getToken()))) {
-                this.mContent = fx_pl_edit.getText().toString();
-                if (!TextUtils.isEmpty(mPicPath)) {
-                    upload(weibo, Weibo.getAppKey(), this.mPicPath, this.mContent, "", "");
+    	if (sina_choice == 1) {
+    		System.out.println("SINA");
+    		Weibo weibo = Weibo.getInstance();
+    		try {
+    			if (!TextUtils.isEmpty((String) (weibo.getAccessToken().getToken()))) {
+    				this.mContent = fx_pl_edit.getText().toString();
+    				if (!TextUtils.isEmpty(mPicPath)) {
+    					//uploadPic(mPicPath);
+    					upload(weibo, Weibo.getAppKey(), this.mPicPath, this.mContent, "", "");
+    					
+    				} else {
+    					// Just update a text weibo!
+//                	System.out.println("Weibo.getAppKey()===>"+Weibo.getAppKey());
+//                	System.out.println("mContent====>"+mContent);
+    					//uploadQQ();
+    					 update(weibo, Weibo.getAppKey(), mContent, "", "");
+    				}
+    			} else {
+    				dialog.dismiss();
+    				share_pinglun.setEnabled(true);
+    				Toast.makeText(this, this.getString(R.string.please_login), Toast.LENGTH_LONG).show();
+    			}
+    		} 
+    		catch (Exception e) {
+    			//dialog.dismiss();
+    			e.printStackTrace();
+    		}
+    	}
+    	else if(qq_choice == 1)
+    	{
+    		System.out.println("QQ");
+    		QQ_SS_Count = 0;
+    		this.mContent = fx_pl_edit.getText().toString();
+    		if (!TextUtils.isEmpty(mPicPath)) {
+    			System.out.println(1);
+				uploadPic(mPicPath);
+				//upload(weibo, Weibo.getAppKey(), this.mPicPath, this.mContent, "", "");
+				
+			} else {
+				// Just update a text weibo!
+//        	System.out.println("Weibo.getAppKey()===>"+Weibo.getAppKey());
+//        	System.out.println("mContent====>"+mContent);
+				System.out.println(2);
+				uploadQQ();
+				 //update(weibo, Weibo.getAppKey(), mContent, "", "");
+			}
+    	}
+//    	if (getThird_AccessToken.getlogin_where().equals(getString(R.string.sinawb))) 
+//    	{
+//    		
+//    	}
+//    	else if (getThird_AccessToken.getlogin_where().equals(getString(R.string.tencent)))
+//    	{
+//
+//    	}
+//    	else
+//    	{
+//    		
+//    	}
+    }
+  //第三方新浪登录
+  	class AuthDialogListener implements WeiboDialogListener {
 
-                } else {
-                    // Just update a text weibo!
-                	System.out.println("Weibo.getAppKey()===>"+Weibo.getAppKey());
-                	System.out.println("mContent====>"+mContent);
-                    update(weibo, Weibo.getAppKey(), mContent, "", "");
-                }
-            } else {
-            	dialog.dismiss();
-            	share_pinglun.setEnabled(true);
-                Toast.makeText(this, this.getString(R.string.please_login), Toast.LENGTH_LONG).show();
-            }
-        } catch (MalformedURLException e) {
-        	//dialog.dismiss();
-            e.printStackTrace();
-        } catch (IOException e) {
-        	//dialog.dismiss();
-            e.printStackTrace();
-        } catch (WeiboException e) {
-        	//dialog.dismiss();
-            e.printStackTrace();
-        }
+  		@Override
+  		public void onComplete(Bundle values) {
+  			String token = values.getString("access_token");
+  			String expires_in = values.getString("expires_in");
+  			System.out.println("expires_in=====>"+expires_in);
+  			AccessToken accessToken = new AccessToken(token, SINA_CONSUMER_SECRET);
+  			accessToken.setExpiresIn(expires_in);
+  			Weibo.getInstance().setAccessToken(accessToken);
+  			getThird_AccessToken.setSinaToken(accessToken);
+  			getThird_AccessToken.setSina_Expires_in(expires_in);
+  			sina_choice = 1;
+			xinlang_button.setBackgroundResource(R.drawable.synchronous_sina_true);
+//  			Intent intent = new Intent();
+//  			intent.setClass(context, SupplementaryInformation.class);
+//  			startActivity(intent);
+  		}
+
+  		@Override
+  		public void onError(DialogError e) {
+  			Toast.makeText(getApplicationContext(),
+  					"Auth error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+  		}
+
+  		@Override
+  		public void onCancel() {
+  			Toast.makeText(getApplicationContext(), "Auth cancel",
+  					Toast.LENGTH_LONG).show();
+  		}
+
+  		@Override
+  		public void onWeiboException(WeiboException e) {
+  			Toast.makeText(getApplicationContext(),
+  					"Auth exception : " + e.getMessage(), Toast.LENGTH_LONG)
+  					.show();
+  		}
+
+  	}
+	//以第三方QQ账户登录
+	private void auth(String clientId, String target) {
+		Intent intent = new Intent(context, com.tencent.tauth.TAuthView.class);
+		
+		intent.putExtra(TAuthView.CLIENT_ID, clientId);
+		intent.putExtra(TAuthView.SCOPE, scope);
+		intent.putExtra(TAuthView.TARGET, target);
+		intent.putExtra(TAuthView.CALLBACK, CALLBACK);
+		startActivity(intent);
+		
+	}
+    @Override
+    protected void onDestroy() {
+    	super.onDestroy();
+    	if (receiver != null) {
+        	unregisterIntentReceivers();
+    	}
+    }
+    
+    //初始化广播
+	private void registerIntentReceivers() {
+		receiver =  new AuthReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(TAuthView.AUTH_BROADCAST);
+		registerReceiver(receiver, filter);
+	}
+	
+	private void unregisterIntentReceivers() {
+		unregisterReceiver(receiver);
+	}
+	//调用一个广播以通知PC用户我利用第三方登陆
+public class AuthReceiver extends BroadcastReceiver {
+    	
+    	private static final String TAG="AuthReceiver";
+
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    		final Context mContext = context;
+ 			Bundle exts = intent.getExtras();
+        	String raw =  exts.getString("raw");
+        	String access_token =  exts.getString(TAuthView.ACCESS_TOKEN);
+        	String expires_in =  exts.getString(TAuthView.EXPIRES_IN);
+        	String error_ret =  exts.getString(TAuthView.ERROR_RET);
+        	String error_des =  exts.getString(TAuthView.ERROR_DES);
+        	Log.i(TAG, String.format("raw: %s, access_token:%s, expires_in:%s", raw, access_token, expires_in));
+        	
+        	if (access_token != null) {
+        		if(!isFinishing())
+        		{
+        			System.out.println("do this");
+        			showDialog(PROGRESS);
+        		}
+        		getThird_AccessToken.setQQ_Token(access_token);
+//        		Intent intent2 = new Intent();
+//        		intent2.putExtra("token", access_token);
+//				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//				intent2.setClass(mContext, SupplementaryInformation.class);
+//            	/*getThird_AccessToken.setVerificationCode(url);*/
+//            	//intent.putExtra(ConfigUtil.OAUTH_VERIFIER_URL, url);
+//            	startActivity(intent2);
+            	//finish();
+        		//用access token 来获取open id
+				TencentOpenAPI.openid(access_token, new Callback() {
+					@Override
+					public void onSuccess(final Object obj) {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								dismissDialog(PROGRESS);
+								Toast.makeText(mContext, "授权成功", Toast.LENGTH_SHORT).show();
+								getThird_AccessToken.setOpenID(((OpenId)obj).getOpenId());
+								qq_choice = 1;
+								qq_button.setBackgroundResource(R.drawable.synchronous_qq_true);
+//								getThird_AccessToken.setOpenID(((OpenId)obj).getOpenId());
+//								getThird_AccessToken.SaveOpenID();
+							}
+						});
+					}
+					@Override
+					public void onFail(int ret, final String msg) {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								dismissDialog(PROGRESS);
+								TDebug.msg(msg, getApplicationContext());
+							}
+						});
+					}
+				});
+			}
+        	if (error_ret != null) {
+        		Toast.makeText(context, "授权失败", Toast.LENGTH_SHORT).show();
+			}
+    	}
+
+    }
+	public boolean satisfyConditions() {
+		return 	mAccessToken != null && 
+				mAppid != null && 
+				mOpenId != null && 
+				!mAccessToken.equals("") && 
+				!mAppid.equals("") && 
+				!mOpenId.equals("");
+	}
+	
+	public static final int PROGRESS = 0;
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog = null;
+		switch (id) {
+		case PROGRESS:
+			dialog = new ProgressDialog(this);
+			((ProgressDialog)dialog).setMessage("请求中,请稍等...");
+			break;
+		}
+		
+		return dialog;
+	}
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+    	switch(keyCode){
+        case KeyEvent.KEYCODE_BACK:
+        	Intent intent = new Intent();
+        	intent.setClass(this, DetailActivity.class);
+        	startActivity(intent);
+            finish();
+        	break;
+    	}
+        return true;
     }
 }

@@ -8,8 +8,7 @@
     android:layout_width="fill_parent"
   	android:layout_height="wrap_content"
   	android:id="@+id/title" 
-  	android:background="@color/blue"
-  	android:gravity="center_vertical" 
+  	android:background="@drawable/title"
     >
 <TextView
      android:layout_width="wrap_content" 
@@ -25,17 +24,29 @@
      android:layout_alignParentRight="true"
      android:layout_centerVertical="true"
      android:layout_marginRight="5dp"
-     android:text="分享"
+     android:text="@string/fenxiang"
+     android:textColor="@color/white"
+     android:background="@drawable/btn_top_right"
 	/> 
-	<Button 
-	 android:id="@+id/login_goback"
-	 android:layout_width="wrap_content" 
-     android:layout_height="wrap_content"
-     android:layout_alignParentLeft="true"
-     android:layout_centerVertical="true"
-     android:layout_marginLeft="5dp"
-     android:text="@string/goback"
-	/> 
+	<RelativeLayout 
+		    android:id="@+id/login_goback"
+		    android:layout_alignParentLeft="true"
+		    android:layout_marginLeft="10dp"
+		    android:layout_width="64dp"
+		    android:layout_height="wrap_content"
+		    android:layout_centerVertical="true"
+		    android:background="@drawable/btn_top_left"
+    >
+		 <TextView
+		     android:layout_width="wrap_content" 
+		     android:layout_height="wrap_content" 
+		     android:text="@string/goback"
+		     android:layout_alignParentRight="true"
+		     android:layout_marginRight="12dp"
+		     android:textSize="15sp"		
+		     android:layout_centerVertical="true"
+			 android:textColor="@color/white" />   
+</RelativeLayout>
 </RelativeLayout>
    
 <LinearLayout
@@ -48,25 +59,25 @@
 	        >
 	        <Button
 	            android:id="@+id/recommend"
-	            android:text="推荐" 
+	            android:text="@string/tuijian" 
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            />
 	        <Button
 	            android:id="@+id/seen"
-	            android:text="看过" 
+	            android:text="@string/kanguo" 
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            />
 	        <Button
 	            android:id="@+id/favorite"
-	            android:text="收藏" 
+	            android:text="@string/shoucang" 
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            />
 	        <Button
 	            android:id="@+id/comment"
-	            android:text="评论" 
+	            android:text="@string/pinglun" 
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            />

@@ -48,6 +48,8 @@
             android:gravity="center_vertical"
             android:clickable="true"
             android:onClick="Btndaren"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/preference_single_item" >
             <TextView
         		android:layout_width="wrap_content" 
@@ -74,6 +76,8 @@
             android:gravity="center_vertical"
             android:clickable="true"
             android:onClick="Btnsina"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/preference_first_item" >
             <TextView
         		android:layout_width="wrap_content" 
@@ -99,6 +103,8 @@
             android:gravity="center_vertical"
             android:clickable="true"
             android:onClick="Btntengxun"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/preference_item" >
             <TextView
         		android:layout_width="wrap_content" 
@@ -124,6 +130,8 @@
             android:gravity="center_vertical"
             android:clickable="true"
             android:onClick="Btntongxunlu"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/preference_last_item" >
             <TextView
         		android:layout_width="wrap_content" 

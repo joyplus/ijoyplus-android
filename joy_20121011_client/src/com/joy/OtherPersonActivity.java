@@ -34,10 +34,11 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.joy.Tools.AsyncImageLoader;
+
+import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.Tools;
-import com.joy.Tools.AsyncImageLoader.ImageCallback;
 import com.joy.Tools.BitmapZoom;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
 
@@ -94,7 +95,7 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 			};
 	PullToRefreshView_foot mPullToRefreshView;
 	Bitmap mBitmap;
-	AsyncImageLoader asyncImageLoader;
+	AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
 	final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -117,7 +118,6 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 		setContentView(R.layout.oherperson);
 		context=this;
 		Tools.creat("joy/admin");
-		asyncImageLoader=new AsyncImageLoader();
 		mPullToRefreshView = (PullToRefreshView_foot)findViewById(R.id.act04_main_pull_refresh_view);
 //		mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
@@ -298,7 +298,29 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
     				RelativeLayout rll = (RelativeLayout)view. findViewById(R.id.RelativeLayout02);
     				ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
-    				setViewImage(imageView, list.get(index));
+    				Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, list.get(index), new ImageCallBack() {  
+  	                  
+    	                @Override  
+    	                public void imageLoad(ImageView imageView, Bitmap bitmap) {  
+    	                	Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+        					imageView.setImageBitmap(bitmap2);
+                            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
+                            layoutParams.setMargins(4, 1, 4, 1);
+                            imageView.setLayoutParams(layoutParams);
+        					imageView.setImageBitmap(bitmap);  
+    	                }  
+    	            });  
+    				if (bitmap==null) {
+    					imageView.setImageResource(R.drawable.pic_bg);
+					}
+    				else {
+    					Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    					imageView.setImageBitmap(bitmap2);
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
+                        layoutParams.setMargins(4, 1, 4, 1);
+                        imageView.setLayoutParams(layoutParams);
+    					imageView.setImageBitmap(bitmap);
+					}
     				textView.setText("第"+(index+1)+"张");
     				imageView.setTag(new Integer(index));
     				imageView.setOnClickListener(new OnClickListener() {
@@ -340,27 +362,6 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 			e.printStackTrace();
 			System.out.println(e.toString());
 		}
-    }
-	
-	public void setViewImage(final ImageView v, String url) {
-    	asyncImageLoader.loadDrawable(url, new ImageCallback() {
-			
-			@Override
-			public void imageLoaded(Drawable imageDrawable) {
-				if(imageDrawable!=null && imageDrawable.getIntrinsicWidth()>0 ) {
-	            	BitmapDrawable bd = (BitmapDrawable) imageDrawable;
-	            	Bitmap bm = bd.getBitmap();
-	            	bitmap2 = BitmapZoom.bitmapZoomByWidth(bm, linearlayoutWidth);
-	                v.setImageBitmap(bitmap2);
-	                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
-	                layoutParams.setMargins(4, 1, 4, 1);
-	                v.setLayoutParams(layoutParams);
-	            }
-	            else {
-					v.setImageResource(R.drawable.pic_bg);
-				}
-			}
-		});
     }
 	
 	@Override

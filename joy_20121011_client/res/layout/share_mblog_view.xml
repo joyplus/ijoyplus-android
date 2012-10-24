@@ -26,14 +26,13 @@
     android:layout_width="fill_parent"
   	android:layout_height="wrap_content"
   	android:id="@+id/title" 
-  	android:background="@color/blue"
-  	android:gravity="center_vertical" 
+  	android:background="@drawable/title"
     >
 	<TextView
 	     android:id="@+id/title_text"
 	     android:layout_width="wrap_content" 
 	     android:layout_height="wrap_content" 
-	     android:text="@string/linglun"
+	     android:text="@string/pinglun"
 	     android:layout_centerInParent="true"
 	     android:textSize="20sp"		
 		android:textColor="@color/white" /> 
@@ -44,60 +43,82 @@
 	     android:layout_alignParentRight="true"
 	     android:layout_centerVertical="true"
 	     android:layout_marginRight="5dp"
-	     android:text="@string/linglun"
+	     android:background="@drawable/btn_top_right"
+	     android:textColor="@color/white"
+	     android:text="@string/pinglun"
 		/>
-	<Button 
-		 android:id="@+id/login_goback"
-		 android:layout_width="wrap_content" 
-	     android:layout_height="wrap_content"
-	     android:layout_alignParentLeft="true"
-	     android:layout_centerVertical="true"
-	     android:layout_marginLeft="5dp"
-	     android:text="@string/goback"
-		/> 
+
+		<RelativeLayout 
+		    android:id="@+id/login_goback"
+		    android:layout_alignParentLeft="true"
+		    android:layout_marginLeft="10dp"
+		    android:layout_width="64dp"
+		    android:layout_height="wrap_content"
+		    android:layout_centerVertical="true"
+		    android:background="@drawable/btn_top_left"
+    >
+		 <TextView
+		     android:layout_width="wrap_content" 
+		     android:layout_height="wrap_content" 
+		     android:text="@string/goback"
+		     android:layout_alignParentRight="true"
+		     android:layout_marginRight="12dp"
+		     android:textSize="15sp"		
+		     android:layout_centerVertical="true"
+			 android:textColor="@color/white" />   
+</RelativeLayout>
 	</RelativeLayout>
 	<ScrollView    
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-	        <TextView 
+		<RelativeLayout 
+		    android:layout_width="wrap_content" 
+		    android:layout_height="30dp"
+		    android:layout_alignParentBottom="true"
+		    android:id="@+id/relat_layout"
+		    >
+		    <TextView 
 		        android:layout_width="wrap_content" 
 		    	android:layout_height="wrap_content"
+		    	android:layout_centerVertical="true"
 		    	android:text="@string/tongbudao"
-		    	android:textSize="20sp"
+		    	android:textSize="18sp"
 		    	android:textColor="@color/white"
 		    	android:id="@+id/text_tb"
-		    	android:layout_alignParentBottom="true"
         	/>
 	        <Button
 	             android:id="@+id/xinlang_button"
 	             android:layout_toRightOf="@id/text_tb"
+	             android:layout_centerVertical="true"
 	             android:layout_width="wrap_content" 
 		    	 android:layout_height="wrap_content"
-		    	 android:text="新浪"
-		    	 android:layout_alignParentBottom="true"
+		    	 android:background="@drawable/synchronous_sina_false"
 	            />
 	        <Button
 	             android:id="@+id/qq_button"
 	             android:layout_width="wrap_content" 
+	             android:layout_centerVertical="true"
 		    	 android:layout_height="wrap_content"
-		    	 android:text="腾讯"
+		    	 android:background="@drawable/synchronous_qq_false"
 		    	 android:layout_toRightOf="@id/xinlang_button"
-		    	 android:layout_alignParentBottom="true"
+		    	 android:layout_marginLeft="2dp"
 	            />
+		</RelativeLayout>
 	        <TextView 
 	            android:id="@+id/tv_text_limit"
 	            android:layout_alignParentRight="true"
+	            android:padding="1sp"
 		        android:layout_width="wrap_content" 
 		    	android:layout_height="wrap_content"
-		    	android:text="还可以输入120字"
+		    	android:text="@string/youcanenterwords"
 		    	android:textSize="15sp"
 		    	android:textColor="@color/white"
 		    	android:layout_alignParentBottom="true"
         	/>
 <RelativeLayout 
      android:layout_below="@id/title"
-	 android:layout_above="@id/xinlang_button"
+	 android:layout_above="@id/relat_layout"
 	 android:layout_width="fill_parent" 
 	 android:layout_height="fill_parent"
 	 android:background="@color/white"

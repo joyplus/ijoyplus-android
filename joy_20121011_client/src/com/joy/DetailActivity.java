@@ -45,7 +45,8 @@ import android.widget.LinearLayout.LayoutParams;
 
 public class DetailActivity extends Activity implements OnClickListener,OnHeaderRefreshListener,OnFooterRefreshListener{
 	PullToRefreshView mPullToRefreshView;
-	Button recommend,seen,favorite,comment,share,login_goback;
+	Button recommend,seen,favorite,comment,share;
+	RelativeLayout login_goback;
 	LinearLayout myGridView;
 	SimpleAdapter adapter;
 	List<Map<String, Object>> items;
@@ -196,16 +197,16 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 		switch(v.getId())
 		{
 		case R.id.recommend:
-			Toast.makeText(context, "推荐", Toast.LENGTH_SHORT).show();
+			Toast.makeText(context, getString(R.string.tuijian), Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.seen:
-			Toast.makeText(context, "看过", Toast.LENGTH_SHORT).show();
+			Toast.makeText(context, getString(R.string.kanguo), Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.favorite:
-			Toast.makeText(context, "收藏", Toast.LENGTH_SHORT).show();
+			Toast.makeText(context, getString(R.string.shoucang), Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.comment:
-			getThird_AccessToken.setButton_Name("评论");
+			getThird_AccessToken.setButton_Name(getString(R.string.pinglun));
 			file = Environment.getExternalStorageDirectory();
             sdPath = file.getAbsolutePath();
             // 请保证SD卡根目录下有这张图片文件
@@ -213,7 +214,16 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
            // picFile = new File(picPath);
             picPath = null;
             try {
-                share2weibo("请输入", picPath);
+            	if (getThird_AccessToken.getlogin_where().equals(getString(R.string.sinawb))) {
+            		share2weibo(getString(R.string.pleaseenter), picPath);
+            	}
+            	else
+            	{
+            		intent = new Intent();
+            		intent.putExtra(ShareActivity.EXTRA_PIC_URI, picPath);
+            		intent.setClass(context, ShareActivity.class);
+            		startActivity(intent);
+            	}
 //                Intent i = new Intent(context, ShareActivity.class);
 //                startActivity(i);
             } catch (WeiboException e) {
@@ -222,13 +232,10 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
             } finally {
 
             }
-//			intent = new Intent();
-//			intent.setClass(context, ShareActivity.class);
-//			startActivity(intent);
 			finish();
 			break;
 		case R.id.share:
-			getThird_AccessToken.setButton_Name("分享");
+			getThird_AccessToken.setButton_Name(getString(R.string.fenxiang));
 			file = Environment.getExternalStorageDirectory();
             sdPath = file.getAbsolutePath();
             // 请保证SD卡根目录下有这张图片文件
@@ -240,7 +247,16 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
                 picPath = null;
             }
             try {
-                share2weibo("请输入", picPath);
+            	if (getThird_AccessToken.getlogin_where().equals(getString(R.string.sinawb))) {
+            		share2weibo(getString(R.string.pleaseenter), picPath);
+            	}
+            	else
+            	{
+            		intent = new Intent();
+            		intent.putExtra(ShareActivity.EXTRA_PIC_URI, picPath);
+            		intent.setClass(context, ShareActivity.class);
+            		startActivity(intent);
+            	}
 //                Intent i = new Intent(context, ShareActivity.class);
 //                startActivity(i);
             } catch (WeiboException e) {
@@ -249,6 +265,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
             } finally {
 
             }
+        	finish();
 			//Toast.makeText(context, "分享", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.login_goback:
@@ -258,7 +275,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 	}
 	private void share2weibo(String content, String picPath) throws WeiboException {
         Weibo weibo = Weibo.getInstance();
-        System.out.println("weibo.getAccessToken().getSecret():"+weibo.getAccessToken().getSecret());
+       // System.out.println("weibo.getAccessToken().getSecret():"+weibo.getAccessToken().getSecret());
         weibo.share2weibo(this, weibo.getAccessToken().getToken(), weibo.getAccessToken()
                 .getSecret(), content, picPath);
     }
@@ -288,6 +305,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
     	switch(keyCode){
         case KeyEvent.KEYCODE_BACK:
+        	finish();
         	break;
     	}
         return true;

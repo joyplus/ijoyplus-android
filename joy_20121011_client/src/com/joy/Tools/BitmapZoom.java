@@ -68,7 +68,7 @@ public class BitmapZoom
 	 */
 	public static Bitmap bitmapZoomByWidth(Bitmap srcBitmap,int newWidth)
 	{
-		int srcWidth = srcBitmap.getWidth();   
+		int srcWidth = srcBitmap.getWidth();
         int srcHeight = srcBitmap.getHeight();    
      
         float scaleWidth = ((float) newWidth) / srcWidth;   

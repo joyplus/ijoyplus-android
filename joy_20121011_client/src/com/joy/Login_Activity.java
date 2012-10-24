@@ -114,24 +114,24 @@ public class Login_Activity extends Activity implements OnClickListener{
 			}
 			break;
 		case R.id.QQ_weibo:
-			Toast.makeText(context, "尚未开放", Toast.LENGTH_SHORT).show();
-//			getThird_AccessToken.setlogin_where(getString(R.string.tencent));
-//			getThird_AccessToken.GetAccessToken();
-//			if (getThird_AccessToken.getAccessToken().trim().length()==0) {
-//				getThird_AccessToken.setAccessToken("");
-//				registerIntentReceivers();
-//				auth(mAppid, "_self");
-////				conf.initQqData();
-////				intent.setClass(context, Third_PartyActivity.class);
-////				startActivity(intent);
-//			}
-//			else
-//			{
-//				getThird_AccessToken.setAccessToken(getThird_AccessToken.getAccessToken().trim());
-//				intent.setClass(context, JoyActivity.class);
+			//Toast.makeText(context, "尚未开放", Toast.LENGTH_SHORT).show();
+			getThird_AccessToken.setlogin_where(getString(R.string.tencent));
+			getThird_AccessToken.GetAccessToken();
+			if (getThird_AccessToken.getAccessToken().trim().length()==0) {
+				getThird_AccessToken.setAccessToken("");
+				registerIntentReceivers();
+				auth(mAppid, "_self");
+//				conf.initQqData();
+//				intent.setClass(context, Third_PartyActivity.class);
 //				startActivity(intent);
-//				finish();
-//			}
+			}
+			else
+			{
+				getThird_AccessToken.setAccessToken(getThird_AccessToken.getAccessToken().trim());
+				intent.setClass(context, JoyActivity.class);
+				startActivity(intent);
+				finish();
+			}
 			break;
 		case R.id.goin:
 			Toast.makeText(context, "尚未开放", Toast.LENGTH_SHORT).show();
@@ -200,16 +200,13 @@ public class AuthReceiver extends BroadcastReceiver {
         	Log.i(TAG, String.format("raw: %s, access_token:%s, expires_in:%s", raw, access_token, expires_in));
         	
         	if (access_token != null) {
-        		mAccessToken = access_token;
-        		getThird_AccessToken.setAccessToken(mAccessToken);
-        		getThird_AccessToken.SaveAccessToken();
-//        		TDebug.msg("正在获取OpenID...", getApplicationContext());
         		if(!isFinishing())
         		{
         			System.out.println("do this");
         			showDialog(PROGRESS);
         		}
         		Intent intent2 = new Intent();
+        		intent2.putExtra("token", access_token);
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				intent2.setClass(mContext, SupplementaryInformation.class);
@@ -280,20 +277,15 @@ public class AuthReceiver extends BroadcastReceiver {
 			String token = values.getString("access_token");
 			String expires_in = values.getString("expires_in");
 			System.out.println("expires_in=====>"+expires_in);
-			//储存token值
-			getThird_AccessToken.setAccessToken(token);
-			getThird_AccessToken.SaveAccessToken();
-			getThird_AccessToken.setExpires_in(expires_in);
-			getThird_AccessToken.SaveExpires_in();
-			
 			AccessToken accessToken = new AccessToken(token, SINA_CONSUMER_SECRET);
 			accessToken.setExpiresIn(expires_in);
 			Weibo.getInstance().setAccessToken(accessToken);
-			
-			
 			Intent intent = new Intent();
+			intent.putExtra("token", token);
+			intent.putExtra("expires_in", expires_in);
 			intent.setClass(context, SupplementaryInformation.class);
 			startActivity(intent);
+			finish();
 		}
 
 		@Override

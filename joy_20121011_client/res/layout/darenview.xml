@@ -28,6 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/darenview_text"
         android:layout_centerHorizontal="true"
-        android:text="@string/jiaguanzhu" />
+        android:text="@string/jiaguanzhu" 
+        android:background="@drawable/btn_guanzhu"
+        android:textColor="@color/white"/>
 
 </RelativeLayout>

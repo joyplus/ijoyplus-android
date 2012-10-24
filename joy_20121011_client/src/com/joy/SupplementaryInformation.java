@@ -16,15 +16,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class SupplementaryInformation extends Activity {
+	GetThird_AccessToken getThird_AccessToken;
 	Button finish;
 	EditText imformation_name,imformation_email,imformation_password;
 	Context context;
+	Intent in;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.supplementaryinformation);
         context = this;
+        getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
         finish = (Button) findViewById(R.id.finish);
         imformation_name = (EditText) findViewById(R.id.imformation_name);
         imformation_email = (EditText) findViewById(R.id.imformation_email);
@@ -35,21 +38,40 @@ public class SupplementaryInformation extends Activity {
 			@Override
 			public void onClick(View v) {
 				int isFinish = 1;
+				String error = getString(R.string.error);
 				if (!isName(imformation_name.getText().toString().trim())) {
+					error += " "+getString(R.string.imformation_nameerror);
 					isFinish = 0;
 				}
 				if (!isEmail(imformation_email.getText().toString().trim())) {
+					error += " "+getString(R.string.emailerror);
 					isFinish = 0;
 					}
-				if (imformation_password.getText().toString().trim().length()==0) {
+				if (imformation_password.getText().toString().trim().length()<6) {
+					error += " "+getString(R.string.passworderror);
 					isFinish = 0;
 				}
 				switch(isFinish)
 				{
 				case 0:
-					Toast.makeText(context, "请正确填写资料内容", Toast.LENGTH_SHORT).show();
+					Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
 					break;
 				case 1:
+					//新浪token
+					if (getThird_AccessToken.getlogin_where().equals(getString(R.string.sinawb))) {
+						getThird_AccessToken.setAccessToken(getIntent().getStringExtra("token"));
+						getThird_AccessToken.setExpires_in(getIntent().getStringExtra("expires_in"));
+						getThird_AccessToken.SaveAccessToken();
+						getThird_AccessToken.SaveExpires_in();
+					}
+					//QqTOKEN
+					else if (getThird_AccessToken.getlogin_where().equals(getString(R.string.tencent))) 
+					{
+						getThird_AccessToken.setQQ_Token(getIntent().getStringExtra("token"));
+						getThird_AccessToken.SaveQQAccessToken();
+//						getThird_AccessToken.GetQQAccessToken();
+//						System.out.println("token:"+getThird_AccessToken.getQQ_Token());
+					}
 					Intent intent = new Intent();
 					intent.setClass(context, JoyActivity.class);
 					startActivity(intent);
@@ -75,7 +97,7 @@ public class SupplementaryInformation extends Activity {
 		}
 	public static boolean isName(String strName) {
 
-		String strPattern = "^[\\u4e00-\\u9fa5\\w\\d_]{4,16}$";
+		String strPattern = "^[\\u4e00-\\u9fa5\\w\\d_]{1,16}$";
 
 		Pattern p = Pattern.compile(strPattern);
 

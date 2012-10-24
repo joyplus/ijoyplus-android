@@ -1,5 +1,7 @@
 package com.joy;
 
+import com.joy.weibo.net.Token;
+import com.joy.weibo.net.AccessToken;
 import android.app.Application;
 import android.content.SharedPreferences;
 
@@ -13,6 +15,73 @@ public class GetThird_AccessToken extends Application {
 	String Expires_in = "";
 	String Button_Name = "";
 	String OpenID = "";
+	Token SinaToken = null;
+	String Sina_Expires_in = "";
+	String QQ_Token = "";
+	String QQ_OpenID = "";
+	
+	String go_detail = "";
+	
+	int mTab_Where = 0;
+	int mTab_ID = R.id.channel1;
+	
+	public void setmTab_ID(int mTab_ID){
+		this.mTab_ID=mTab_ID;
+	}
+	public int getmTab_ID(){
+		return mTab_ID;
+	}
+	public void setgo_detail(String go_detail){
+		this.go_detail=go_detail;
+	}
+	public String getgo_detail(){
+		return go_detail;
+	}
+	
+	public void setmTab_Where(int mTab_Where){
+		this.mTab_Where=mTab_Where;
+	}
+	public int getmTab_Where(){
+		return mTab_Where;
+	}
+	
+	
+	public void setQQ_OpenID(String QQ_OpenID){
+		this.QQ_OpenID=QQ_OpenID;
+	}
+	public String getQQ_OpenID(){
+		return QQ_OpenID;
+	}
+	
+	public void setQQ_Token(String QQ_Token){
+		this.QQ_Token=QQ_Token;
+	}
+	public String getQQ_Token(){
+		return QQ_Token;
+	}
+	
+	public void setSina_Expires_in(String Sina_Expires_in){
+		this.Sina_Expires_in=Sina_Expires_in;
+	}
+	public String getSina_Expires_in(){
+		return Sina_Expires_in;
+	}
+	
+	public void setSinaToken(AccessToken SinaToken){
+		this.SinaToken=SinaToken;
+	}
+	public Token getSinaToken(){
+		return SinaToken;
+	}
+	
+	String IMG_Name="";
+	
+	public String getIMG_Name(){
+		return IMG_Name;
+	}
+	public void setIMG_Name(String n){
+		IMG_Name=n;
+	}
 	public void setOpenID(String OpenID){
 		this.OpenID=OpenID;
 	}
@@ -90,16 +159,40 @@ public class GetThird_AccessToken extends Application {
 		return VerificationCode;
 	}
 	
+	public void SaveImageName(String where)
+	{
+		SharedPreferences.Editor sharedatab = getSharedPreferences("IMG", 0).edit();
+		sharedatab.putString("IMG_Name"+where, IMG_Name);
+		sharedatab.commit();
+	}
+	public void GetImageName(String where)
+	{
+		SharedPreferences sharedata = getSharedPreferences("IMG", 0);
+		IMG_Name=sharedata.getString("IMG_Name"+where, "");
+	}
+	
 	public void SaveAccessToken()
 	{
-		SharedPreferences.Editor sharedatab = getSharedPreferences("AccessToken_"+login_where, 0).edit();
+		SharedPreferences.Editor sharedatab = getSharedPreferences("AccessToken", 0).edit();
 		sharedatab.putString("AccessToken", AccessToken);
 		sharedatab.commit();
 	}
 	public void GetAccessToken()
 	{
-		SharedPreferences sharedata = getSharedPreferences("AccessToken_"+login_where, 0);
+		SharedPreferences sharedata = getSharedPreferences("AccessToken", 0);
 		AccessToken=sharedata.getString("AccessToken", "");
+	}
+	
+	public void SaveQQAccessToken()
+	{
+		SharedPreferences.Editor sharedatab = getSharedPreferences("QQ_Token", 0).edit();
+		sharedatab.putString("QQ_Token", QQ_Token);
+		sharedatab.commit();
+	}
+	public void GetQQAccessToken()
+	{
+		SharedPreferences sharedata = getSharedPreferences("QQ_Token", 0);
+		QQ_Token=sharedata.getString("QQ_Token", "");
 	}
 	
 	// 保存新浪Expires_in值

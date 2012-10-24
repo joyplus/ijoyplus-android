@@ -38,10 +38,11 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.joy.Tools.AsyncImageLoader;
+
+import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.Tools;
-import com.joy.Tools.AsyncImageLoader.ImageCallback;
 import com.joy.Tools.BitmapZoom;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
 
@@ -63,16 +64,17 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
     int selectIndex=1;
     String bitString[]={"拍照","相册"};
     private File mCurrentPhotoFile;
+    GetThird_AccessToken getThird_AccessToken;
 	private String images_kanguodeyingpian[] = {
-			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
-			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
-			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
-			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
-			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
-			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
-			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
-			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
+			"http://imgsrc.baidu.com/forum/pic/item/06509e4472138361500ffe18.jpg",
+			"http://imgsrc.baidu.com/forum/pic/item/c99ee50389ab4fa5d53f7c1a.jpg",
+			"http://imgsrc.baidu.com/forum/pic/item/f77c583494e1a963241f141f.jpg",
+			"http://imgsrc.baidu.com/forum/pic/item/dbabbe86c0ede61366096eee.jpg",
+			"http://wenwen.soso.com/p/20100708/20100708050003-665156019.jpg",
+			"http://movie.yntv.cn/category/2021302/2009/07/10/images/2021302_20090710_802.jpg",
+			"http://www.sznews.com/rollnews/images/20110601/19/10978230170352392435.jpg",
+			"http://img2.mtime.com/mg/2008/25/9efc5c01-6d6a-4aa5-b09e-f49359eb7ea8.jpg",
+			"http://epaper.loone.cn/site1/czrb/res/1/20080616/7271213581523254.jpg"
 			};
 	private String images_shoucangdeyingpian[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
@@ -98,7 +100,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			};
 	PullToRefreshView_foot mPullToRefreshView;
 	Bitmap BigBitmap;
-	AsyncImageLoader asyncImageLoader;
+	AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
 	final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -120,8 +122,8 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity04);
 		context=this;
+		getThird_AccessToken=(GetThird_AccessToken)getApplicationContext();
 		Tools.creat("joy/admin");
-		asyncImageLoader=new AsyncImageLoader();
 		mPullToRefreshView = (PullToRefreshView_foot)findViewById(R.id.act04_main_pull_refresh_view);
 //		mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
@@ -134,21 +136,24 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
         fensi= (LinearLayout)findViewById(R.id.act04_fensi);
         btn_kanguodeyingpian=(Button)findViewById(R.id.act04_kanguodeyingpian);
         btn_kanguodeyingpian.setEnabled(false);
+        btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft1);
         btn_shoucangdeyingpian=(Button)findViewById(R.id.act04_shoucangdeyingpian);
         btn_tuijiandeyingpian=(Button)findViewById(R.id.act04_tuijiandeyingpian);
 		linearLayout1 = (LinearLayout)findViewById(R.id.act04_linearlayout1);
         linearLayout2 = (LinearLayout)findViewById(R.id.act04_linearlayout2);
         linearLayout3 = (LinearLayout)findViewById(R.id.act04_linearlayout3);
         linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/3;
+        
+        images_kanguodeyingpian=SetSaveData("where_4_1", images_kanguodeyingpian);
         addBitmaps(current_page, page_count,images_kanguodeyingpian);
         String path_bg=Environment.getExternalStorageDirectory()+"/joy/admin/bg.png";
         String path_head=Environment.getExternalStorageDirectory()+"/joy/admin/head.png";
         BitmapFactory.Options opts = new BitmapFactory.Options();  
-        opts.inSampleSize = 2;  
+        opts.inSampleSize = 1;  
         Bitmap bitmap = BitmapFactory.decodeFile(path_bg, opts);  
         
         BitmapFactory.Options opts1 = new BitmapFactory.Options();  
-        opts1.inSampleSize = 2;  
+        opts1.inSampleSize = 1;  
         Bitmap bitmap2 = BitmapFactory.decodeFile(path_head, opts1);  
         if (bitmap!=null) {
         	Drawable drawable=new BitmapDrawable(bitmap);
@@ -215,9 +220,13 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			@Override
 			public void onClick(View v) {
 				selectIndex=1;
+				images_kanguodeyingpian=SetSaveData("where_4_1", images_kanguodeyingpian);
 				btn_kanguodeyingpian.setEnabled(false);
 				btn_shoucangdeyingpian.setEnabled(true);
 				btn_tuijiandeyingpian.setEnabled(true);
+				btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft1);
+				btn_shoucangdeyingpian.setBackgroundResource(R.drawable.topbarmid);
+				btn_tuijiandeyingpian.setBackgroundResource(R.drawable.topbarright);
 				linearLayout1.removeAllViews();
 				linearLayout2.removeAllViews();
 				linearLayout3.removeAllViews();
@@ -232,9 +241,13 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			@Override
 			public void onClick(View v) {
 				selectIndex=2;
+				images_shoucangdeyingpian=SetSaveData("where_4_2", images_shoucangdeyingpian);
 				btn_kanguodeyingpian.setEnabled(true);
 				btn_shoucangdeyingpian.setEnabled(false);
 				btn_tuijiandeyingpian.setEnabled(true);
+				btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft);
+				btn_shoucangdeyingpian.setBackgroundResource(R.drawable.topbarmid1);
+				btn_tuijiandeyingpian.setBackgroundResource(R.drawable.topbarright);
 				linearLayout1.removeAllViews();
 				linearLayout2.removeAllViews();
 				linearLayout3.removeAllViews();
@@ -249,9 +262,13 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			@Override
 			public void onClick(View v) {
 				selectIndex=3;
+				images_tuijiandeyingpian=SetSaveData("where_4_3", images_tuijiandeyingpian);
 				btn_kanguodeyingpian.setEnabled(true);
 				btn_shoucangdeyingpian.setEnabled(true);
 				btn_tuijiandeyingpian.setEnabled(false);
+				btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft);
+				btn_shoucangdeyingpian.setBackgroundResource(R.drawable.topbarmid);
+				btn_tuijiandeyingpian.setBackgroundResource(R.drawable.topbarright1);
 				linearLayout1.removeAllViews();
 				linearLayout2.removeAllViews();
 				linearLayout3.removeAllViews();
@@ -369,7 +386,18 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
     				RelativeLayout rll = (RelativeLayout)view. findViewById(R.id.RelativeLayout02);
     				ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
-    				setViewImage(imageView, list.get(index));
+    				Bitmap bitmap=setImage(imageView, list.get(index));
+    				if (bitmap==null) {
+    					imageView.setImageResource(R.drawable.pic_bg);
+					}
+    				else {
+    					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    					imageView.setImageBitmap(BigBitmap);
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+                        layoutParams.setMargins(4, 1, 4, 1);
+                        imageView.setLayoutParams(layoutParams);
+    					imageView.setImageBitmap(bitmap);
+					}
     				textView.setText("第"+(index+1)+"张");
     				imageView.setOnClickListener(new OnClickListener() {
 						
@@ -421,27 +449,51 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			System.out.println(e.toString());
 		}
     }
-	
-	public void setViewImage(final ImageView v, String url) {
-    	asyncImageLoader.loadDrawable(url, new ImageCallback() {
+	public Bitmap setImage(ImageView imageView,String URL){
+		return asyncBitmapLoader.loadBitmap(imageView, URL, new ImageCallBack() {
 			
 			@Override
-			public void imageLoaded(Drawable imageDrawable) {
-				if(imageDrawable!=null && imageDrawable.getIntrinsicWidth()>0 ) {
-	            	BitmapDrawable bd = (BitmapDrawable) imageDrawable;
-	            	Bitmap bm = bd.getBitmap();
-	            	BigBitmap = BitmapZoom.bitmapZoomByWidth(bm, linearlayoutWidth);
-	                v.setImageBitmap(BigBitmap);
-	                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
-	                layoutParams.setMargins(4, 1, 4, 1);
-	                v.setLayoutParams(layoutParams);
-	            }
-	            else {
-					v.setImageResource(R.drawable.pic_bg);
+			public void imageLoad(ImageView imageView, Bitmap bitmap) {
+				if (bitmap!=null) {
+					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+					imageView.setImageBitmap(BigBitmap);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+                    layoutParams.setMargins(4, 1, 4, 1);
+                    imageView.setLayoutParams(layoutParams);
+					imageView.setImageBitmap(bitmap);
+				}
+            	else {
+            		imageView.setImageResource(R.drawable.pic_bg);
 				}
 			}
 		});
-    }
+	}
+	public String[] SetSaveData(String where,String URL[]){
+		if (Tools.isNetworkAvailable(context)==false) {
+        	getThird_AccessToken.GetImageName(where);
+        	String Img_Name=getThird_AccessToken.getIMG_Name();
+        	URL=Tools.Split(Img_Name, "$URL$");
+        	for (int i = 0; i < URL.length; i++) {
+				System.out.println("URL==>"+URL[i]);
+			}
+		}
+		else {
+			int a=0;
+			String iMG_Name="";
+			for (int i = 0; i < URL.length; i++) {
+				if (a==0) {
+					iMG_Name+=URL[i];
+					a=1;
+				}
+				else {
+					iMG_Name+="$URL$"+URL[i];
+				}
+			}
+			getThird_AccessToken.setIMG_Name(iMG_Name);
+			getThird_AccessToken.SaveImageName(where);
+		}
+		return URL;
+	}
 	
 	@Override
 	public void onFooterRefresh(PullToRefreshView_foot view) {

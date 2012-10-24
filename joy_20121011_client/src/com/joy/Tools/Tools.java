@@ -29,6 +29,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Bitmap.Config;
 import android.graphics.PorterDuff.Mode;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -41,6 +43,38 @@ public class Tools {
 	public Tools(){
 		
 	}
+	public static boolean isNetworkAvailable(Context context) {   
+        ConnectivityManager cm = (ConnectivityManager) context   
+                .getSystemService(Context.CONNECTIVITY_SERVICE);   
+        if (cm == null) {   
+        } else {
+        	//如果仅仅是用来判断网络连接 ,则可以使用 cm.getActiveNetworkInfo().isAvailable();
+            NetworkInfo[] info = cm.getAllNetworkInfo();
+            if (info != null) {   
+                for (int i = 0; i < info.length; i++) {   
+                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {   
+                        return true;   
+                    }   
+                }   
+            }   
+        }   
+        return false;   
+    }
+	
+	public static InputStream getStreamFromURL(String imageURL) {  
+        InputStream in=null;  
+        try {  
+            URL url=new URL(imageURL);
+            HttpURLConnection connection=(HttpURLConnection) url.openConnection();  
+            in=connection.getInputStream();  
+              
+        } catch (Exception e) {  
+            // TODO Auto-generated catch block  
+            e.printStackTrace();  
+        }  
+        return in;  
+          
+    }  
 	public static boolean isSimExist(Context context){	//是否插卡
 		TelephonyManager mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 		if(mTelephonyManager.getSimState()==TelephonyManager.SIM_STATE_READY){

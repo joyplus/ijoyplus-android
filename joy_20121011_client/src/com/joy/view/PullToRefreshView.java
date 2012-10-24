@@ -234,8 +234,8 @@ public class PullToRefreshView extends LinearLayout{
 	}
 
 	/*
-	 * 濡傛灉鍦╫nInterceptTouchEvent()鏂规硶涓病鏈夋嫤鎴�(鍗硂nInterceptTouchEvent()鏂规硶涓� return
-	 * false)鍒欑敱PullToRefreshView 鐨勫瓙View鏉ュ鐞�;鍚﹀垯鐢变笅闈㈢殑鏂规硶鏉ュ鐞�(鍗崇敱PullToRefreshView鑷繁鏉ュ鐞�)
+	 * 如果在onInterceptTouchEvent()方法中没有拦截(即onInterceptTouchEvent()方法中 return
+	 * false)则由PullToRefreshView 的子View来处理;否则由下面的方法来处理(即由PullToRefreshView自己来处理)
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -245,18 +245,15 @@ public class PullToRefreshView extends LinearLayout{
 		int y = (int) event.getRawY();
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			// onInterceptTouchEvent宸茬粡璁板綍
+			// onInterceptTouchEvent已经记录
 			// mLastMotionY = y;
 			break;
 		case MotionEvent.ACTION_MOVE:
 			int deltaY = y - mLastMotionY;
 			if (mPullState == PULL_DOWN_STATE) {
-				// PullToRefreshView鎵ц涓嬫媺
 				Log.i(TAG, " pull down!parent view move!");
 				headerPrepareToRefresh(deltaY);
-				// setHeaderPadding(-mHeaderViewHeight);
 			} else if (mPullState == PULL_UP_STATE) {
-				// PullToRefreshView鎵ц涓婃媺
 				Log.i(TAG, "pull up!parent view move!");
 				footerPrepareToRefresh(deltaY);
 			}
@@ -267,19 +264,15 @@ public class PullToRefreshView extends LinearLayout{
 			int topMargin = getHeaderTopMargin();
 			if (mPullState == PULL_DOWN_STATE) {
 				if (topMargin >= 0) {
-					// 寮€濮嬪埛鏂�
 					headerRefreshing();
 				} else {
-					// 杩樻病鏈夋墽琛屽埛鏂帮紝閲嶆柊闅愯棌
 					setHeaderTopMargin(-mHeaderViewHeight);
 				}
 			} else if (mPullState == PULL_UP_STATE) {
 				if (Math.abs(topMargin) >= mHeaderViewHeight
 						+ mFooterViewHeight) {
-					// 寮€濮嬫墽琛宖ooter 鍒锋柊
 					footerRefreshing();
 				} else {
-					// 杩樻病鏈夋墽琛屽埛鏂帮紝閲嶆柊闅愯棌
 					setHeaderTopMargin(-mHeaderViewHeight);
 				}
 			}
@@ -288,25 +281,15 @@ public class PullToRefreshView extends LinearLayout{
 		return super.onTouchEvent(event);
 	}
 
-	/**
-	 * 鏄惁搴旇鍒颁簡鐖禫iew,鍗砅ullToRefreshView婊戝姩
-	 * 
-	 * @param deltaY
-	 *            , deltaY > 0 鏄悜涓嬭繍鍔�,< 0鏄悜涓婅繍鍔�
-	 * @return
-	 */
 	private boolean isRefreshViewScroll(int deltaY) {
 		if (mHeaderState == REFRESHING || mFooterState == REFRESHING) {
 			return false;
 		}
-		//瀵逛簬ListView鍜孏ridView
 		if (mAdapterView != null) {
-			// 瀛恦iew(ListView or GridView)婊戝姩鍒版渶椤剁
 			if (deltaY > 0) {
 
 				View child = mAdapterView.getChildAt(0);
 				if (child == null) {
-					// 濡傛灉mAdapterView涓病鏈夋暟鎹�,涓嶆嫤鎴�
 					return false;
 				}
 				if (mAdapterView.getFirstVisiblePosition() == 0
@@ -326,11 +309,8 @@ public class PullToRefreshView extends LinearLayout{
 				View lastChild = mAdapterView.getChildAt(mAdapterView
 						.getChildCount() - 1);
 				if (lastChild == null) {
-					// 濡傛灉mAdapterView涓病鏈夋暟鎹�,涓嶆嫤鎴�
 					return false;
 				}
-				// 鏈€鍚庝竴涓瓙view鐨凚ottom灏忎簬鐖禫iew鐨勯珮搴﹁鏄巑AdapterView鐨勬暟鎹病鏈夊～婊＄埗view,
-				// 绛変簬鐖禫iew鐨勯珮搴﹁鏄巑AdapterView宸茬粡婊戝姩鍒版渶鍚�
 				if (lastChild.getBottom() <= getHeight()
 						&& mAdapterView.getLastVisiblePosition() == mAdapterView
 								.getCount() - 1) {
@@ -341,7 +321,6 @@ public class PullToRefreshView extends LinearLayout{
 		}
 		// 瀵逛簬ScrollView
 		if (mScrollView != null) {
-			// 瀛恠croll view婊戝姩鍒版渶椤剁
 			View child = mScrollView.getChildAt(0);
 			if (deltaY > 0 && mScrollView.getScrollY() == 0) {
 				mPullState = PULL_DOWN_STATE;
@@ -356,15 +335,8 @@ public class PullToRefreshView extends LinearLayout{
 		return false;
 	}
 
-	/**
-	 * header 鍑嗗鍒锋柊,鎵嬫寚绉诲姩杩囩▼,杩樻病鏈夐噴鏀�
-	 * 
-	 * @param deltaY
-	 *            ,鎵嬫寚婊戝姩鐨勮窛绂�
-	 */
 	private void headerPrepareToRefresh(int deltaY) {
 		int newTopMargin = changingHeaderViewTopMargin(deltaY);
-		// 褰揾eader view鐨則opMargin>=0鏃讹紝璇存槑宸茬粡瀹屽叏鏄剧ず鍑烘潵浜�,淇敼header view 鐨勬彁绀虹姸鎬�
 		if (newTopMargin >= 0 && mHeaderState != RELEASE_TO_REFRESH) {
 			mHeaderTextView.setText(R.string.pull_to_refresh_release_label);
 //			mHeaderUpdateTextView.setVisibility(View.VISIBLE);
@@ -416,8 +388,6 @@ public class PullToRefreshView extends LinearLayout{
 	private int changingHeaderViewTopMargin(int deltaY) {
 		LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
 		float newTopMargin = params.topMargin + deltaY * 0.3f;
-		//杩欓噷瀵逛笂鎷夊仛涓€涓嬮檺鍒�,鍥犱负褰撳墠涓婃媺鍚庣劧鍚庝笉閲婃斁鎵嬫寚鐩存帴涓嬫媺,浼氭妸涓嬫媺鍒锋柊缁欒Е鍙戜簡,鎰熻阿缃戝弸yufengzungzhe鐨勬寚鍑�
-		//琛ㄧず濡傛灉鏄湪涓婃媺鍚庝竴娈佃窛绂�,鐒跺悗鐩存帴涓嬫媺
 		if(deltaY>0&&mPullState == PULL_UP_STATE&&Math.abs(params.topMargin) <= mHeaderViewHeight){
 			return params.topMargin;
 		}
@@ -434,7 +404,6 @@ public class PullToRefreshView extends LinearLayout{
 	/**
 	 * header refreshing
 	 * 
-	 * @description hylin 2012-7-31涓婂崍9:10:12
 	 */
 	private void headerRefreshing() {
 		mHeaderState = REFRESHING;

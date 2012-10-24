@@ -24,7 +24,7 @@
     android:id="@+id/act01_sousuo"
     android:layout_alignParentRight="true"
     android:layout_marginRight="10dp"
-    android:layout_width="wrap_content"
+    android:layout_width="65dp"
     android:layout_height="wrap_content"
     android:text="@string/sousuo"
     android:layout_centerVertical="true"
@@ -45,6 +45,8 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal" 
     android:gravity="center"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
     >
 <Button
     android:layout_width="wrap_content"

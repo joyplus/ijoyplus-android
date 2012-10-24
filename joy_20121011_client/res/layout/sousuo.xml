@@ -44,11 +44,11 @@
 <LinearLayout
     android:id="@+id/sousuo_lin2"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="45dp"
     android:orientation="horizontal" 
     android:background="@color/black"
     android:layout_marginTop="5dp"
-    android:layout_marginLeft="5dp"
+    android:gravity="center_vertical"
     >
 <EditText
     android:id="@+id/sousuo_edit"
@@ -57,16 +57,21 @@
      android:hint="@string/yingpianmingzi"
      android:layout_alignParentLeft="true"
      android:layout_weight="1"
-     android:paddingLeft="15dp"
+     android:paddingLeft="10dp"
      android:drawableLeft="@drawable/edittext_search_image"
+     android:background="@drawable/editbg"
+     android:textColor="@color/white"
      /> 
 <Button
     android:layout_alignParentRight="true"
     android:layout_marginRight="10dp"
+    android:layout_marginLeft="5dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/sousuo_sousuo" 
     android:text="@string/sousuo"
+    android:textColor="@color/white"
+    android:background="@drawable/btn_sousuo"
     />
 </LinearLayout>
 

@@ -15,7 +15,7 @@
     <string name="shifoutuichu">是否退出程序</string>
     <string name="queding">确定</string>
     <string name="quxiao">取消</string>
-    <string name="yue">悦+</string>
+    <string name="yue">悦视频</string>
     <string name="denglu">登  录</string>
     <string name="zhuce">注册</string>
     <string name="dianying">电影</string>
@@ -92,12 +92,28 @@
     <string name="wait">请稍候...</string>
     <string name="sinawb">SINA</string>
     <string name="tencent">QQ</string>
-    
+    <string name="pleaseenter">请输入</string>
+    <string name="canenter">还可以输入</string>
+    <string name="word">字</string>
     <string name="all_reply">全部回复</string>
     <string name="please_login">请登录！</string>
     <string name="fenxiang">分享</string>
-    <string name="linglun">评论</string>
+    <string name="pinglun">评论</string>
     <string name="tongbudao">同步到:</string>
     <string name="send_failed">发送失败！</string>
     <string name="send_sucess">发送成功！</string>
+     <string name="tuijian">推荐</string>
+      <string name="kanguo">看过</string>
+       <string name="shoucang">收藏</string>
+       <string name="youcanenterwords">还可以输入120字</string>
+       <string name="error">资料填写错误：</string>
+       <string name="imformation_nameerror">昵称格式（不小于1位）</string>
+       <string name="emailerror">邮箱格式</string>
+       <string name="passworderror">密码不小于6位</string>
+       <string name="reply">回复</string>
+       <string name="zhuxiaochenggong">注销成功</string>
+       <string name="go_detail">welcome</string>
+       <string name="go_detail_notwelcome">notwelcome</string>
+       
+       <!-- <友盟 -->
 </resources>

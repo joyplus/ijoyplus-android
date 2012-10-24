@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.joy.Tools.AsyncImageLoader;
+import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.BitmapZoom;
-import com.joy.Tools.AsyncImageLoader.ImageCallback;
+import com.joy.Tools.Tools;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
 import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
@@ -46,6 +47,7 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
     private int index =0;
     List<String> list;
     Context context;
+    GetThird_AccessToken getThird_AccessToken;
     private String images[] = {
     		"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
@@ -57,14 +59,14 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
-	AsyncImageLoader asyncImageLoader;
+    AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
 	final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			System.out.println("msg.what===========>"+msg.what);
 			switch (msg.what) {
 			case 1500:
-				addBitmaps(++current_page, page_count);
+				addBitmaps(++current_page, page_count,images);
 				break;
 			}
 		}
@@ -74,9 +76,8 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity02);
 		context=this;
-		asyncImageLoader=new AsyncImageLoader();
+		getThird_AccessToken=(GetThird_AccessToken)getApplicationContext();
 		list=new ArrayList<String>();
-		list=Arrays.asList(images);
 		mPullToRefreshView = (PullToRefreshView)findViewById(R.id.act02_main_pull_refresh_view);
 		mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
@@ -86,7 +87,9 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
         linearLayout2 = (LinearLayout)findViewById(R.id.act02_linearlayout2);
         linearLayout3 = (LinearLayout)findViewById(R.id.act02_linearlayout3);
         linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/3;
-        addBitmaps(current_page, page_count);
+        
+        images=SetSaveData("where_2_1", images);
+        addBitmaps(current_page, page_count,images);
         
         btn_xunzhaohaoyou.setOnClickListener(new OnClickListener() {
 			
@@ -99,16 +102,28 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 			}
 		});
 	}
-	private void addBitmaps(int pageindex, int pagecount){
+	private void addBitmaps(int pageindex, int pagecount,String img[]){
+		list=Arrays.asList(img);
 		LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     	try {
-    		for(int i = index; i < pagecount * (pageindex + 1)&&i<images.length; i++){
+    		for(int i = index; i < pagecount * (pageindex + 1)&&i<img.length; i++){
     			try {
     				final View view=inflater.inflate(R.layout.wall, null);
     				RelativeLayout rll = (RelativeLayout)view.findViewById(R.id.RelativeLayout02);
     				ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
-    				setimage(imageView, list.get(index));
+    				Bitmap bitmap=setImage(imageView, list.get(index));
+    				if (bitmap==null) {
+    					imageView.setImageResource(R.drawable.pic_bg);
+					}
+    				else {
+    					Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    					imageView.setImageBitmap(bitmap2);
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
+                        layoutParams.setMargins(4, 1, 4, 1);
+                        imageView.setLayoutParams(layoutParams);
+    					imageView.setImageBitmap(bitmap);
+					}
     				textView.setText("第"+(index+1)+"张");
     				imageView.setOnClickListener(new OnClickListener() {
 						
@@ -148,7 +163,6 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 							break;
 					}
     				index++;
-    				System.out.println("index====>"+index);
     				USE_LINEAR_INTERVAL++;
     				USE_LINEAR_INTERVAL= USE_LINEAR_INTERVAL%3;
     				
@@ -161,6 +175,32 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 			System.out.println(e.toString());
 		}
     }
+	public String[] SetSaveData(String where,String URL[]){
+		if (Tools.isNetworkAvailable(context)==false) {
+        	getThird_AccessToken.GetImageName(where);
+        	String Img_Name=getThird_AccessToken.getIMG_Name();
+        	URL=Tools.Split(Img_Name, "$URL$");
+        	for (int i = 0; i < URL.length; i++) {
+				System.out.println("URL==>"+URL[i]);
+			}
+		}
+		else {
+			int a=0;
+			String iMG_Name="";
+			for (int i = 0; i < URL.length; i++) {
+				if (a==0) {
+					iMG_Name+=URL[i];
+					a=1;
+				}
+				else {
+					iMG_Name+="$URL$"+URL[i];
+				}
+			}
+			getThird_AccessToken.setIMG_Name(iMG_Name);
+			getThird_AccessToken.SaveImageName(where);
+		}
+		return URL;
+	}
 	@Override
 	public void onFooterRefresh(PullToRefreshView view) {
 		mPullToRefreshView.postDelayed(new Runnable() {
@@ -184,21 +224,21 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 			}
 		},1000);
 	}
-	public void setimage(final ImageView v, String url){
-		asyncImageLoader.loadDrawable(url, new ImageCallback() {
+	public Bitmap setImage(ImageView imageView,String URL){
+		return asyncBitmapLoader.loadBitmap(imageView, URL, new ImageCallBack() {
 			
 			@Override
-			public void imageLoaded(Drawable imageDrawable) {
-				if (imageDrawable!=null&&imageDrawable.getIntrinsicWidth()>0) {
-					BitmapDrawable bd = (BitmapDrawable) imageDrawable;
-                	Bitmap bm = bd.getBitmap();
-                	Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bm, linearlayoutWidth);
-                    v.setImageBitmap(bitmap2);
+			public void imageLoad(ImageView imageView, Bitmap bitmap) {
+				if (bitmap!=null) {
+					Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+					imageView.setImageBitmap(bitmap2);
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
                     layoutParams.setMargins(4, 1, 4, 1);
-                    v.setLayoutParams(layoutParams);
-				}else {
-					v.setImageResource(R.drawable.pic_bg);
+                    imageView.setLayoutParams(layoutParams);
+					imageView.setImageBitmap(bitmap); 
+				}
+            	else {
+            		imageView.setImageResource(R.drawable.pic_bg);
 				}
 			}
 		});
