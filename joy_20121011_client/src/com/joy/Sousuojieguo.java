@@ -122,9 +122,7 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
         return listItems;
     }
 	public void Btn_sousuojieguo_back(View v){
-		Intent intent=new Intent();
-		intent.setClass(context, Sousuo.class);
-		startActivity(intent);
+		finish();
 	}
 	@Override
 	public void onFooterRefresh(PullToRefreshView view) {

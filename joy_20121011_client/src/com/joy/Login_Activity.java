@@ -311,6 +311,10 @@ public class AuthReceiver extends BroadcastReceiver {
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
     	switch(keyCode){
         case KeyEvent.KEYCODE_BACK:
+        	Intent intent=new Intent();
+    		intent.setClass(context, Welcome.class);
+    		startActivity(intent);
+    		finish();
         	break;
     	}
         return true;

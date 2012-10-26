@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.joy.R.drawable;
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.BitmapZoom;
@@ -23,6 +24,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -30,8 +33,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -55,7 +60,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 	AsyncBitmapLoader asyncBitmapLoader;
 	private int USE_LINEAR_INTERVAL = 0;
     private int linearlayoutWidth = 0;
-	private int page_count = 6;// 每次加载x张图片
+	private int page_count = 9;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
     private int index =0;
     int select_index=1;
@@ -68,19 +73,19 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			"http://wenwen.soso.com/p/20100708/20100708050003-665156019.jpg",
 			"http://movie.yntv.cn/category/2021302/2009/07/10/images/2021302_20090710_802.jpg",
 			"http://www.sznews.com/rollnews/images/20110601/19/10978230170352392435.jpg",
-			"http://img2.mtime.com/mg/2008/25/9efc5c01-6d6a-4aa5-b09e-f49359eb7ea8.jpg",
+			"http://img.daqi.com/upload/slidepic/2007-12-26/151_1198628708_1778481.jpg",
 			"http://epaper.loone.cn/site1/czrb/res/1/20080616/7271213581523254.jpg"
 	};
 	private String images_juji[] = {
-			"http://www.95hz.com/uploads/allimg/090522/1654454.jpg",
-			"http://www.gog.com.cn/pic/0/10/30/68/10306846_997429.jpg",
-			"http://img2.mtime.com/mg/2009/33/d7a6ed3b-18bb-431f-b49f-fef4a92cb896.jpg",
-			"http://www.nen.com.cn/73749755317977088/20080616/1054206.jpg",
-			"http://img.daqi.com/upload/slidepic/2007-12-26/110_1198628708_1778481.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/0a443eefd9e73142c45cc35a.jpg",
-			"http://www.m1905.com/UploadFile/pics/2008/12/12/092848264.jpg",
-			"http://img.daqi.com/upload/slidepic/2007-12-26/332_1198628708_1778481.jpg",
-			"http://img.daqi.com/upload/slidepic/2007-12-26/151_1198628708_1778481.jpg"
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
 	private String images_zongyi[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
@@ -260,7 +265,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
     			try {
     				final View view=inflater.inflate(R.layout.wall, null);
     				RelativeLayout rll = (RelativeLayout)view.findViewById(R.id.RelativeLayout02);
-    				ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
+    				final ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
     				
     				Bitmap bitmap=setImage(imageView, list.get(index));
@@ -276,15 +281,27 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
     					imageView.setImageBitmap(bitmap);
 					}
     				textView.setText("第"+(index+1)+"张");
-    				imageView.setOnClickListener(new OnClickListener() {
+    				imageView.setOnTouchListener(new OnTouchListener() {
 						
 						@Override
-						public void onClick(View v) {
-							int index  =  (Integer)v.getTag();
-							Intent intent = new Intent();
-					    	intent.setClass(context, DetailActivity.class);
-					    	startActivity(intent);
-					    	//finish();
+						public boolean onTouch(View v, MotionEvent event) {
+							switch (event.getAction()) {
+							case MotionEvent.ACTION_UP:
+								getThird_AccessToken.setwhere_gologin(1);
+								int index  =  (Integer)v.getTag();
+								Intent intent = new Intent();
+								intent.setClass(context, DetailActivity.class);
+								startActivity(intent);
+								Tools.changeLight(imageView, 0);
+								break;
+							case MotionEvent.ACTION_DOWN:
+								Tools.changeLight(imageView, -50);
+								break;
+							case MotionEvent.ACTION_CANCEL:
+								Tools.changeLight(imageView, 0);
+								break;
+							}
+							return true;
 						}
 					});
     				imageView.setTag(new Integer(index));
@@ -316,28 +333,27 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 		}
     }
 	public Bitmap setImage(ImageView imageView,String imageURL){
-		return asyncBitmapLoader.loadBitmap(imageView, imageURL, new ImageCallBack() {
+		return asyncBitmapLoader.loadBitmap(imageView, imageURL, linearlayoutWidth,new ImageCallBack() {
 			
 			@Override
 			public void imageLoad(ImageView imageView, Bitmap bitmap) {
 				if (bitmap!=null) {
-            		BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
-            		imageView.setImageBitmap(BigBitmap);
-            		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
-            		layoutParams.setMargins(4, 1, 4, 1);
-            		imageView.setLayoutParams(layoutParams);
-            		imageView.setImageBitmap(bitmap);
+					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+					imageView.setImageBitmap(BigBitmap);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+                    layoutParams.setMargins(4, 1, 4, 1);
+                    imageView.setLayoutParams(layoutParams);
 				}
             	else {
-            		imageView.setImageResource(R.drawable.pic_bg);
+            		imageView.setBackgroundResource(R.drawable.pic_bg);
 				}
 			}
 		});
 	}
 	public void Btndenglu(View v){
+		Intent intent=new Intent();
 		getThird_AccessToken.setlogin_where(getString(R.string.sinawb));
 		getThird_AccessToken.GetAccessToken();
-		Intent intent=new Intent();
 		if (getThird_AccessToken.getAccessToken().trim().length()==0) {
 			getThird_AccessToken.setlogin_where(getString(R.string.tencent));
 			getThird_AccessToken.GetQQAccessToken();
@@ -351,8 +367,15 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 				getThird_AccessToken.setQQ_Token(getThird_AccessToken.getQQ_Token().trim());
 				getThird_AccessToken.GetOpenID();
 				getThird_AccessToken.setOpenID(getThird_AccessToken.getOpenID());
-				intent.setClass(context, JoyActivity.class);
-				startActivity(intent);
+				System.out.println(getThird_AccessToken.getwhere_gologin());
+				if (getThird_AccessToken.getwhere_gologin()==1) {
+					
+				}
+				else
+				{
+					intent.setClass(context, JoyActivity.class);
+					startActivity(intent);
+				}
 				finish();
 			}
 		}
@@ -365,8 +388,15 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			AccessToken accessToken = new AccessToken(getThird_AccessToken.getAccessToken().trim(), SINA_CONSUMER_SECRET);
 			accessToken.setExpiresIn(getThird_AccessToken.getExpires_in());
 			Weibo.getInstance().setAccessToken(accessToken);
-			intent.setClass(context, JoyActivity.class);
-			startActivity(intent);
+			System.out.println(getThird_AccessToken.getwhere_gologin());
+			if (getThird_AccessToken.getwhere_gologin()==1) {
+				
+			}
+			else
+			{
+				intent.setClass(context, JoyActivity.class);
+				startActivity(intent);
+			}
 			finish();
 		}
 	}

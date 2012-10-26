@@ -1,16 +1,10 @@
 package com.joy;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -31,13 +24,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
-import com.joy.Tools.Tools;
 import com.joy.Tools.BitmapZoom;
+import com.joy.Tools.Tools;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
@@ -47,8 +39,9 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 	private  LinearLayout linearLayout1 = null;
     private  LinearLayout linearLayout2 = null;
     private  LinearLayout linearLayout3 = null;
-    Button btn_kanguodeyingpian,btn_shoucangdeyingpian,btn_tuijiandeyingpian,login_goback;
+    Button btn_kanguodeyingpian,btn_shoucangdeyingpian,btn_tuijiandeyingpian;
     LinearLayout guanzhu,fensi;
+    TextView title;
     private int USE_LINEAR_INTERVAL = 0;
     private int linearlayoutWidth = 0;
 	private int page_count = 6;// 每次加载30张图片
@@ -58,8 +51,7 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
     Context context;
     ImageView beijing,head;
     int selectIndex=1;
-    String bitString[]={"拍照","相册"};
-    Bitmap bitmap2;
+    Bitmap BigBitmap;
 	private String images_kanguodeyingpian[] = {
 			"http://pic1a.nipic.com/20090319/1988006_183521008_2.jpg",
 			"http://pic5.nipic.com/20100223/2167235_193708431126_2.jpg",
@@ -95,7 +87,7 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 			};
 	PullToRefreshView_foot mPullToRefreshView;
 	Bitmap mBitmap;
-	AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
+	AsyncBitmapLoader asyncBitmapLoader;
 	final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -117,65 +109,32 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.oherperson);
 		context=this;
+		asyncBitmapLoader=new AsyncBitmapLoader();
 		Tools.creat("joy/admin");
-		mPullToRefreshView = (PullToRefreshView_foot)findViewById(R.id.act04_main_pull_refresh_view);
+		mPullToRefreshView = (PullToRefreshView_foot)findViewById(R.id.oherperson_main_pull_refresh_view);
 //		mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
 		
         list=new ArrayList<String>();
         
-        beijing=(ImageView)findViewById(R.id.act04_beijing);
-        head=(ImageView)findViewById(R.id.act04_hand);
-        guanzhu = (LinearLayout)findViewById(R.id.act04_guanzhu);
-        fensi= (LinearLayout)findViewById(R.id.act04_fensi);
-        btn_kanguodeyingpian=(Button)findViewById(R.id.act04_kanguodeyingpian);
+        title=(TextView)findViewById(R.id.oherperson_title);
+        beijing=(ImageView)findViewById(R.id.oherperson_beijing);
+        head=(ImageView)findViewById(R.id.oherperson_hand);
+        guanzhu = (LinearLayout)findViewById(R.id.oherperson_guanzhu);
+        fensi= (LinearLayout)findViewById(R.id.oherperson_fensi);
+        btn_kanguodeyingpian=(Button)findViewById(R.id.oherperson_kanguodeyingpian);
         btn_kanguodeyingpian.setEnabled(false);
-        btn_shoucangdeyingpian=(Button)findViewById(R.id.act04_shoucangdeyingpian);
-        btn_tuijiandeyingpian=(Button)findViewById(R.id.act04_tuijiandeyingpian);
-        login_goback = (Button) findViewById(R.id.login_goback);
-		linearLayout1 = (LinearLayout)findViewById(R.id.act04_linearlayout1);
-        linearLayout2 = (LinearLayout)findViewById(R.id.act04_linearlayout2);
-        linearLayout3 = (LinearLayout)findViewById(R.id.act04_linearlayout3);
+        btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft1);
+        btn_shoucangdeyingpian=(Button)findViewById(R.id.oherperson_shoucangdeyingpian);
+        btn_tuijiandeyingpian=(Button)findViewById(R.id.oherperson_tuijiandeyingpian);
+		linearLayout1 = (LinearLayout)findViewById(R.id.oherperson_linearlayout1);
+        linearLayout2 = (LinearLayout)findViewById(R.id.oherperson_linearlayout2);
+        linearLayout3 = (LinearLayout)findViewById(R.id.oherperson_linearlayout3);
         linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/3;
+        title.setText("Name");
+        
         addBitmaps(current_page, page_count,images_kanguodeyingpian);
-        String path=Environment.getExternalStorageDirectory()+"/joy/admin/bg.png";
-        Bitmap mBitmap=BitmapFactory.decodeFile(path);
-        if (mBitmap!=null) {
-        	Drawable drawable=new BitmapDrawable(mBitmap);
-        	beijing.setBackgroundDrawable(drawable);
-        	beijing.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-		}
-        beijing.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent1=new Intent();
-				intent1.setType("image/*");
-				intent1.setAction(Intent.ACTION_GET_CONTENT);
-				startActivityForResult(intent1,100);
-			}
-		});
-        head.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder builder=new AlertDialog.Builder(context);
-		  		  builder.setTitle("选择照片类型").setItems(bitString, new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						if(which==0){
-							Toast.makeText(context, "拍照", Toast.LENGTH_SHORT).show();
-						}
-						else {
-							Toast.makeText(context, "相册", Toast.LENGTH_SHORT).show();
-						}
-					}
-				});
-					AlertDialog ad = builder.create();
-					ad.show();
-			}
-		});
+        
         guanzhu.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -198,9 +157,13 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 				btn_kanguodeyingpian.setEnabled(false);
 				btn_shoucangdeyingpian.setEnabled(true);
 				btn_tuijiandeyingpian.setEnabled(true);
+				btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft1);
+				btn_shoucangdeyingpian.setBackgroundResource(R.drawable.topbarmid);
+				btn_tuijiandeyingpian.setBackgroundResource(R.drawable.topbarright);
 				linearLayout1.removeAllViews();
 				linearLayout2.removeAllViews();
 				linearLayout3.removeAllViews();
+				Tools.ClearBitmap(BigBitmap);
 				current_page=0;
 				index=0;
 				addBitmaps(current_page, page_count,images_kanguodeyingpian);
@@ -214,9 +177,13 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 				btn_kanguodeyingpian.setEnabled(true);
 				btn_shoucangdeyingpian.setEnabled(false);
 				btn_tuijiandeyingpian.setEnabled(true);
+				btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft);
+				btn_shoucangdeyingpian.setBackgroundResource(R.drawable.topbarmid1);
+				btn_tuijiandeyingpian.setBackgroundResource(R.drawable.topbarright);
 				linearLayout1.removeAllViews();
 				linearLayout2.removeAllViews();
 				linearLayout3.removeAllViews();
+				Tools.ClearBitmap(BigBitmap);
 				current_page=0;
 				index=0;
 				addBitmaps(current_page, page_count,images_shoucangdeyingpian);
@@ -230,64 +197,47 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 				btn_kanguodeyingpian.setEnabled(true);
 				btn_shoucangdeyingpian.setEnabled(true);
 				btn_tuijiandeyingpian.setEnabled(false);
+				btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft);
+				btn_shoucangdeyingpian.setBackgroundResource(R.drawable.topbarmid);
+				btn_tuijiandeyingpian.setBackgroundResource(R.drawable.topbarright1);
 				linearLayout1.removeAllViews();
 				linearLayout2.removeAllViews();
 				linearLayout3.removeAllViews();
+				Tools.ClearBitmap(BigBitmap);
 				current_page=0;
 				index=0;
 				addBitmaps(current_page, page_count,images_tuijiandeyingpian);
 			}
 		});
-        login_goback.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setClass(context, ReplyActivity.class);
-				startActivity(intent);
-				finish();
-			}
-		});
 
 	}
-	public void Btn_shezhi(View v){
-		Intent intent=new Intent();
-		intent.setClass(context, Shezhi.class);
-		startActivity(intent);
+	public void Btn_oherperson_back(View v){
+		/*Intent intent = new Intent();
+		intent.setClass(context, ReplyActivity.class);
+		startActivity(intent);*/
+		finish();
 	}
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-        	return;
-        }
-        switch (requestCode) {
-		case 100:
-			Uri uri = data.getData();
-        	ContentResolver cr = this.getContentResolver();    
-        	Intent intent = new Intent("com.android.camera.action.CROP");
-			intent.setData(data.getData());     //data是图库选取文件传回的参数
-			intent.putExtra("crop", "true");
-			intent.putExtra("aspectX", 2);
-			intent.putExtra("aspectY", 1);
-			intent.putExtra("outputX", getWindowManager().getDefaultDisplay().getWidth());
-			intent.putExtra("outputY", getWindowManager().getDefaultDisplay().getWidth()/2);
-			intent.putExtra("noFaceDetection", true);
-			intent.putExtra("return-data", true);
-			startActivityForResult(intent, 101);
-			break;
-		case 101:
-			Bundle extras = data.getExtras();
-			if(extras != null ) {
-			    Bitmap photo = extras.getParcelable("data");
-//			    Bitmap bitmap=BitmapZoom.bitmapZoomByWidth(photo, getWindowManager().getDefaultDisplay().getWidth());
-			    Drawable drawable=new BitmapDrawable(photo);
-			    Tools.saveMyBitmap("joy/admin", "bg.png", photo);
-			    beijing.setBackgroundDrawable(drawable);
-			    beijing.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+	public void Btn_oherperson_guanzhu(View v){
+		
+	}
+	public Bitmap setImage(ImageView imageView,String URL){
+		return asyncBitmapLoader.loadBitmap(imageView, URL, linearlayoutWidth,new ImageCallBack() {
+			
+			@Override
+			public void imageLoad(ImageView imageView, Bitmap bitmap) {
+				if (bitmap!=null) {
+					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+					imageView.setImageBitmap(BigBitmap);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+                    layoutParams.setMargins(4, 1, 4, 1);
+                    imageView.setLayoutParams(layoutParams);
+				}
+            	else {
+            		imageView.setImageResource(R.drawable.pic_bg);
+				}
 			}
-			break;
-		}
-        super.onActivityResult(requestCode, resultCode, data);    
-    }
+		});
+	}
 	private void addBitmaps(int pageindex, int pagecount,String img[]){
 		list=Arrays.asList(img);
 		LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -298,25 +248,14 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
     				RelativeLayout rll = (RelativeLayout)view. findViewById(R.id.RelativeLayout02);
     				ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
-    				Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, list.get(index), new ImageCallBack() {  
-  	                  
-    	                @Override  
-    	                public void imageLoad(ImageView imageView, Bitmap bitmap) {  
-    	                	Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
-        					imageView.setImageBitmap(bitmap2);
-                            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
-                            layoutParams.setMargins(4, 1, 4, 1);
-                            imageView.setLayoutParams(layoutParams);
-        					imageView.setImageBitmap(bitmap);  
-    	                }  
-    	            });  
+    				Bitmap bitmap=setImage(imageView, list.get(index));
     				if (bitmap==null) {
     					imageView.setImageResource(R.drawable.pic_bg);
 					}
     				else {
-    					Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
-    					imageView.setImageBitmap(bitmap2);
-                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
+    					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    					imageView.setImageBitmap(BigBitmap);
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
                         layoutParams.setMargins(4, 1, 4, 1);
                         imageView.setLayoutParams(layoutParams);
     					imageView.setImageBitmap(bitmap);
@@ -379,22 +318,7 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 	}
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			AlertDialog.Builder builder=new AlertDialog.Builder(context);
-	  		  builder.setTitle(getResources().getString(R.string.tishi));
-	  		  builder.setMessage(getResources().getString(R.string.shifoutuichu)).setPositiveButton(getResources().getString(R.string.queding), new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
-				        	android.os.Process.killProcess(android.os.Process.myPid()); 
-							System.exit(0);
-						}
-					})
-				   .setNegativeButton(getResources().getString(R.string.quxiao), new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							
-						}
-					});
-				AlertDialog ad = builder.create();
-				ad.show();
+			finish();
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);

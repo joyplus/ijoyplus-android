@@ -73,8 +73,15 @@ public class SupplementaryInformation extends Activity {
 //						System.out.println("token:"+getThird_AccessToken.getQQ_Token());
 					}
 					Intent intent = new Intent();
-					intent.setClass(context, JoyActivity.class);
-					startActivity(intent);
+					if (getThird_AccessToken.getwhere_gologin()==1) {
+						
+					}
+					else
+					{
+						getThird_AccessToken.setActivitytype("1");
+						intent.setClass(context, Darentuijian.class);
+						startActivity(intent);
+					}
 					finish();
 					break;
 				}

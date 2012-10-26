@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
     android:orientation="vertical"
-    android:background="#333333"
+    android:background="#1A1A1A"
     >
 <RelativeLayout
     android:layout_width="fill_parent"
@@ -43,7 +43,7 @@
     android:id="@+id/yaoqing_hand"
      android:layout_width="wrap_content" 
      android:layout_height="wrap_content"
-     android:background="@drawable/ic_launcher"
+     android:background="@drawable/head"
      android:layout_marginTop="60dp"
      android:layout_marginLeft="10dp"
     />

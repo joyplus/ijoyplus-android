@@ -3,7 +3,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical"
-        android:background="#333333" >
+        android:background="#1A1A1A" >
 <RelativeLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
     android:layout_width="fill_parent"
     android:layout_height="45dp"
     android:orientation="horizontal" 
-    android:background="@color/black"
+    android:background="#4A4A4A"
     android:gravity="center_vertical"
     >
 <EditText
@@ -82,7 +82,7 @@
     android:layout_width="fill_parent"
     android:layout_height="45dp"
     android:orientation="horizontal" 
-    android:background="@color/black"
+    android:background="#4A4A4A"
     android:gravity="center_vertical"
     >
 <EditText
@@ -107,6 +107,12 @@
     android:background="@drawable/btn_sousuo"
     />
 </LinearLayout>
+<RelativeLayout 
+    android:layout_width="fill_parent" 
+     android:layout_height="wrap_content" 
+     android:background="@color/black"
+    >
+    
 <TextView 
      android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
@@ -115,6 +121,7 @@
      android:textSize="12sp"
      android:layout_marginLeft="15dp"
     />
+</RelativeLayout>
 <com.joy.view.PullToRefreshView_foot
     android:id="@+id/tongxunlu_main_pull_refresh_view"
     android:layout_width="fill_parent"
@@ -126,9 +133,9 @@
     android:layout_height="fill_parent" 
     android:id="@+id/tongxunlu_list"
     android:cacheColorHint="#00000000"
-    android:divider="@color/white"
+    android:divider="#313132"
     android:fadingEdge="none"
-    android:dividerHeight="1dp"
+    android:dividerHeight="1px"
     >
 </ListView>
 </com.joy.view.PullToRefreshView_foot>

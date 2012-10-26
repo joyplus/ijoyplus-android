@@ -17,18 +17,24 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import com.joy.R.drawable;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Bitmap.Config;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -37,11 +43,27 @@ import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class Tools {
 	public Tools(){
 		
+	}
+	public static void changeLight(ImageView imageView, int brightness) {
+        ColorMatrix cMatrix = new ColorMatrix();
+        cMatrix.set(new float[] { 1, 0, 0, 0, brightness, 0, 1, 0, 0,
+                        brightness,// 改变亮度
+                        0, 0, 1, 0, brightness, 0, 0, 0, 1, 0 });
+        imageView.setColorFilter(new ColorMatrixColorFilter(cMatrix));
+}
+	public static Bitmap drawableToBitamp(Drawable drawable){
+		BitmapDrawable bd = (BitmapDrawable) drawable;
+		return bd.getBitmap();
+	}
+	public static Drawable BitampTodrawable(Bitmap bitmap){
+		BitmapDrawable bd=new BitmapDrawable(bitmap);
+		return bd;
 	}
 	public static boolean isNetworkAvailable(Context context) {   
         ConnectivityManager cm = (ConnectivityManager) context   

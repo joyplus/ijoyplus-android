@@ -134,9 +134,6 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 	}
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			Intent intent=new Intent();
-			intent.setClass(context, Xunzhaohaoyou.class);
-			startActivity(intent);
 			finish();
 			return true;
 		}

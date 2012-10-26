@@ -114,6 +114,8 @@
        <string name="zhuxiaochenggong">注销成功</string>
        <string name="go_detail">welcome</string>
        <string name="go_detail_notwelcome">notwelcome</string>
-       
+       <string name="error_file">未能找到指定文件</string>
+       <string name="nologin">您尚未登录是否进行登录并进行回复</string>
+       <string name="nopic">Demo版：图片不存在，请于sd卡中创建一张abc.jpg图片</string>
        <!-- <友盟 -->
 </resources>

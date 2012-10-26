@@ -40,6 +40,7 @@ public class JoyActivity extends TabActivity implements OnClickListener{
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.tab);
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
+        getThird_AccessToken.setwhere_gologin(2);
         prepareIntent();
 		setupIntent();
 		prepareView();

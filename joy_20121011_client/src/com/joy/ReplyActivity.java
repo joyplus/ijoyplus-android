@@ -58,9 +58,9 @@ public class ReplyActivity extends Activity{
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setClass(context, DetailActivity.class);
-				startActivity(intent);
+//				Intent intent = new Intent();
+//				intent.setClass(context, DetailActivity.class);
+//				startActivity(intent);
 				finish();
 			}
 		});
@@ -150,9 +150,9 @@ public class ReplyActivity extends Activity{
 //        	}
 //        	else
 //        	{
-        		Intent intent = new Intent();
-				intent.setClass(context, DetailActivity.class);
-				startActivity(intent);
+//        		Intent intent = new Intent();
+//				intent.setClass(context, DetailActivity.class);
+//				startActivity(intent);
 				finish();
  //       	}
         	break;

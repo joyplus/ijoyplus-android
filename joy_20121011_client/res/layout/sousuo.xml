@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
     android:orientation="vertical"
-    android:background="#333333"
+    android:background="#1A1A1A"
     >
 <RelativeLayout
     android:layout_width="fill_parent"
@@ -46,8 +46,7 @@
     android:layout_width="fill_parent"
     android:layout_height="45dp"
     android:orientation="horizontal" 
-    android:background="@color/black"
-    android:layout_marginTop="5dp"
+    android:background="#4A4A4A"
     android:gravity="center_vertical"
     >
 <EditText
@@ -80,7 +79,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
     android:orientation="vertical"
-    android:layout_marginTop="5dp"
     >
 <ListView 
     android:id="@+id/sousuo_listview"
@@ -88,8 +86,8 @@
     android:layout_height="fill_parent"
     android:fadingEdge="none"
     android:cacheColorHint="#00000000"
-    android:divider="@color/white"
-    android:dividerHeight="1dp"
+    android:divider="#313132"
+    android:dividerHeight="1px"
     >
     
 </ListView>

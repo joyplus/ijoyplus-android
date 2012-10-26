@@ -3,6 +3,7 @@ package com.joy;
 import com.joy.weibo.net.Token;
 import com.joy.weibo.net.AccessToken;
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 public class GetThird_AccessToken extends Application {
@@ -19,11 +20,38 @@ public class GetThird_AccessToken extends Application {
 	String Sina_Expires_in = "";
 	String QQ_Token = "";
 	String QQ_OpenID = "";
+	int bitmapW=0;
 	
+	Context context;
 	String go_detail = "";
 	
 	int mTab_Where = 0;
 	int mTab_ID = R.id.channel1;
+	
+	
+	
+	public int getbitmapW(){
+		return bitmapW;
+	}
+	public void setbitmapW(int n){
+		bitmapW=n;
+	}
+	
+	int where_gologin = 2;
+	
+	public void setwhere_gologin(int where_gologin){
+		this.where_gologin=where_gologin;
+	}
+	public int getwhere_gologin(){
+		return where_gologin;
+	}
+	
+	public void setcontext(Context context){
+		this.context=context;
+	}
+	public Context getcontext(){
+		return context;
+	}
 	
 	public void setmTab_ID(int mTab_ID){
 		this.mTab_ID=mTab_ID;

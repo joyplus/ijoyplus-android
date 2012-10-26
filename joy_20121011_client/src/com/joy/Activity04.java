@@ -29,8 +29,10 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -55,48 +57,48 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
     LinearLayout guanzhu,fensi;
     private int USE_LINEAR_INTERVAL = 0;
     private int linearlayoutWidth = 0;
-	private int page_count = 6;// 每次加载30张图片
+	private int page_count = 9;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
     private int index =0;
     List<String> list;
-    Context context;
+    public Context context;
     ImageView beijing,head;
     int selectIndex=1;
     String bitString[]={"拍照","相册"};
     private File mCurrentPhotoFile;
     GetThird_AccessToken getThird_AccessToken;
 	private String images_kanguodeyingpian[] = {
-			"http://imgsrc.baidu.com/forum/pic/item/06509e4472138361500ffe18.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/c99ee50389ab4fa5d53f7c1a.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/f77c583494e1a963241f141f.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/dbabbe86c0ede61366096eee.jpg",
-			"http://wenwen.soso.com/p/20100708/20100708050003-665156019.jpg",
-			"http://movie.yntv.cn/category/2021302/2009/07/10/images/2021302_20090710_802.jpg",
-			"http://www.sznews.com/rollnews/images/20110601/19/10978230170352392435.jpg",
-			"http://img2.mtime.com/mg/2008/25/9efc5c01-6d6a-4aa5-b09e-f49359eb7ea8.jpg",
-			"http://epaper.loone.cn/site1/czrb/res/1/20080616/7271213581523254.jpg"
+			"http://online.sccnn.com/img2/384/s010.jpg",
+			"http://img01.tooopen.com/Product/thumbnails/2009/11/12/x_20091112173541287022.jpg",
+			"http://imgsrc.baidu.com/forum/abpic/item/cc4967f0605cd3f87931aac9.jpg",
+			"http://img9.nipic.com/20090827/2615908_093838500191_1.jpg",
+			"http://online.sccnn.com/img2/818/xfkp_s05.jpg",
+			"http://circler.cn.idc.weicent.com/uploads/allimg/110426/2-110426160227-lp.jpg",
+			"http://www.circler.cn/uploads/allimg/100526/2-1005261636080-L.jpg",
+			"http://web.2008php.com/09_jietu/09-12-16/20091216151830.jpg",
+			"http://img7.nipic.com/20090514/1988006_000103186_1.jpg"
 			};
 	private String images_shoucangdeyingpian[] = {
-			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
-			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
-			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
-			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
-			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
-			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
-			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
-			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
+			"http://www.circler.cn/uploads/allimg/100905/2-100Z51524380-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100823/2-100R31940130-L.jpg",
+			"http://circler.cn.idc.weicent.com/uploads/allimg/100324/1-100324232508.jpg",
+			"http://www.circler.cn/uploads/allimg/100903/2-100Z3031Q20-L.jpg",
+			"http://www.circler.cn/uploads/allimg/110304/2-110304144K9-50-lp.jpg",
+			"http://www.circler.cn/uploads/allimg/100329/1-100329153Q30-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100726/1-100H61453390-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100310/2-1003100101180-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100403/1-1004031959480-l.jpg"
 			};
 	private String images_tuijiandeyingpian[] = {
-			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
-			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
-			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
-			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
-			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
-			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
-			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
-			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
+			"http://www.circler.cn/uploads/allimg/100423/1-1004231602500-l.jpg",
+			"http://www.circler.cn/uploads/allimg/110219/1-11021Z004060-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100909/2-100ZZ434410-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100315/2-1003151633250-l.jpg",
+			"http://www.circler.cn/uploads/allimg/100627/1-10062H21F40-L.jpg",
+			"http://www.circler.cn/uploads/100322/1-100322121J54D.jpg",
+			"http://www.circler.cn/uploads/allimg/100722/1-100H22153240-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100419/1-100419215p40-l.jpg",
+			"http://www.circler.cn/uploads/allimg/100407/1-10040G319430-L.jpg"
 			};
 	PullToRefreshView_foot mPullToRefreshView;
 	Bitmap BigBitmap;
@@ -283,6 +285,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 	public void Btn_shezhi(View v){
 		Intent intent=new Intent();
 		intent.setClass(context, Shezhi.class);
+		getThird_AccessToken.setcontext(context);
 		startActivity(intent);
 	}
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -329,22 +332,25 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			}
 			break;
 		case 100:
-        	Intent intent = new Intent("com.android.camera.action.CROP");
-			intent.setData(data.getData());     //data是图库选取文件传回的参数
-			intent.putExtra("crop", "true");
-			intent.putExtra("aspectX", 2);
-			intent.putExtra("aspectY", 1);
-			intent.putExtra("outputX", getWindowManager().getDefaultDisplay().getWidth());
-			intent.putExtra("outputY", getWindowManager().getDefaultDisplay().getWidth()/2);
-			intent.putExtra("noFaceDetection", true);
-			intent.putExtra("return-data", true);
-			startActivityForResult(intent, 101);
+			try {
+				Intent intent = new Intent("com.android.camera.action.CROP");
+				intent.setData(data.getData());     //data是图库选取文件传回的参数
+				intent.putExtra("crop", "true");
+				intent.putExtra("aspectX", 2);
+				intent.putExtra("aspectY", 1);
+				intent.putExtra("outputX", getWindowManager().getDefaultDisplay().getWidth());
+				intent.putExtra("outputY", getWindowManager().getDefaultDisplay().getWidth()/2);
+				intent.putExtra("noFaceDetection", true);
+				intent.putExtra("return-data", true);
+				startActivityForResult(intent, 101);
+			} catch (Exception e) {
+				Toast.makeText(context, getResources().getString(R.string.error_file), Toast.LENGTH_SHORT).show();
+			}
 			break;
 		case 101:
 			Bundle extras = data.getExtras();
 			if(extras != null ) {
 			    Bitmap photo = extras.getParcelable("data");
-//			    Bitmap bitmap=BitmapZoom.bitmapZoomByWidth(photo, getWindowManager().getDefaultDisplay().getWidth());
 			    Drawable drawable=new BitmapDrawable(photo);
 			    Tools.saveMyBitmap("joy/admin", "bg.png", photo);
 			    beijing.setBackgroundDrawable(drawable);
@@ -352,16 +358,20 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			}
 			break;
 		case 200:
-        	Intent intent1 = new Intent("com.android.camera.action.CROP");
-			intent1.setData(data.getData());     //data是图库选取文件传回的参数
-			intent1.putExtra("crop", "true");
-			intent1.putExtra("aspectX", 1);
-			intent1.putExtra("aspectY", 1);
-			intent1.putExtra("outputX", getWindowManager().getDefaultDisplay().getWidth()/5);
-			intent1.putExtra("outputY", getWindowManager().getDefaultDisplay().getWidth()/5);
-			intent1.putExtra("noFaceDetection", true);
-			intent1.putExtra("return-data", true);
-			startActivityForResult(intent1, 201);
+			try {
+				Intent intent1 = new Intent("com.android.camera.action.CROP");
+				intent1.setData(data.getData());     //data是图库选取文件传回的参数
+				intent1.putExtra("crop", "true");
+				intent1.putExtra("aspectX", 1);
+				intent1.putExtra("aspectY", 1);
+				intent1.putExtra("outputX", getWindowManager().getDefaultDisplay().getWidth()/5);
+				intent1.putExtra("outputY", getWindowManager().getDefaultDisplay().getWidth()/5);
+				intent1.putExtra("noFaceDetection", true);
+				intent1.putExtra("return-data", true);
+				startActivityForResult(intent1, 201);
+			} catch (Exception e) {
+				Toast.makeText(context, getResources().getString(R.string.error_file), Toast.LENGTH_SHORT).show();
+			}
 			break;
 		case 201:
 			Bundle extras1 = data.getExtras();
@@ -384,7 +394,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
     			try {
     				final View view=inflater.inflate(R.layout.wall, null);
     				RelativeLayout rll = (RelativeLayout)view. findViewById(R.id.RelativeLayout02);
-    				ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
+    				final ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
     				Bitmap bitmap=setImage(imageView, list.get(index));
     				if (bitmap==null) {
@@ -399,27 +409,29 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
     					imageView.setImageBitmap(bitmap);
 					}
     				textView.setText("第"+(index+1)+"张");
-    				imageView.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							int index  =  (Integer)v.getTag();
-					    	System.out.println("click index= "+index);
-					    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
-						}
-					});
     				imageView.setTag(new Integer(index));
-    				imageView.setOnClickListener(new OnClickListener() {
+    				imageView.setOnTouchListener(new OnTouchListener() {
 						
 						@Override
-						public void onClick(View v) {
-							int index  =  (Integer)v.getTag();
-					    	System.out.println("click index= "+index);
-					    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
-					    	Intent intent = new Intent();
-					    	intent.setClass(context, DetailActivity.class);
-					    	startActivity(intent);
-					    	//finish();
+						public boolean onTouch(View v, MotionEvent event) {
+							switch (event.getAction()) {
+							case MotionEvent.ACTION_UP:
+								int index  =  (Integer)v.getTag();
+						    	System.out.println("click index= "+index);
+						    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
+						    	Intent intent = new Intent();
+						    	intent.setClass(context, DetailActivity.class);
+						    	startActivity(intent);
+								Tools.changeLight(imageView, 0);
+								break;
+							case MotionEvent.ACTION_DOWN:
+								Tools.changeLight(imageView, -50);
+								break;
+							case MotionEvent.ACTION_CANCEL:
+								Tools.changeLight(imageView, 0);
+								break;
+							}
+							return true;
 						}
 					});
     					switch (USE_LINEAR_INTERVAL) 
@@ -450,7 +462,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 		}
     }
 	public Bitmap setImage(ImageView imageView,String URL){
-		return asyncBitmapLoader.loadBitmap(imageView, URL, new ImageCallBack() {
+		return asyncBitmapLoader.loadBitmap(imageView, URL, linearlayoutWidth,new ImageCallBack() {
 			
 			@Override
 			public void imageLoad(ImageView imageView, Bitmap bitmap) {

@@ -180,7 +180,12 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
         fx_pl_edit = (MyEditText) this.findViewById(R.id.fx_pl_edit);
         ImageView imageView = (ImageView) findViewById(R.id.image_moves);
         imageView.setVisibility(View.GONE);
-        if (getThird_AccessToken.getButton_Name().equals(getString(R.string.fenxiang))) {
+        File f = null;
+        System.out.println("mPicPath====>"+mPicPath+":"+TextUtils.isEmpty(this.mPicPath));
+        if (TextUtils.isEmpty(this.mPicPath)) {
+        		f = null;
+        }
+        if (getThird_AccessToken.getButton_Name().equals(getString(R.string.fenxiang))&&f!=null) {
         	Bitmap bt = BitmapFactory.decodeFile(mPicPath);
         	imageView.setVisibility(View.VISIBLE);
         	Bitmap newBit = BitmapZoom.bitmapZoomByWidth(bt, linearlayout_width);

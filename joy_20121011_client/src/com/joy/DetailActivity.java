@@ -17,8 +17,10 @@ import com.joy.weibo.net.Weibo;
 import com.joy.weibo.net.WeiboException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -105,6 +107,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
     	mPullToRefreshView = (PullToRefreshView) findViewById(R.id.detail_main_pull_refresh_view);
     	mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
+        findViewById(R.id.detail_beijing).setOnClickListener(this);
     }
     
     public void into_juji()
@@ -141,6 +144,15 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 							@Override
 							public void onClick(View v) {
 								Toast.makeText(context, "这里是第"+(v.getId()+1)+"集", Toast.LENGTH_SHORT).show();
+								//webview
+								Intent intent = new Intent();
+								intent.setClass(context, PlayVideoActivity.class);
+								startActivity(intent);
+								//打开网页
+//								Intent it = new Intent(Intent.ACTION_VIEW, Uri.parse("http://video.sina.cn/?sa=t424d736959v456&pos=23&vt=4"));
+//						        //it.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
+//						        startActivity(it);
+
 							}
 						});
         				h_linearlayout.addView(RelativeLayout);
@@ -166,10 +178,38 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 				
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent();
-					intent.setClass(context, ReplyActivity.class);
-					startActivity(intent);
-					finish();
+					if (getThird_AccessToken.getAccessToken().trim().trim().length()==0) {
+						if (getThird_AccessToken.getQQ_Token().trim().trim().length()==0) {
+							new AlertDialog.Builder(context).setTitle(getString(R.string.tishi))
+							.setMessage(getString(R.string.nologin)).setCancelable(false)
+							.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									Intent intent = new Intent();
+									intent.setClass(context, Welcome.class);
+									startActivity(intent);
+									//finish();
+								}
+							}).setNegativeButton(getString(R.string.quxiao), new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+							
+								}
+							}).show();
+						}
+						else
+						{
+							Intent intent = new Intent();
+							intent.setClass(context, ReplyActivity.class);
+							startActivity(intent);
+//							finish();
+						}
+					}
+					else
+					{
+						Intent intent = new Intent();
+						intent.setClass(context, ReplyActivity.class);
+						startActivity(intent);
+//						finish();
+					}
 				}
 			});
 			TextView user_time_view = (TextView) lo.findViewById(R.id.user_time);
@@ -242,8 +282,8 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
             picPath = sdPath + "/" + "abc.jpg";
             picFile = new File(picPath);
             if (!picFile.exists()) {
-//                Toast.makeText(context, "图片" + picPath + "不存在！", Toast.LENGTH_SHORT)
-//                        .show();
+                Toast.makeText(context, "图片" + picPath + "不存在！", Toast.LENGTH_SHORT)
+                        .show();
                 picPath = null;
             }
             try {
@@ -269,7 +309,22 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			//Toast.makeText(context, "分享", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.login_goback:
-			finish();
+			if(getThird_AccessToken.getwhere_gologin()==1) {
+				getThird_AccessToken.setwhere_gologin(2);
+//				intent = new Intent();
+//				intent.setClass(context, Welcome.class);
+//				startActivity(intent);
+			}
+			else
+			{
+				getThird_AccessToken.setwhere_gologin(2);
+			}
+				finish();
+			break;
+		case R.id.detail_beijing:
+			intent = new Intent();
+			intent.setClass(context, PlayVideoActivity.class);
+			startActivity(intent);
 			break;
 		}
 	}
@@ -305,7 +360,17 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
     	switch(keyCode){
         case KeyEvent.KEYCODE_BACK:
-        	finish();
+        	//if(getThird_AccessToken.getwhere_gologin()==1) {
+        	//	getThird_AccessToken.setwhere_gologin(2);
+//        		Intent intent = new Intent();
+//				intent.setClass(context, Welcome.class);
+//				startActivity(intent);
+			//}
+			//else
+			//{
+				getThird_AccessToken.setwhere_gologin(2);
+			//}
+				finish();
         	break;
     	}
         return true;

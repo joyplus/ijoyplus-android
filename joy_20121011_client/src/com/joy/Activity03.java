@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.BitmapZoom;
+import com.joy.Tools.Tools;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.SearchAdapter;
 import com.joy.view.PullToRefreshView;
@@ -19,12 +20,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.ColorFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -42,15 +47,15 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 	Context context;
 	ListView listView;
 	private String images[] = {
-			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
-			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
-			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
-			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
-			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
-			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
-			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
-			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
+			"http://www.circler.cn/uploads/allimg/100423/1-1004231602500-l.jpg",
+			"http://www.circler.cn/uploads/allimg/110219/1-11021Z004060-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100909/2-100ZZ434410-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100315/2-1003151633250-l.jpg",
+			"http://www.circler.cn/uploads/allimg/100627/1-10062H21F40-L.jpg",
+			"http://www.circler.cn/uploads/100322/1-100322121J54D.jpg",
+			"http://www.circler.cn/uploads/allimg/100722/1-100H22153240-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100419/1-100419215p40-l.jpg",
+			"http://www.circler.cn/uploads/allimg/100407/1-10040G319430-L.jpg"
 	};
 	private String images_head[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
@@ -236,7 +241,6 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				holder.img1 = (ImageView)convertView.findViewById(R.id.dongtailistview_img);
 				holder.time = (TextView)convertView.findViewById(R.id.dongtailistview_time);
 				holder.viewBtn = (TextView)convertView.findViewById(R.id.dongtailistview_how);
-				holder.editText=(EditText)convertView.findViewById(R.id.dongtailistview_edit);
 				convertView.setTag(holder);
 			}else{
 				holder = (ViewHolder)convertView.getTag();
@@ -249,6 +253,9 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				@Override
 				public void onClick(View v) {
 					Toast.makeText(context, v.getTag()+"", Toast.LENGTH_SHORT).show();
+					Intent intent=new Intent();
+					intent.setClass(context, OtherPersonActivity.class);
+					startActivity(intent);
 				}
 			});
 			holder.title.setText((String)listItems.get(position).get("who"));
@@ -256,7 +263,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				
 //				holder.img1.setBackgroundResource((Integer)listItems.get(position).get("img"));
 				
-				Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.img1, (String)listItems.get(position).get("img"), new ImageCallBack() {
+				Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.img1, (String)listItems.get(position).get("img"), getWindowManager().getDefaultDisplay().getWidth()/3,new ImageCallBack() {
 					
 					public void imageLoad(ImageView imageView, Bitmap bitmap) {
 						BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
@@ -289,6 +296,9 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 						}
 						else if (v.getTag().equals("回复")) {
 							Toast.makeText(context, "回复", Toast.LENGTH_SHORT).show();
+							Intent intent = new Intent();
+							intent.setClass(context, ReplyActivity.class);
+							startActivity(intent);
 						}
 						
 					}

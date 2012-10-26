@@ -21,8 +21,10 @@ import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -53,7 +55,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 	PullToRefreshView mPullToRefreshView;
 	private int USE_LINEAR_INTERVAL = 0;
     private int linearlayoutWidth = 0;
-	private int page_count = 6;// 每次加载6张图片
+	private int page_count = 9;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
     private int index =0;
     List<String> list;
@@ -76,7 +78,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 	private String images_juji[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://pic3.nipic.com/20090514/1988006_001600282_2.jpg",
 			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
 			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
@@ -270,7 +272,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
     			try {
     				final View view=inflater.inflate(R.layout.wall, null);
     				RelativeLayout rll = (RelativeLayout)view.findViewById(R.id.RelativeLayout02);
-    				ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
+    				final ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
     				Bitmap bitmap=setImage(imageView, list.get(index));
     				if (bitmap==null) {
@@ -285,29 +287,31 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
     					imageView.setImageBitmap(bitmap);
 					}
     				textView.setText("第"+(index+1)+"张");
-    				imageView.setOnClickListener(new OnClickListener() {
+    				imageView.setOnTouchListener(new OnTouchListener() {
 						
 						@Override
-						public void onClick(View v) {
-							int index  =  (Integer)v.getTag();
-					    	System.out.println("click index= "+index);
-					    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
+						public boolean onTouch(View v, MotionEvent event) {
+							switch (event.getAction()) {
+							case MotionEvent.ACTION_UP:
+								int index  =  (Integer)v.getTag();
+						    	System.out.println("click index= "+index);
+						    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
+						    	Intent intent = new Intent();
+						    	intent.setClass(context, DetailActivity.class);
+						    	startActivity(intent);
+								Tools.changeLight(imageView, 0);
+								break;
+							case MotionEvent.ACTION_DOWN:
+								Tools.changeLight(imageView, -50);
+								break;
+							case MotionEvent.ACTION_CANCEL:
+								Tools.changeLight(imageView, 0);
+								break;
+							}
+							return true;
 						}
 					});
     				imageView.setTag(new Integer(index));
-    				imageView.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							int index  =  (Integer)v.getTag();
-					    	System.out.println("click index= "+index);
-					    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
-					    	Intent intent = new Intent();
-					    	intent.setClass(context, DetailActivity.class);
-					    	startActivity(intent);
-					    	//finish();
-						}
-					});
     				switch (USE_LINEAR_INTERVAL) 
     				{
 						case 0:
@@ -337,7 +341,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 		}
     }
 	public Bitmap setImage(ImageView imageView,String URL){
-		return asyncBitmapLoader.loadBitmap(imageView, URL, new ImageCallBack() {
+		return asyncBitmapLoader.loadBitmap(imageView, URL, linearlayoutWidth,new ImageCallBack() {
 			
 			@Override
 			public void imageLoad(ImageView imageView, Bitmap bitmap) {

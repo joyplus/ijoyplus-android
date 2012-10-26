@@ -2,46 +2,59 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
+    android:background="#1A1A1A"
     >
 <RelativeLayout
     android:layout_width="fill_parent"
   	android:layout_height="wrap_content"
   	android:id="@+id/title" 
-  	android:background="@color/blue"
-  	android:gravity="center_vertical" 
+  	android:background="@drawable/title"
     >
 <TextView
+     android:id="@+id/oherperson_title" 
      android:layout_width="wrap_content" 
      android:layout_height="wrap_content" 
-     android:text="@string/gerenzhuye"
      android:layout_centerInParent="true"
      android:textSize="20sp"		
 	android:textColor="@color/white" /> 
+<RelativeLayout 
+    android:onClick="Btn_oherperson_back"
+    android:layout_alignParentLeft="true"
+    android:layout_marginLeft="10dp"
+    android:layout_width="64dp"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:background="@drawable/btn_top_left"
+    >
+ <TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/back"
+     android:layout_alignParentRight="true"
+     android:layout_marginRight="12dp"
+     android:textSize="15sp"		
+     android:layout_centerVertical="true"
+	android:textColor="@color/white" />   
+</RelativeLayout>	
+
 <Button 
-	 android:id="@+id/act04_shezhi"
-	 android:layout_width="wrap_content" 
+	 android:layout_width="65dp" 
      android:layout_height="wrap_content"
      android:layout_alignParentRight="true"
+     android:layout_marginRight="10dp"
+     android:text="@string/guanzhu"
+     android:onClick="Btn_oherperson_guanzhu"
      android:layout_centerVertical="true"
-     android:layout_marginRight="5dp"
-     android:text="@string/shezhi"
-     android:onClick="Btn_shezhi"
-	/>
-<Button 
-	 android:id="@+id/login_goback"
-	 android:layout_width="wrap_content" 
-     android:layout_height="wrap_content"
-     android:layout_alignParentLeft="true"
-     android:layout_centerVertical="true"
-     android:layout_marginLeft="5dp"
-     android:text="@string/goback"
+     android:background="@drawable/btn_top_right"
+     android:textColor="@color/white"
+     android:textSize="15sp"
 	/> 
 </RelativeLayout>
    
 <com.joy.view.PullToRefreshView_foot
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
-    android:id="@+id/act04_main_pull_refresh_view"
+    android:id="@+id/oherperson_main_pull_refresh_view"
     android:orientation="vertical"
      android:layout_below="@id/title"
     >
@@ -60,19 +73,19 @@
 
 <ImageView 
    
-    android:id="@+id/act04_beijing"
+    android:id="@+id/oherperson_beijing"
     android:layout_width="fill_parent"
     android:layout_height="150dp"
-    android:background="@color/red"
+    android:background="@drawable/zhuyebg"
     android:scaleType="centerInside"
     />
 
 <RelativeLayout
-    android:layout_below="@id/act04_beijing"
+    android:layout_below="@id/oherperson_beijing"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" 
-    android:layout_marginTop="10dp"
-    android:id="@+id/act04_rel"
+    android:layout_marginTop="20dp"
+    android:id="@+id/oherperson_rel"
     android:layout_gravity="center"
     >
 <LinearLayout 
@@ -82,7 +95,7 @@
     android:layout_alignParentRight="true"
     >
 <LinearLayout 
-    android:id="@+id/act04_guanzhu"
+    android:id="@+id/oherperson_guanzhu"
     android:layout_width="80dp"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -104,7 +117,7 @@
     />
 </LinearLayout>
 <LinearLayout 
-    android:id="@+id/act04_fensi"
+    android:id="@+id/oherperson_fensi"
     android:layout_width="80dp"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -129,36 +142,47 @@
 </LinearLayout>   
 </RelativeLayout>
 <LinearLayout
-    android:layout_below="@id/act04_rel"
+    android:layout_below="@id/oherperson_rel"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" 
     android:gravity="center"
-    android:layout_marginTop="15dp"
-    android:id="@+id/act04_linear"
+    android:layout_marginTop="17dp"
+    android:id="@+id/oherperson_linear"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
     >
 <Button
-    android:id="@+id/act04_kanguodeyingpian"
+    android:id="@+id/oherperson_kanguodeyingpian"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/kanguodeyingpian"
+    android:background="@drawable/btn_topleft"
+    android:textColor="@color/white"
+    android:layout_weight="1"
     />
 <Button
-    android:id="@+id/act04_shoucangdeyingpian"
+    android:id="@+id/oherperson_shoucangdeyingpian"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/shoucangdeyingpian"
+    android:textColor="@color/white"
+    android:background="@drawable/btn_topbar"
+    android:layout_weight="1"
     />
 <Button
-    android:id="@+id/act04_tuijiandeyingpian"
+    android:id="@+id/oherperson_tuijiandeyingpian"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/tuijiandeyingpian"
+    android:textColor="@color/white"
+    android:background="@drawable/btn_topright"
+    android:layout_weight="1"
     />
 </LinearLayout>
 
 <LinearLayout
-    android:layout_below="@id/act04_linear"
+    android:layout_below="@id/oherperson_linear"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal" >
@@ -167,36 +191,36 @@
     android:layout_height="fill_parent" 
     android:orientation="vertical"
     android:layout_weight="1" 
-    android:id="@+id/act04_linearlayout1"/>
+    android:id="@+id/oherperson_linearlayout1"/>
 <LinearLayout 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:layout_weight="1" 
-    android:id="@+id/act04_linearlayout2"/>
+    android:id="@+id/oherperson_linearlayout2"/>
 <LinearLayout 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
     android:orientation="vertical"
     android:layout_weight="1" 
-    android:id="@+id/act04_linearlayout3"/>
+    android:id="@+id/oherperson_linearlayout3"/>
 </LinearLayout>
 <ImageView
-    android:id="@+id/act04_hand"
+    android:id="@+id/oherperson_hand"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/head" 
+    android:background="@drawable/head"
     android:layout_marginTop="130dp"
     android:layout_marginLeft="10dp"
     />
 <TextView 
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_toRightOf="@id/act04_hand"
+    android:layout_toRightOf="@id/oherperson_hand"
     android:text="Joyce"
     android:textColor="@color/white"
     android:textSize="25sp"
-    android:layout_marginTop="120dp"
+    android:layout_marginTop="130dp"
     android:layout_marginLeft="20dp"
     />
 </RelativeLayout>

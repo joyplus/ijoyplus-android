@@ -35,8 +35,10 @@ public class Shezhi extends Activity {
 		getThird_AccessToken.SaveOpenID();
 		Toast.makeText(context, getString(R.string.zhuxiaochenggong), Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.setClass(context, Welcome.class);
 		startActivity(intent);
+		((Activity04) getThird_AccessToken.getcontext()).finish();
 		finish();
 	}
 	public void Btn_chazhao(View v){

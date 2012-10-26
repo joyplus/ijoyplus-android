@@ -25,8 +25,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,7 +44,7 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 	PullToRefreshView mPullToRefreshView;
 	private int USE_LINEAR_INTERVAL = 0;
     private int linearlayoutWidth = 0;
-	private int page_count = 6;// 每次加载30张图片
+	private int page_count = 9;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
     private int index =0;
     List<String> list;
@@ -110,7 +112,7 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
     			try {
     				final View view=inflater.inflate(R.layout.wall, null);
     				RelativeLayout rll = (RelativeLayout)view.findViewById(R.id.RelativeLayout02);
-    				ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
+    				final ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
     				Bitmap bitmap=setImage(imageView, list.get(index));
     				if (bitmap==null) {
@@ -125,27 +127,28 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
     					imageView.setImageBitmap(bitmap);
 					}
     				textView.setText("第"+(index+1)+"张");
-    				imageView.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							int index  =  (Integer)v.getTag();
-					    	System.out.println("click index= "+index);
-					    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
-						}
-					});
     				imageView.setTag(new Integer(index));
-    				imageView.setOnClickListener(new OnClickListener() {
+    				imageView.setOnTouchListener(new OnTouchListener() {
 						
 						@Override
-						public void onClick(View v) {
-							int index  =  (Integer)v.getTag();
-					    	System.out.println("click index= "+index);
-					    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
-					    	Intent intent = new Intent();
-					    	intent.setClass(context, DetailActivity.class);
-					    	startActivity(intent);
-					    	//finish();
+						public boolean onTouch(View v, MotionEvent event) {
+							switch (event.getAction()) {
+							case MotionEvent.ACTION_UP:
+								int index  =  (Integer)v.getTag();
+						    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
+						    	Intent intent = new Intent();
+						    	intent.setClass(context, DetailActivity.class);
+						    	startActivity(intent);
+								Tools.changeLight(imageView, 0);
+								break;
+							case MotionEvent.ACTION_DOWN:
+								Tools.changeLight(imageView, -50);
+								break;
+							case MotionEvent.ACTION_CANCEL:
+								Tools.changeLight(imageView, 0);
+								break;
+							}
+							return true;
 						}
 					});
     				switch (USE_LINEAR_INTERVAL) 
@@ -225,7 +228,7 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 		},1000);
 	}
 	public Bitmap setImage(ImageView imageView,String URL){
-		return asyncBitmapLoader.loadBitmap(imageView, URL, new ImageCallBack() {
+		return asyncBitmapLoader.loadBitmap(imageView, URL, linearlayoutWidth,new ImageCallBack() {
 			
 			@Override
 			public void imageLoad(ImageView imageView, Bitmap bitmap) {

@@ -47,15 +47,15 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
     GetThird_AccessToken getThird_AccessToken;
     List<String> list;
 	private String images[] = {
-			"http://i1.cvimage.cn/c/thump/2009/10/09/f5151da65941feb45f3bdefb0928b6da_3_500_100.jpg",
-			"http://i1.cvimage.cn/c/thump/2009/10/09/3bd9e4f25d4dd92e8d0d1672a30b2139_3_500_100.jpg",
-			"http://www.mobanwang.com/icon/UploadFiles_8971/201009/20100924235742218.png",
-			"http://pic4.nipic.com/20091211/3835230_093635079035_2.jpg",
-			"http://up.ekoooo.com/uploads2/tubiao/7/20088721564235977804.png",
-			"http://www.mobanwang.com/icon/UploadFiles_8971/201009/20100924235740442.png",
-			"http://img.article.pchome.net/00/38/18/21/pic_lib/wm/I_like_buttons_001.JPG",
-			"http://www.blueidea.com/articleimg/2006/09/4015/01.gif",
-			"http://www.85flash.com/Files/BeyondPic/2006-8/1/068118181319408.gif"
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573742.jpg",
+			"http://www.qqtai.com/qqhead/uploadfiles_3178/200901/2009011503573886.jpg",
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573759.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_14.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_6.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_7.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_2.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_4.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_1.jpg"
 			};
 	PullToRefreshView_foot mPullToRefreshView;
 	AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
@@ -134,7 +134,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
     				ImageView imageView = (ImageView)view.findViewById(R.id.darenview_image);
     				TextView textView = (TextView)view.findViewById(R.id.darenview_text);
     				Button button=(Button)view.findViewById(R.id.darenview_button);
-    				Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, list.get(index), new ImageCallBack() {  
+    				Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, list.get(index),linearlayoutWidth, new ImageCallBack() {  
   	                  
     	                @Override  
     	                public void imageLoad(ImageView imageView, Bitmap bitmap) {  
@@ -166,6 +166,9 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 							int index  =  (Integer)v.getTag();
 					    	System.out.println("click index= "+index);
 					    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
+					    	Intent intent=new Intent();
+							intent.setClass(context, OtherPersonActivity.class);
+							startActivity(intent);
 						}
 					});
     				button.setOnClickListener(new OnClickListener() {
