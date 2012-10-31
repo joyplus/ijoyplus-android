@@ -5,12 +5,12 @@
     <string name="app_name">Joy</string>
     <string name="pull_to_refresh_pull_label">下拉刷新</string>
     <string name="pull_to_refresh_release_label">松开后刷新</string>
-    <string name="pull_to_refresh_refreshing_label">刷新...</string>
+    <string name="pull_to_refresh_refreshing_label">刷新中...</string>
     
     <string name="pull_to_refresh_footer_release_label">松开后加载</string>
     <string name="pull_to_refresh_footer_pull_label">上拉加载更多...</string>
-    <string name="pull_to_refresh_footer_refreshing_label">加载...</string>
-    
+    <string name="pull_to_refresh_footer_refreshing_label">加载中...</string>
+    <string name="shaohou">请稍候</string>
     <string name="tishi">提示</string>
     <string name="shifoutuichu">是否退出程序</string>
     <string name="queding">确定</string>
@@ -117,5 +117,23 @@
        <string name="error_file">未能找到指定文件</string>
        <string name="nologin">您尚未登录是否进行登录并进行回复</string>
        <string name="nopic">Demo版：图片不存在，请于sd卡中创建一张abc.jpg图片</string>
+       <string name="photostyle">选择照片类型</string>
+       <string name="exit_true">true</string>
+       <string name="exit_false">false</string>
+       <string name="finish">完成</string>
+       <string name="Joyce">Joyce</string>
+       <string name="jianjie">简介</string>
+       <string name="dou">豆</string>
+       <string name="move_name">冰川时代</string>
+       <string name="fenshu">3601</string>
+       <string name="SINA_CONSUMER_KEY">3069972161</string>
+       <string name="SINA_CONSUMER_SECRET">eea5ede316c6a283c6bae57e52c9a877</string>
+       <string name="mAppid">222222</string>
+       <string name="CALLBACK">auth://tauth.qq.com/</string>
+       <string name="scope">get_user_info,get_user_profile,add_share,add_topic,list_album,upload_pic,add_album</string>
+       <string name="delete">删除</string>
+       <string name="huifu">回复</string>
+       <string name="pleasewait">请稍候</string>
+       <string name="loading">加载中</string>
        <!-- <友盟 -->
 </resources>

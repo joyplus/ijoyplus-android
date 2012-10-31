@@ -13,9 +13,12 @@ import com.joy.Tools.SearchAdapter;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
 import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.xp.view.o;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -70,14 +73,14 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 			};
 	private String how[] = {
 			"删除",
-			"删除",
 			"回复",
 			"删除",
 			"删除",
 			"回复",
 			"删除",
+			"回复",
 			"删除",
-			"回复"
+			"删除"
 			};
 	private String time[] = {
 			"12:34",
@@ -90,15 +93,40 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 			"14:06",
 			"10:11"
 			};
+	private String who[] = {
+			"JoyPlus",
+			"Tina",
+			"Steven",
+			"JoyPlus",
+			"Tina",
+			"Steven",
+			"JoyPlus",
+			"Tina",
+			"Steven"
+			};
+	private String what[] = {
+			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人",
+			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人",
+			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人",
+			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人",
+			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人",
+			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人",
+			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人",
+			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人",
+			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人"
+			};
 	private int page_count = 3;
 	private int current_page = 0;
     private int index =0;
     Bitmap BigBitmap;
+    ProgressDialog progressBar;
     PullToRefreshView mPullToRefreshView;
     AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
     ViewHolder	holder;
     MyAdapter adapter;
+    int select;
     List<Map<String, Object>> listItems=new ArrayList<Map<String, Object>>();
+    GetThird_AccessToken getThird_AccessToken;
     final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -109,7 +137,29 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				listView.setSelection(listView.getCount()-1);
 				break;
 			case 200:
-				
+				index=0;
+				current_page=0;
+				listItems.clear();
+				listItems=getListItems(current_page, page_count);
+				adapter.notifyDataSetChanged();
+				listView.setSelection(0);
+				break;
+			case 1001:
+				Intent intent=new Intent();
+				intent.setClass(context, OtherPersonActivity.class);
+				startActivity(intent);
+				progressBar.dismiss();
+				break;
+			case 444:
+				Intent intent1 = new Intent();
+				intent1.setClass(context, ReplyActivity.class);
+				startActivity(intent1);
+				progressBar.dismiss();
+				break;
+			case 333:
+				listItems.remove(select);
+				adapter.notifyDataSetChanged();
+				progressBar.dismiss();
 				break;
 			}
 		}
@@ -119,7 +169,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity03);
 		context=this;
-		
+		getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
 		mPullToRefreshView = (PullToRefreshView)findViewById(R.id.act03_main_pull_refresh_view);
 		mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
@@ -132,12 +182,19 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 		
 		
 	}
+	
+	@Override
+	protected void onDestroy() {
+		Tools.ClearBitmap(BigBitmap);
+		super.onDestroy();
+	}
+
 	private List<Map<String, Object>> getListItems(int pageindex, int pagecount) {
         for(int i = index; i < pagecount * (pageindex + 1)&&i<images.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>(); 
             map.put("head", R.drawable.head);
-            map.put("who", "谁"+(i+1));
-            map.put("what", "干什么"+(i+1));
+            map.put("who", who[i]);
+            map.put("what", what[i]);
             map.put("img", images[i]);
             map.put("time", time[i]);
             map.put("how", how[i]);
@@ -146,6 +203,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
         }    
         return listItems;
     }
+	//消息的按钮
 	public void Btn_goxiaoxi(View view){
 		Intent intent=new Intent();
 		intent.setClass(context, Xiaoxi.class);
@@ -157,6 +215,8 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 	  		  builder.setTitle(getResources().getString(R.string.tishi));
 	  		  builder.setMessage(getResources().getString(R.string.shifoutuichu)).setPositiveButton(getResources().getString(R.string.queding), new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
+							getThird_AccessToken.setexit(getString(R.string.exit_true));
+							getThird_AccessToken.SaveExit();
 							finish();
 				        	android.os.Process.killProcess(android.os.Process.myPid()); 
 							System.exit(0);
@@ -207,7 +267,9 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 		public TextView time;
 		public TextView viewBtn;
 		public EditText editText;
+		public RelativeLayout relativeLayout;
 	}
+	//listview的adapter
 	public class MyAdapter extends BaseAdapter{
 		
 		private LayoutInflater mInflater;
@@ -241,6 +303,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				holder.img1 = (ImageView)convertView.findViewById(R.id.dongtailistview_img);
 				holder.time = (TextView)convertView.findViewById(R.id.dongtailistview_time);
 				holder.viewBtn = (TextView)convertView.findViewById(R.id.dongtailistview_how);
+				holder.relativeLayout=(RelativeLayout)convertView.findViewById(R.id.dongtailistview_rel);
 				convertView.setTag(holder);
 			}else{
 				holder = (ViewHolder)convertView.getTag();
@@ -248,62 +311,89 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 			
 			holder.head.setBackgroundResource((Integer)listItems.get(position).get("head"));
 			holder.head.setTag((position+1));
+			//点击了头像
 			holder.head.setOnClickListener(new View.OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
+					progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
 					Toast.makeText(context, v.getTag()+"", Toast.LENGTH_SHORT).show();
-					Intent intent=new Intent();
-					intent.setClass(context, OtherPersonActivity.class);
-					startActivity(intent);
+					new Handler().postDelayed(new Runnable(){
+						@Override
+						public void run(){
+							Message msg = new Message(); 
+			                msg.what = 1001;
+			                handler.sendMessage(msg);
+						}
+					}, 1000);
+					
 				}
 			});
 			holder.title.setText((String)listItems.get(position).get("who"));
 			holder.info.setText((String)listItems.get(position).get("what"));
 				
-//				holder.img1.setBackgroundResource((Integer)listItems.get(position).get("img"));
+			Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.img1, (String)listItems.get(position).get("img"), getWindowManager().getDefaultDisplay().getWidth()/3,new ImageCallBack() {
 				
-				Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.img1, (String)listItems.get(position).get("img"), getWindowManager().getDefaultDisplay().getWidth()/3,new ImageCallBack() {
-					
-					public void imageLoad(ImageView imageView, Bitmap bitmap) {
-						BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
-						imageView.setImageBitmap(BigBitmap);
-					}
-				});
-				if (bitmap!=null) {
+				public void imageLoad(ImageView imageView, Bitmap bitmap) {
 					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
-					holder.img1.setImageBitmap(BigBitmap);
+					imageView.setImageBitmap(BigBitmap);
 				}
-				else {
-					holder.img1.setImageResource(R.drawable.pic_bg);
-				}
+			});
+			if (bitmap!=null) {
+				BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
+				holder.img1.setImageBitmap(BigBitmap);
+			}
+			else {
+				holder.img1.setImageResource(R.drawable.pic_bg);
+			}
 				
+			holder.time.setText((String)listItems.get(position).get("time"));
+			holder.viewBtn.setText((String)listItems.get(position).get("how"));
+			holder.relativeLayout.setTag((String)listItems.get(position).get("how"));
+			
+			//点击listview中的删除还是回复
+			holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
 				
-				
-				holder.time.setText((String)listItems.get(position).get("time"));
-				holder.viewBtn.setText((String)listItems.get(position).get("how"));
-				holder.viewBtn.setTag((String)listItems.get(position).get("how"));
-				
-				holder.viewBtn.setOnClickListener(new View.OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						System.out.println("v.getTag();===>"+v.getTag());
-						if (v.getTag().equals("删除")) {
-							listItems.remove(position);
-							MyAdapter.this.notifyDataSetChanged();
-							Toast.makeText(context, "删除", Toast.LENGTH_SHORT).show();
-						}
-						else if (v.getTag().equals("回复")) {
-							Toast.makeText(context, "回复", Toast.LENGTH_SHORT).show();
-							Intent intent = new Intent();
-							intent.setClass(context, ReplyActivity.class);
-							startActivity(intent);
-						}
+				@Override
+				public void onClick(View v) {
+					if (v.getTag().equals(getResources().getString(R.string.delete))) {
+						/*listItems.remove(position);
+						MyAdapter.this.notifyDataSetChanged();*/
+						select=position;
+						progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+						new Handler().postDelayed(new Runnable(){
+							@Override
+							public void run(){
+								Message msg = new Message(); 
+				                msg.what = 333;
+				                handler.sendMessage(msg);
+							}
+						}, 1000);
+					}
+					else if (v.getTag().equals(getResources().getString(R.string.huifu))) {
+						progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+						new Handler().postDelayed(new Runnable(){
+							@Override
+							public void run(){
+								Message msg = new Message(); 
+				                msg.what = 444;
+				                handler.sendMessage(msg);
+							}
+						}, 1000);
 						
 					}
-				});
+					
+				}
+			});
 			return convertView;
 		}
+	}
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

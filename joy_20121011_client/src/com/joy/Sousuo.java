@@ -8,6 +8,7 @@ import java.util.Map;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
+import com.umeng.analytics.MobclickAgent;
 
 import android.R.integer;
 import android.app.Activity;
@@ -109,6 +110,7 @@ public class Sousuo extends Activity implements OnFooterRefreshListener{
 	public void Btn_sousuo_back(View v){
 		finish();
 	}
+	//添加list
 	public void initData(){
         list = new ArrayList<String>();
         
@@ -128,6 +130,7 @@ public class Sousuo extends Activity implements OnFooterRefreshListener{
         list.add(getResources().getString(R.string.remensousuo));
         list.addAll(moreList);
     }
+	//下拉加载更多时调用的添加list
 	public void addremen(int pageindex, int pagecount){
 		navList.clear();
 		moreList.clear();
@@ -137,6 +140,7 @@ public class Sousuo extends Activity implements OnFooterRefreshListener{
         }
         list.addAll(moreList);
 	}
+	//listview的adapter
 	public static class DragListAdapter extends ArrayAdapter<String>{
 
         public DragListAdapter(Context context, List<String> objects) {
@@ -189,5 +193,13 @@ public class Sousuo extends Activity implements OnFooterRefreshListener{
 				mPullToRefreshView.onFooterRefreshComplete();
 			}
 		}, 1000);
+	}
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

@@ -1,5 +1,7 @@
 package com.joy;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,21 +19,26 @@ public class Xunzhaohaoyou extends Activity {
 		getThird_AccessToken=(GetThird_AccessToken)getApplicationContext();
 		context=this;
 	}
+	//返回按钮
 	public void Btnback(View v){
 		finish();
 	}
+	//达人推荐按钮
 	public void Btndaren(View v){
 		getThird_AccessToken.setActivitytype("2");
 		Intent intent=new Intent();
 		intent.setClass(context, Darentuijian.class);
 		startActivity(intent);
 	}
+	//新浪微博好友按钮
 	public void Btnsina(View v){
 		
 	}
+	//腾讯微博好友
 	public void Btntengxun(View v){
 		
 	}
+	//查找通讯录好友按钮
 	public void Btntongxunlu(View v){
 		Intent intent=new Intent();
 		intent.setClass(context, TongxunluList.class);
@@ -43,5 +50,15 @@ public class Xunzhaohaoyou extends Activity {
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	@Override
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	@Override
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

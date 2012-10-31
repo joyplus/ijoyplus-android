@@ -49,7 +49,29 @@ public class AsyncBitmapLoader {
                 }
                 if(i < cacheFiles.length){
                 	BitmapFactory.Options opts1 = new BitmapFactory.Options();  
-                    opts1.inSampleSize = 1;
+                	if (cacheDir.length()<20480) {
+                		opts1.inSampleSize = 1;
+                		System.out.println(1);
+					}
+                	else if (cacheDir.length()<51200) {
+                		opts1.inSampleSize = 2;
+                		System.out.println(2);
+					}
+                	else if (cacheDir.length()<307200) {
+                		opts1.inSampleSize = 4;
+                		System.out.println(4);
+					}
+                	else if (cacheDir.length()<819200) {
+                		opts1.inSampleSize = 6;
+                		System.out.println(6);
+					}
+                	else if (cacheDir.length()<1048576) {
+                		opts1.inSampleSize = 8;
+                		System.out.println(8);
+					}else {
+						opts1.inSampleSize = 10;
+						System.out.println(10);
+					}
                     Bitmap bitmap = BitmapFactory.decodeFile("/mnt/sdcard/joy/ijoyplus/" + bitmapName,opts1);
                     return bitmap;
                 }

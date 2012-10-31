@@ -1,5 +1,7 @@
 package com.joy;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -35,7 +37,6 @@ public class Yaoqing extends Activity {
 	public void Btn_Yaoqing(View v){
 		String strDestAddress=GetThird_AccessToken.getphoneNum();
 		String strMessage=getResources().getString(R.string.duanxinneirong);
-		System.out.println(strDestAddress+"/"+strMessage);
 		try {
 			SmsManager smsManager = SmsManager.getDefault();
 			PendingIntent mPI = PendingIntent.getBroadcast(
@@ -57,5 +58,15 @@ public class Yaoqing extends Activity {
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	@Override
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	@Override
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

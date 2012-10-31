@@ -59,6 +59,7 @@
      android:layout_below="@id/title"
     >
 <ScrollView
+    android:id="@+id/other_sco"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fillViewport="true"
@@ -217,7 +218,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_toRightOf="@id/oherperson_hand"
-    android:text="Joyce"
+    android:text="@string/Joyce"
     android:textColor="@color/white"
     android:textSize="25sp"
     android:layout_marginTop="130dp"

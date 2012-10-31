@@ -10,6 +10,7 @@ import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
 import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
+import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
 import android.content.Context;
@@ -109,6 +110,7 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
 			}
 		});
 	}
+	//添加list
 	private List<Map<String, Object>> getListItems(int pageindex, int pagecount) {
         for(int i = index; i < pagecount * (pageindex + 1)&&i<images.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>(); 
@@ -121,6 +123,7 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
         }    
         return listItems;
     }
+	//返回按钮
 	public void Btn_sousuojieguo_back(View v){
 		finish();
 	}
@@ -156,5 +159,13 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
 	}
 	public void Btn_dianyingjieguo(View v){
 		Toast.makeText(context, "点击的影片", Toast.LENGTH_SHORT).show();
+	}
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

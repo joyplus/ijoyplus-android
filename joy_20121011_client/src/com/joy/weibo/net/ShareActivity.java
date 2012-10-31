@@ -31,6 +31,8 @@ import com.joy.GetThird_AccessToken;
 import com.joy.Login_Activity;
 import com.joy.R;
 import com.joy.SupplementaryInformation;
+import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.MyEditText;
 import com.joy.weibo.net.AsyncWeiboRunner.RequestListener;
@@ -97,8 +99,6 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     private Button share_pinglun,xinlang_button,qq_button;
     private MyEditText fx_pl_edit;
     private FrameLayout mPiclayout;
-    private static final String SINA_CONSUMER_KEY = "3069972161";// 替换为开发者的appkey，例如"1646212960";
-	private static final String SINA_CONSUMER_SECRET = "eea5ede316c6a283c6bae57e52c9a877";
     private String mPicPath = "";
     private String mContent = "";
     private String mAccessToken = "";
@@ -106,7 +106,8 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     Dialog dialog;
     Context context;
     int sina_choice,qq_choice;
-    public String mAppid = "222222",mOpenId;//申请时分配的appid
+    AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
+    public String mOpenId;//申请时分配的appid
     public static final String EXTRA_WEIBO_CONTENT = "com.weibo.android.content";
     public static final String EXTRA_PIC_URI = "com.weibo.android.pic.uri";
     public static final String EXTRA_ACCESS_TOKEN = "com.weibo.android.accesstoken";
@@ -117,8 +118,6 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     int linearlayout_width = 0;
     int QQ_SS_Count = 0;
     private AuthReceiver receiver;
-	private String scope = "get_user_info,get_user_profile,add_share,add_topic,list_album,upload_pic,add_album";//授权范围
-	private static final String CALLBACK = "auth://tauth.qq.com/";
     final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			switch (msg.getData().getInt("msg")) {
@@ -128,6 +127,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 			}
 		}
     };
+    Bitmap newBT = null;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -145,7 +145,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
         {
         	System.out.println(getString(R.string.sinawb));
         	mPicPath = in.getStringExtra(EXTRA_PIC_URI);
-        	mContent = in.getStringExtra(EXTRA_WEIBO_CONTENT);
+        	mContent = "";
         	mAccessToken = in.getStringExtra(EXTRA_ACCESS_TOKEN);
         	mTokenSecret = in.getStringExtra(EXTRA_TOKEN_SECRET);
         	xinlang_button.setBackgroundResource(R.drawable.synchronous_sina_true);
@@ -157,14 +157,14 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
         else if (getThird_AccessToken.getQQ_Token().trim().length()!=0){
         	qq_button.setBackgroundResource(R.drawable.synchronous_qq_true);
         	qq_choice = 1;
-        	mContent = getString(R.string.pleaseenter);
+        	mContent = "";
         	mPicPath = in.getStringExtra(EXTRA_PIC_URI);
         }
         else
         {
         	sina_choice = 0;
         	qq_choice = 0;
-        	mContent = getString(R.string.pleaseenter);
+        	mContent = "";
         	mPicPath = in.getStringExtra(EXTRA_PIC_URI);
         }
       //获取新浪上传的一切值
@@ -180,16 +180,28 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
         fx_pl_edit = (MyEditText) this.findViewById(R.id.fx_pl_edit);
         ImageView imageView = (ImageView) findViewById(R.id.image_moves);
         imageView.setVisibility(View.GONE);
-        File f = null;
-        System.out.println("mPicPath====>"+mPicPath+":"+TextUtils.isEmpty(this.mPicPath));
-        if (TextUtils.isEmpty(this.mPicPath)) {
-        		f = null;
-        }
-        if (getThird_AccessToken.getButton_Name().equals(getString(R.string.fenxiang))&&f!=null) {
-        	Bitmap bt = BitmapFactory.decodeFile(mPicPath);
+        System.out.println("mPicPath====>"+mPicPath);
+//        if (TextUtils.isEmpty(this.mPicPath)) {
+//        		f = null;
+//        }
+//        else
+//        {
+//        	f = new File(this.mPicPath);
+//        }
+        if (getThird_AccessToken.getButton_Name().equals(getString(R.string.fenxiang))) {
         	imageView.setVisibility(View.VISIBLE);
-        	Bitmap newBit = BitmapZoom.bitmapZoomByWidth(bt, linearlayout_width);
-        	imageView.setImageBitmap(newBit);
+        	newBT = asyncBitmapLoader.loadBitmap(imageView, mPicPath, linearlayout_width, new ImageCallBack() {
+				
+				@Override
+				public void imageLoad(ImageView imageView, Bitmap bitmap) {
+					if (bitmap != null) {
+						imageView.setImageBitmap(bitmap);
+					}
+				}
+			});
+        	if (newBT!=null) {
+        		imageView.setImageBitmap(newBT);
+			}
         	imageView.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -255,7 +267,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 //        		}
         		if (tk==null) {
         			Weibo weibo = Weibo.getInstance();
-        			weibo.setupConsumerConfig(SINA_CONSUMER_KEY, SINA_CONSUMER_SECRET);
+        			weibo.setupConsumerConfig(getString(R.string.SINA_CONSUMER_KEY), getString(R.string.SINA_CONSUMER_SECRET));
         			// Oauth2.0
         			// 隐式授权认证方式
         			weibo.setRedirectUrl("http://www.sina.com");// 此处回调页内容应该替换为与appkey对应的应用回调页
@@ -284,7 +296,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 //        		}
         		if (str_token.length()==0) {
         			registerIntentReceivers();
-    				auth(mAppid, "_self");
+    				auth(getString(R.string.mAppid), "_self");
         		}
         		else
         		{
@@ -375,7 +387,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 		bundle.putString("y", "0-360");//照片拍摄时的地理位置的纬度。请使用原始数据（纯经纬度，0-360）。
 		//取得QQ的AccessToken值和openid值
 		//getThird_AccessToken.GetOpenID();
-		TencentOpenAPI.uploadPic(getThird_AccessToken.getQQ_Token(), mAppid, getThird_AccessToken.getOpenID(), bundle, new Callback() {
+		TencentOpenAPI.uploadPic(getThird_AccessToken.getQQ_Token(), getString(R.string.mAppid), getThird_AccessToken.getOpenID(), bundle, new Callback() {
 			
 			@Override
 			public void onSuccess(final Object obj) {
@@ -404,6 +416,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 			}
 		});
 	}
+    
     //QQ分享不包含图片
     public void uploadQQ()
     {
@@ -428,7 +441,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 		
 		//取得QQ的AccessToken值和openid值
 	//	getThird_AccessToken.GetOpenID();
-		TencentOpenAPI.addTopic(getThird_AccessToken.getQQ_Token(), mAppid, getThird_AccessToken.getOpenID(), bundle, new Callback() {
+		TencentOpenAPI.addTopic(getThird_AccessToken.getQQ_Token(), getString(R.string.mAppid), getThird_AccessToken.getOpenID(), bundle, new Callback() {
 			//因腾讯发表文字会连续调用2次返回，故我们只捕捉第2次的
 			@Override
 			public void onSuccess(final Object obj) {
@@ -456,8 +469,8 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 					@Override
 					public void run() {
 						QQ_SS_Count++;
+						System.out.println("false"+"/ret:"+ret);
 						if (QQ_SS_Count==2) {
-							System.out.println("false");
 							dialog.dismiss();
 							Toast.makeText(ShareActivity.this, getString(R.string.send_failed), Toast.LENGTH_LONG).show();
 						}
@@ -489,7 +502,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
             	}
             }
         });
-        share_pinglun.setEnabled(true);
+        //share_pinglun.setEnabled(true);
         //this.finish();
     }
 
@@ -514,7 +527,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
                                 e.getMessage()), Toast.LENGTH_LONG).show();
             }
         });
-        share_pinglun.setEnabled(true);
+        //share_pinglun.setEnabled(true);
 
     }
     //因有的机器点击评论或发送后有卡机的情况，故写一个线程控制
@@ -534,6 +547,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 			} catch (Exception e) {
 				System.out.println(1231231);
 				dialog.dismiss();
+				share_pinglun.setEnabled(true);
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}     // sleep 1000ms   
@@ -546,10 +560,13 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     		System.out.println("SINA");
     		Weibo weibo = Weibo.getInstance();
     		try {
+    			System.out.println("weibo.getAccessToken().getToken()===>"+weibo.getAccessToken().getToken());
+    			System.out.println(!TextUtils.isEmpty((String) (weibo.getAccessToken().getToken())));
     			if (!TextUtils.isEmpty((String) (weibo.getAccessToken().getToken()))) {
     				this.mContent = fx_pl_edit.getText().toString();
     				if (!TextUtils.isEmpty(mPicPath)) {
     					//uploadPic(mPicPath);
+    					System.out.println("pic");
     					upload(weibo, Weibo.getAppKey(), this.mPicPath, this.mContent, "", "");
     					
     				} else {
@@ -557,11 +574,12 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 //                	System.out.println("Weibo.getAppKey()===>"+Weibo.getAppKey());
 //                	System.out.println("mContent====>"+mContent);
     					//uploadQQ();
+    					System.out.println("no pic");
     					 update(weibo, Weibo.getAppKey(), mContent, "", "");
     				}
     			} else {
     				dialog.dismiss();
-    				share_pinglun.setEnabled(true);
+    				//share_pinglun.setEnabled(true);
     				Toast.makeText(this, this.getString(R.string.please_login), Toast.LENGTH_LONG).show();
     			}
     		} 
@@ -610,7 +628,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
   			String token = values.getString("access_token");
   			String expires_in = values.getString("expires_in");
   			System.out.println("expires_in=====>"+expires_in);
-  			AccessToken accessToken = new AccessToken(token, SINA_CONSUMER_SECRET);
+  			AccessToken accessToken = new AccessToken(token, getString(R.string.SINA_CONSUMER_SECRET));
   			accessToken.setExpiresIn(expires_in);
   			Weibo.getInstance().setAccessToken(accessToken);
   			getThird_AccessToken.setSinaToken(accessToken);
@@ -647,9 +665,9 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 		Intent intent = new Intent(context, com.tencent.tauth.TAuthView.class);
 		
 		intent.putExtra(TAuthView.CLIENT_ID, clientId);
-		intent.putExtra(TAuthView.SCOPE, scope);
+		intent.putExtra(TAuthView.SCOPE, getString(R.string.scope));
 		intent.putExtra(TAuthView.TARGET, target);
-		intent.putExtra(TAuthView.CALLBACK, CALLBACK);
+		intent.putExtra(TAuthView.CALLBACK, getString(R.string.CALLBACK));
 		startActivity(intent);
 		
 	}
@@ -659,6 +677,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     	if (receiver != null) {
         	unregisterIntentReceivers();
     	}
+    	Tools.ClearBitmap(newBT);
     }
     
     //初始化广播
@@ -741,10 +760,10 @@ public class AuthReceiver extends BroadcastReceiver {
     }
 	public boolean satisfyConditions() {
 		return 	mAccessToken != null && 
-				mAppid != null && 
+				getString(R.string.mAppid) != null && 
 				mOpenId != null && 
 				!mAccessToken.equals("") && 
-				!mAppid.equals("") && 
+				!getString(R.string.mAppid).equals("") && 
 				!mOpenId.equals("");
 	}
 	
@@ -761,6 +780,7 @@ public class AuthReceiver extends BroadcastReceiver {
 		
 		return dialog;
 	}
+	
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
     	switch(keyCode){
         case KeyEvent.KEYCODE_BACK:

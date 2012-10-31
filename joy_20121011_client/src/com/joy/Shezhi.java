@@ -1,23 +1,30 @@
 package com.joy;
 
 
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.UMFeedbackService;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Shezhi extends Activity {
 	Context context;
 	GetThird_AccessToken getThird_AccessToken;
+	TextView name;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.shezhi);
 		context=this;
 		getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
+		name=(TextView)findViewById(R.id.shezhi_name);
+		name.setText(getResources().getString(R.string.zhuxiao)+"Name");//Name是你的帐号
 	}
 	public void Btn_back(View v){
 		finish();
@@ -40,13 +47,19 @@ public class Shezhi extends Activity {
 		startActivity(intent);
 		((Activity04) getThird_AccessToken.getcontext()).finish();
 		finish();
+		UMFeedbackService.setGoBackButtonVisible();
+		UMFeedbackService
+		.openUmengFeedbackSDK(Shezhi.this);
 	}
+	//查找/添加好友按钮
 	public void Btn_chazhao(View v){
 		
 	}
+	//意见反馈按钮
 	public void Btn_yijianfankui(View v){
 		
 	}
+	//关于我们按钮
 	public void Btn_guanyuwomen(View v){
 		
 	}
@@ -56,5 +69,13 @@ public class Shezhi extends Activity {
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

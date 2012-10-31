@@ -67,6 +67,7 @@
     android:layout_height="fill_parent" 
     android:layout_below="@id/darentuijian_lin"
     android:layout_above="@id/darentuijian_guanzhu"
+    android:layout_marginBottom="20dp"
     android:orientation="vertical">
 <ScrollView
     android:layout_width="fill_parent"

@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.MyGridView;
+import com.joy.Tools.Tools;
 import com.joy.oauthTools.ConfigUtil;
 import com.joy.oauthTools.OAuth;
 import com.joy.view.PullToRefreshView;
@@ -15,6 +18,7 @@ import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
 import com.joy.weibo.net.ShareActivity;
 import com.joy.weibo.net.Weibo;
 import com.joy.weibo.net.WeiboException;
+import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,6 +26,7 @@ import android.app.TabActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,11 +57,13 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 	LinearLayout myGridView;
 	SimpleAdapter adapter;
 	List<Map<String, Object>> items;
+	TextView nameTextView;
 	Map<String, Object> item;
 	int juji = 21;
 	int button_wigth = 60;
 	int lin_han = 0;
 	LinearLayout detail_all_comment;
+	ImageView pic;
 	String user_name[]={"张3","张4","张5","张6","张7","张8","张9","张0"};
 	String user_content[]={"XXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"};
     String user_time[] = {"12:45","12:46","12:47","12:48","12:49","12:50","12:51","12:52"};
@@ -66,6 +73,8 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
     int pinglun_nub = 5;
     int count = 0;
     int page = 0;
+    Bitmap bitmap;
+    AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
     GetThird_AccessToken getThird_AccessToken;
     final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
@@ -97,7 +106,8 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
     	findViewById(R.id.comment).setOnClickListener(this);
     	findViewById(R.id.share).setOnClickListener(this);
     	findViewById(R.id.login_goback).setOnClickListener(this);
-    	findViewById(R.id.detail_Move_Name).setOnClickListener(this);
+    	nameTextView=(TextView)findViewById(R.id.detail_Move_Name);
+    	nameTextView.setText(getThird_AccessToken.getPicName());
     	findViewById(R.id.briefintroduction).setOnClickListener(this);
     	findViewById(R.id.detail_seen_nub).setOnClickListener(this);
     	findViewById(R.id.detail_favorite_nub).setOnClickListener(this);
@@ -107,7 +117,26 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
     	mPullToRefreshView = (PullToRefreshView) findViewById(R.id.detail_main_pull_refresh_view);
     	mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
-        findViewById(R.id.detail_beijing).setOnClickListener(this);
+        pic=(ImageView)findViewById(R.id.detail_beijing);
+        pic.setOnClickListener(this);
+        bitmap=asyncBitmapLoader.loadBitmap(pic, getThird_AccessToken.getPicURL(), getWindowManager().getDefaultDisplay().getWidth(), new ImageCallBack() {
+			
+			@Override
+			public void imageLoad(ImageView imageView, Bitmap bitmap) {
+				if (bitmap==null) {
+					imageView.setImageResource(R.drawable.zhuyebg);
+				}
+				else {
+					imageView.setImageBitmap(bitmap);
+				}
+			}
+		});
+        if (bitmap==null) {
+			pic.setImageResource(R.drawable.zhuyebg);
+		}
+        else {
+			pic.setImageBitmap(bitmap);
+		}
     }
     
     public void into_juji()
@@ -278,11 +307,13 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			getThird_AccessToken.setButton_Name(getString(R.string.fenxiang));
 			file = Environment.getExternalStorageDirectory();
             sdPath = file.getAbsolutePath();
+            String picName=getThird_AccessToken.getPicURL().substring(getThird_AccessToken.getPicURL().lastIndexOf("/") + 1);    
             // 请保证SD卡根目录下有这张图片文件
-            picPath = sdPath + "/" + "abc.jpg";
+            picPath = sdPath + "/joy/ijoyplus/"+picName;
+            
             picFile = new File(picPath);
             if (!picFile.exists()) {
-                Toast.makeText(context, "图片" + picPath + "不存在！", Toast.LENGTH_SHORT)
+                Toast.makeText(context, getString(R.string.nopic), Toast.LENGTH_SHORT)
                         .show();
                 picPath = null;
             }
@@ -330,7 +361,8 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 	}
 	private void share2weibo(String content, String picPath) throws WeiboException {
         Weibo weibo = Weibo.getInstance();
-       // System.out.println("weibo.getAccessToken().getSecret():"+weibo.getAccessToken().getSecret());
+        System.out.println("weibo.getAccessToken().getSecret():"+weibo.getAccessToken().getSecret());
+        System.out.println("weibo.getAccessToken().token():"+weibo.getAccessToken().getToken());
         weibo.share2weibo(this, weibo.getAccessToken().getToken(), weibo.getAccessToken()
                 .getSecret(), content, picPath);
     }
@@ -375,4 +407,18 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
     	}
         return true;
     }
+	
+	@Override
+	protected void onDestroy() {
+		Tools.ClearBitmap(bitmap);
+		super.onDestroy();
+	}
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
+	}
 }

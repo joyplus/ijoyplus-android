@@ -98,6 +98,7 @@
     android:layout_above="@id/welcome_denglu"
     android:orientation="vertical">
 <ScrollView
+    android:id="@+id/welcome_sco"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fillViewport="true"

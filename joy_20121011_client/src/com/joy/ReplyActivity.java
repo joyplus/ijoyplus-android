@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.umeng.analytics.MobclickAgent;
+
 
 import android.app.Activity;
 import android.content.Context;
@@ -159,4 +161,12 @@ public class ReplyActivity extends Activity{
     	}
         return true;
     }
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
+	}
 }

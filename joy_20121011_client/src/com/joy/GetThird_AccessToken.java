@@ -5,7 +5,7 @@ import com.joy.weibo.net.AccessToken;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-
+import com.joy.weibo.net.*;
 public class GetThird_AccessToken extends Application {
 	String AccessToken = "";
 	String VerificationCode = "";
@@ -21,14 +21,63 @@ public class GetThird_AccessToken extends Application {
 	String QQ_Token = "";
 	String QQ_OpenID = "";
 	int bitmapW=0;
-	
+	WeiboDialogListener WeiboDialogListener;
 	Context context;
 	String go_detail = "";
 	
 	int mTab_Where = 0;
 	int mTab_ID = R.id.channel1;
+	String url = "";
+	
+	Weibo Weibo;
+	
+	String exit = "false";
+	String PicName="";
+	String PicURL="";
 	
 	
+	
+	public String getPicURL(){
+		return PicURL;
+	}
+	public void setPicURL(String p){
+		PicURL=p;
+	}
+	public String getPicName(){
+		return PicName;
+	}
+	public void setPicName(String p){
+		PicName=p;
+	}
+	public void setexit(String exit){
+		this.exit=exit;
+	}
+	public String getexit(){
+		return exit;
+	}
+	
+	
+	public void setWeibo(Weibo Weibo){
+		this.Weibo=Weibo;
+	}
+	public Weibo getWeibo(){
+		return Weibo;
+	}
+	
+	public void seturl(String url){
+		this.url=url;
+	}
+	public String geturl(){
+		return url;
+	}
+	
+	
+	public WeiboDialogListener getWeiboDialogListener(){
+		return WeiboDialogListener;
+	}
+	public void setWeiboDialogListener(WeiboDialogListener WeiboDialogListener){
+		this.WeiboDialogListener=WeiboDialogListener;
+	}
 	
 	public int getbitmapW(){
 		return bitmapW;
@@ -103,7 +152,15 @@ public class GetThird_AccessToken extends Application {
 	}
 	
 	String IMG_Name="";
+	String Name_URL="";
 	
+	
+	public String getName_URL(){
+		return Name_URL;
+	}
+	public void setName_URL(String n){
+		Name_URL=n;
+	}
 	public String getIMG_Name(){
 		return IMG_Name;
 	}
@@ -187,6 +244,17 @@ public class GetThird_AccessToken extends Application {
 		return VerificationCode;
 	}
 	
+	public void SaveName(String where)
+	{
+		SharedPreferences.Editor sharedatab = getSharedPreferences("Name", 0).edit();
+		sharedatab.putString("Name_URL"+where, Name_URL);
+		sharedatab.commit();
+	}
+	public void GetName(String where)
+	{
+		SharedPreferences sharedata = getSharedPreferences("Name", 0);
+		Name_URL=sharedata.getString("Name_URL"+where, "");
+	}
 	public void SaveImageName(String where)
 	{
 		SharedPreferences.Editor sharedatab = getSharedPreferences("IMG", 0).edit();
@@ -246,5 +314,17 @@ public class GetThird_AccessToken extends Application {
 	{
 		SharedPreferences sharedata = getSharedPreferences("OpenID", 0);
 		OpenID=sharedata.getString("OpenID", "");
+	}
+	//是否正常退出
+	public void SaveExit()
+	{
+		SharedPreferences.Editor sharedatab = getSharedPreferences("Exit", 0).edit();
+		sharedatab.putString("Exit", exit);
+		sharedatab.commit();
+	}
+	public void GetExit()
+	{
+		SharedPreferences sharedata = getSharedPreferences("Exit", 0);
+		exit=sharedata.getString("Exit", "");
 	}
 }

@@ -1,14 +1,19 @@
 package com.joy;
 
+import com.joy.Tools.Tools;
 import com.joy.oauthTools.ConfigUtil;
 import com.joy.oauthTools.OAuth;
+import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -20,7 +25,7 @@ import android.widget.TextView;
 
 public class JoyActivity extends TabActivity implements OnClickListener{
 	private final String LOGTAG = "AccessToken";
-	
+	ProgressDialog progressBar;
 	public static String TAB_TAG_HOME = "zhengzailiuxing";
 	public static String TAB_TAG_CHANNEL = "haoyoutuijian";
 	public static String TAB_TAG_ACCOUNT = "donttaitixing";
@@ -34,12 +39,37 @@ public class JoyActivity extends TabActivity implements OnClickListener{
 
 	int mCurTabId = R.id.channel1;
 	GetThird_AccessToken getThird_AccessToken;
+	final Handler handler = new Handler(){
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case 1:
+				mTabHost.setCurrentTabByTag(TAB_TAG_HOME);
+				progressBar.dismiss();
+				break;
+			case 2:
+				mTabHost.setCurrentTabByTag(TAB_TAG_CHANNEL);
+				progressBar.dismiss();
+				break;
+			case 3:
+				mTabHost.setCurrentTabByTag(TAB_TAG_SEARCH);
+				progressBar.dismiss();
+				break;
+			case 4:
+				mTabHost.setCurrentTabByTag(TAB_TAG_ACCOUNT);
+				progressBar.dismiss();
+				break;
+			}
+		}
+	};
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.tab);
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
+        getThird_AccessToken.setexit(getString(R.string.exit_false));
+        getThird_AccessToken.SaveExit();
         getThird_AccessToken.setwhere_gologin(2);
         prepareIntent();
 		setupIntent();
@@ -113,51 +143,84 @@ public class JoyActivity extends TabActivity implements OnClickListener{
 		mBut3.setImageResource(R.drawable.icon3);
 		mBut4.setImageResource(R.drawable.icon4);
 		int checkedId = v.getId();
-		/*final boolean o;
-		if (mCurTabId < checkedId) {
-			o=true;
-		}
-		else {
-			o=false;
-		}
-		if (o) {
-			
-		}*/
-		
 		switch (checkedId) {
 		case R.id.channel1:
-			mTabHost.setCurrentTabByTag(TAB_TAG_HOME);
 			mBut1.setImageResource(R.drawable.icon1);
 			linearLayout1.setBackgroundResource(R.drawable.bottom_onclick);
 			linearLayout2.setBackgroundColor(Color.parseColor("#000000"));
 			linearLayout3.setBackgroundColor(Color.parseColor("#000000"));
 			linearLayout4.setBackgroundColor(Color.parseColor("#000000"));
+			progressBar = ProgressDialog.show(JoyActivity.this, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+			new Handler().postDelayed(new Runnable(){
+				@Override
+				public void run(){
+					Message msg = new Message(); 
+	                msg.what = 1; 
+	                handler.sendMessage(msg); 
+				}
+			}, 1000);
+			
 			break;
 		case R.id.channel2:
-			mTabHost.setCurrentTabByTag(TAB_TAG_CHANNEL);
 			mBut2.setImageResource(R.drawable.icon2);
 			linearLayout2.setBackgroundResource(R.drawable.bottom_onclick);
 			linearLayout1.setBackgroundColor(Color.parseColor("#000000"));
 			linearLayout3.setBackgroundColor(Color.parseColor("#000000"));
 			linearLayout4.setBackgroundColor(Color.parseColor("#000000"));
+			progressBar = ProgressDialog.show(JoyActivity.this, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+			new Handler().postDelayed(new Runnable(){
+				@Override
+				public void run(){
+					Message msg = new Message(); 
+	                msg.what = 2; 
+	                handler.sendMessage(msg); 
+				}
+			}, 1000);
+			
 			break;
 		case R.id.channel3:
-			mTabHost.setCurrentTabByTag(TAB_TAG_SEARCH);
 			mBut3.setImageResource(R.drawable.icon3);
 			linearLayout3.setBackgroundResource(R.drawable.bottom_onclick);
 			linearLayout1.setBackgroundColor(Color.parseColor("#000000"));
 			linearLayout2.setBackgroundColor(Color.parseColor("#000000"));
 			linearLayout4.setBackgroundColor(Color.parseColor("#000000"));
+			progressBar = ProgressDialog.show(JoyActivity.this, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+			new Handler().postDelayed(new Runnable(){
+				@Override
+				public void run(){
+					Message msg = new Message(); 
+	                msg.what = 3; 
+	                handler.sendMessage(msg); 
+				}
+			}, 1000);
+			
 			break;
 		case R.id.channel4:
-			mTabHost.setCurrentTabByTag(TAB_TAG_ACCOUNT);
 			mBut4.setImageResource(R.drawable.icon4);
 			linearLayout4.setBackgroundResource(R.drawable.bottom_onclick);
 			linearLayout1.setBackgroundColor(Color.parseColor("#000000"));
 			linearLayout3.setBackgroundColor(Color.parseColor("#000000"));
 			linearLayout2.setBackgroundColor(Color.parseColor("#000000"));
+			progressBar = ProgressDialog.show(JoyActivity.this, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+			new Handler().postDelayed(new Runnable(){
+				@Override
+				public void run(){
+					Message msg = new Message(); 
+	                msg.what = 4; 
+	                handler.sendMessage(msg); 
+				}
+			}, 1000);
+			
 			break;
 		}
 		mCurTabId = checkedId;
+	}
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

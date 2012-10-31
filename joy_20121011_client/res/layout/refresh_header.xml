@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:paddingBottom="15dip"
+    android:paddingBottom="10dip"
     android:paddingTop="10dip" >
 
     <ProgressBar

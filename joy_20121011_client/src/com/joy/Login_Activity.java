@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -31,18 +32,13 @@ import com.tencent.tauth.TencentOpenAPI;
 import com.tencent.tauth.bean.OpenId;
 import com.tencent.tauth.http.Callback;
 import com.tencent.tauth.http.TDebug;
+import com.umeng.analytics.MobclickAgent;
 
 
 public class Login_Activity extends Activity implements OnClickListener{
 	Context context;
 	EditText login_user_edit,login_passwd_edit;
 	GetThird_AccessToken getThird_AccessToken;
-	private static final String SINA_CONSUMER_KEY = "3069972161";// 替换为开发者的appkey，例如"1646212960";
-	private static final String SINA_CONSUMER_SECRET = "eea5ede316c6a283c6bae57e52c9a877";
-	private static final String CALLBACK = "auth://tauth.qq.com/";
-	
-	public String mAppid = "222222";//申请时分配的appid
-	private String scope = "get_user_info,get_user_profile,add_share,add_topic,list_album,upload_pic,add_album";//授权范围
 	private AuthReceiver receiver;
 	
 	public String mAccessToken, mOpenId;
@@ -84,7 +80,7 @@ public class Login_Activity extends Activity implements OnClickListener{
 			getThird_AccessToken.GetAccessToken();
 			if (getThird_AccessToken.getAccessToken().trim().length()==0) {
 				Weibo weibo = Weibo.getInstance();
-				weibo.setupConsumerConfig(SINA_CONSUMER_KEY, SINA_CONSUMER_SECRET);
+				weibo.setupConsumerConfig(getString(R.string.SINA_CONSUMER_KEY), getString(R.string.SINA_CONSUMER_SECRET));
 				// Oauth2.0
 				// 隐式授权认证方式
 				weibo.setRedirectUrl("http://www.sina.com");// 此处回调页内容应该替换为与appkey对应的应用回调页
@@ -96,11 +92,11 @@ public class Login_Activity extends Activity implements OnClickListener{
 			}
 			else
 			{
-				Weibo.getInstance().setupConsumerConfig(SINA_CONSUMER_KEY, SINA_CONSUMER_SECRET);
+				Weibo.getInstance().setupConsumerConfig(getString(R.string.SINA_CONSUMER_KEY), getString(R.string.SINA_CONSUMER_SECRET));
 				getThird_AccessToken.setAccessToken(getThird_AccessToken.getAccessToken().trim());
 				getThird_AccessToken.GetExpires_in();
 				Utility.setAuthorization(new Oauth2AccessTokenHeader());
-				AccessToken accessToken = new AccessToken(getThird_AccessToken.getAccessToken().trim(), SINA_CONSUMER_SECRET);
+				AccessToken accessToken = new AccessToken(getThird_AccessToken.getAccessToken().trim(), getString(R.string.SINA_CONSUMER_SECRET));
 				accessToken.setExpiresIn(getThird_AccessToken.getExpires_in());
 				Weibo.getInstance().setAccessToken(accessToken);
 				
@@ -116,18 +112,18 @@ public class Login_Activity extends Activity implements OnClickListener{
 		case R.id.QQ_weibo:
 			//Toast.makeText(context, "尚未开放", Toast.LENGTH_SHORT).show();
 			getThird_AccessToken.setlogin_where(getString(R.string.tencent));
-			getThird_AccessToken.GetAccessToken();
-			if (getThird_AccessToken.getAccessToken().trim().length()==0) {
-				getThird_AccessToken.setAccessToken("");
+			getThird_AccessToken.GetQQAccessToken();
+			if (getThird_AccessToken.getQQ_Token().trim().length()==0) {
+				getThird_AccessToken.setQQ_Token("");
 				registerIntentReceivers();
-				auth(mAppid, "_self");
+				auth(getString(R.string.mAppid), "_self");
 //				conf.initQqData();
 //				intent.setClass(context, Third_PartyActivity.class);
 //				startActivity(intent);
 			}
 			else
 			{
-				getThird_AccessToken.setAccessToken(getThird_AccessToken.getAccessToken().trim());
+				getThird_AccessToken.setQQ_Token(getThird_AccessToken.getQQ_Token().trim());
 				intent.setClass(context, JoyActivity.class);
 				startActivity(intent);
 				finish();
@@ -157,9 +153,9 @@ public class Login_Activity extends Activity implements OnClickListener{
 		Intent intent = new Intent(context, com.tencent.tauth.TAuthView.class);
 		
 		intent.putExtra(TAuthView.CLIENT_ID, clientId);
-		intent.putExtra(TAuthView.SCOPE, scope);
+		intent.putExtra(TAuthView.SCOPE, getString(R.string.scope));
 		intent.putExtra(TAuthView.TARGET, target);
-		intent.putExtra(TAuthView.CALLBACK, CALLBACK);
+		intent.putExtra(TAuthView.CALLBACK, getString(R.string.CALLBACK));
 		startActivity(intent);
 		
 	}
@@ -247,10 +243,10 @@ public class AuthReceiver extends BroadcastReceiver {
     }
 	public boolean satisfyConditions() {
 		return 	mAccessToken != null && 
-				mAppid != null && 
+				getString(R.string.mAppid) != null && 
 				mOpenId != null && 
 				!mAccessToken.equals("") && 
-				!mAppid.equals("") && 
+				!getString(R.string.mAppid).equals("") && 
 				!mOpenId.equals("");
 	}
 	
@@ -277,7 +273,7 @@ public class AuthReceiver extends BroadcastReceiver {
 			String token = values.getString("access_token");
 			String expires_in = values.getString("expires_in");
 			System.out.println("expires_in=====>"+expires_in);
-			AccessToken accessToken = new AccessToken(token, SINA_CONSUMER_SECRET);
+			AccessToken accessToken = new AccessToken(token, getString(R.string.SINA_CONSUMER_SECRET));
 			accessToken.setExpiresIn(expires_in);
 			Weibo.getInstance().setAccessToken(accessToken);
 			Intent intent = new Intent();
@@ -319,4 +315,12 @@ public class AuthReceiver extends BroadcastReceiver {
     	}
         return true;
     }
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
+	}
 }

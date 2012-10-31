@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
 import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
+import com.umeng.analytics.MobclickAgent;
 
 
 
@@ -104,6 +106,7 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
 			"六周前",
 			"七周前"
 			};
+    ProgressDialog progressBar;
     final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -114,7 +117,17 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
 				listView.setSelection(listView.getCount()-1);
 				break;
 			case 200:
-				
+				listItems.clear();
+				current_page=0;
+				index=0;
+				listItems=getListItems(current_page, page_count);
+				adapter.notifyDataSetChanged();
+				break;
+			case 1001:
+				Intent intent=new Intent();
+				intent.setClass(context, OtherPersonActivity.class);
+				startActivity(intent);
+				progressBar.dismiss();
 				break;
 			}
 		}
@@ -133,9 +146,7 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
 		adapter=new MyAdapter(context);
 		listView.setAdapter(adapter); 
 	}
-	
-	
-	
+	//添加list
 	private List<Map<String, Object>> getListItems(int pageindex, int pagecount) {
         for(int i = index; i < pagecount * (pageindex + 1)&&i<time.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>(); 
@@ -145,7 +156,7 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
             map.put("who", who[i]);
             map.put("huifudata", huifudata[i]);
             map.put("huifutime", huifutime[i]);
-            map.put("how", "回复");
+            map.put("how", getResources().getString(R.string.huifu));
             map.put("time", time[i]);
             listItems.add(map);
             index++;
@@ -194,6 +205,7 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
 		public TextView time;
 		public LinearLayout layout;
 	}
+	//listview的adapter
 	public class MyAdapter extends BaseAdapter{
 		
 		private LayoutInflater mInflater;
@@ -242,10 +254,17 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
 				
 				@Override
 				public void onClick(View v) {
+					progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
 					Toast.makeText(context, v.getTag()+"", Toast.LENGTH_SHORT).show();
-					Intent intent=new Intent();
-					intent.setClass(context, OtherPersonActivity.class);
-					startActivity(intent);
+					new Handler().postDelayed(new Runnable(){
+						@Override
+						public void run(){
+							Message msg = new Message(); 
+			                msg.what = 1001; 
+			                handler.sendMessage(msg); 
+						}
+					}, 1000);
+					
 				}
 			});
 			holder.title.setText((String)listItems.get(position).get("title"));
@@ -271,5 +290,15 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	@Override
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	@Override
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

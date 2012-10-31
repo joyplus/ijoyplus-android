@@ -10,8 +10,10 @@ import com.joy.Tools.Tools;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
+import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,8 +24,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +39,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 	Context context;
 	Button btn_allguanzhu,btn_xiayibu;
 	RelativeLayout btn_back;;
+	ProgressDialog progressBar;
 	private  LinearLayout linearLayout1 = null;
     private  LinearLayout linearLayout2 = null;
     private  LinearLayout linearLayout3 = null;
@@ -57,6 +62,17 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_4.jpg",
 			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_1.jpg"
 			};
+	private String names[] = {
+			"名字1",
+			"名字2",
+			"名字3",
+			"名字4",
+			"名字5",
+			"名字6",
+			"名字7",
+			"名字8",
+			"名字9"
+			};
 	PullToRefreshView_foot mPullToRefreshView;
 	AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
 	final Handler handler = new Handler(){
@@ -65,6 +81,19 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 			switch (msg.what) {
 			case 1500:
 				addBitmaps(++current_page, page_count,images);
+				break;
+			case 300:
+				progressBar.dismiss();
+				Intent intent=new Intent();
+				intent.setClass(context, JoyActivity.class);
+				startActivity(intent);
+				finish();
+				break;
+			case 999:
+				Intent intent1=new Intent();
+				intent1.setClass(context, OtherPersonActivity.class);
+				startActivity(intent1);
+				progressBar.dismiss();
 				break;
 			}
 		}
@@ -101,10 +130,15 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent=new Intent();
-				intent.setClass(context, JoyActivity.class);
-				startActivity(intent);
-				finish();
+				progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+				new Handler().postDelayed(new Runnable(){
+					@Override
+					public void run(){
+						Message msg = new Message(); 
+		                msg.what = 300; 
+		                handler.sendMessage(msg); 
+					}
+				}, 1000);
 			}
 		});
         btn_allguanzhu.setOnClickListener(new OnClickListener() {
@@ -122,7 +156,12 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 			}
 		});
 	}
-
+	@Override
+	protected void onDestroy() {
+		Tools.ClearBitmap(bitmap2);
+		super.onDestroy();
+	}
+	//界面中加载图片
 	private void addBitmaps(int pageindex, int pagecount,String img[]){
 		list=Arrays.asList(img);
 		LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -131,14 +170,14 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
     			try {
     				final View view=inflater.inflate(R.layout.darenview, null);
     				RelativeLayout rll = (RelativeLayout)view. findViewById(R.id.RelativeLayout03);
-    				ImageView imageView = (ImageView)view.findViewById(R.id.darenview_image);
+    				final ImageView imageView = (ImageView)view.findViewById(R.id.darenview_image);
     				TextView textView = (TextView)view.findViewById(R.id.darenview_text);
     				Button button=(Button)view.findViewById(R.id.darenview_button);
     				Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, list.get(index),linearlayoutWidth, new ImageCallBack() {  
   	                  
     	                @Override  
     	                public void imageLoad(ImageView imageView, Bitmap bitmap) {  
-    	                	Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    	                	bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
         					imageView.setImageBitmap(bitmap2);
                             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
                             layoutParams.setMargins(4, 1, 4, 1);
@@ -150,7 +189,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
     					imageView.setImageResource(R.drawable.pic_bg);
 					}
     				else {
-    					Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    					bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
     					imageView.setImageBitmap(bitmap2);
                         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
                         layoutParams.setMargins(4, 1, 4, 1);
@@ -159,18 +198,37 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 					}
     				textView.setText("第"+(index+1)+"张");
     				button.setId(index*100);
-    				imageView.setOnClickListener(new OnClickListener() {
+    				//点击了头像，用到ontouch方法是为了有点击效果
+    				imageView.setOnTouchListener(new OnTouchListener() {
 						
 						@Override
-						public void onClick(View v) {
-							int index  =  (Integer)v.getTag();
-					    	System.out.println("click index= "+index);
-					    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
-					    	Intent intent=new Intent();
-							intent.setClass(context, OtherPersonActivity.class);
-							startActivity(intent);
+						public boolean onTouch(View v, MotionEvent event) {
+							switch (event.getAction()) {
+							case MotionEvent.ACTION_UP:
+								int index  =  (Integer)v.getTag();
+						    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
+						    	Tools.changeLight(imageView, 0);
+						    	progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+								new Handler().postDelayed(new Runnable(){
+									@Override
+									public void run(){
+										Message msg = new Message(); 
+						                msg.what = 999; 
+						                handler.sendMessage(msg); 
+									}
+								}, 1000);
+								break;
+							case MotionEvent.ACTION_DOWN:
+								Tools.changeLight(imageView, -50);
+								break;
+							case MotionEvent.ACTION_CANCEL:
+								Tools.changeLight(imageView, 0);
+								break;
+							}
+							return true;
 						}
 					});
+    				//关注按钮
     				button.setOnClickListener(new OnClickListener() {
 						
 						@Override
@@ -207,6 +265,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 			System.out.println(e.toString());
 		}
     }
+	//保存URL地址，没网络的情况从内存拿之前保存过的地址来显示图片
 	public String[] SetSaveData(String where,String URL[]){
 		if (Tools.isNetworkAvailable(context)==false) {
         	getThird_AccessToken.GetImageName(where);
@@ -256,6 +315,14 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 				mPullToRefreshView.onFooterRefreshComplete();
 			}
 		}, 1000);
+	}
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }
 

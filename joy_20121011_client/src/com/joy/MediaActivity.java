@@ -2,6 +2,8 @@ package com.joy;
 
 import java.io.IOException;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.media.AudioManager;
@@ -102,4 +104,12 @@ public class MediaActivity extends Activity implements
             this.mediaPlayer = null;
         }
     }
+    public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
+	}
 }

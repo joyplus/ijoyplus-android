@@ -3,6 +3,8 @@ package com.joy;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -63,6 +65,8 @@ public class SupplementaryInformation extends Activity {
 						getThird_AccessToken.setExpires_in(getIntent().getStringExtra("expires_in"));
 						getThird_AccessToken.SaveAccessToken();
 						getThird_AccessToken.SaveExpires_in();
+						System.out.println("getIntent().getStringExtra(\"token\")====>"+getIntent().getStringExtra("token"));
+						System.out.println("getIntent().getStringExtra(\"expires_in\")====>"+getIntent().getStringExtra("expires_in"));
 					}
 					//QqTOKEN
 					else if (getThird_AccessToken.getlogin_where().equals(getString(R.string.tencent))) 
@@ -121,4 +125,12 @@ public class SupplementaryInformation extends Activity {
     	}
         return true;
     }
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
+	}
 }

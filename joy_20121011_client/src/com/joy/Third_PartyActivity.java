@@ -4,6 +4,7 @@ package com.joy;
 
 import com.joy.oauthTools.ConfigUtil;
 import com.joy.oauthTools.OAuth;
+import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -29,7 +30,7 @@ public class Third_PartyActivity extends Activity {
 	    setContentView(R.layout.third_party);
 	    getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
 	    context = this;
-	    progressBar = ProgressDialog.show(context, "请稍等", "加载中...");
+	    progressBar = ProgressDialog.show(context, getString(R.string.pleasewait), getString(R.string.loading));
 	    //init
 	    OAuth  oAuth = OAuth.getInstance();
 	    oAuth.clear();
@@ -57,7 +58,7 @@ public class Third_PartyActivity extends Activity {
 		private int index = 0;
 		@Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			progressBar = ProgressDialog.show(context, "请稍等", "加载中...");
+			progressBar = ProgressDialog.show(context, getString(R.string.pleasewait), getString(R.string.loading));
 			view.loadUrl(url);
 			view.reload();
 			return true;
@@ -103,5 +104,15 @@ public class Third_PartyActivity extends Activity {
                 progressBar.dismiss();  
             }
         }
+	}
+	@Override
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	@Override
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

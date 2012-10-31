@@ -140,6 +140,7 @@
 	 android:maxLength="120"
 	 android:paddingLeft="3sp"
 	 android:gravity="left|top"
+	 android:hint="@string/pleaseenter"
     />
 
 </RelativeLayout>

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -47,17 +48,19 @@ import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
+import com.umeng.analytics.MobclickAgent;
 
 
 public class Activity04 extends Activity implements OnFooterRefreshListener{
 	private  LinearLayout linearLayout1 = null;
     private  LinearLayout linearLayout2 = null;
     private  LinearLayout linearLayout3 = null;
+    private ScrollView	scrollView;
     Button btn_kanguodeyingpian,btn_shoucangdeyingpian,btn_tuijiandeyingpian;
     LinearLayout guanzhu,fensi;
     private int USE_LINEAR_INTERVAL = 0;
     private int linearlayoutWidth = 0;
-	private int page_count = 9;// 每次加载x张图片
+	private int page_count = 6;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
     private int index =0;
     List<String> list;
@@ -67,6 +70,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
     String bitString[]={"拍照","相册"};
     private File mCurrentPhotoFile;
     GetThird_AccessToken getThird_AccessToken;
+    ProgressDialog progressBar;
 	private String images_kanguodeyingpian[] = {
 			"http://online.sccnn.com/img2/384/s010.jpg",
 			"http://img01.tooopen.com/Product/thumbnails/2009/11/12/x_20091112173541287022.jpg",
@@ -100,6 +104,39 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			"http://www.circler.cn/uploads/allimg/100419/1-100419215p40-l.jpg",
 			"http://www.circler.cn/uploads/allimg/100407/1-10040G319430-L.jpg"
 			};
+	private String name_kanguodeyingpian[] = {
+			"看过的影片1",
+			"看过的影片2",
+			"看过的影片3",
+			"看过的影片4",
+			"看过的影片5",
+			"看过的影片6",
+			"看过的影片7",
+			"看过的影片8",
+			"看过的影片9"
+	};
+	private String name_shoucangdeyingpian[] = {
+			"收藏的影片1",
+			"收藏的影片2",
+			"收藏的影片3",
+			"收藏的影片4",
+			"收藏的影片5",
+			"收藏的影片6",
+			"收藏的影片7",
+			"收藏的影片8",
+			"收藏的影片9"
+	};
+	private String name_tuijiandeyingpian[] = {
+			"推荐的影片1",
+			"推荐的影片2",
+			"推荐的影片3",
+			"推荐的影片4",
+			"推荐的影片5",
+			"推荐的影片6",
+			"推荐的影片7",
+			"推荐的影片8",
+			"推荐的影片9"
+	};
 	PullToRefreshView_foot mPullToRefreshView;
 	Bitmap BigBitmap;
 	AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
@@ -108,13 +145,54 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case 1:
-				addBitmaps(++current_page, page_count,images_kanguodeyingpian);
+				addBitmaps(++current_page, page_count,images_kanguodeyingpian,name_kanguodeyingpian);
 				break;
 			case 2:
-				addBitmaps(++current_page, page_count,images_shoucangdeyingpian);
+				addBitmaps(++current_page, page_count,images_shoucangdeyingpian,name_shoucangdeyingpian);
 				break;
 			case 3:
-				addBitmaps(++current_page, page_count,images_tuijiandeyingpian);
+				addBitmaps(++current_page, page_count,images_tuijiandeyingpian,name_tuijiandeyingpian);
+				break;
+			case 11:
+				linearLayout1.removeAllViews();
+				linearLayout2.removeAllViews();
+				linearLayout3.removeAllViews();
+				Tools.ClearBitmap(BigBitmap);
+				current_page=0;
+				index=0;
+				scrollView.fullScroll(ScrollView.FOCUS_UP);
+				addBitmaps(current_page, page_count,images_kanguodeyingpian,name_kanguodeyingpian);
+				progressBar.dismiss();
+				break;
+			case 12:
+				
+				linearLayout1.removeAllViews();
+				linearLayout2.removeAllViews();
+				linearLayout3.removeAllViews();
+				Tools.ClearBitmap(BigBitmap);
+				current_page=0;
+				index=0;
+				scrollView.fullScroll(ScrollView.FOCUS_UP);
+				addBitmaps(current_page, page_count,images_shoucangdeyingpian,name_shoucangdeyingpian);
+				progressBar.dismiss();
+				break;
+			case 13:
+				
+				linearLayout1.removeAllViews();
+				linearLayout2.removeAllViews();
+				linearLayout3.removeAllViews();
+				Tools.ClearBitmap(BigBitmap);
+				current_page=0;
+				index=0;
+				scrollView.fullScroll(ScrollView.FOCUS_UP);
+				addBitmaps(current_page, page_count,images_tuijiandeyingpian,name_tuijiandeyingpian);
+				progressBar.dismiss();
+				break;
+			case 999:
+				Intent intent = new Intent();
+		    	intent.setClass(context, DetailActivity.class);
+		    	startActivity(intent);
+				progressBar.dismiss();
 				break;
 			}
 		}
@@ -144,10 +222,11 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 		linearLayout1 = (LinearLayout)findViewById(R.id.act04_linearlayout1);
         linearLayout2 = (LinearLayout)findViewById(R.id.act04_linearlayout2);
         linearLayout3 = (LinearLayout)findViewById(R.id.act04_linearlayout3);
+        scrollView=(ScrollView)findViewById(R.id.act04_sco);
         linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/3;
         
         images_kanguodeyingpian=SetSaveData("where_4_1", images_kanguodeyingpian);
-        addBitmaps(current_page, page_count,images_kanguodeyingpian);
+        name_kanguodeyingpian=SetSaveName("where_4_1", name_kanguodeyingpian);
         String path_bg=Environment.getExternalStorageDirectory()+"/joy/admin/bg.png";
         String path_head=Environment.getExternalStorageDirectory()+"/joy/admin/head.png";
         BitmapFactory.Options opts = new BitmapFactory.Options();  
@@ -166,6 +245,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
         	Bitmap bitmap3=Tools.toRoundCorner(bitmap2, 360);
         	head.setImageBitmap(bitmap3);
 		}
+        addBitmaps(current_page, page_count,images_kanguodeyingpian,name_kanguodeyingpian);
         beijing.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -181,7 +261,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			@Override
 			public void onClick(View v) {
 				AlertDialog.Builder builder=new AlertDialog.Builder(context);
-		  		  builder.setTitle("选择照片类型").setItems(bitString, new DialogInterface.OnClickListener() {
+		  		  builder.setTitle(getResources().getString(R.string.photostyle)).setItems(bitString, new DialogInterface.OnClickListener() {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -223,19 +303,23 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			public void onClick(View v) {
 				selectIndex=1;
 				images_kanguodeyingpian=SetSaveData("where_4_1", images_kanguodeyingpian);
+				name_kanguodeyingpian=SetSaveName("where_4_1", name_kanguodeyingpian);
 				btn_kanguodeyingpian.setEnabled(false);
 				btn_shoucangdeyingpian.setEnabled(true);
 				btn_tuijiandeyingpian.setEnabled(true);
 				btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft1);
 				btn_shoucangdeyingpian.setBackgroundResource(R.drawable.topbarmid);
 				btn_tuijiandeyingpian.setBackgroundResource(R.drawable.topbarright);
-				linearLayout1.removeAllViews();
-				linearLayout2.removeAllViews();
-				linearLayout3.removeAllViews();
-				Tools.ClearBitmap(BigBitmap);
-				current_page=0;
-				index=0;
-				addBitmaps(current_page, page_count,images_kanguodeyingpian);
+				progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+				new Handler().postDelayed(new Runnable(){
+					@Override
+					public void run(){
+						Message msg = new Message(); 
+		                msg.what = 11; 
+		                handler.sendMessage(msg); 
+					}
+				}, 1000);
+				
 			}
 		});
         btn_shoucangdeyingpian.setOnClickListener(new OnClickListener() {
@@ -244,19 +328,23 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			public void onClick(View v) {
 				selectIndex=2;
 				images_shoucangdeyingpian=SetSaveData("where_4_2", images_shoucangdeyingpian);
+				name_shoucangdeyingpian=SetSaveName("where_4_2", name_shoucangdeyingpian);
 				btn_kanguodeyingpian.setEnabled(true);
 				btn_shoucangdeyingpian.setEnabled(false);
 				btn_tuijiandeyingpian.setEnabled(true);
 				btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft);
 				btn_shoucangdeyingpian.setBackgroundResource(R.drawable.topbarmid1);
 				btn_tuijiandeyingpian.setBackgroundResource(R.drawable.topbarright);
-				linearLayout1.removeAllViews();
-				linearLayout2.removeAllViews();
-				linearLayout3.removeAllViews();
-				Tools.ClearBitmap(BigBitmap);
-				current_page=0;
-				index=0;
-				addBitmaps(current_page, page_count,images_shoucangdeyingpian);
+				progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+				new Handler().postDelayed(new Runnable(){
+					@Override
+					public void run(){
+						Message msg = new Message(); 
+		                msg.what = 12; 
+		                handler.sendMessage(msg); 
+					}
+				}, 1000);
+				
 			}
 		});
         btn_tuijiandeyingpian.setOnClickListener(new OnClickListener() {
@@ -265,23 +353,33 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			public void onClick(View v) {
 				selectIndex=3;
 				images_tuijiandeyingpian=SetSaveData("where_4_3", images_tuijiandeyingpian);
+				name_tuijiandeyingpian=SetSaveName("where_4_3", name_tuijiandeyingpian);
 				btn_kanguodeyingpian.setEnabled(true);
 				btn_shoucangdeyingpian.setEnabled(true);
 				btn_tuijiandeyingpian.setEnabled(false);
 				btn_kanguodeyingpian.setBackgroundResource(R.drawable.topleft);
 				btn_shoucangdeyingpian.setBackgroundResource(R.drawable.topbarmid);
 				btn_tuijiandeyingpian.setBackgroundResource(R.drawable.topbarright1);
-				linearLayout1.removeAllViews();
-				linearLayout2.removeAllViews();
-				linearLayout3.removeAllViews();
-				Tools.ClearBitmap(BigBitmap);
-				current_page=0;
-				index=0;
-				addBitmaps(current_page, page_count,images_tuijiandeyingpian);
+				progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+				new Handler().postDelayed(new Runnable(){
+					@Override
+					public void run(){
+						Message msg = new Message(); 
+		                msg.what = 13; 
+		                handler.sendMessage(msg); 
+					}
+				}, 1000);
+				
 			}
 		});
 
 	}
+	@Override
+	protected void onDestroy() {
+		Tools.ClearBitmap(BigBitmap);
+		super.onDestroy();
+	}
+	//设置按钮
 	public void Btn_shezhi(View v){
 		Intent intent=new Intent();
 		intent.setClass(context, Shezhi.class);
@@ -386,7 +484,8 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 		}
         super.onActivityResult(requestCode, resultCode, data);    
     }
-	private void addBitmaps(int pageindex, int pagecount,String img[]){
+	//界面中加载图片
+	private void addBitmaps(int pageindex, int pagecount,String img[],String name[]){
 		list=Arrays.asList(img);
 		LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     	try {
@@ -408,8 +507,10 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
                         imageView.setLayoutParams(layoutParams);
     					imageView.setImageBitmap(bitmap);
 					}
-    				textView.setText("第"+(index+1)+"张");
+//    				textView.setText("第"+(index+1)+"张");
+    				textView.setText(name[index]);
     				imageView.setTag(new Integer(index));
+    				//点击了影片，用到ontouch方法是为了有点击效果
     				imageView.setOnTouchListener(new OnTouchListener() {
 						
 						@Override
@@ -417,12 +518,31 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 							switch (event.getAction()) {
 							case MotionEvent.ACTION_UP:
 								int index  =  (Integer)v.getTag();
-						    	System.out.println("click index= "+index);
+								switch (selectIndex) {
+								case 1:
+									getThird_AccessToken.setPicURL(images_kanguodeyingpian[index]);
+									getThird_AccessToken.setPicName(name_kanguodeyingpian[index]);
+									break;
+								case 2:
+									getThird_AccessToken.setPicURL(images_shoucangdeyingpian[index]);
+									getThird_AccessToken.setPicName(name_shoucangdeyingpian[index]);
+									break;
+								case 3:
+									getThird_AccessToken.setPicURL(images_tuijiandeyingpian[index]);
+									getThird_AccessToken.setPicName(name_tuijiandeyingpian[index]);
+									break;
+								}
 						    	Toast.makeText(context, ""+(index+1), Toast.LENGTH_SHORT).show();
-						    	Intent intent = new Intent();
-						    	intent.setClass(context, DetailActivity.class);
-						    	startActivity(intent);
-								Tools.changeLight(imageView, 0);
+						    	Tools.changeLight(imageView, 0);
+						    	progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+								new Handler().postDelayed(new Runnable(){
+									@Override
+									public void run(){
+										Message msg = new Message(); 
+						                msg.what = 999; 
+						                handler.sendMessage(msg); 
+									}
+								}, 1000);
 								break;
 							case MotionEvent.ACTION_DOWN:
 								Tools.changeLight(imageView, -50);
@@ -461,6 +581,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			System.out.println(e.toString());
 		}
     }
+	//异步加载图片
 	public Bitmap setImage(ImageView imageView,String URL){
 		return asyncBitmapLoader.loadBitmap(imageView, URL, linearlayoutWidth,new ImageCallBack() {
 			
@@ -480,6 +601,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			}
 		});
 	}
+	//保存URL地址，没网络的情况从内存拿之前保存过的地址来显示图片
 	public String[] SetSaveData(String where,String URL[]){
 		if (Tools.isNetworkAvailable(context)==false) {
         	getThird_AccessToken.GetImageName(where);
@@ -506,6 +628,29 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 		}
 		return URL;
 	}
+	public String[] SetSaveName(String where,String Name[]){
+		if (Tools.isNetworkAvailable(context)==false) {
+        	getThird_AccessToken.GetName(where);
+        	String Name_URL=getThird_AccessToken.getName_URL();
+        	Name=Tools.Split(Name_URL, "$URL$");
+		}
+		else {
+			int a=0;
+			String Name_URL="";
+			for (int i = 0; i < Name.length; i++) {
+				if (a==0) {
+					Name_URL+=Name[i];
+					a=1;
+				}
+				else {
+					Name_URL+="$URL$"+Name[i];
+				}
+			}
+			getThird_AccessToken.setName_URL(Name_URL);
+			getThird_AccessToken.SaveName(where);
+		}
+		return Name;
+	}
 	
 	@Override
 	public void onFooterRefresh(PullToRefreshView_foot view) {
@@ -520,12 +665,15 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			}
 		}, 1000);
 	}
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 			AlertDialog.Builder builder=new AlertDialog.Builder(context);
 	  		  builder.setTitle(getResources().getString(R.string.tishi));
 	  		  builder.setMessage(getResources().getString(R.string.shifoutuichu)).setPositiveButton(getResources().getString(R.string.queding), new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
+							getThird_AccessToken.setexit(getString(R.string.exit_true));
+							getThird_AccessToken.SaveExit();
 							finish();
 				        	android.os.Process.killProcess(android.os.Process.myPid()); 
 							System.exit(0);
@@ -541,5 +689,13 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

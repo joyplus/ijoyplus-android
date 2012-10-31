@@ -3,6 +3,40 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
+    <RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/title" 
+    android:background="@drawable/title"
+    >
+<TextView
+    android:id="@+id/textName"
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:layout_centerInParent="true"
+     android:textSize="20sp"		
+	android:textColor="@color/white" /> 
+
+<RelativeLayout 
+    android:onClick="Btn_login_goback"
+    android:layout_alignParentLeft="true"
+    android:layout_marginLeft="10dp"
+    android:layout_width="64dp"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:background="@drawable/btn_top_left"
+    >
+ <TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/back"
+     android:layout_alignParentRight="true"
+     android:layout_marginRight="12dp"
+     android:textSize="15sp"		
+     android:layout_centerVertical="true"
+	android:textColor="@color/white" />   
+</RelativeLayout>
+</RelativeLayout>
     <WebView
     android:id="@+id/webview"
     android:layout_width="fill_parent"

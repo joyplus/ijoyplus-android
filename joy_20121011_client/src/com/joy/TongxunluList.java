@@ -36,6 +36,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
+import com.umeng.analytics.MobclickAgent;
 
 public class TongxunluList extends Activity implements OnFooterRefreshListener{
 	Context context;
@@ -93,9 +94,11 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 		});
 		
 	}
+	//返回按钮
 	public void Btnback(View v){
 		finish();
 	}
+	//搜索按钮
 	public void Btnsousuo(View v){
 		if (sousuo.getText().toString().trim().length()!=0) {
 			
@@ -104,6 +107,7 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 			
 		}
 	}
+	//发送按钮
 	public void BtnSend(View v){
 		if (phone.getText().toString().trim().length()!=0) {
 			
@@ -112,7 +116,8 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 			
 		}
 	}
-	public void getPhoneNum(int pageindex, int pagecount){//获取手机通讯录
+	//获取手机通讯录
+	public void getPhoneNum(int pageindex, int pagecount){
 		ContentResolver resolver = context.getContentResolver();
 		Cursor phoneCursor = resolver.query(Phone.CONTENT_URI,null, null, null, null);  //传入正确的uri
 		if(phoneCursor!=null){
@@ -151,5 +156,15 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 				mPullToRefreshView.onFooterRefreshComplete();
 			}
 		}, 1000);
+	}
+	@Override
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	@Override
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

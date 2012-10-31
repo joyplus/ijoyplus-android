@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/tencent_openapi.jar"/>
+	<classpathentry kind="lib" path="lib/umeng_sdk.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

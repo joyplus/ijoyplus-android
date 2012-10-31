@@ -65,7 +65,8 @@
     </LinearLayout>
     
 <RelativeLayout 
-    android:layout_width="fill_parent"
+    android:id="@+id/rel_time"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_toRightOf="@id/dongtailistview_head"
     android:layout_below="@id/dongtailistview_line"
@@ -80,7 +81,15 @@
         android:id="@+id/dongtailistview_time" 
         android:text="time"
         />
-    
+</RelativeLayout>
+<RelativeLayout 
+    android:id="@+id/dongtailistview_rel" 
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:padding="10dp"
+    android:layout_alignParentRight="true"
+    android:layout_below="@id/dongtailistview_line"
+    >
 <TextView 
         android:id="@+id/dongtailistview_how" 
     	android:layout_height="wrap_content"
@@ -88,9 +97,8 @@
         android:textSize="15sp" 
         android:textColor="@color/grey"
         android:text="how"
-        android:layout_alignParentRight="true"
-        android:focusable="true"
     />
+    
 </RelativeLayout>
 </RelativeLayout>  
 

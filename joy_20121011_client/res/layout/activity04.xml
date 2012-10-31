@@ -40,6 +40,7 @@
      android:layout_below="@id/title"
     >
 <ScrollView
+    android:id="@+id/act04_sco"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fillViewport="true"

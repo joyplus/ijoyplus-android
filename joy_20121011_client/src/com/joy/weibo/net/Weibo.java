@@ -19,6 +19,8 @@ package com.joy.weibo.net;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import com.joy.GetThird_AccessToken;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -68,7 +70,7 @@ public class Weibo {
     public static final String DEFAULT_CANCEL_URI = "wbconnect://cancel";// 暂不支持
 
     private String mRedirectUrl;
-
+    GetThird_AccessToken getThird_AccessToken;
     private Weibo() {
         Utility.setRequestHeader("Accept-Encoding", "gzip");
         Utility.setTokenObject(this.mRequestToken);
@@ -351,7 +353,15 @@ public class Weibo {
             Utility.showAlert(context, "Error",
                     "Application requires permission to access the Internet");
         } else {
-            new WeiboDialog(this, context, url, listener).show();
+            //new WeiboDialog(this, context, url, listener).show();
+        	getThird_AccessToken = (GetThird_AccessToken)context.getApplicationContext();
+        	getThird_AccessToken.setWeiboDialogListener(listener);
+        	getThird_AccessToken.seturl(url);
+        	getThird_AccessToken.setWeibo(this);
+        	Intent intent = new Intent();
+        	intent.setClass(context, WeiboDialog2.class);
+        	context.startActivity(intent);
+        	//((Activity) context).finish();
         }
     }
 
