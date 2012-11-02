@@ -126,7 +126,7 @@
 	    android:id="@+id/text"
 	    android:layout_height="wrap_content"
 	    android:layout_width="fill_parent"
-	    android:text="帐号登录"
+	    android:text="@string/zhanghaodenglu"
 	    android:textColor="@color/white"
 	    android:textSize="18sp"
 	    android:layout_below="@+id/login_top_layout"

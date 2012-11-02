@@ -57,6 +57,8 @@
      android:background="@drawable/editbg"
      android:textColor="@color/white"
      android:paddingLeft="10dp"
+     android:paddingRight="10dp"
+     android:singleLine="true"
      /> 
 <Button
     android:layout_marginLeft="5dp"
@@ -95,6 +97,8 @@
      android:background="@drawable/editbg"
      android:textColor="@color/white"
      android:paddingLeft="10dp"
+     android:paddingRight="10dp"
+     android:singleLine="true"
      /> 
 <Button
     android:layout_marginLeft="5dp"

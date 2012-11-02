@@ -448,7 +448,6 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
                         imageView.setLayoutParams(layoutParams);
     					imageView.setImageBitmap(bitmap);
 					}
-//    				textView.setText("第"+(index+1)+"张");
     				textView.setText(name[index]);
     				//点击了影片，用到ontouch方法是为了有点击效果
     				imageView.setOnTouchListener(new OnTouchListener() {

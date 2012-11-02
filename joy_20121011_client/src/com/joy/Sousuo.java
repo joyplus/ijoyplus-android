@@ -30,6 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -99,6 +100,7 @@ public class Sousuo extends Activity implements OnFooterRefreshListener{
 					Intent intent=new Intent();
 					intent.setClass(context, Sousuojieguo.class);
 					startActivity(intent);
+					sousuoEditText.setText("");
 				}
 				else {
 					
@@ -166,7 +168,7 @@ public class Sousuo extends Activity implements OnFooterRefreshListener{
             if(groupKey.contains(getItem(position))){
                 view = LayoutInflater.from(getContext()).inflate(R.layout.drag_list_item_tag, null);
             }else{
-                view = LayoutInflater.from(getContext()).inflate(R.layout.drag_list_item, null);
+                view = LayoutInflater.from(getContext()).inflate(R.layout.drag_list_item_sousuo, null);
             }
             
             TextView textView = (TextView)view.findViewById(R.id.drag_list_item_text);

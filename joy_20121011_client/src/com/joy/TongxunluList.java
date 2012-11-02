@@ -44,6 +44,7 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 	EditText sousuo,phone;
 	AutoCompleteTextView autoCompleteTextView;
 	List<Map<String, String>> list= new ArrayList<Map<String,String>>();
+	List<Map<String, String>> Alllist= new ArrayList<Map<String,String>>();
 	private int page_count = 2;
 	private int current_page = 0;
     private int index =0;
@@ -77,7 +78,7 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 		sousuo=(EditText)findViewById(R.id.tongxunlu_sousuo);
 		phone=(EditText)findViewById(R.id.tongxunlu_phone);
 		getPhoneNum(current_page, page_count);
-		
+		getAllPhontNum();
 		adapter=new SimpleAdapter(context,list,R.layout.mylistview,new String[] {"name"},new int[ ] {R.id.item_text});
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
@@ -100,20 +101,32 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 	}
 	//搜索按钮
 	public void Btnsousuo(View v){
+		int ok=0;
 		if (sousuo.getText().toString().trim().length()!=0) {
-			
+			for (int i = 0; i < Alllist.size(); i++) {
+				if (sousuo.getText().toString().trim().equals(Alllist.get(i).get("phoneNumber"))||sousuo.getText().toString().trim().equals(Alllist.get(i).get("name"))) {
+					GetThird_AccessToken.setphoneNum(Alllist.get(i).get("phoneNumber"));
+					GetThird_AccessToken.setphoneName(Alllist.get(i).get("name"));
+					ok=1;
+					break;
+				}
+			}
 		}
-		else {
-			
+		if (ok==1) {
+			Intent intent=new Intent();
+			intent.setClass(context, Yaoqing.class);
+			startActivity(intent);
+		}else {
+			Toast.makeText(context, getResources().getString(R.string.weizhaodao), Toast.LENGTH_SHORT).show();
 		}
+		
 	}
-	//发送按钮
+	//提交按钮
 	public void BtnSend(View v){
 		if (phone.getText().toString().trim().length()!=0) {
-			
-		}
-		else {
-			
+			Intent intent=new Intent();
+			intent.setClass(context, Friend.class);
+			startActivity(intent);
 		}
 	}
 	//获取手机通讯录
@@ -134,6 +147,25 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 				map.put("name", name);
 				map.put("phoneNumber", phoneNumber);
 				list.add(map);
+			}
+		}
+	}
+	public void getAllPhontNum(){
+		ContentResolver resolver = context.getContentResolver();
+		Cursor phoneCursor = resolver.query(Phone.CONTENT_URI,null, null, null, null);  //传入正确的uri
+		if(phoneCursor!=null){
+			for (int i = 0; i < phoneCursor.getCount(); i++) {
+				phoneCursor.moveToPosition(i);
+				int nameIndex = phoneCursor.getColumnIndex(Phone.DISPLAY_NAME);   //获取联系人name
+				String name = phoneCursor.getString(nameIndex);
+				String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(Phone.NUMBER)); //获取联系人number
+				if(TextUtils.isEmpty(phoneNumber)){
+					 continue;
+				}
+				Map<String, String> map=new HashMap<String, String>();
+				map.put("name", name);
+				map.put("phoneNumber", phoneNumber);
+				Alllist.add(map);
 			}
 		}
 	}

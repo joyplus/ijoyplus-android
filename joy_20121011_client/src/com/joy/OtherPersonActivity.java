@@ -219,7 +219,7 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
         name_kanguodeyingpian=SetSaveName("where_5_1", name_kanguodeyingpian);
         addBitmaps(current_page, page_count,images_kanguodeyingpian,name_kanguodeyingpian);
         
-        guanzhu.setOnClickListener(new OnClickListener() {
+        /*guanzhu.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -232,7 +232,7 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 			public void onClick(View v) {
 				Toast.makeText(context, "粉丝", Toast.LENGTH_SHORT).show();
 			}
-		});
+		});*/
         btn_kanguodeyingpian.setOnClickListener(new OnClickListener() {
 			
 			@Override

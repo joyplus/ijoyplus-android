@@ -13,6 +13,7 @@ import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
 import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,6 +50,40 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
+	private String name[] = {
+			"影片名1",
+			"影片名2",
+			"影片名3",
+			"影片名4",
+			"影片名5",
+			"影片名6",
+			"影片名7",
+			"影片名8",
+			"影片名9"
+	};
+	private String pingfen[] = {
+			"9.2",
+			"9.2",
+			"9.2",
+			"9.2",
+			"9.2",
+			"9.2",
+			"9.2",
+			"9.2",
+			"9.2"
+	};
+	private String time[] = {
+			"8:10分钟",
+			"8:10分钟",
+			"8:10分钟",
+			"8:10分钟",
+			"8:10分钟",
+			"8:10分钟",
+			"8:10分钟",
+			"8:10分钟",
+			"8:10分钟"
+	};
+	ProgressDialog progressBar;
 	private int page_count = 6;
 	private int current_page = 0;
     private int index =0;
@@ -62,6 +97,32 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
 				listItems = getListItems(++current_page, page_count);
 				adapter.notifyDataSetChanged();
 				listView.setSelection(listView.getCount()-1);
+				break;
+			case 999:
+				Intent intent = new Intent();
+		    	intent.setClass(context, DetailActivity.class);
+		    	startActivity(intent);
+		    	progressBar.dismiss();
+				break;
+			case 111:
+				youguandeyingpin.setText("和"+"《"+editText.getText().toString().trim()+"》"+getResources().getString(R.string.youguandeyingpian));
+		        youguandeshipin.setText("和"+"《"+editText.getText().toString().trim()+"》"+getResources().getString(R.string.youguandeshipin));
+		        //影片名
+		        titleName.setText("《"+editText.getText().toString().trim()+"》");
+		        //豆瓣评分
+		        doubanpinfen.setText(getResources().getString(R.string.doubanpingfen));
+		        //简介
+		        text.setText("内容");
+		        //时长
+		        shichang.setText(getResources().getString(R.string.shichang));
+		        editText.setText("");
+		        listItems.clear();
+		        current_page=0;
+		        index=0;
+		        listItems = getListItems(current_page, page_count);
+		        adapter.notifyDataSetChanged();
+		        listView.setSelection(0);
+		        progressBar.dismiss();
 				break;
 			}
 		}
@@ -83,12 +144,17 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
         doubanpinfen=(TextView)findViewById(R.id.sousuojieguo_pingfeng);
         text=(TextView)findViewById(R.id.sousuojieguo_txt);
         shichang=(TextView)findViewById(R.id.sousuojieguo_time);
+        editText=(EditText)findViewById(R.id.sousuojieguo_edit);
         
         youguandeyingpin.setText("和"+"《"+getThird_AccessToken.getdinayingName()+"》"+getResources().getString(R.string.youguandeyingpian));
         youguandeshipin.setText("和"+"《"+getThird_AccessToken.getdinayingName()+"》"+getResources().getString(R.string.youguandeshipin));
+        //影片名
         titleName.setText("《"+getThird_AccessToken.getdinayingName()+"》");
+        //豆瓣评分
         doubanpinfen.setText(getResources().getString(R.string.doubanpingfen));
+        //简介
         text.setText("内容");
+        //时长
         shichang.setText(getResources().getString(R.string.shichang));
         
         btn_sousuo=(Button)findViewById(R.id.sousuojieguo_sousuo);
@@ -105,8 +171,34 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				arg0.getItemAtPosition(arg2);
-				Toast.makeText(context, (arg2+1)+"", Toast.LENGTH_SHORT).show();
+				getThird_AccessToken.setPicURL(images[arg2]);
+				getThird_AccessToken.setPicName(name[arg2]);
+				progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+				new Handler().postDelayed(new Runnable(){
+					@Override
+					public void run(){
+						Message msg = new Message(); 
+		                msg.what = 999; 
+		                handler.sendMessage(msg); 
+					}
+				}, 1000);
+			}
+		});
+		btn_sousuo.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (editText.getText().toString().trim().length()!=0) {
+					progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+					new Handler().postDelayed(new Runnable(){
+						@Override
+						public void run(){
+							Message msg = new Message(); 
+			                msg.what = 111; 
+			                handler.sendMessage(msg); 
+						}
+					}, 1000);
+				}
 			}
 		});
 	}
@@ -115,9 +207,9 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
         for(int i = index; i < pagecount * (pageindex + 1)&&i<images.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>(); 
             map.put("image", images[i]);
-            map.put("title", "影片名"+(i+1));
-            map.put("info", "评分："+(i+1));
-            map.put("time", "时长："+(i+1));
+            map.put("title", name[i]);
+            map.put("info", pingfen[i]);
+            map.put("time", time[i]);
             listItems.add(map);
             index++;
         }    

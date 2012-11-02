@@ -59,8 +59,12 @@
     <string name="tongxunlufirend">查找通讯录好友</string>
     <string name="dianhuahaoma">电话号码</string>
     <string name="shoujihaoma">请输入您的手机号码:</string>
-    <string name="haoyouliebiao">好友列表</string>
     <string name="xiangxiziliao">详细资料</string>
+    
+    <string name="zhanghaodenglu">帐号登录</string>
+    <string name="haoyouliebiao">好友列表</string>
+    <string name="yaoqinghaoyou">邀请好友</string>
+    <string name="yiguanzhu">已关注的</string>
     <string name="duanxinyaoqing">短信邀请</string>
     <string name="yaoqing_text">还未加入joy+，您可以：</string>
     <string name="name">姓名：</string>
@@ -135,5 +139,14 @@
        <string name="huifu">回复</string>
        <string name="pleasewait">请稍候</string>
        <string name="loading">加载中</string>
+       <string name="weizhaodao">未能找到您搜索的结果</string>
+       <string name="woguanzhu">我关注的人</string>
+        <string name="cancelguanzhu">取消关注</string>
+         <string name="yiguanzhu1">已关注</string>
+         <string name="qingqiu">请求中,请稍等...</string>
+         <string name="shouquanfalse">授权失败</string>
+        <string name="shouquansuess">授权成功</string>
+         
+         
        <!-- <友盟 -->
 </resources>

@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -52,8 +53,7 @@ import android.widget.LinearLayout.LayoutParams;
 
 public class DetailActivity extends Activity implements OnClickListener,OnHeaderRefreshListener,OnFooterRefreshListener{
 	PullToRefreshView mPullToRefreshView;
-	Button recommend,seen,favorite,comment,share;
-	RelativeLayout login_goback;
+	RelativeLayout login_goback,recommend,seen,favorite,comment,share;
 	LinearLayout myGridView;
 	SimpleAdapter adapter;
 	List<Map<String, Object>> items;
@@ -100,6 +100,9 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
     }
     public void into()
     {
+    	 findViewById(R.id.shoucang_bt).setOnClickListener(this);
+    	 findViewById(R.id.kanguoback).setOnClickListener(this);
+    	 findViewById(R.id.jiejian_bt).setOnClickListener(this);
     	findViewById(R.id.recommend).setOnClickListener(this);
     	findViewById(R.id.seen).setOnClickListener(this);
     	findViewById(R.id.favorite).setOnClickListener(this);
@@ -111,6 +114,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
     	findViewById(R.id.briefintroduction).setOnClickListener(this);
     	findViewById(R.id.detail_seen_nub).setOnClickListener(this);
     	findViewById(R.id.detail_favorite_nub).setOnClickListener(this);
+    	findViewById(R.id.play_moves).setOnClickListener(this);
     	myGridView = (LinearLayout) findViewById(R.id.myGridview);
     	findViewById(R.id.detail_drama);
     	detail_all_comment = (LinearLayout) findViewById(R.id.detail_all_comment);
@@ -124,18 +128,18 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			@Override
 			public void imageLoad(ImageView imageView, Bitmap bitmap) {
 				if (bitmap==null) {
-					imageView.setImageResource(R.drawable.zhuyebg);
+					imageView.setBackgroundResource(R.drawable.zhuyebg);
 				}
 				else {
-					imageView.setImageBitmap(bitmap);
+					imageView.setBackgroundDrawable(Tools.BitampTodrawable(bitmap));
 				}
 			}
 		});
         if (bitmap==null) {
-			pic.setImageResource(R.drawable.zhuyebg);
+			pic.setBackgroundResource(R.drawable.zhuyebg);
 		}
         else {
-			pic.setImageBitmap(bitmap);
+			pic.setBackgroundDrawable(Tools.BitampTodrawable(bitmap));
 		}
     }
     
@@ -352,7 +356,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			}
 				finish();
 			break;
-		case R.id.detail_beijing:
+		case R.id.play_moves:
 			intent = new Intent();
 			intent.setClass(context, PlayVideoActivity.class);
 			startActivity(intent);

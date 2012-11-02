@@ -36,7 +36,7 @@ public class MediaActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.surface);
         this.surfaceView = (SurfaceView) this.findViewById(R.id.surface);
-        progressBar = ProgressDialog.show(this, "请稍等", "加载中...");
+        progressBar = ProgressDialog.show(this, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
         this.surfaceHolder = this.surfaceView.getHolder();
         this.surfaceHolder.addCallback(this);
         this.surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);

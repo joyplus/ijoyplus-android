@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.Tools;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.SearchAdapter;
+import com.joy.msg.ChatMsgEntity;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
 import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
@@ -125,22 +127,22 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
     ViewHolder	holder;
     MyAdapter adapter;
     int select;
-    List<Map<String, Object>> listItems=new ArrayList<Map<String, Object>>();
+    private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
     GetThird_AccessToken getThird_AccessToken;
     final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case 100:
-				listItems=getListItems(++current_page, page_count);
+				initData(++current_page, page_count);
 				adapter.notifyDataSetChanged();
 				listView.setSelection(listView.getCount()-1);
 				break;
 			case 200:
 				index=0;
 				current_page=0;
-				listItems.clear();
-				listItems=getListItems(current_page, page_count);
+				mDataArrays.clear();
+				initData(current_page, page_count);
 				adapter.notifyDataSetChanged();
 				listView.setSelection(0);
 				break;
@@ -157,7 +159,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				progressBar.dismiss();
 				break;
 			case 333:
-				listItems.remove(select);
+				mDataArrays.remove(select);
 				adapter.notifyDataSetChanged();
 				progressBar.dismiss();
 				break;
@@ -174,11 +176,9 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 		mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
 		listView=(ListView)findViewById(R.id.act03_listview);
-		listItems=getListItems(current_page, page_count);
-		
-		adapter=new MyAdapter(context);
-		listView.setAdapter(adapter); 
-		
+		adapter=new MyAdapter(context,mDataArrays);
+    	listView.setAdapter(adapter); 
+		initData(current_page, page_count);
 		
 		
 	}
@@ -189,19 +189,19 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 		super.onDestroy();
 	}
 
-	private List<Map<String, Object>> getListItems(int pageindex, int pagecount) {
-        for(int i = index; i < pagecount * (pageindex + 1)&&i<images.length; i++) {
-            Map<String, Object> map = new HashMap<String, Object>(); 
-            map.put("head", R.drawable.head);
-            map.put("who", who[i]);
-            map.put("what", what[i]);
-            map.put("img", images[i]);
-            map.put("time", time[i]);
-            map.put("how", how[i]);
-            listItems.add(map);
-            index++;
-        }    
-        return listItems;
+	public void initData(int pageindex, int pagecount){
+    	for(int i = index; i < pagecount * (pageindex + 1)&&i<images.length; i++){
+    		ChatMsgEntity entity = new ChatMsgEntity();
+    		entity.sethead(R.drawable.head);
+    		entity.setName(who[i]);
+    		entity.setDate(what[i]);
+    		entity.setURL(images[i]);
+    		entity.settime(time[i]);
+    		entity.sethow(how[i]);
+    		mDataArrays.add(entity);
+    		index++;
+    	}
+		
     }
 	//消息的按钮
 	public void Btn_goxiaoxi(View view){
@@ -273,13 +273,15 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 	public class MyAdapter extends BaseAdapter{
 		
 		private LayoutInflater mInflater;
+		private List<ChatMsgEntity> coll;
 		
-		public MyAdapter(Context context){
+		public MyAdapter(Context context,List<ChatMsgEntity> coll){
 			this.mInflater = LayoutInflater.from(context);
+			this.coll = coll;
 		}
 		@Override
 		public int getCount() {
-			return listItems.size();
+			return coll.size();
 		}
 
 		@Override
@@ -294,6 +296,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
+			ChatMsgEntity entity = coll.get(position);
 			if(convertView == null){
 				holder = new ViewHolder();
 				convertView = mInflater.inflate(R.layout.dongtailistview, null);
@@ -309,9 +312,26 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				holder = (ViewHolder)convertView.getTag();
 			}
 			
-			holder.head.setBackgroundResource((Integer)listItems.get(position).get("head"));
+			holder.head.setImageResource(entity.gethead());
+			holder.title.setText(entity.getName());
+			holder.info.setText(entity.getDate());
+			Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.img1, entity.getURL(), getWindowManager().getDefaultDisplay().getWidth()/3,new ImageCallBack() {
+				
+				public void imageLoad(ImageView imageView, Bitmap bitmap) {
+					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
+					imageView.setImageBitmap(BigBitmap);
+				}
+			});
+			if (bitmap!=null) {
+				BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
+				holder.img1.setImageBitmap(BigBitmap);
+			}
+			else {
+				holder.img1.setImageResource(R.drawable.pic_bg);
+			}
+			holder.time.setText(entity.gettime());
+			holder.viewBtn.setText(entity.gethow());
 			holder.head.setTag((position+1));
-			//点击了头像
 			holder.head.setOnClickListener(new View.OnClickListener() {
 				
 				@Override
@@ -329,27 +349,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 					
 				}
 			});
-			holder.title.setText((String)listItems.get(position).get("who"));
-			holder.info.setText((String)listItems.get(position).get("what"));
-				
-			Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.img1, (String)listItems.get(position).get("img"), getWindowManager().getDefaultDisplay().getWidth()/3,new ImageCallBack() {
-				
-				public void imageLoad(ImageView imageView, Bitmap bitmap) {
-					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
-					imageView.setImageBitmap(BigBitmap);
-				}
-			});
-			if (bitmap!=null) {
-				BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
-				holder.img1.setImageBitmap(BigBitmap);
-			}
-			else {
-				holder.img1.setImageResource(R.drawable.pic_bg);
-			}
-				
-			holder.time.setText((String)listItems.get(position).get("time"));
-			holder.viewBtn.setText((String)listItems.get(position).get("how"));
-			holder.relativeLayout.setTag((String)listItems.get(position).get("how"));
+			holder.relativeLayout.setTag(entity.gethow());
 			
 			//点击listview中的删除还是回复
 			holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
@@ -357,8 +357,6 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				@Override
 				public void onClick(View v) {
 					if (v.getTag().equals(getResources().getString(R.string.delete))) {
-						/*listItems.remove(position);
-						MyAdapter.this.notifyDataSetChanged();*/
 						select=position;
 						progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
 						new Handler().postDelayed(new Runnable(){
@@ -380,9 +378,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				                handler.sendMessage(msg);
 							}
 						}, 1000);
-						
 					}
-					
 				}
 			});
 			return convertView;

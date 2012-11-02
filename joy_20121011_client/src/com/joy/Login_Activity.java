@@ -130,7 +130,7 @@ public class Login_Activity extends Activity implements OnClickListener{
 			}
 			break;
 		case R.id.goin:
-			Toast.makeText(context, "尚未开放", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(context, "尚未开放", Toast.LENGTH_SHORT).show();
 //			if (login_user_edit.getText().toString().trim().length()==0
 //			||login_passwd_edit.getText().toString().trim().length()==0) {
 ////				Toast.makeText(context, R.string.loginError, Toast.LENGTH_SHORT).show();
@@ -217,7 +217,7 @@ public class AuthReceiver extends BroadcastReceiver {
 						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								Toast.makeText(mContext, "授权成功", Toast.LENGTH_SHORT).show();
+								Toast.makeText(mContext, getString(R.string.shouquansuess), Toast.LENGTH_SHORT).show();
 								getThird_AccessToken.setOpenID(((OpenId)obj).getOpenId());
 								getThird_AccessToken.SaveOpenID();
 							}
@@ -236,7 +236,7 @@ public class AuthReceiver extends BroadcastReceiver {
 				});
 			}
         	if (error_ret != null) {
-        		Toast.makeText(context, "授权失败", Toast.LENGTH_SHORT).show();
+        		Toast.makeText(context, getString(R.string.shouquanfalse), Toast.LENGTH_SHORT).show();
 			}
     	}
 
@@ -257,7 +257,7 @@ public class AuthReceiver extends BroadcastReceiver {
 		switch (id) {
 		case PROGRESS:
 			dialog = new ProgressDialog(this);
-			((ProgressDialog)dialog).setMessage("请求中,请稍等...");
+			((ProgressDialog)dialog).setMessage(getString(R.string.qingqiu));
 			break;
 		}
 		

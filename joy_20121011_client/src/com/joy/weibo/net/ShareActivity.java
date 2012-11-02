@@ -188,19 +188,21 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 //        {
 //        	f = new File(this.mPicPath);
 //        }
-        if (getThird_AccessToken.getButton_Name().equals(getString(R.string.fenxiang))) {
+        if (getThird_AccessToken.getButton_Name().equals(getString(R.string.fenxiang))&&mPicPath!=null) {
         	imageView.setVisibility(View.VISIBLE);
-        	newBT = asyncBitmapLoader.loadBitmap(imageView, mPicPath, linearlayout_width, new ImageCallBack() {
+        	Bitmap bitmap = asyncBitmapLoader.loadBitmap(imageView, mPicPath, linearlayout_width, new ImageCallBack() {
 				
 				@Override
 				public void imageLoad(ImageView imageView, Bitmap bitmap) {
 					if (bitmap != null) {
-						imageView.setImageBitmap(bitmap);
+						newBT=BitmapZoom.bitmapZoomByWidth(bitmap, linearlayout_width);
+						imageView.setImageBitmap(newBT);
 					}
 				}
 			});
-        	if (newBT!=null) {
-        		imageView.setImageBitmap(newBT);
+        	if (bitmap!=null) {
+        		newBT=BitmapZoom.bitmapZoomByWidth(bitmap, linearlayout_width);
+				imageView.setImageBitmap(newBT);
 			}
         	imageView.setOnClickListener(new OnClickListener() {
 				
@@ -731,7 +733,7 @@ public class AuthReceiver extends BroadcastReceiver {
 							@Override
 							public void run() {
 								dismissDialog(PROGRESS);
-								Toast.makeText(mContext, "授权成功", Toast.LENGTH_SHORT).show();
+								Toast.makeText(mContext, getString(R.string.shouquansuess), Toast.LENGTH_SHORT).show();
 								getThird_AccessToken.setOpenID(((OpenId)obj).getOpenId());
 								qq_choice = 1;
 								qq_button.setBackgroundResource(R.drawable.synchronous_qq_true);
@@ -753,7 +755,7 @@ public class AuthReceiver extends BroadcastReceiver {
 				});
 			}
         	if (error_ret != null) {
-        		Toast.makeText(context, "授权失败", Toast.LENGTH_SHORT).show();
+        		Toast.makeText(context, getString(R.string.shouquanfalse), Toast.LENGTH_SHORT).show();
 			}
     	}
 
@@ -774,7 +776,7 @@ public class AuthReceiver extends BroadcastReceiver {
 		switch (id) {
 		case PROGRESS:
 			dialog = new ProgressDialog(this);
-			((ProgressDialog)dialog).setMessage("请求中,请稍等...");
+			((ProgressDialog)dialog).setMessage(getString(R.string.qingqiu));
 			break;
 		}
 		

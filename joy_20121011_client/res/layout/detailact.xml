@@ -54,33 +54,110 @@
 	         android:layout_width="fill_parent"
 		     android:layout_height="wrap_content"
 		     android:layout_alignParentBottom="true"
-		     android:gravity="center"
 		     android:orientation="horizontal"
+		     android:layout_marginBottom="5dp"
 	        >
-	        <Button
-	            android:id="@+id/recommend"
-	            android:text="@string/tuijian" 
+	<RelativeLayout 
+	    android:id="@+id/recommend"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            />
-	        <Button
-	            android:id="@+id/seen"
-	            android:text="@string/kanguo" 
+	            android:background="@drawable/btn_smalltab"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	    >
+	    <ImageView 
+	        android:id="@+id/bt1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/tuijian"
+	        />
+	    <TextView 
+	        android:layout_toRightOf="@id/bt1"
+	        android:layout_marginLeft="5dp"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/white"
+	        android:text="@string/tuijian" 
+	        />
+	</RelativeLayout>
+	
+	<RelativeLayout 
+	    		android:id="@+id/seen"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            />
-	        <Button
-	            android:id="@+id/favorite"
-	            android:text="@string/shoucang" 
+	            android:background="@drawable/btn_smalltab"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	    >
+	    <ImageView 
+	        android:id="@+id/bt2"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/kanguo"
+	        android:layout_marginTop="4dp"
+	        />
+	    <TextView 
+	        android:layout_toRightOf="@id/bt2"
+	        android:layout_marginLeft="5dp"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/white"
+	        android:text="@string/kanguo" 
+	        />
+	</RelativeLayout>
+	
+	<RelativeLayout 
+	    android:id="@+id/favorite"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            />
-	        <Button
-	            android:id="@+id/comment"
-	            android:text="@string/pinglun" 
+	            android:background="@drawable/btn_smalltab"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	    >
+	    <ImageView 
+	        android:id="@+id/bt3"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/shoucang"
+	        android:layout_marginTop="2dp"
+	        />
+	    <TextView 
+	        android:layout_toRightOf="@id/bt3"
+	        android:layout_marginLeft="5dp"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/white"
+	        android:text="@string/shoucang" 
+	        />
+	</RelativeLayout>
+	
+	<RelativeLayout 
+	    android:id="@+id/comment"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            />
+	            android:background="@drawable/btn_smalltab"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	    >
+	    <ImageView 
+	        android:id="@+id/bt4"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/pinglun"
+	        android:layout_marginTop="2dp"
+	        />
+	    <TextView 
+	        android:layout_toRightOf="@id/bt4"
+	        android:layout_marginLeft="5dp"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="@color/white"
+	        android:text="@string/pinglun" 
+	        />
+	</RelativeLayout>
+	       
+	        
+	        
 	    </LinearLayout>
 
 
@@ -103,12 +180,24 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
     	>
-	    <ImageView 
-		    android:id="@+id/detail_beijing"
-		    android:layout_width="fill_parent"
-		    android:layout_height="150dp"
-		    android:background="@drawable/zhuyebg"
-	    />
+    	<RelativeLayout 
+    	    android:layout_width="fill_parent"
+        	android:layout_height="wrap_content"
+    	    >
+		    <ImageView 
+			    android:id="@+id/detail_beijing"
+			    android:layout_width="fill_parent"
+			    android:layout_height="150dp"
+			    android:background="@drawable/zhuyebg"
+		    />
+    	    <Button
+    	        android:layout_centerInParent="true"
+    	        android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:id="@+id/play_moves"
+        		android:background="@drawable/btn_play"
+    	        />
+    	</RelativeLayout>
 	    <TextView
 	         android:id="@+id/detail_Move_Name"
 	         android:layout_width="wrap_content"
@@ -125,37 +214,49 @@
 	        android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
 	        >
+    	     <RelativeLayout 
+    	         android:id="@+id/douback"
+	        android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@drawable/dou_left"
+	        >
 	        <TextView 
+	            android:layout_centerInParent="true"
 	            android:id="@+id/dou_nub"
 	            android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textColor="@color/white"
-		        android:background="#494949"
 		        android:textSize="18dp"
 		        android:text="@string/fenshu"
 		        android:layout_gravity="left"
 		        android:layout_marginLeft="5dp"
 	            />
-	        <TextView 
+	        </RelativeLayout>
+	        <ImageView 
 	            android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="@color/white"
-		        android:background="#292929"
-		        android:textSize="18dp"
-		        android:text="@string/dou"
-		        android:layout_toRightOf="@id/dou_nub"
+		        android:background="@drawable/dou"
+		        android:layout_toRightOf="@id/douback"
 	            />
+	        <RelativeLayout 
+	        android:id="@+id/jiejian_bt"
+	        android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:background="@drawable/btn_jianjie"
+		    android:layout_alignParentRight="true"
+	        >
 	        <TextView 
+	            android:layout_centerInParent="true"
 	            android:id="@+id/briefintroduction"
 	            android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textColor="@color/white"
-		        android:background="#494949"
 		        android:textSize="18dp"
 		        android:text="@string/jianjie"
-		        android:layout_alignParentRight="true"
+		        
 		        android:layout_marginRight="5dp"
 	            />
+	        </RelativeLayout>
 	    </RelativeLayout>
 	    
 	    <RelativeLayout 
@@ -163,47 +264,57 @@
 	        android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
 	        >
+	        <RelativeLayout
+	            	android:id="@+id/kanguoback"
+	                android:layout_width="wrap_content"
+		        	android:layout_height="wrap_content"
+		        	android:background="@drawable/btn_shoucangbt"
+		        	android:layout_gravity="left"
+		        	android:layout_marginLeft="5dp"
+	             >
 	        <TextView 
+	            android:layout_centerInParent="true"
 	            android:id="@+id/detail_seen_nub"
 	            android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textColor="@color/white"
-		        android:background="#494949"
 		        android:textSize="18dp"
 		        android:text="@string/fenshu"
-		        android:layout_gravity="left"
-		        android:layout_marginLeft="5dp"
 	            />
-	        <TextView 
+	        </RelativeLayout>
+	        <ImageView 
 	            android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="@color/white"
-		        android:background="#292929"
-		        android:textSize="18dp"
-		        android:text="@string/kanguo"
-		        android:layout_toRightOf="@id/detail_seen_nub"
+		        android:background="@drawable/kanguoblack"
+		        android:layout_toRightOf="@id/kanguoback"
 	            />
 	         <TextView 
 	            android:id="@+id/detail_favorite"
 	            android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="@color/white"
-		        android:background="#292929"
-		        android:textSize="18dp"
-		        android:text="@string/shoucang"
+		        android:background="@drawable/shoucangblack"
 		        android:layout_alignParentRight="true"
 		        android:layout_marginRight="5dp"
 	            />
-	        <TextView 
+	         
+	         <RelativeLayout
+	              android:id="@+id/shoucang_bt"
+	              android:layout_width="wrap_content"
+		        	android:layout_height="wrap_content"
+		        	android:layout_toLeftOf="@id/detail_favorite"
+		        	android:background="@drawable/btn_shoucangbt"
+	             >
+	             <TextView 
 	            android:id="@+id/detail_favorite_nub"
 	            android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textColor="@color/white"
-		        android:background="#494949"
 		        android:textSize="18dp"
 		        android:text="@string/fenshu"
-		        android:layout_toLeftOf="@id/detail_favorite"
+		        android:layout_centerInParent="true"
 	            />
+	         </RelativeLayout>
+	        
 	    </RelativeLayout>
 	    <TextView
 	            android:id="@+id/detail_drama"
@@ -224,7 +335,7 @@
 		        android:gravity="center"
 	        >
 	    </LinearLayout>
-	    <!-- <com.joy.Tools.MyGridView 
+	    <com.joy.Tools.MyGridView 
 		    android:id="@+id/myGridview"
 		    android:numColumns="auto_fit" 
 		    android:layout_width="fill_parent"   
@@ -237,7 +348,7 @@
 		    android:visibility="visible"
         >
 	        
-    </com.joy.Tools.MyGridView> -->
+    </com.joy.Tools.MyGridView>
 	    <TextView
 	            android:id="@+id/detail_comment"
 	            android:layout_width="wrap_content"
@@ -260,4 +371,5 @@
 	</LinearLayout>
 </ScrollView>
 </com.joy.view.PullToRefreshView>
+
 </RelativeLayout>

@@ -81,7 +81,7 @@
     android:layout_marginLeft="10dp"
     />
 <Button 
-    android:onClick="Btn_Yaoqing"
+    android:id="@+id/btn_Yaoqing"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content"
     android:layout_below="@id/yaoqing_text"

@@ -53,7 +53,9 @@ public class Shezhi extends Activity {
 	}
 	//查找/添加好友按钮
 	public void Btn_chazhao(View v){
-		
+		Intent intent=new Intent();
+		intent.setClass(context, Xunzhaohaoyou.class);
+		startActivity(intent);
 	}
 	//意见反馈按钮
 	public void Btn_yijianfankui(View v){

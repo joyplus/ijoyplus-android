@@ -287,14 +287,20 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(context, "关注", Toast.LENGTH_SHORT).show();
+				getThird_AccessToken.setActivitytype("3");
+				Intent intent=new Intent();
+				intent.setClass(context, Guanzhuderen.class);
+				startActivity(intent);
 			}
 		});
         fensi.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(context, "粉丝", Toast.LENGTH_SHORT).show();
+				getThird_AccessToken.setActivitytype("4");
+				Intent intent=new Intent();
+				intent.setClass(context, Guanzhuderen.class);
+				startActivity(intent);
 			}
 		});
         btn_kanguodeyingpian.setOnClickListener(new OnClickListener() {

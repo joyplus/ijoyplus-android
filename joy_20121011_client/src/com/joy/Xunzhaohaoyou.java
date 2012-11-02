@@ -32,11 +32,15 @@ public class Xunzhaohaoyou extends Activity {
 	}
 	//新浪微博好友按钮
 	public void Btnsina(View v){
-		
+		Intent intent=new Intent();
+		intent.setClass(context, Friend.class);
+		startActivity(intent);
 	}
 	//腾讯微博好友
 	public void Btntengxun(View v){
-		
+		Intent intent=new Intent();
+		intent.setClass(context, Friend.class);
+		startActivity(intent);
 	}
 	//查找通讯录好友按钮
 	public void Btntongxunlu(View v){

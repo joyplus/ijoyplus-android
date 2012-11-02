@@ -17,6 +17,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +47,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
     private  LinearLayout linearLayout3 = null;
     private int USE_LINEAR_INTERVAL = 0;
     private int linearlayoutWidth = 0;
-	private int page_count = 6;// 每次加载30张图片
+	private int page_count = 6;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
     private int index =0;
     Bitmap bitmap2;
@@ -84,6 +86,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 				break;
 			case 300:
 				progressBar.dismiss();
+				getThird_AccessToken.setActivitytype("");
 				Intent intent=new Intent();
 				intent.setClass(context, JoyActivity.class);
 				startActivity(intent);
@@ -152,6 +155,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 			
 			@Override
 			public void onClick(View v) {
+				getThird_AccessToken.setActivitytype("");
 				finish();
 			}
 		});
@@ -169,7 +173,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
     		for(int i = index; i < pagecount * (pageindex + 1)&&i<img.length; i++){
     			try {
     				final View view=inflater.inflate(R.layout.darenview, null);
-    				RelativeLayout rll = (RelativeLayout)view. findViewById(R.id.RelativeLayout03);
+    				LinearLayout rll = (LinearLayout)view. findViewById(R.id.RelativeLayout03);
     				final ImageView imageView = (ImageView)view.findViewById(R.id.darenview_image);
     				TextView textView = (TextView)view.findViewById(R.id.darenview_text);
     				Button button=(Button)view.findViewById(R.id.darenview_button);
@@ -177,26 +181,26 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
   	                  
     	                @Override  
     	                public void imageLoad(ImageView imageView, Bitmap bitmap) {  
-    	                	bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    	                	Bitmap myBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.daren);
+    	                	bitmap2=Tools.toRoundCorner(bitmap, 360);
         					imageView.setImageBitmap(bitmap2);
-                            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
-                            layoutParams.setMargins(4, 1, 4, 1);
-                            imageView.setLayoutParams(layoutParams);
-        					imageView.setImageBitmap(bitmap);
+        					LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(myBitmap.getWidth()-2, (myBitmap.getHeight()-2)+40);
+        					params.setMargins(5, 1, 5, 1);
+                            imageView.setLayoutParams(params);
     	                }  
     	            });  
     				if (bitmap==null) {
-    					imageView.setImageResource(R.drawable.pic_bg);
+    					imageView.setImageResource(R.drawable.daren);
 					}
     				else {
-    					bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    					Bitmap myBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.daren);
+    					bitmap2 = Tools.toRoundCorner(bitmap, 360);
     					imageView.setImageBitmap(bitmap2);
-                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
-                        layoutParams.setMargins(4, 1, 4, 1);
-                        imageView.setLayoutParams(layoutParams);
-    					imageView.setImageBitmap(bitmap);
+    					LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(myBitmap.getWidth()-2, (myBitmap.getHeight()-2)+40);
+    					params.setMargins(5, 1, 5, 1);
+                        imageView.setLayoutParams(params);
 					}
-    				textView.setText("第"+(index+1)+"张");
+    				textView.setText(names[index]);
     				button.setId(index*100);
     				//点击了头像，用到ontouch方法是为了有点击效果
     				imageView.setOnTouchListener(new OnTouchListener() {
@@ -295,6 +299,7 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 			if (getThird_AccessToken.getActivitytype().equals("2")) {
+				getThird_AccessToken.setActivitytype("");
 				finish();
 			}
 			return true;
