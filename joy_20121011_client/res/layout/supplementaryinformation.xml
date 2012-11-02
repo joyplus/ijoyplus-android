@@ -55,6 +55,7 @@
 	    android:layout_marginRight="10dp"
 	    android:paddingLeft="10dp"
 	    android:paddingRight="10dp"
+	    android:maxLength="16"
 	    android:singleLine="true"
 	    android:hint="@string/imformation_name"
 	    android:background="@drawable/ic_preference_first_normal"/>

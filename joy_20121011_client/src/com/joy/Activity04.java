@@ -23,7 +23,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.EditTextPreference;
 import android.provider.MediaStore;
+import android.sax.TextElementListener;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -239,7 +241,9 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 		}
         if (bitmap2!=null) {
         	Bitmap bitmap3=Tools.toRoundCorner(bitmap2, 360);
+//        	Drawable drawable=new BitmapDrawable(bitmap3);
         	head.setImageBitmap(bitmap3);
+        	head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 		}
         addBitmaps(current_page, page_count,images_kanguodeyingpian,name_kanguodeyingpian);
         beijing.setOnClickListener(new OnClickListener() {
@@ -394,6 +398,8 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
         }
         switch (requestCode) {
         case 1:
+        	Bitmap bt=BitmapFactory.decodeResource(getResources(), R.drawable.head);
+        	System.out.println(bt.getWidth()+"==============="+bt.getHeight());
 			Uri imgUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 			ContentResolver cr = context.getContentResolver();
 
@@ -417,8 +423,8 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			in.putExtra("crop", "true");
 			in.putExtra("aspectX", 1);
 			in.putExtra("aspectY", 1);
-			in.putExtra("outputX", getWindowManager().getDefaultDisplay().getWidth()/5);
-			in.putExtra("outputY", getWindowManager().getDefaultDisplay().getWidth()/5);
+			in.putExtra("outputX", bt.getWidth());
+			in.putExtra("outputY", bt.getHeight());
 			in.putExtra("return-data", true);
 			startActivityForResult(in, 3);
 			break;
@@ -429,6 +435,9 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			    Bitmap bitmap=Tools.toRoundCorner(photo, 360);
 			    Tools.saveMyBitmap("joy/admin", "head.png", bitmap);
 			    head.setImageBitmap(bitmap);
+//			    Drawable drawable=new BitmapDrawable(bitmap);
+//			    head.setBackgroundDrawable(drawable);
+			    head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			}
 			break;
 		case 100:
@@ -459,13 +468,15 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			break;
 		case 200:
 			try {
+				Bitmap bt1=BitmapFactory.decodeResource(getResources(), R.drawable.head);
+	        	System.out.println(bt1.getWidth()+"==============="+bt1.getHeight());
 				Intent intent1 = new Intent("com.android.camera.action.CROP");
 				intent1.setData(data.getData());     //data是图库选取文件传回的参数
 				intent1.putExtra("crop", "true");
 				intent1.putExtra("aspectX", 1);
 				intent1.putExtra("aspectY", 1);
-				intent1.putExtra("outputX", getWindowManager().getDefaultDisplay().getWidth()/5);
-				intent1.putExtra("outputY", getWindowManager().getDefaultDisplay().getWidth()/5);
+				intent1.putExtra("outputX", bt1.getWidth());
+				intent1.putExtra("outputY", bt1.getHeight());
 				intent1.putExtra("noFaceDetection", true);
 				intent1.putExtra("return-data", true);
 				startActivityForResult(intent1, 201);
@@ -479,8 +490,9 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			    Bitmap photo = extras1.getParcelable("data");
 			    Bitmap bitmap=Tools.toRoundCorner(photo, 360);
 			    Tools.saveMyBitmap("joy/admin", "head.png", bitmap);
+//			    Drawable drawable=new BitmapDrawable(bitmap);
 			    head.setImageBitmap(bitmap);
-//			    head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+			    head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			}
 			break;
 		}

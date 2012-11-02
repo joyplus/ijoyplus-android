@@ -48,9 +48,6 @@ public class Shezhi extends Activity {
 		startActivity(intent);
 		((Activity04) getThird_AccessToken.getcontext()).finish();
 		finish();
-		UMFeedbackService.setGoBackButtonVisible();
-		UMFeedbackService
-		.openUmengFeedbackSDK(Shezhi.this);
 	}
 	//查找/添加好友按钮
 	public void Btn_chazhao(View v){

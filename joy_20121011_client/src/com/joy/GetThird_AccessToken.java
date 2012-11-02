@@ -35,7 +35,14 @@ public class GetThird_AccessToken extends Application {
 	String PicName="";
 	String PicURL="";
 	
+	int editTextVisable = 0;
 	
+	public int geteditTextVisable(){
+		return editTextVisable;
+	}
+	public void seteditTextVisable(int editTextVisable){
+		this.editTextVisable=editTextVisable;
+	}
 	
 	public String getPicURL(){
 		return PicURL;

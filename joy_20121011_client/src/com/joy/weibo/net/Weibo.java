@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import com.joy.GetThird_AccessToken;
+import com.joy.R;
 
 import android.Manifest;
 import android.app.Activity;
@@ -353,7 +354,8 @@ public class Weibo {
             Utility.showAlert(context, "Error",
                     "Application requires permission to access the Internet");
         } else {
-            //new WeiboDialog(this, context, url, listener).show();
+        	/*WeiboDialog WeiboDialog = new WeiboDialog(this, context, url, listener);
+        	WeiboDialog.show();*/
         	getThird_AccessToken = (GetThird_AccessToken)context.getApplicationContext();
         	getThird_AccessToken.setWeiboDialogListener(listener);
         	getThird_AccessToken.seturl(url);

@@ -111,7 +111,7 @@
        <string name="shoucang">收藏</string>
        <string name="youcanenterwords">还可以输入120字</string>
        <string name="error">资料填写错误：</string>
-       <string name="imformation_nameerror">昵称格式（不小于1位）</string>
+       <string name="imformation_nameerror">昵称格式（不小于1位,并且不能包含特殊字符）</string>
        <string name="emailerror">邮箱格式</string>
        <string name="passworderror">密码不小于6位</string>
        <string name="reply">回复</string>
@@ -146,6 +146,8 @@
          <string name="qingqiu">请求中,请稍等...</string>
          <string name="shouquanfalse">授权失败</string>
         <string name="shouquansuess">授权成功</string>
+        <string name="replysuess">回复成功</string>
+        <string name="pleaseenterwords">pleaseenterwords</string>
          
          
        <!-- <友盟 -->

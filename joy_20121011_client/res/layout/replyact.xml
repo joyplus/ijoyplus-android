@@ -51,6 +51,7 @@
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:background="@drawable/editbg"
+			    android:focusable="true"
 			    android:textSize="15sp"
 			    android:paddingLeft="10dp"
 			    android:textColor="@color/white"
@@ -62,7 +63,7 @@
 	            android:text="@string/reply" 
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:background="@drawable/btn_sousuo"
+	            android:background="@drawable/btn_huifu"
 	            android:textColor="@color/white"
 	            />
 	    </LinearLayout>

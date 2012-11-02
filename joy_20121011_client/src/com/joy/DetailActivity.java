@@ -190,6 +190,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			LayoutInflater inflater = ( LayoutInflater ) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE );
 			View lo = ( View ) inflater.inflate( R.layout.sigle_recomment, null );
 			RelativeLayout sigle_relat = (RelativeLayout) lo.findViewById(R.id.sigle_relat);
+			ImageView user_image = (ImageView) findViewById(R.id.user_image);
 			TextView user_name_view = (TextView) lo.findViewById(R.id.user_name);
 			user_name_view.setText(user_name[i]);
 			TextView user_content_view = (TextView) lo.findViewById(R.id.user_content);
@@ -218,6 +219,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 						}
 						else
 						{
+							getThird_AccessToken.seteditTextVisable(0);
 							Intent intent = new Intent();
 							intent.setClass(context, ReplyActivity.class);
 							startActivity(intent);
@@ -226,6 +228,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 					}
 					else
 					{
+						getThird_AccessToken.seteditTextVisable(0);
 						Intent intent = new Intent();
 						intent.setClass(context, ReplyActivity.class);
 						startActivity(intent);
@@ -241,7 +244,40 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 				
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(context, "这里是"+user_name[v.getId()/1000-1]+"的回复", Toast.LENGTH_SHORT).show();
+					if (getThird_AccessToken.getAccessToken().trim().trim().length()==0) {
+						if (getThird_AccessToken.getQQ_Token().trim().trim().length()==0) {
+							new AlertDialog.Builder(context).setTitle(getString(R.string.tishi))
+							.setMessage(getString(R.string.nologin)).setCancelable(false)
+							.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									Intent intent = new Intent();
+									intent.setClass(context, Welcome.class);
+									startActivity(intent);
+									//finish();
+								}
+							}).setNegativeButton(getString(R.string.quxiao), new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+							
+								}
+							}).show();
+						}
+						else
+						{
+							getThird_AccessToken.seteditTextVisable(1);
+							Intent intent = new Intent();
+							intent.setClass(context, ReplyActivity.class);
+							startActivity(intent);
+//							finish();
+						}
+					}
+					else
+					{
+						getThird_AccessToken.seteditTextVisable(1);
+						Intent intent = new Intent();
+						intent.setClass(context, ReplyActivity.class);
+						startActivity(intent);
+//						finish();
+					}
 				}
 			});
 			detail_all_comment.addView(sigle_relat);

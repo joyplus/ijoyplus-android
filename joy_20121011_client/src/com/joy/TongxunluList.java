@@ -4,26 +4,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joy.view.PullToRefreshView_foot;
@@ -40,18 +46,27 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 	private int page_count = 2;
 	private int current_page = 0;
     private int index =0;
-	SimpleAdapter adapter;
+//	SimpleAdapter adapter;
+    DragAdapters adapters;
+    Vector<String>vector=new Vector<String>();
 	PullToRefreshView_foot mPullToRefreshView;
 	GetThird_AccessToken GetThird_AccessToken;
+	public static List<String> groupKey= new ArrayList<String>();
+    private List<String> haoyoulList = new ArrayList<String>();
+    private List<String> yaoqingList = new ArrayList<String>();
+    private List<String> guanzhuList = new ArrayList<String>();
+    private static List<String> lists = null;
+    public static String friends[]={ "好友1", "好友2", "好友3", "好友4", "好友5"};
+    public static String yaoqing[];
 	final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case 1500:
-				getPhoneNum(++current_page, page_count);
+				/*getPhoneNum(++current_page, page_count);
 				adapter=new SimpleAdapter(context,list,R.layout.mylistview,new String[] {"name"},new int[ ] {R.id.item_text});
 				listView.setAdapter(adapter);
-				listView.setSelection(listView.getCount()-1);
+				listView.setSelection(listView.getCount()-1);*/
 				break;
 			}
 		}
@@ -69,31 +84,95 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 		listView=(ListView)findViewById(R.id.tongxunlu_list);
 		sousuo=(EditText)findViewById(R.id.tongxunlu_sousuo);
 		phone=(EditText)findViewById(R.id.tongxunlu_phone);
-		getPhoneNum(current_page, page_count);
-		getAllPhontNum();
-		adapter=new SimpleAdapter(context,list,R.layout.mylistview,new String[] {"name"},new int[ ] {R.id.item_text});
-		listView.setAdapter(adapter);
+//		getPhoneNum(current_page, page_count);
+		vector=getAllPhontNum();
+		yaoqing=new String[vector.size()];
+		vector.copyInto(yaoqing);
+//		adapter=new SimpleAdapter(context,list,R.layout.mylistview,new String[] {"name"},new int[ ] {R.id.item_text});
+		initData();
+		adapters=new DragAdapters(context, lists);
+		listView.setAdapter(adapters);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				GetThird_AccessToken.setphoneNum(list.get(arg2).get("phoneNumber"));
+				/*GetThird_AccessToken.setphoneNum(list.get(arg2).get("phoneNumber"));
 				GetThird_AccessToken.setphoneName(list.get(arg2).get("name"));
 				Intent intent=new Intent();
 				intent.setClass(context, Yaoqing.class);
-				startActivity(intent);
+				startActivity(intent);*/
 			}
 		});
 		
 	}
+	public void initData(){
+        lists = new ArrayList<String>();
+        
+        groupKey.add(getResources().getString(R.string.haoyouliebiao));
+        groupKey.add(getResources().getString(R.string.yaoqinghaoyou));
+        
+        for (int i = 0; i < friends.length; i++) {
+        	haoyoulList.add(friends[i]);
+		}
+        lists.add(getResources().getString(R.string.haoyouliebiao));
+        lists.addAll(haoyoulList);
+        
+        for(int i = 0; i < yaoqing.length; i++){
+            yaoqingList.add(yaoqing[i]);
+        }
+        lists.add(getResources().getString(R.string.yaoqinghaoyou));
+        lists.addAll(yaoqingList);
+    }
+	public static class DragAdapters extends ArrayAdapter<String>{
+
+        public DragAdapters(Context context, List<String> objects) {
+            super(context, 0, objects);
+        }
+        
+        public List<String> getList(){
+            return lists;
+        }
+        
+        @Override
+        public boolean isEnabled(int position) {
+            if(groupKey.contains(getItem(position))){
+                return false;
+            }
+            return super.isEnabled(position);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            
+            View view = convertView;
+            if(groupKey.contains(getItem(position))){
+                view = LayoutInflater.from(getContext()).inflate(R.layout.drag_list_item_tag, null);
+            }else{
+                view = LayoutInflater.from(getContext()).inflate(R.layout.drag_list_item, null);
+                TextView textView2=(TextView)view.findViewById(R.id.drag_list_item_what);
+                if (position<=friends.length) {
+                	textView2.setText(view.getResources().getString(R.string.jiaguanzhu));
+                    textView2.setTextColor(Color.BLUE);
+				}
+                else {
+                	textView2.setText(view.getResources().getString(R.string.yaoqing));
+                    textView2.setTextColor(Color.GREEN);
+				}
+            }
+            
+            TextView textView = (TextView)view.findViewById(R.id.drag_list_item_text);
+            textView.setText(getItem(position));
+            return view;
+        }
+    }
 	//返回按钮
 	public void Btnback(View v){
 		finish();
 	}
 	//搜索按钮
 	public void Btnsousuo(View v){
-		int ok=0;
+		/*int ok=0;
 		if (sousuo.getText().toString().trim().length()!=0) {
 			for (int i = 0; i < Alllist.size(); i++) {
 				if (sousuo.getText().toString().trim().equals(Alllist.get(i).get("phoneNumber"))||sousuo.getText().toString().trim().equals(Alllist.get(i).get("name"))) {
@@ -110,7 +189,7 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 			startActivity(intent);
 		}else {
 			Toast.makeText(context, getResources().getString(R.string.weizhaodao), Toast.LENGTH_SHORT).show();
-		}
+		}*/
 		
 	}
 	//提交按钮
@@ -122,27 +201,8 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 		}
 	}
 	//获取手机通讯录
-	public void getPhoneNum(int pageindex, int pagecount){
-		ContentResolver resolver = context.getContentResolver();
-		Cursor phoneCursor = resolver.query(Phone.CONTENT_URI,null, null, null, null);  //传入正确的uri
-		if(phoneCursor!=null){
-			for (int i = index; i < pagecount * (pageindex + 1) && i < phoneCursor.getCount(); i++) {
-				phoneCursor.moveToPosition(i);
-				int nameIndex = phoneCursor.getColumnIndex(Phone.DISPLAY_NAME);   //获取联系人name
-				String name = phoneCursor.getString(nameIndex);
-				String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(Phone.NUMBER)); //获取联系人number
-				if(TextUtils.isEmpty(phoneNumber)){
-					 continue;
-				}
-				index++;
-				Map<String, String> map=new HashMap<String, String>();
-				map.put("name", name);
-				map.put("phoneNumber", phoneNumber);
-				list.add(map);
-			}
-		}
-	}
-	public void getAllPhontNum(){
+	public Vector<String> getAllPhontNum(){
+		Vector<String>v=new Vector<String>();
 		ContentResolver resolver = context.getContentResolver();
 		Cursor phoneCursor = resolver.query(Phone.CONTENT_URI,null, null, null, null);  //传入正确的uri
 		if(phoneCursor!=null){
@@ -154,12 +214,14 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 				if(TextUtils.isEmpty(phoneNumber)){
 					 continue;
 				}
-				Map<String, String> map=new HashMap<String, String>();
+				/*Map<String, String> map=new HashMap<String, String>();
 				map.put("name", name);
 				map.put("phoneNumber", phoneNumber);
-				Alllist.add(map);
+				Alllist.add(map);*/
+				v.addElement(name);
 			}
 		}
+		return v;
 	}
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
