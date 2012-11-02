@@ -1,6 +1,5 @@
 package com.joy;
 
-import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+
+import com.mobclick.android.MobclickAgent;
 
 public class Xunzhaohaoyou extends Activity {
 	Context context;

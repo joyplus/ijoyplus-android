@@ -1,7 +1,8 @@
 package com.joy;
 
 
-import com.umeng.analytics.MobclickAgent;
+
+import com.mobclick.android.MobclickAgent;
 import com.umeng.fb.UMFeedbackService;
 
 import android.app.Activity;
@@ -59,7 +60,9 @@ public class Shezhi extends Activity {
 	}
 	//意见反馈按钮
 	public void Btn_yijianfankui(View v){
-		
+		UMFeedbackService.setGoBackButtonVisible();
+		UMFeedbackService
+		.openUmengFeedbackSDK(Shezhi.this);
 	}
 	//关于我们按钮
 	public void Btn_guanyuwomen(View v){

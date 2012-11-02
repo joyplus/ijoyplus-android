@@ -11,7 +11,7 @@ import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
 import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
-import com.umeng.analytics.MobclickAgent;
+import com.mobclick.android.MobclickAgent;
 
 import android.app.Activity;
 import android.app.AlertDialog;

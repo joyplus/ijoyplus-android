@@ -4,22 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.joy.Tools.AsyncBitmapLoader;
-import com.joy.Tools.BitmapZoom;
-import com.joy.Tools.Tools;
-import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
-import com.joy.view.PullToRefreshView_foot;
-import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
-import com.umeng.analytics.MobclickAgent;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,10 +22,16 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
+import com.joy.Tools.Tools;
+import com.joy.view.PullToRefreshView_foot;
+import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
+import com.mobclick.android.MobclickAgent;
 
 public class Darentuijian extends Activity implements OnFooterRefreshListener{
 	Context context;
@@ -107,6 +103,8 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
 		setContentView(R.layout.darentuijian);
 		getThird_AccessToken=(GetThird_AccessToken)getApplicationContext();
 		context = this;
+		getThird_AccessToken.setexit(getString(R.string.exit_false));
+		getThird_AccessToken.SaveExit();
 		list=new ArrayList<String>();
 		
 		mPullToRefreshView = (PullToRefreshView_foot)findViewById(R.id.darentuijian_main_pull_refresh_view);

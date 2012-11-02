@@ -1,20 +1,10 @@
 package com.joy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.joy.view.PullToRefreshView;
-import com.joy.view.PullToRefreshView_foot;
-import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
-import com.umeng.analytics.MobclickAgent;
-
-import android.R.integer;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,18 +12,20 @@ import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.joy.view.PullToRefreshView_foot;
+import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
+import com.mobclick.android.MobclickAgent;
 
 public class Sousuo extends Activity implements OnFooterRefreshListener{
 	Context context;

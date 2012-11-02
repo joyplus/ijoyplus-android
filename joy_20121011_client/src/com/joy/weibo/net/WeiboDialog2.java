@@ -10,6 +10,7 @@ import java.net.URL;
 
 import com.joy.GetThird_AccessToken;
 import com.joy.R;
+import com.mobclick.android.MobclickAgent;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -253,4 +254,12 @@ public class WeiboDialog2 extends Activity {
 
         }
     }
+    public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
+	}
 }

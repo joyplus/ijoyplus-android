@@ -1,22 +1,7 @@
 package com.joy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-
-import com.joy.Tools.AsyncBitmapLoader;
-import com.joy.Tools.BitmapZoom;
-import com.joy.Tools.Tools;
-import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
-import com.joy.Tools.SearchAdapter;
-import com.joy.msg.ChatMsgEntity;
-import com.joy.view.PullToRefreshView;
-import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
-import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
-import com.umeng.analytics.MobclickAgent;
-import com.umeng.xp.view.o;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,28 +10,30 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.ColorFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
+import com.joy.Tools.BitmapZoom;
+import com.joy.Tools.Tools;
+import com.joy.msg.ChatMsgEntity;
+import com.joy.view.PullToRefreshView;
+import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
+import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
+import com.mobclick.android.MobclickAgent;
 
 public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFooterRefreshListener{
 	Context context;

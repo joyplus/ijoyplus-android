@@ -1,35 +1,15 @@
 package com.joy;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.joy.Tools.AsyncBitmapLoader;
-import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
-import com.joy.Tools.MyGridView;
-import com.joy.Tools.Tools;
-import com.joy.oauthTools.ConfigUtil;
-import com.joy.oauthTools.OAuth;
-import com.joy.view.PullToRefreshView;
-import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
-import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
-import com.joy.weibo.net.ShareActivity;
-import com.joy.weibo.net.Weibo;
-import com.joy.weibo.net.WeiboException;
-import com.umeng.analytics.MobclickAgent;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.TabActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -38,18 +18,26 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.LinearLayout.LayoutParams;
+
+import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
+import com.joy.Tools.Tools;
+import com.joy.view.PullToRefreshView;
+import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
+import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
+import com.joy.weibo.net.ShareActivity;
+import com.joy.weibo.net.Weibo;
+import com.joy.weibo.net.WeiboException;
+import com.mobclick.android.MobclickAgent;
 
 public class DetailActivity extends Activity implements OnClickListener,OnHeaderRefreshListener,OnFooterRefreshListener{
 	PullToRefreshView mPullToRefreshView;

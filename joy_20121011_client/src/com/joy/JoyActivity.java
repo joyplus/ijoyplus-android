@@ -1,27 +1,22 @@
 package com.joy;
 
-import com.joy.Tools.Tools;
-import com.joy.oauthTools.ConfigUtil;
-import com.joy.oauthTools.OAuth;
-import com.umeng.analytics.MobclickAgent;
-
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
+
+import com.mobclick.android.MobclickAgent;
 
 public class JoyActivity extends TabActivity implements OnClickListener{
 	private final String LOGTAG = "AccessToken";

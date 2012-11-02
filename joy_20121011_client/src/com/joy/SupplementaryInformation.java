@@ -3,8 +3,6 @@ package com.joy;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.umeng.analytics.MobclickAgent;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +14,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.mobclick.android.MobclickAgent;
 
 public class SupplementaryInformation extends Activity {
 	GetThird_AccessToken getThird_AccessToken;

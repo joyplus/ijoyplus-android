@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/tencent_openapi.jar"/>
 	<classpathentry kind="lib" path="lib/umeng_sdk.jar"/>
+	<classpathentry kind="lib" path="lib/Analytics_Android_SDK_3.3.jar"/>
+	<classpathentry kind="lib" path="lib/android-support-v4.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

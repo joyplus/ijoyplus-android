@@ -1,20 +1,18 @@
 package com.joy;
 
-import com.joy.Tools.Tools;
-import com.joy.weibo.net.AccessToken;
-import com.joy.weibo.net.Oauth2AccessTokenHeader;
-import com.joy.weibo.net.Utility;
-import com.joy.weibo.net.Weibo;
-import com.tencent.tauth.bean.OpenId;
-import com.umeng.analytics.MobclickAgent;
-
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
+
+import com.joy.Tools.Tools;
+import com.joy.weibo.net.AccessToken;
+import com.joy.weibo.net.Oauth2AccessTokenHeader;
+import com.joy.weibo.net.Utility;
+import com.joy.weibo.net.Weibo;
+import com.mobclick.android.MobclickAgent;
 
 public class Appstart extends Activity {
 	GetThird_AccessToken getThird_AccessToken;
@@ -103,7 +101,6 @@ public class Appstart extends Activity {
 				}
 			}
 		}, 2000);
-		com.umeng.common.Log.LOG = true;
 		MobclickAgent.onError(this);
 	}
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

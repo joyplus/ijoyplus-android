@@ -5,13 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.joy.Tools.SearchAdapter;
-import com.joy.view.PullToRefreshView;
-import com.joy.view.PullToRefreshView_foot;
-import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
-import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
-import com.umeng.analytics.MobclickAgent;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -21,8 +14,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -30,6 +23,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.joy.Tools.SearchAdapter;
+import com.joy.view.PullToRefreshView;
+import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
+import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
+import com.mobclick.android.MobclickAgent;
 
 public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,OnFooterRefreshListener{
 	Context context;

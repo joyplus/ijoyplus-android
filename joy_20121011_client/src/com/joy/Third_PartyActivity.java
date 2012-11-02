@@ -2,10 +2,6 @@ package com.joy;
 
 
 
-import com.joy.oauthTools.ConfigUtil;
-import com.joy.oauthTools.OAuth;
-import com.umeng.analytics.MobclickAgent;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,11 +9,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.joy.oauthTools.ConfigUtil;
+import com.joy.oauthTools.OAuth;
+import com.mobclick.android.MobclickAgent;
 
 public class Third_PartyActivity extends Activity {
 	ProgressDialog progressBar;

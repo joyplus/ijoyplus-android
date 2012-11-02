@@ -8,6 +8,8 @@ import com.joy.Tools.Tools;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
+import com.mobclick.android.MobclickAgent;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -245,5 +247,12 @@ public class Guanzhuderen extends Activity implements OnFooterRefreshListener{
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
+	}
 }

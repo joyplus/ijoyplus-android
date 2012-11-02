@@ -8,18 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joy.oauthTools.ConfigUtil;
-import com.joy.oauthTools.OAuth;
 import com.joy.weibo.net.AccessToken;
 import com.joy.weibo.net.DialogError;
 import com.joy.weibo.net.Oauth2AccessTokenHeader;
@@ -27,12 +24,12 @@ import com.joy.weibo.net.Utility;
 import com.joy.weibo.net.Weibo;
 import com.joy.weibo.net.WeiboDialogListener;
 import com.joy.weibo.net.WeiboException;
+import com.mobclick.android.MobclickAgent;
 import com.tencent.tauth.TAuthView;
 import com.tencent.tauth.TencentOpenAPI;
 import com.tencent.tauth.bean.OpenId;
 import com.tencent.tauth.http.Callback;
 import com.tencent.tauth.http.TDebug;
-import com.umeng.analytics.MobclickAgent;
 
 
 public class Login_Activity extends Activity implements OnClickListener{

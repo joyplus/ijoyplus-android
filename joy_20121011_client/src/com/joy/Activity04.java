@@ -1,14 +1,10 @@
 package com.joy;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -43,12 +39,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
-import com.joy.Tools.Tools;
-import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
+import com.joy.Tools.BitmapZoom;
+import com.joy.Tools.Tools;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
-import com.umeng.analytics.MobclickAgent;
+import com.mobclick.android.MobclickAgent;
 
 
 public class Activity04 extends Activity implements OnFooterRefreshListener{

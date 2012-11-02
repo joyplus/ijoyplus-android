@@ -36,6 +36,7 @@ import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.MyEditText;
 import com.joy.weibo.net.AsyncWeiboRunner.RequestListener;
+import com.mobclick.android.MobclickAgent;
 import com.tencent.tauth.TAuthView;
 import com.tencent.tauth.TencentOpenAPI;
 import com.tencent.tauth.bean.OpenId;
@@ -794,4 +795,12 @@ public class AuthReceiver extends BroadcastReceiver {
     	}
         return true;
     }
+    public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
+	}
 }

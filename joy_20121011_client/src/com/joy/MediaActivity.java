@@ -2,8 +2,6 @@ package com.joy;
 
 import java.io.IOException;
 
-import com.umeng.analytics.MobclickAgent;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.media.AudioManager;
@@ -14,6 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.mobclick.android.MobclickAgent;
 
 public class MediaActivity extends Activity implements
         OnBufferingUpdateListener, OnCompletionListener,

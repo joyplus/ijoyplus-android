@@ -6,6 +6,7 @@ import java.util.List;
 import com.joy.Tools.Tools;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
+import com.mobclick.android.MobclickAgent;
 
 import android.app.Activity;
 import android.content.Context;
@@ -185,5 +186,13 @@ public class Friend extends Activity implements OnFooterRefreshListener{
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	public void onResume() { 
+		super.onResume();
+		MobclickAgent.onResume(this); 
+	} 
+	public void onPause() { 
+		super.onPause(); 
+		MobclickAgent.onPause(this); 
 	}
 }

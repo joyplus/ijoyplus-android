@@ -48,7 +48,7 @@ import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
 import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
-import com.umeng.analytics.MobclickAgent;
+import com.mobclick.android.MobclickAgent;
 
 public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFooterRefreshListener{
 	Button btn_dianying,btn_juji,btn_shipin,btn_zongyi,btn_sousuo;
