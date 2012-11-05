@@ -20,8 +20,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,7 +33,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,10 +60,28 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
 			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
     private String name_dianying[] = {
-			"电影1",
+    		"电影1",
 			"电影2",
 			"电影3",
 			"电影4",
@@ -74,7 +89,25 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 			"电影6",
 			"电影7",
 			"电影8",
-			"电影9"
+			"电影9",
+			"电影10",
+			"电影11",
+			"电影12",
+			"电影13",
+			"电影14",
+			"电影15",
+			"电影16",
+			"电影17",
+			"电影18",
+			"电影19",
+			"电影20",
+			"电影21",
+			"电影22",
+			"电影23",
+			"电影24",
+			"电影25",
+			"电影26",
+			"电影27"
 	};
     AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
     ProgressDialog progressBar;
@@ -93,8 +126,10 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 				current_page=0;
 				index=0;
 				addBitmaps(current_page, page_count,images,name_dianying);
+				Toast.makeText(context, getResources().getString(R.string.shuaxin), Toast.LENGTH_SHORT).show();
 				break;
 			case 999:
+				getThird_AccessToken.setjujiliebiaoXianshi(1);
 				Intent intent = new Intent();
 		    	intent.setClass(context, DetailActivity.class);
 		    	startActivity(intent);
@@ -214,6 +249,9 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 							break;
 					}
     				index++;
+    				if (index>=img.length) {
+    					Toast.makeText(context, getResources().getString(R.string.jiazai), Toast.LENGTH_SHORT).show();
+					}
     				USE_LINEAR_INTERVAL++;
     				USE_LINEAR_INTERVAL= USE_LINEAR_INTERVAL%3;
     				

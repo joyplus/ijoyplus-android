@@ -2,9 +2,7 @@ package com.joy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -12,27 +10,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -42,7 +29,6 @@ import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.BitmapZoom;
-import com.joy.Tools.ImageAndText;
 import com.joy.Tools.Tools;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView;
@@ -59,7 +45,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 	PullToRefreshView mPullToRefreshView;
 	private int USE_LINEAR_INTERVAL = 0;
     private int linearlayoutWidth = 0;
-	private int page_count = 6;// 每次加载x张图片
+	private int page_count = 9;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
     private int index =0;
     List<String> IMG_list;
@@ -69,6 +55,24 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
     GetThird_AccessToken getThird_AccessToken;
     String where="where_1_1";
 	private String images_dianying[] = {
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
 			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
@@ -88,9 +92,45 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
 			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://pic3.nipic.com/20090514/1988006_001600282_2.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://pic3.nipic.com/20090514/1988006_001600282_2.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
 	private String images_zongyi[] = {
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://www.u2game.net/uchome/attachment/201008/30/2905_1283184026q702.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://www.u2game.net/uchome/attachment/201008/30/2905_1283184026q702.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
 			"http://www.u2game.net/uchome/attachment/201008/30/2905_1283184026q702.jpg",
@@ -110,6 +150,24 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
 			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
 	private String name_dianying[] = {
@@ -121,7 +179,25 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"电影6",
 			"电影7",
 			"电影8",
-			"电影9"
+			"电影9",
+			"电影10",
+			"电影11",
+			"电影12",
+			"电影13",
+			"电影14",
+			"电影15",
+			"电影16",
+			"电影17",
+			"电影18",
+			"电影19",
+			"电影20",
+			"电影21",
+			"电影22",
+			"电影23",
+			"电影24",
+			"电影25",
+			"电影26",
+			"电影27"
 	};
 	private String name_juji[] = {
 			"剧集1",
@@ -132,7 +208,25 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"剧集6",
 			"剧集7",
 			"剧集8",
-			"剧集9"
+			"剧集9",
+			"剧集10",
+			"剧集11",
+			"剧集12",
+			"剧集13",
+			"剧集14",
+			"剧集15",
+			"剧集16",
+			"剧集17",
+			"剧集18",
+			"剧集19",
+			"剧集20",
+			"剧集21",
+			"剧集22",
+			"剧集23",
+			"剧集24",
+			"剧集25",
+			"剧集26",
+			"剧集27"
 	};
 	private String name_zongyi[] = {
 			"综艺1",
@@ -143,7 +237,25 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"综艺6",
 			"综艺7",
 			"综艺8",
-			"综艺9"
+			"综艺9",
+			"综艺10",
+			"综艺11",
+			"综艺12",
+			"综艺13",
+			"综艺14",
+			"综艺15",
+			"综艺16",
+			"综艺17",
+			"综艺18",
+			"综艺19",
+			"综艺20",
+			"综艺21",
+			"综艺22",
+			"综艺23",
+			"综艺24",
+			"综艺25",
+			"综艺26",
+			"综艺27"
 	};
 	private String name_shipin[]={
 			"视频1",
@@ -154,7 +266,25 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"视频6",
 			"视频7",
 			"视频8",
-			"视频9"	
+			"视频9",
+			"视频10",
+			"视频11",
+			"视频12",
+			"视频13",
+			"视频14",
+			"视频15",
+			"视频16",
+			"视频17",
+			"视频18",
+			"视频19",
+			"视频20",
+			"视频21",
+			"视频22",
+			"视频23",
+			"视频24",
+			"视频25",
+			"视频26",
+			"视频27"	
 	};
 	AsyncBitmapLoader asyncBitmapLoader;
 	ProgressDialog progressBar;
@@ -183,6 +313,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 				index=0;
 				scrollView.fullScroll(ScrollView.FOCUS_UP);
 				addBitmaps(current_page, page_count,images_dianying,name_dianying);
+				Toast.makeText(context, getResources().getString(R.string.shuaxin), Toast.LENGTH_SHORT).show();
 				break;
 			case 20:
 				linearLayout1.removeAllViews();
@@ -193,6 +324,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 				index=0;
 				scrollView.fullScroll(ScrollView.FOCUS_UP);
 				addBitmaps(current_page, page_count,images_juji,name_juji);
+				Toast.makeText(context, getResources().getString(R.string.shuaxin), Toast.LENGTH_SHORT).show();
 				break;
 			case 30:
 				linearLayout1.removeAllViews();
@@ -203,6 +335,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 				index=0;
 				scrollView.fullScroll(ScrollView.FOCUS_UP);
 				addBitmaps(current_page, page_count,images_zongyi,name_zongyi);
+				Toast.makeText(context, getResources().getString(R.string.shuaxin), Toast.LENGTH_SHORT).show();
 				break;
 			case 40:
 				linearLayout1.removeAllViews();
@@ -213,6 +346,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 				index=0;
 				scrollView.fullScroll(ScrollView.FOCUS_UP);
 				addBitmaps(current_page, page_count,images_shipin,name_shipin);
+				Toast.makeText(context, getResources().getString(R.string.shuaxin), Toast.LENGTH_SHORT).show();
 				break;
 			case 11:
 				linearLayout1.removeAllViews();
@@ -301,6 +435,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			
 			@Override
 			public void onClick(View v) {
+				getThird_AccessToken.setjujiliebiaoXianshi(0);
 				selectIndex=1;
 				where="where_1_1";
 		        images_dianying=SetSaveData(where, images_dianying);
@@ -329,6 +464,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			
 			@Override
 			public void onClick(View v) {
+				getThird_AccessToken.setjujiliebiaoXianshi(1);
 				selectIndex=2;
 				where="where_1_2";
 				images_juji=SetSaveData(where, images_juji);
@@ -357,6 +493,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			
 			@Override
 			public void onClick(View v) {
+				getThird_AccessToken.setjujiliebiaoXianshi(2);
 				selectIndex=3;
 				where="where_1_3";
 				images_zongyi=SetSaveData(where, images_zongyi);
@@ -386,6 +523,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			
 			@Override
 			public void onClick(View v) {
+				getThird_AccessToken.setjujiliebiaoXianshi(0);
 				selectIndex=4;
 				where="where_1_4";
 				images_shipin=SetSaveData(where, images_shipin);
@@ -513,6 +651,9 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 							break;
 					}
     				index++;
+    				if (index>=img.length) {
+    					Toast.makeText(context, getResources().getString(R.string.jiazai), Toast.LENGTH_SHORT).show();
+					}
     				System.out.println("index====>"+index);
     				USE_LINEAR_INTERVAL++;
     				USE_LINEAR_INTERVAL= USE_LINEAR_INTERVAL%3;

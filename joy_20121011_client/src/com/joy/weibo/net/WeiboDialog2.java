@@ -13,27 +13,18 @@ import com.joy.R;
 import com.mobclick.android.MobclickAgent;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 
 public class WeiboDialog2 extends Activity {
@@ -44,10 +35,8 @@ public class WeiboDialog2 extends Activity {
     static final int PADDING = 2;
 
     Weibo mWeibo;
-    private String mUrl;
     private WeiboDialogListener mListener;
     private ProgressDialog mSpinner;
-    private ImageView mBtnClose;
     private WebView mWebView;
     GetThird_AccessToken getThird_AccessToken;
 //    private RelativeLayout webViewContainer;

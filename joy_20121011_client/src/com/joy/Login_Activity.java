@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.joy.oauthTools.ConfigUtil;
 import com.joy.weibo.net.AccessToken;
 import com.joy.weibo.net.DialogError;
 import com.joy.weibo.net.Oauth2AccessTokenHeader;
@@ -69,7 +68,6 @@ public class Login_Activity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		Intent intent=new Intent();
-		ConfigUtil conf = ConfigUtil.getInstance();
 		switch(v.getId())
 		{
 		case R.id.Sina_weibo:
@@ -225,7 +223,12 @@ public class AuthReceiver extends BroadcastReceiver {
 						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								dismissDialog(PROGRESS);
+								try{
+									dismissDialog(PROGRESS);
+								}catch(Exception e)
+								{
+									
+								}
 								TDebug.msg(msg, getApplicationContext());
 							}
 						});

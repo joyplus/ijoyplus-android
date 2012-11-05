@@ -9,10 +9,6 @@ import java.util.Random;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import android.app.Application;
-import android.content.SharedPreferences;
-import android.util.Log;
-
 
 
 public class OAuth{

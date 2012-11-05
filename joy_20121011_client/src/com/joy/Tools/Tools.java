@@ -453,4 +453,11 @@ public class Tools {
 	  
 	        return output;  
 	    }
+	 public static float getWidth(String text)
+	 {
+		 	Paint mPaint = new Paint();
+	        mPaint.setTextSize(16);   
+	        float FontSpace = mPaint.getFontSpacing(); 
+	        return text.length()*FontSpace;
+	 }
 }

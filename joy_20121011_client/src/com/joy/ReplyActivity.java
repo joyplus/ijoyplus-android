@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +34,15 @@ public class ReplyActivity extends Activity{
 	SimpleAdapter adapter;
 	LinearLayout reply_linearlayout;
 	String user_name[]={"张3","张4","张5","张6","张7","张8","张9","张0"};
-	String user_content[]={"XXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"};
-    String user_time[] = {"12:45","12:46","12:47","12:48","12:49","12:50","12:51","12:52"};
+	String user_content[]={"夏日炎炎",
+			"马上要光棍节了",
+			"星期八小镇，3岁至15岁孩子玩角色扮演",
+			"当我还是年轻的时候妈妈告诉我，其实每个人都是super star",
+			"上帝之手没有瑕疵",
+			"今晚饮得尽兴啊，听日休息，可以训大觉",
+			"哥是好爷们，铁血真汉子，不需要备胎",
+			"清理QQ好友时发现某个三年没动静的好友。最后一条签名是：自从买了保险，过马路再也不用左右看了..."};    
+	String user_time[] = {"12:45","12:46","12:47","12:48","12:49","12:50","12:51","12:52"};
     int srcollY = 0,srcollY2 = 0;
     ProgressDialog progressBar;
     GetThird_AccessToken getThird_AccessToken;
@@ -45,9 +51,9 @@ public class ReplyActivity extends Activity{
 		super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
-        if (getThird_AccessToken.geteditTextVisable()==0) {
-        	getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        }
+//        if (getThird_AccessToken.geteditTextVisable()==0) {
+//        	getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+//        }
         setContentView(R.layout.replyact);
         context = this;
         reply_editText = (EditText) findViewById(R.id.reply_edit);
@@ -68,6 +74,26 @@ public class ReplyActivity extends Activity{
 //			    	reply_listview.scrollTo(0, 99999999);  
 //			    }   
 //			});
+        }
+        else
+        {
+        	new Handler().postDelayed(new Runnable(){
+    			@Override
+    			public void run(){
+    				//reply_listview.scrollTo(0, 99999999);  
+    				InputMethodManager m = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+    	            m .hideSoftInputFromWindow(reply_editText.getWindowToken(), 0);
+    			}
+    		}, 100);
+        	
+
+
+        	new Handler().postDelayed(new Runnable(){
+    			@Override
+    			public void run(){
+    				reply_listview.scrollTo(0, 1);  
+    			}
+    		}, 400);
         }
         login_goback = (RelativeLayout) findViewById(R.id.login_goback);
         login_goback.setOnClickListener(new OnClickListener() {
@@ -99,8 +125,8 @@ public class ReplyActivity extends Activity{
 			
 			@Override
 			public void onClick(View v) {
-				reply_editText.setFocusable(true);
-				reply_editText.setFocusableInTouchMode(true); 
+//				reply_editText.setFocusable(true);
+				reply_editText.setFocusableInTouchMode(false); 
 				new Handler().postDelayed(new Runnable(){
 					@Override
 					public void run(){

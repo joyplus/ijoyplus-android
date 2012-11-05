@@ -6,7 +6,7 @@
          android:layout_weight = "1"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <Button android:id="@+id/button_item"
-        
+        android:singleLine="true"
         android:background="@drawable/btn_juji"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

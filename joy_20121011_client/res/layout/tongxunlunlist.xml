@@ -59,7 +59,8 @@
      android:paddingLeft="10dp"
      android:paddingRight="10dp"
      android:singleLine="true"
-     /> 
+     android:completionThreshold="1"
+     />
 <Button
     android:layout_marginLeft="5dp"
     android:layout_width="wrap_content"

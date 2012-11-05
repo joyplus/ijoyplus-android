@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.mobclick.android.MobclickAgent;
 
 public class JoyActivity extends TabActivity implements OnClickListener{
-	private final String LOGTAG = "AccessToken";
 	ProgressDialog progressBar;
 	public static String TAB_TAG_HOME = "zhengzailiuxing";
 	public static String TAB_TAG_CHANNEL = "haoyoutuijian";
@@ -120,14 +119,14 @@ public class JoyActivity extends TabActivity implements OnClickListener{
 						getResources().getDrawable(resIcon))
 				.setContent(content);
 	}
-    @Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			mBut1.performClick();
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
+//    @Override
+//	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+//			mBut1.performClick();
+//			return true;
+//		}
+//		return super.onKeyDown(keyCode, event);
+//	}
 	@Override
 	public void onClick(View v) {
 		if (mCurTabId == v.getId()) {

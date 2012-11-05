@@ -1,6 +1,5 @@
 package com.joy.msg;
 
-import android.R.integer;
 
 public class ChatMsgEntity {
 	private int head;

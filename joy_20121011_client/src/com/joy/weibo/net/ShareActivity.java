@@ -23,14 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 
-import com.joy.Login_Activity.AuthReceiver;
 import com.joy.Tools.*;
 
 import com.joy.DetailActivity;
 import com.joy.GetThird_AccessToken;
-import com.joy.Login_Activity;
 import com.joy.R;
-import com.joy.SupplementaryInformation;
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.BitmapZoom;
@@ -44,27 +41,17 @@ import com.tencent.tauth.http.Callback;
 import com.tencent.tauth.http.TDebug;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
-import android.text.InputType;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -74,14 +61,10 @@ import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.LinearLayout.LayoutParams;
 
 
 /**
@@ -99,7 +82,6 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     private TextView mTextNum,title_text;
     private Button share_pinglun,xinlang_button,qq_button;
     private MyEditText fx_pl_edit;
-    private FrameLayout mPiclayout;
     private String mPicPath = "";
     private String mContent = "";
     private String mAccessToken = "";
@@ -226,7 +208,6 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String mText = fx_pl_edit.getText().toString();
-                String mStr;
                 int len = mText.length();
                 if (len <= WEIBO_MAX_LENGTH) {
                     len = WEIBO_MAX_LENGTH - len;

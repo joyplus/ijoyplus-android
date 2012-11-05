@@ -47,21 +47,38 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 	List<Map<String, Object>> items;
 	TextView nameTextView;
 	Map<String, Object> item;
-	int juji = 21;
+	//int juji = 5;
 	int button_wigth = 60;
 	int lin_han = 0;
 	LinearLayout detail_all_comment;
 	ImageView pic;
 	String user_name[]={"张3","张4","张5","张6","张7","张8","张9","张0"};
-	String user_content[]={"XXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"};
+	String user_content[]={"夏日炎炎",
+							"马上要光棍节了",
+							"星期八小镇，3岁至15岁孩子玩角色扮演",
+							"当我还是年轻的时候妈妈告诉我，其实每个人都是super star",
+							"上帝之手没有瑕疵",
+							"今晚饮得尽兴啊，听日休息，可以训大觉",
+							"哥是好爷们，铁血真汉子，不需要备胎",
+							"清理QQ好友时发现某个三年没动静的好友。最后一条签名是：自从买了保险，过马路再也不用左右看了..."};
     String user_time[] = {"12:45","12:46","12:47","12:48","12:49","12:50","12:51","12:52"};
     Context context;
     int linearlayoutWidth;
     int index = 0;
+    int juji_nub = 5;
     int pinglun_nub = 5;
     int count = 0;
     int page = 0;
     Bitmap bitmap;
+//    天生王牌-100611-石小群
+//    天生王牌-100521-孙兴
+//    天生王牌-100528-孙兴王喜
+//    天生王牌-100507-黄品源
+//    天生王牌-100618-五强晋级赛
+
+//    String juji_Name[] = {"天生王牌-100611-石小群","天生王牌-100521-孙兴","天生王牌-100528-孙兴王喜",
+//    						"天生王牌-100507-黄品源","天生王牌-100618-五强晋级赛"};
+    String juji_Name[]={"1","2","3","4","5","6","7","8"};
     AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
     GetThird_AccessToken getThird_AccessToken;
     final Handler handler = new Handler(){
@@ -81,7 +98,8 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
         setContentView(R.layout.detailact);
         context = this;
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
-        linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/pinglun_nub;
+        
+        //linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/pinglun_nub;
         into();
         into_juji();
         into_jiazai(page);
@@ -130,17 +148,53 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			pic.setBackgroundDrawable(Tools.BitampTodrawable(bitmap));
 		}
     }
-    
+    //按剧集名字长度来显示每行显示几列
+    public int getLie()
+    {
+    	int  lie= 0;
+    	int index = 0;
+    	for (int i = 0; i < juji_Name.length;i++) {
+    		if (juji_Name[index].length()<juji_Name[i].length()) {
+    			index = i;
+    		}
+    	}
+    	linearlayoutWidth = (int)Tools.getWidth(juji_Name[index]);
+    	//判断剧集名字长度是否大于屏幕宽度
+    	if (getWindowManager().getDefaultDisplay().getWidth()<linearlayoutWidth) {
+    		linearlayoutWidth = getWindowManager().getDefaultDisplay().getWidth();
+    	}
+    	lie = getWindowManager().getDefaultDisplay().getWidth()/linearlayoutWidth;
+    	//重新获取每个剧集BUTTON的宽度
+    	linearlayoutWidth = getWindowManager().getDefaultDisplay().getWidth()/lie;
+    	//判断剧集每行不超过5个
+    	if (lie>5) {
+    		linearlayoutWidth = getWindowManager().getDefaultDisplay().getWidth()/5;
+    		return 5;
+    	}
+    	return lie;
+    }
     public void into_juji()
     {
-    	if (juji == 1) {
+    	//判断是否是电影或视频
+    	if (juji_Name.length == 1 || getThird_AccessToken.getjujiliebiaoXianshi()==0) {
         	findViewById(R.id.detail_drama).setVisibility(View.GONE);
         	myGridView.setVisibility(View.GONE);
         }
         else
         {
-        	lin_han = juji/5;
-        	if (lin_han*5<juji) {
+        	//判断是否为剧集
+        	if (getThird_AccessToken.getjujiliebiaoXianshi()==1) {
+        		juji_Name=new String[]{"01","02","03","04","05","06","07","08"};
+        	}
+        	//判断是否为综艺
+        	else if(getThird_AccessToken.getjujiliebiaoXianshi()==2)
+        	{
+        		juji_Name=new String[]{"天生王牌-100611-石小群","天生王牌-100521-孙兴","天生王牌-100528-孙兴王喜",
+						"天生王牌-100507-黄品源","天生王牌-100618-五强晋级赛"};
+        	}
+        	juji_nub = getLie();
+        	lin_han = juji_Name.length/juji_nub;
+        	if (lin_han*juji_nub<juji_Name.length) {
         		lin_han++;
         	}
         	for (int i = 0; i < lin_han;i++) {
@@ -150,15 +204,16 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
         		h_linearlayout.setOrientation(LinearLayout.HORIZONTAL);
         		
         		h_linearlayout.setLayoutParams(h_ll);
-        		for (int j = 0; j < 5; j++) {
-        			if (index<juji) {
+        		for (int j = 0; j < juji_nub; j++) {
+        			if (index<juji_Name.length) {
         				
         				LayoutInflater inflater = ( LayoutInflater ) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE );
         				View lo = ( View ) inflater.inflate( R.layout.grid_item, null );
         				LinearLayout RelativeLayout = (LinearLayout) lo.findViewById(R.id.RelativeLayout01);
         				Button bt = (Button) lo.findViewById(R.id.button_item);
         				bt.setLayoutParams(new LinearLayout.LayoutParams(linearlayoutWidth,LinearLayout.LayoutParams.WRAP_CONTENT));
-        				bt.setText((index+1)+"");
+        				bt.setTextSize(16);
+        				bt.setText(juji_Name[index]);
         				bt.setId(index);
         				bt.setOnClickListener(new OnClickListener() {
 							
@@ -190,7 +245,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			LayoutInflater inflater = ( LayoutInflater ) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE );
 			View lo = ( View ) inflater.inflate( R.layout.sigle_recomment, null );
 			RelativeLayout sigle_relat = (RelativeLayout) lo.findViewById(R.id.sigle_relat);
-			ImageView user_image = (ImageView) findViewById(R.id.user_image);
+			//ImageView user_image = (ImageView) findViewById(R.id.user_image);
 			TextView user_name_view = (TextView) lo.findViewById(R.id.user_name);
 			user_name_view.setText(user_name[i]);
 			TextView user_content_view = (TextView) lo.findViewById(R.id.user_content);

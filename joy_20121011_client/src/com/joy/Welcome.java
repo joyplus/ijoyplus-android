@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
@@ -52,13 +53,31 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 	AsyncBitmapLoader asyncBitmapLoader;
 	private int USE_LINEAR_INTERVAL = 0;
     private int linearlayoutWidth = 0;
-	private int page_count = 6;// 每次加载x张图片
+	private int page_count = 9;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
     private int index =0;
     int select_index=1;
     Bitmap BigBitmap;
     ProgressDialog progressBar;
     private String images_dianying[] = {
+			"http://imgsrc.baidu.com/forum/pic/item/06509e4472138361500ffe18.jpg",
+			"http://imgsrc.baidu.com/forum/pic/item/c99ee50389ab4fa5d53f7c1a.jpg",
+			"http://imgsrc.baidu.com/forum/pic/item/f77c583494e1a963241f141f.jpg",
+			"http://imgsrc.baidu.com/forum/pic/item/dbabbe86c0ede61366096eee.jpg",
+			"http://wenwen.soso.com/p/20100708/20100708050003-665156019.jpg",
+			"http://movie.yntv.cn/category/2021302/2009/07/10/images/2021302_20090710_802.jpg",
+			"http://www.sznews.com/rollnews/images/20110601/19/10978230170352392435.jpg",
+			"http://img.daqi.com/upload/slidepic/2007-12-26/151_1198628708_1778481.jpg",
+			"http://epaper.loone.cn/site1/czrb/res/1/20080616/7271213581523254.jpg",
+			"http://imgsrc.baidu.com/forum/pic/item/06509e4472138361500ffe18.jpg",
+			"http://imgsrc.baidu.com/forum/pic/item/c99ee50389ab4fa5d53f7c1a.jpg",
+			"http://imgsrc.baidu.com/forum/pic/item/f77c583494e1a963241f141f.jpg",
+			"http://imgsrc.baidu.com/forum/pic/item/dbabbe86c0ede61366096eee.jpg",
+			"http://wenwen.soso.com/p/20100708/20100708050003-665156019.jpg",
+			"http://movie.yntv.cn/category/2021302/2009/07/10/images/2021302_20090710_802.jpg",
+			"http://www.sznews.com/rollnews/images/20110601/19/10978230170352392435.jpg",
+			"http://img.daqi.com/upload/slidepic/2007-12-26/151_1198628708_1778481.jpg",
+			"http://epaper.loone.cn/site1/czrb/res/1/20080616/7271213581523254.jpg",
 			"http://imgsrc.baidu.com/forum/pic/item/06509e4472138361500ffe18.jpg",
 			"http://imgsrc.baidu.com/forum/pic/item/c99ee50389ab4fa5d53f7c1a.jpg",
 			"http://imgsrc.baidu.com/forum/pic/item/f77c583494e1a963241f141f.jpg",
@@ -78,9 +97,45 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
 			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
 	private String images_zongyi[] = {
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
 			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
@@ -100,7 +155,25 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
 			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
-			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"	
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
 	private String name_dianying[] = {
 			"电影1",
@@ -111,7 +184,26 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			"电影6",
 			"电影7",
 			"电影8",
-			"电影9"
+			"电影9",
+			"电影10",
+			"电影11",
+			"电影12",
+			"电影13",
+			"电影14",
+			"电影15",
+			"电影16",
+			"电影17",
+			"电影18",
+			"电影19",
+			"电影20",
+			"电影21",
+			"电影22",
+			"电影23",
+			"电影24",
+			"电影25",
+			"电影26",
+			"电影27"
+			
 	};
 	private String name_juji[] = {
 			"剧集1",
@@ -122,7 +214,25 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			"剧集6",
 			"剧集7",
 			"剧集8",
-			"剧集9"
+			"剧集9",
+			"剧集10",
+			"剧集11",
+			"剧集12",
+			"剧集13",
+			"剧集14",
+			"剧集15",
+			"剧集16",
+			"剧集17",
+			"剧集18",
+			"剧集19",
+			"剧集20",
+			"剧集21",
+			"剧集22",
+			"剧集23",
+			"剧集24",
+			"剧集25",
+			"剧集26",
+			"剧集27"
 	};
 	private String name_zongyi[] = {
 			"综艺1",
@@ -133,7 +243,25 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			"综艺6",
 			"综艺7",
 			"综艺8",
-			"综艺9"
+			"综艺9",
+			"综艺10",
+			"综艺11",
+			"综艺12",
+			"综艺13",
+			"综艺14",
+			"综艺15",
+			"综艺16",
+			"综艺17",
+			"综艺18",
+			"综艺19",
+			"综艺20",
+			"综艺21",
+			"综艺22",
+			"综艺23",
+			"综艺24",
+			"综艺25",
+			"综艺26",
+			"综艺27"
 	};
 	private String name_shipin[]={
 			"视频1",
@@ -144,7 +272,25 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			"视频6",
 			"视频7",
 			"视频8",
-			"视频9"	
+			"视频9",
+			"视频10",
+			"视频11",
+			"视频12",
+			"视频13",
+			"视频14",
+			"视频15",
+			"视频16",
+			"视频17",
+			"视频18",
+			"视频19",
+			"视频20",
+			"视频21",
+			"视频22",
+			"视频23",
+			"视频24",
+			"视频25",
+			"视频26",
+			"视频27"	
 	};
     /*private String images_dianying[];
 	private String images_juji[];
@@ -177,6 +323,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 				index=0;
 				addBitmaps(current_page, page_count,images_dianying,name_dianying);
 				scrollView.fullScroll(ScrollView.FOCUS_UP);
+				Toast.makeText(context, getResources().getString(R.string.shuaxin), Toast.LENGTH_SHORT).show();
 				break;
 			case 20:
 				linearLayout1.removeAllViews();
@@ -187,6 +334,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 				index=0;
 				addBitmaps(current_page, page_count,images_juji,name_juji);
 				scrollView.fullScroll(ScrollView.FOCUS_UP);
+				Toast.makeText(context, getResources().getString(R.string.shuaxin), Toast.LENGTH_SHORT).show();
 				break;
 			case 30:
 				linearLayout1.removeAllViews();
@@ -197,6 +345,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 				index=0;
 				addBitmaps(current_page, page_count,images_zongyi,name_zongyi);
 				scrollView.fullScroll(ScrollView.FOCUS_UP);
+				Toast.makeText(context, getResources().getString(R.string.shuaxin), Toast.LENGTH_SHORT).show();
 				break;
 			case 40:
 				linearLayout1.removeAllViews();
@@ -207,6 +356,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 				index=0;
 				addBitmaps(current_page, page_count,images_shipin,name_shipin);
 				scrollView.fullScroll(ScrollView.FOCUS_UP);
+				Toast.makeText(context, getResources().getString(R.string.shuaxin), Toast.LENGTH_SHORT).show();
 				break;
 			case 300:
 				getThird_AccessToken.setQQ_Token(getThird_AccessToken.getQQ_Token().trim());
@@ -310,6 +460,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			
 			@Override
 			public void onClick(View v) {
+				getThird_AccessToken.setjujiliebiaoXianshi(0);
 				where="where_0_1";
 				images_dianying=SetSaveData(where,images_dianying);
 				name_dianying=SetSaveName(where,name_dianying);
@@ -338,6 +489,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			
 			@Override
 			public void onClick(View v) {
+				getThird_AccessToken.setjujiliebiaoXianshi(1);
 				where="where_0_2";
 				images_juji=SetSaveData(where,images_juji);
 				name_juji=SetSaveName(where,name_juji);
@@ -366,6 +518,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			
 			@Override
 			public void onClick(View v) {
+				getThird_AccessToken.setjujiliebiaoXianshi(2);
 				where="where_0_3";
 				images_zongyi=SetSaveData(where,images_zongyi);
 				name_zongyi=SetSaveName(where,name_zongyi);
@@ -394,6 +547,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			
 			@Override
 			public void onClick(View v) {
+				getThird_AccessToken.setjujiliebiaoXianshi(0);
 				where="where_0_4";
 				images_shipin=SetSaveData(where,images_shipin);
 				name_shipin=SetSaveName(where,name_shipin);
@@ -517,6 +671,9 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 							break;
 					}
     				index++;
+    				if (index>=img.length) {
+    					Toast.makeText(context, getResources().getString(R.string.jiazai), Toast.LENGTH_SHORT).show();
+					}
     				USE_LINEAR_INTERVAL++;
     				USE_LINEAR_INTERVAL= USE_LINEAR_INTERVAL%3;
     				

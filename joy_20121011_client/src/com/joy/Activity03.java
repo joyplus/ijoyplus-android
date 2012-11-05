@@ -49,17 +49,17 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://www.circler.cn/uploads/allimg/100419/1-100419215p40-l.jpg",
 			"http://www.circler.cn/uploads/allimg/100407/1-10040G319430-L.jpg"
 	};
-	private String images_head[] = {
-			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
-			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
-			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
-			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
-			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
-			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
-			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
-			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
-			};
+//	private String images_head[] = {
+//			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+//			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+//			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+//			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+//			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+//			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+//			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+//			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+//			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
+//			};
 	private String how[] = {
 			"删除",
 			"回复",
@@ -140,6 +140,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				progressBar.dismiss();
 				break;
 			case 444:
+				getThird_AccessToken.seteditTextVisable(1);
 				Intent intent1 = new Intent();
 				intent1.setClass(context, ReplyActivity.class);
 				startActivity(intent1);

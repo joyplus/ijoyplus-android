@@ -23,9 +23,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.EditTextPreference;
 import android.provider.MediaStore;
-import android.sax.TextElementListener;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -78,9 +76,45 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			"http://circler.cn.idc.weicent.com/uploads/allimg/110426/2-110426160227-lp.jpg",
 			"http://www.circler.cn/uploads/allimg/100526/2-1005261636080-L.jpg",
 			"http://web.2008php.com/09_jietu/09-12-16/20091216151830.jpg",
+			"http://img7.nipic.com/20090514/1988006_000103186_1.jpg",
+			"http://online.sccnn.com/img2/384/s010.jpg",
+			"http://img01.tooopen.com/Product/thumbnails/2009/11/12/x_20091112173541287022.jpg",
+			"http://imgsrc.baidu.com/forum/abpic/item/cc4967f0605cd3f87931aac9.jpg",
+			"http://img9.nipic.com/20090827/2615908_093838500191_1.jpg",
+			"http://online.sccnn.com/img2/818/xfkp_s05.jpg",
+			"http://circler.cn.idc.weicent.com/uploads/allimg/110426/2-110426160227-lp.jpg",
+			"http://www.circler.cn/uploads/allimg/100526/2-1005261636080-L.jpg",
+			"http://web.2008php.com/09_jietu/09-12-16/20091216151830.jpg",
+			"http://img7.nipic.com/20090514/1988006_000103186_1.jpg",
+			"http://online.sccnn.com/img2/384/s010.jpg",
+			"http://img01.tooopen.com/Product/thumbnails/2009/11/12/x_20091112173541287022.jpg",
+			"http://imgsrc.baidu.com/forum/abpic/item/cc4967f0605cd3f87931aac9.jpg",
+			"http://img9.nipic.com/20090827/2615908_093838500191_1.jpg",
+			"http://online.sccnn.com/img2/818/xfkp_s05.jpg",
+			"http://circler.cn.idc.weicent.com/uploads/allimg/110426/2-110426160227-lp.jpg",
+			"http://www.circler.cn/uploads/allimg/100526/2-1005261636080-L.jpg",
+			"http://web.2008php.com/09_jietu/09-12-16/20091216151830.jpg",
 			"http://img7.nipic.com/20090514/1988006_000103186_1.jpg"
 			};
 	private String images_shoucangdeyingpian[] = {
+			"http://www.circler.cn/uploads/allimg/100905/2-100Z51524380-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100823/2-100R31940130-L.jpg",
+			"http://circler.cn.idc.weicent.com/uploads/allimg/100324/1-100324232508.jpg",
+			"http://www.circler.cn/uploads/allimg/100903/2-100Z3031Q20-L.jpg",
+			"http://www.circler.cn/uploads/allimg/110304/2-110304144K9-50-lp.jpg",
+			"http://www.circler.cn/uploads/allimg/100329/1-100329153Q30-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100726/1-100H61453390-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100310/2-1003100101180-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100403/1-1004031959480-l.jpg",
+			"http://www.circler.cn/uploads/allimg/100905/2-100Z51524380-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100823/2-100R31940130-L.jpg",
+			"http://circler.cn.idc.weicent.com/uploads/allimg/100324/1-100324232508.jpg",
+			"http://www.circler.cn/uploads/allimg/100903/2-100Z3031Q20-L.jpg",
+			"http://www.circler.cn/uploads/allimg/110304/2-110304144K9-50-lp.jpg",
+			"http://www.circler.cn/uploads/allimg/100329/1-100329153Q30-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100726/1-100H61453390-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100310/2-1003100101180-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100403/1-1004031959480-l.jpg",
 			"http://www.circler.cn/uploads/allimg/100905/2-100Z51524380-L.jpg",
 			"http://www.circler.cn/uploads/allimg/100823/2-100R31940130-L.jpg",
 			"http://circler.cn.idc.weicent.com/uploads/allimg/100324/1-100324232508.jpg",
@@ -100,6 +134,24 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			"http://www.circler.cn/uploads/100322/1-100322121J54D.jpg",
 			"http://www.circler.cn/uploads/allimg/100722/1-100H22153240-L.jpg",
 			"http://www.circler.cn/uploads/allimg/100419/1-100419215p40-l.jpg",
+			"http://www.circler.cn/uploads/allimg/100407/1-10040G319430-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100423/1-1004231602500-l.jpg",
+			"http://www.circler.cn/uploads/allimg/110219/1-11021Z004060-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100909/2-100ZZ434410-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100315/2-1003151633250-l.jpg",
+			"http://www.circler.cn/uploads/allimg/100627/1-10062H21F40-L.jpg",
+			"http://www.circler.cn/uploads/100322/1-100322121J54D.jpg",
+			"http://www.circler.cn/uploads/allimg/100722/1-100H22153240-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100419/1-100419215p40-l.jpg",
+			"http://www.circler.cn/uploads/allimg/100407/1-10040G319430-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100423/1-1004231602500-l.jpg",
+			"http://www.circler.cn/uploads/allimg/110219/1-11021Z004060-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100909/2-100ZZ434410-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100315/2-1003151633250-l.jpg",
+			"http://www.circler.cn/uploads/allimg/100627/1-10062H21F40-L.jpg",
+			"http://www.circler.cn/uploads/100322/1-100322121J54D.jpg",
+			"http://www.circler.cn/uploads/allimg/100722/1-100H22153240-L.jpg",
+			"http://www.circler.cn/uploads/allimg/100419/1-100419215p40-l.jpg",
 			"http://www.circler.cn/uploads/allimg/100407/1-10040G319430-L.jpg"
 			};
 	private String name_kanguodeyingpian[] = {
@@ -111,7 +163,25 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			"看过的影片6",
 			"看过的影片7",
 			"看过的影片8",
-			"看过的影片9"
+			"看过的影片9",
+			"看过的影片10",
+			"看过的影片11",
+			"看过的影片12",
+			"看过的影片13",
+			"看过的影片14",
+			"看过的影片15",
+			"看过的影片16",
+			"看过的影片17",
+			"看过的影片18",
+			"看过的影片19",
+			"看过的影片20",
+			"看过的影片21",
+			"看过的影片22",
+			"看过的影片23",
+			"看过的影片24",
+			"看过的影片25",
+			"看过的影片26",
+			"看过的影片27"
 	};
 	private String name_shoucangdeyingpian[] = {
 			"收藏的影片1",
@@ -122,7 +192,25 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			"收藏的影片6",
 			"收藏的影片7",
 			"收藏的影片8",
-			"收藏的影片9"
+			"收藏的影片9",
+			"收藏的影片10",
+			"收藏的影片11",
+			"收藏的影片12",
+			"收藏的影片13",
+			"收藏的影片14",
+			"收藏的影片15",
+			"收藏的影片16",
+			"收藏的影片17",
+			"收藏的影片18",
+			"收藏的影片19",
+			"收藏的影片20",
+			"收藏的影片21",
+			"收藏的影片22",
+			"收藏的影片23",
+			"收藏的影片24",
+			"收藏的影片25",
+			"收藏的影片26",
+			"收藏的影片27"
 	};
 	private String name_tuijiandeyingpian[] = {
 			"推荐的影片1",
@@ -133,7 +221,25 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			"推荐的影片6",
 			"推荐的影片7",
 			"推荐的影片8",
-			"推荐的影片9"
+			"推荐的影片9",
+			"推荐的影片10",
+			"推荐的影片11",
+			"推荐的影片12",
+			"推荐的影片13",
+			"推荐的影片14",
+			"推荐的影片15",
+			"推荐的影片16",
+			"推荐的影片17",
+			"推荐的影片18",
+			"推荐的影片19",
+			"推荐的影片20",
+			"推荐的影片21",
+			"推荐的影片22",
+			"推荐的影片23",
+			"推荐的影片24",
+			"推荐的影片25",
+			"推荐的影片26",
+			"推荐的影片27"
 	};
 	PullToRefreshView_foot mPullToRefreshView;
 	Bitmap BigBitmap;
@@ -163,7 +269,6 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 				progressBar.dismiss();
 				break;
 			case 12:
-				
 				linearLayout1.removeAllViews();
 				linearLayout2.removeAllViews();
 				linearLayout3.removeAllViews();
@@ -187,6 +292,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 				progressBar.dismiss();
 				break;
 			case 999:
+				getThird_AccessToken.setjujiliebiaoXianshi(1);
 				Intent intent = new Intent();
 		    	intent.setClass(context, DetailActivity.class);
 		    	startActivity(intent);
@@ -583,6 +689,9 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
     						break;
     				}
     				index++;
+    				if (index>=img.length) {
+    					Toast.makeText(context, getResources().getString(R.string.jiazai), Toast.LENGTH_SHORT).show();
+					}
     				USE_LINEAR_INTERVAL++;
     				USE_LINEAR_INTERVAL= USE_LINEAR_INTERVAL%3;
     				

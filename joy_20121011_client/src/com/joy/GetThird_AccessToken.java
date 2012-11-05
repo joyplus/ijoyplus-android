@@ -37,6 +37,16 @@ public class GetThird_AccessToken extends Application {
 	
 	int editTextVisable = 0;
 	
+	
+	int jujiliebiaoXianshi = 0;
+	
+	public int getjujiliebiaoXianshi(){
+		return jujiliebiaoXianshi;
+	}
+	public void setjujiliebiaoXianshi(int jujiliebiaoXianshi){
+		this.jujiliebiaoXianshi=jujiliebiaoXianshi;
+	}
+	
 	public int geteditTextVisable(){
 		return editTextVisable;
 	}

@@ -3,7 +3,6 @@ package com.joy;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.joy.Tools.Tools;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
 import com.mobclick.android.MobclickAgent;
@@ -26,7 +25,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 

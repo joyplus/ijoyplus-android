@@ -1,7 +1,6 @@
 package com.joy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -28,7 +27,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,21 +41,19 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 	AutoCompleteTextView autoCompleteTextView;
 	List<Map<String, String>> list= new ArrayList<Map<String,String>>();
 	List<Map<String, String>> Alllist= new ArrayList<Map<String,String>>();
-	private int page_count = 2;
-	private int current_page = 0;
-    private int index =0;
 //	SimpleAdapter adapter;
     DragAdapters adapters;
-    Vector<String>vector=new Vector<String>();
+    Vector<String>vName=new Vector<String>();
+    Vector<String>vNum=new Vector<String>();
 	PullToRefreshView_foot mPullToRefreshView;
 	GetThird_AccessToken GetThird_AccessToken;
 	public static List<String> groupKey= new ArrayList<String>();
     private List<String> haoyoulList = new ArrayList<String>();
     private List<String> yaoqingList = new ArrayList<String>();
-    private List<String> guanzhuList = new ArrayList<String>();
     private static List<String> lists = null;
     public static String friends[]={ "好友1", "好友2", "好友3", "好友4", "好友5"};
     public static String yaoqing[];
+    public static String yaoqingNum[];
 	final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -82,26 +78,41 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 		mPullToRefreshView = (PullToRefreshView_foot)findViewById(R.id.tongxunlu_main_pull_refresh_view);
         mPullToRefreshView.setOnFooterRefreshListener(this);
 		listView=(ListView)findViewById(R.id.tongxunlu_list);
-		sousuo=(EditText)findViewById(R.id.tongxunlu_sousuo);
+//		sousuo=(EditText)findViewById(R.id.tongxunlu_sousuo);
+		autoCompleteTextView=(AutoCompleteTextView)findViewById(R.id.tongxunlu_sousuo);
 		phone=(EditText)findViewById(R.id.tongxunlu_phone);
 //		getPhoneNum(current_page, page_count);
-		vector=getAllPhontNum();
-		yaoqing=new String[vector.size()];
-		vector.copyInto(yaoqing);
+		getAllPhontNum();
+		yaoqing=new String[vName.size()];
+		yaoqingNum=new String[vNum.size()];
+		vName.copyInto(yaoqing);
+		vNum.copyInto(yaoqingNum);
 //		adapter=new SimpleAdapter(context,list,R.layout.mylistview,new String[] {"name"},new int[ ] {R.id.item_text});
 		initData();
 		adapters=new DragAdapters(context, lists);
+		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				R.layout.list_item, yaoqing);
+		autoCompleteTextView.setAdapter(adapter);
 		listView.setAdapter(adapters);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				/*GetThird_AccessToken.setphoneNum(list.get(arg2).get("phoneNumber"));
-				GetThird_AccessToken.setphoneName(list.get(arg2).get("name"));
+//				GetThird_AccessToken.setphoneNum(yaoqingNum[arg2+friends.length+2]);
+//				GetThird_AccessToken.setphoneName(yaoqing[arg2+friends.length+2]);
+				if (arg2>=friends.length+2) {
+					GetThird_AccessToken.setphoneNum(yaoqingNum[(arg2-(friends.length+2))]);
+					GetThird_AccessToken.setphoneName(yaoqing[(arg2-(friends.length+2))]);
+				}
+				else {
+					GetThird_AccessToken.setphoneNum("");
+					GetThird_AccessToken.setphoneName("");
+				}
 				Intent intent=new Intent();
 				intent.setClass(context, Yaoqing.class);
-				startActivity(intent);*/
+				startActivity(intent);
 			}
 		});
 		
@@ -172,12 +183,13 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 	}
 	//搜索按钮
 	public void Btnsousuo(View v){
-		/*int ok=0;
-		if (sousuo.getText().toString().trim().length()!=0) {
-			for (int i = 0; i < Alllist.size(); i++) {
-				if (sousuo.getText().toString().trim().equals(Alllist.get(i).get("phoneNumber"))||sousuo.getText().toString().trim().equals(Alllist.get(i).get("name"))) {
-					GetThird_AccessToken.setphoneNum(Alllist.get(i).get("phoneNumber"));
-					GetThird_AccessToken.setphoneName(Alllist.get(i).get("name"));
+		int ok=0;
+		if (autoCompleteTextView.getText().toString().trim().length()!=0) {
+			for (int i = 0; i < yaoqing.length; i++) {
+				if (autoCompleteTextView.getText().toString().trim().equals(yaoqing[i])
+						||autoCompleteTextView.getText().toString().trim().equals(yaoqingNum[i])) {
+					GetThird_AccessToken.setphoneNum(yaoqingNum[i]);
+					GetThird_AccessToken.setphoneName(yaoqing[i]);
 					ok=1;
 					break;
 				}
@@ -189,7 +201,7 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 			startActivity(intent);
 		}else {
 			Toast.makeText(context, getResources().getString(R.string.weizhaodao), Toast.LENGTH_SHORT).show();
-		}*/
+		}
 		
 	}
 	//提交按钮
@@ -201,8 +213,7 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 		}
 	}
 	//获取手机通讯录
-	public Vector<String> getAllPhontNum(){
-		Vector<String>v=new Vector<String>();
+	public void getAllPhontNum(){
 		ContentResolver resolver = context.getContentResolver();
 		Cursor phoneCursor = resolver.query(Phone.CONTENT_URI,null, null, null, null);  //传入正确的uri
 		if(phoneCursor!=null){
@@ -214,14 +225,10 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 				if(TextUtils.isEmpty(phoneNumber)){
 					 continue;
 				}
-				/*Map<String, String> map=new HashMap<String, String>();
-				map.put("name", name);
-				map.put("phoneNumber", phoneNumber);
-				Alllist.add(map);*/
-				v.addElement(name);
+				vName.addElement(name);
+				vNum.addElement(phoneNumber);
 			}
 		}
-		return v;
 	}
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
