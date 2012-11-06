@@ -99,7 +99,7 @@ public class Utility {
 
     private static WeiboParameters mRequestHeader = new WeiboParameters();
     private static HttpHeaderFactory mAuth;
-    private static Token mToken = null;
+    static Token mToken = null;
 
     public static final String BOUNDARY = "7cd4a6d158c";
     public static final String MP_BOUNDARY = "--" + BOUNDARY;

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -81,12 +82,22 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
     String juji_Name[]={"1","2","3","4","5","6","7","8"};
     AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
     GetThird_AccessToken getThird_AccessToken;
+    ProgressDialog progressBar;
     final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case 1500:
 				into_jiazai(++page);
+				break;
+			case 300:
+				progressBar.dismiss();
+				getThird_AccessToken.setActivitytype("");
+				Intent intent=new Intent();
+				intent.setClass(context, JoyActivity.class);
+				startActivity(intent);
+				((Welcome) getThird_AccessToken.getcontext()).finish();
+				finish();
 				break;
 			}
 		}
@@ -158,6 +169,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
     			index = i;
     		}
     	}
+    	System.out.println(juji_Name[index]+"/"+index);
     	linearlayoutWidth = (int)Tools.getWidth(juji_Name[index]);
     	//判断剧集名字长度是否大于屏幕宽度
     	if (getWindowManager().getDefaultDisplay().getWidth()<linearlayoutWidth) {
@@ -423,17 +435,26 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			//Toast.makeText(context, "分享", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.login_goback:
-			if(getThird_AccessToken.getwhere_gologin()==1) {
-				getThird_AccessToken.setwhere_gologin(2);
-//				intent = new Intent();
-//				intent.setClass(context, Welcome.class);
-//				startActivity(intent);
-			}
-			else
-			{
-				getThird_AccessToken.setwhere_gologin(2);
-			}
+			if(getThird_AccessToken.getwhere_gologin()==3) {
 				finish();
+			}
+        	else if(getThird_AccessToken.getwhere_gologin()==1)
+        	{
+        		getThird_AccessToken.setwhere_gologin(2);
+        		finish();
+        	}
+        	else if (getThird_AccessToken.getwhere_gologin()==2) {
+        		progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+				new Handler().postDelayed(new Runnable(){
+					@Override
+					public void run(){
+						Message msg = new Message(); 
+		                msg.what = 300; 
+		                handler.sendMessage(msg); 
+					}
+				}, 1000);
+        	}
+				
 			break;
 		case R.id.play_moves:
 			intent = new Intent();
@@ -475,17 +496,25 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
     	switch(keyCode){
         case KeyEvent.KEYCODE_BACK:
-        	//if(getThird_AccessToken.getwhere_gologin()==1) {
-        	//	getThird_AccessToken.setwhere_gologin(2);
-//        		Intent intent = new Intent();
-//				intent.setClass(context, Welcome.class);
-//				startActivity(intent);
-			//}
-			//else
-			//{
-				getThird_AccessToken.setwhere_gologin(2);
-			//}
-				finish();
+        	if(getThird_AccessToken.getwhere_gologin()==3) {
+        		finish();
+			}
+        	else if(getThird_AccessToken.getwhere_gologin()==1)
+        	{
+        		getThird_AccessToken.setwhere_gologin(2);
+        		finish();
+        	}
+        	else if (getThird_AccessToken.getwhere_gologin()==2) {
+        		progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+				new Handler().postDelayed(new Runnable(){
+					@Override
+					public void run(){
+						Message msg = new Message(); 
+		                msg.what = 300; 
+		                handler.sendMessage(msg); 
+					}
+				}, 1000);
+        	}
         	break;
     	}
         return true;

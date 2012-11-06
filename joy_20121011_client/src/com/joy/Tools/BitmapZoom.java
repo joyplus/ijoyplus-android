@@ -2,8 +2,6 @@ package com.joy.Tools;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.graphics.Bitmap.Config;
-import android.graphics.drawable.Drawable;
 
 public class BitmapZoom 
 {
@@ -16,8 +14,8 @@ public class BitmapZoom
 	 */
 	public static Bitmap bitmapZoomByPercent(Bitmap srcBitmap ,double percent)
 	{
-		int srcWidth = srcBitmap.getWidth();   
-        int srcHeight = srcBitmap.getHeight();    
+//		int srcWidth = srcBitmap.getWidth();   
+//        int srcHeight = srcBitmap.getHeight();    
   
         float scaleWidth = (float) percent;   
         float scaleHeight = (float) percent;   
@@ -51,7 +49,7 @@ public class BitmapZoom
 	 */
 	public static Bitmap bitmapZoomByHeight(Bitmap srcBitmap,int newHeight)
 	{
-		int srcWidth = srcBitmap.getWidth();   
+//		int srcWidth = srcBitmap.getWidth();   
         int srcHeight = srcBitmap.getHeight();    
      
         float scaleHeight = ((float) newHeight) / srcHeight;   
@@ -69,7 +67,7 @@ public class BitmapZoom
 	public static Bitmap bitmapZoomByWidth(Bitmap srcBitmap,int newWidth)
 	{
 		int srcWidth = srcBitmap.getWidth();
-        int srcHeight = srcBitmap.getHeight();    
+//        int srcHeight = srcBitmap.getHeight();    
      
         float scaleWidth = ((float) newWidth) / srcWidth;   
         float scaleHeight = scaleWidth;

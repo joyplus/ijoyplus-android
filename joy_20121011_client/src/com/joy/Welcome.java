@@ -60,38 +60,38 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
     Bitmap BigBitmap;
     ProgressDialog progressBar;
     private String images_dianying[] = {
-			"http://imgsrc.baidu.com/forum/pic/item/06509e4472138361500ffe18.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/c99ee50389ab4fa5d53f7c1a.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/f77c583494e1a963241f141f.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/dbabbe86c0ede61366096eee.jpg",
-			"http://wenwen.soso.com/p/20100708/20100708050003-665156019.jpg",
-			"http://movie.yntv.cn/category/2021302/2009/07/10/images/2021302_20090710_802.jpg",
-			"http://www.sznews.com/rollnews/images/20110601/19/10978230170352392435.jpg",
-			"http://img.daqi.com/upload/slidepic/2007-12-26/151_1198628708_1778481.jpg",
-			"http://epaper.loone.cn/site1/czrb/res/1/20080616/7271213581523254.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/06509e4472138361500ffe18.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/c99ee50389ab4fa5d53f7c1a.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/f77c583494e1a963241f141f.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/dbabbe86c0ede61366096eee.jpg",
-			"http://wenwen.soso.com/p/20100708/20100708050003-665156019.jpg",
-			"http://movie.yntv.cn/category/2021302/2009/07/10/images/2021302_20090710_802.jpg",
-			"http://www.sznews.com/rollnews/images/20110601/19/10978230170352392435.jpg",
-			"http://img.daqi.com/upload/slidepic/2007-12-26/151_1198628708_1778481.jpg",
-			"http://epaper.loone.cn/site1/czrb/res/1/20080616/7271213581523254.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/06509e4472138361500ffe18.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/c99ee50389ab4fa5d53f7c1a.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/f77c583494e1a963241f141f.jpg",
-			"http://imgsrc.baidu.com/forum/pic/item/dbabbe86c0ede61366096eee.jpg",
-			"http://wenwen.soso.com/p/20100708/20100708050003-665156019.jpg",
-			"http://movie.yntv.cn/category/2021302/2009/07/10/images/2021302_20090710_802.jpg",
-			"http://www.sznews.com/rollnews/images/20110601/19/10978230170352392435.jpg",
-			"http://img.daqi.com/upload/slidepic/2007-12-26/151_1198628708_1778481.jpg",
-			"http://epaper.loone.cn/site1/czrb/res/1/20080616/7271213581523254.jpg"
-	};
-	private String images_juji[] = {
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
 			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
+	};
+	private String images_juji[] = {
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
 			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
@@ -119,9 +119,9 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 	};
 	private String images_zongyi[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
-			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
 			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
 			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
 			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
 			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
@@ -139,14 +139,14 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
 			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
 			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
 			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
-			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
-	private String images_shipin[]={
+	private String images_shipin[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
 			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
@@ -421,6 +421,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 				break;
 			case 999:
 				Intent intent = new Intent();
+					getThird_AccessToken.setcontext(context);
 				intent.setClass(context, DetailActivity.class);
 				startActivity(intent);
 				progressBar.dismiss();

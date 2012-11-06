@@ -1,14 +1,11 @@
 package com.joy.Tools;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 
-import com.joy.GetThird_AccessToken;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

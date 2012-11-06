@@ -10,18 +10,13 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import com.joy.R.drawable;
-
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -37,14 +32,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 public class Tools {
 	public Tools(){
@@ -299,7 +291,7 @@ public class Tools {
 //		int widths = 0;
 		int lineStart = 0;
 		int lineEnd = -1;
-		Vector v = new Vector();
+		Vector<String> v = new Vector<String>();
 		while(++pos<len)
 		{
 			char c = t.charAt(pos);
@@ -398,8 +390,6 @@ public class Tools {
 	     return   aSplit;   
 	}
 	 public Bitmap getImage(String path,Handler mHandler){ 
-		 Message msg = mHandler.obtainMessage();
-         Bundle b = new Bundle();
 		 try{
 			 	URL url = new URL(path);       
 		        HttpURLConnection conn = (HttpURLConnection) url.openConnection();       

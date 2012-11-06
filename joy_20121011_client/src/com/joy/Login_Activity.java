@@ -187,7 +187,7 @@ public class AuthReceiver extends BroadcastReceiver {
         	String access_token =  exts.getString(TAuthView.ACCESS_TOKEN);
         	String expires_in =  exts.getString(TAuthView.EXPIRES_IN);
         	String error_ret =  exts.getString(TAuthView.ERROR_RET);
-        	String error_des =  exts.getString(TAuthView.ERROR_DES);
+//        	String error_des =  exts.getString(TAuthView.ERROR_DES);
         	Log.i(TAG, String.format("raw: %s, access_token:%s, expires_in:%s", raw, access_token, expires_in));
         	
         	if (access_token != null) {

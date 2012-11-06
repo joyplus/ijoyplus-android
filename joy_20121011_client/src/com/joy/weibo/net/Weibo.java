@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import com.joy.GetThird_AccessToken;
-import com.joy.R;
 
 import android.Manifest;
 import android.app.Activity;

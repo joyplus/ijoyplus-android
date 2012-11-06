@@ -78,7 +78,7 @@ public class SupplementaryInformation extends Activity {
 					}
 					Intent intent = new Intent();
 					if (getThird_AccessToken.getwhere_gologin()==1) {
-						
+						getThird_AccessToken.setwhere_gologin(2);
 					}
 					else
 					{

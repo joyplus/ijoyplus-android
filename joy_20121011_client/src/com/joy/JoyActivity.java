@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -64,7 +63,7 @@ public class JoyActivity extends TabActivity implements OnClickListener{
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
         getThird_AccessToken.setexit(getString(R.string.exit_false));
         getThird_AccessToken.SaveExit();
-        getThird_AccessToken.setwhere_gologin(2);
+        getThird_AccessToken.setwhere_gologin(3);
         prepareIntent();
 		setupIntent();
 		prepareView();

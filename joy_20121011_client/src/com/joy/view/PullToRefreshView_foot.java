@@ -72,9 +72,9 @@ public class PullToRefreshView_foot extends LinearLayout{
 	
 	private OnFooterRefreshListener mOnFooterRefreshListener;
 	
-	private OnHeaderRefreshListener mOnHeaderRefreshListener;
+//	private OnHeaderRefreshListener mOnHeaderRefreshListener;
 	
-	private String mLastUpdateTime;
+//	private String mLastUpdateTime;
 
 	public PullToRefreshView_foot(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -329,7 +329,7 @@ public class PullToRefreshView_foot extends LinearLayout{
 		return params.topMargin;
 	}
 
-	private void headerRefreshing() {
+	/*private void headerRefreshing() {
 		mHeaderState = REFRESHING;
 		setHeaderTopMargin(0);
 		mHeaderImageView.setVisibility(View.GONE);
@@ -340,7 +340,7 @@ public class PullToRefreshView_foot extends LinearLayout{
 		if (mOnHeaderRefreshListener != null) {
 			mOnHeaderRefreshListener.onHeaderRefresh(this);
 		}
-	}
+	}*/
 
 	private void footerRefreshing() {
 		mFooterState = REFRESHING;
@@ -403,18 +403,18 @@ public class PullToRefreshView_foot extends LinearLayout{
 		return params.topMargin;
 	}
 
-	private void lock() {
-		mLock = true;
-	}
+//	private void lock() {
+//		mLock = true;
+//	}
+//
+//	private void unlock() {
+//		mLock = false;
+//	}
 
-	private void unlock() {
-		mLock = false;
-	}
-
-	public void setOnHeaderRefreshListener(
-			OnHeaderRefreshListener headerRefreshListener) {
-		mOnHeaderRefreshListener = headerRefreshListener;
-	}
+//	public void setOnHeaderRefreshListener(
+//			OnHeaderRefreshListener headerRefreshListener) {
+//		mOnHeaderRefreshListener = headerRefreshListener;
+//	}
 
 	public void setOnFooterRefreshListener(
 			OnFooterRefreshListener footerRefreshListener) {

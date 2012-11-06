@@ -452,7 +452,14 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
 					
 					@Override
 					public void run() {
-						QQ_SS_Count++;
+						if (ret == 0) {
+							QQ_SS_Count++;
+						}
+						else
+						{
+							dialog.dismiss();
+							Toast.makeText(ShareActivity.this, getString(R.string.send_failed), Toast.LENGTH_LONG).show();
+						}
 						System.out.println("false"+"/ret:"+ret);
 						if (QQ_SS_Count==2) {
 							dialog.dismiss();

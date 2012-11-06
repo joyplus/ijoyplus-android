@@ -21,14 +21,14 @@ public class OAuth{
 	private String oauth_token;
 	private String oauth_token_secret;
 	private String oauth_verifier; //验证码
-	private String oauth_callback = ""; // —— 用户授权后的返回地址
+	String oauth_callback = ""; // —— 用户授权后的返回地址
 	private String oauth_nonce; // —— 随机字符串，须保证每次都不同 （32个字符长度）
 	private String oauth_timestamp; // —— 时间戳
 	private String oauth_signature_method = "HMAC-SHA1"; // —— 签名base string 的方法，目前支持
 	// HMAC-SHA1
 	private String oauth_version = "1.0"; // —— Oauth协议版本
 	private String oauth_signature; // oauth请求签 名
-	private String AccessToken = ""; //第三方登陆后的唯一标签
+	String AccessToken = ""; //第三方登陆后的唯一标签
 	private static OAuth instance;
 
 	public void setOauthTokenAndOauthTokenSercet(String oauth_token,String oauth_token_secret,String oauth_verifier){
@@ -149,7 +149,8 @@ public class OAuth{
 			
 		}
 		
-		String oauthSignature = new Base64Encoder().encode(byteHMAC);
+		new Base64Encoder();
+		String oauthSignature = Base64Encoder.encode(byteHMAC);
 		return oauthSignature;
 	}
 

@@ -75,7 +75,7 @@ public class PullToRefreshView extends LinearLayout{
 	
 	private OnHeaderRefreshListener mOnHeaderRefreshListener;
 	
-	private String mLastUpdateTime;
+//	private String mLastUpdateTime;
 
 	public PullToRefreshView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -523,18 +523,18 @@ public class PullToRefreshView extends LinearLayout{
 	 * 
 	 * @description hylin 2012-7-27涓嬪崍6:52:25
 	 */
-	private void lock() {
-		mLock = true;
-	}
+//	private void lock() {
+//		mLock = true;
+//	}
 
 	/**
 	 * unlock
 	 * 
 	 * @description hylin 2012-7-27涓嬪崍6:53:18
 	 */
-	private void unlock() {
-		mLock = false;
-	}
+//	private void unlock() {
+//		mLock = false;
+//	}
 
 	/**
 	 * set headerRefreshListener

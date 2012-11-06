@@ -54,13 +54,13 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
     Bitmap BigBitmap;
     GetThird_AccessToken getThird_AccessToken;
     String where="where_1_1";
-	private String images_dianying[] = {
+    private String images_dianying[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
 			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
 			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
 			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
@@ -84,9 +84,9 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
 	private String images_juji[] = {
-			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://pic3.nipic.com/20090514/1988006_001600282_2.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
 			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
@@ -95,7 +95,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://pic3.nipic.com/20090514/1988006_001600282_2.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
 			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
 			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
@@ -104,7 +104,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://pic3.nipic.com/20090514/1988006_001600282_2.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
 			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
 			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
@@ -114,8 +114,17 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 	};
 	private String images_zongyi[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://www.u2game.net/uchome/attachment/201008/30/2905_1283184026q702.jpg",
+			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
+			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
+			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
+			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
+			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
+			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
 			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
 			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
@@ -124,20 +133,11 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://www.u2game.net/uchome/attachment/201008/30/2905_1283184026q702.jpg",
+			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
+			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
 			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
 			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
 			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
-			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
-			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
-			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg",
-			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
-			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-			"http://www.u2game.net/uchome/attachment/201008/30/2905_1283184026q702.jpg",
-			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
-			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
-			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
-			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};

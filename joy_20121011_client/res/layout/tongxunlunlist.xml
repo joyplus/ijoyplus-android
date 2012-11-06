@@ -112,21 +112,6 @@
     android:background="@drawable/btn_sousuo"
     />
 </LinearLayout>
-<RelativeLayout 
-    android:layout_width="fill_parent" 
-     android:layout_height="wrap_content" 
-     android:background="@color/black"
-    >
-    
-<TextView 
-     android:layout_width="wrap_content" 
-     android:layout_height="wrap_content" 
-     android:hint="@string/haoyouliebiao"
-     android:textColor="@color/white"
-     android:textSize="12sp"
-     android:layout_marginLeft="15dp"
-    />
-</RelativeLayout>
 <com.joy.view.PullToRefreshView_foot
     android:id="@+id/tongxunlu_main_pull_refresh_view"
     android:layout_width="fill_parent"
