@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.joy.Tools.BrayAdapter;
 import com.joy.view.PullToRefreshView_foot;
 import com.joy.view.PullToRefreshView_foot.OnFooterRefreshListener;
 import com.mobclick.android.MobclickAgent;
@@ -91,8 +92,9 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 		initData();
 		adapters=new DragAdapters(context, lists);
 		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				R.layout.list_item, yaoqing);
+		BrayAdapter<String>adapter=new BrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line,yaoqing);
+		/*ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				R.layout.list_item, yaoqing);*/
 		autoCompleteTextView.setAdapter(adapter);
 		listView.setAdapter(adapters);
 		listView.setOnItemClickListener(new OnItemClickListener() {

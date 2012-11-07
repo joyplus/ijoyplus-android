@@ -42,6 +42,14 @@ public class Tools {
 	public Tools(){
 		
 	}
+	public static boolean hasSdcard(){  
+        String state = Environment.getExternalStorageState();  
+        if(state.equals(Environment.MEDIA_MOUNTED)){  
+            return true;  
+        }else{  
+            return false;  
+        }  
+    } 
 	public static void changeLight(ImageView imageView, int brightness) {
         ColorMatrix cMatrix = new ColorMatrix();
         cMatrix.set(new float[] { 1, 0, 0, 0, brightness, 0, 1, 0, 0,

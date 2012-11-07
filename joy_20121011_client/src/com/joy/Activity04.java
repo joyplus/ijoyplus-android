@@ -4,16 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -343,13 +339,13 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
         if (bitmap!=null) {
         	Drawable drawable=new BitmapDrawable(bitmap);
         	beijing.setBackgroundDrawable(drawable);
-        	beijing.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//        	beijing.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 		}
         if (bitmap2!=null) {
         	Bitmap bitmap3=Tools.toRoundCorner(bitmap2, 360);
 //        	Drawable drawable=new BitmapDrawable(bitmap3);
         	head.setImageBitmap(bitmap3);
-        	head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//        	head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 		}
         addBitmaps(current_page, page_count,images_kanguodeyingpian,name_kanguodeyingpian);
         beijing.setOnClickListener(new OnClickListener() {
@@ -360,33 +356,6 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 				intent1.setType("image/*");
 				intent1.setAction(Intent.ACTION_GET_CONTENT);
 				startActivityForResult(intent1,100);
-			}
-		});
-        head.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder builder=new AlertDialog.Builder(context);
-		  		  builder.setTitle(getResources().getString(R.string.photostyle)).setItems(bitString, new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						if(which==0){
-							Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-							mCurrentPhotoFile = new File("mnt/sdcard/joy/admin/","head.png");
-							intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCurrentPhotoFile));
-							startActivityForResult(intent,Activity.DEFAULT_KEYS_DIALER);
-						}
-						else {
-							Intent intent1=new Intent();
-							intent1.setType("image/*");
-							intent1.setAction(Intent.ACTION_GET_CONTENT);
-							startActivityForResult(intent1,200);
-						}
-					}
-				});
-					AlertDialog ad = builder.create();
-					ad.show();
 			}
 		});
         guanzhu.setOnClickListener(new OnClickListener() {
@@ -484,7 +453,36 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 				
 			}
 		});
-
+        head.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder builder=new AlertDialog.Builder(context);
+		  		  builder.setTitle(getResources().getString(R.string.photostyle)).setItems(bitString, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if(which==0){
+							Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+							if (Tools.hasSdcard()) {
+								mCurrentPhotoFile = new File("mnt/sdcard/joy/admin/","head.png");
+								intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCurrentPhotoFile));
+							}
+							startActivityForResult(intent,1);
+							
+						}
+						else {
+							Intent intent1=new Intent();
+							intent1.setType("image/*");
+							intent1.setAction(Intent.ACTION_GET_CONTENT);
+							startActivityForResult(intent1,200);
+						}
+					}
+				});
+					AlertDialog ad = builder.create();
+					ad.show();
+			}
+		});
 	}
 	@Override
 	protected void onDestroy() {
@@ -498,6 +496,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 		getThird_AccessToken.setcontext(context);
 		startActivity(intent);
 	}
+	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
         	return;
@@ -505,34 +504,22 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
         switch (requestCode) {
         case 1:
         	Bitmap bt=BitmapFactory.decodeResource(getResources(), R.drawable.head);
-        	System.out.println(bt.getWidth()+"==============="+bt.getHeight());
-			Uri imgUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-			ContentResolver cr = context.getContentResolver();
-
-			Uri fileUri = Uri.fromFile(mCurrentPhotoFile);
-			sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-					fileUri));
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+        	if (Tools.hasSdcard()) {
+        		Intent intent = new Intent("com.android.camera.action.CROP");  
+        		intent.setDataAndType(Uri.fromFile(mCurrentPhotoFile), "image/*");  
+        		// 设置裁剪  
+        		intent.putExtra("crop", "true");  
+        		// aspectX aspectY 是宽高的比例  
+        		intent.putExtra("aspectX", 1);  
+        		intent.putExtra("aspectY", 1);  
+        		// outputX outputY 是裁剪图片宽高  
+        		intent.putExtra("outputX", bt.getWidth());  
+        		intent.putExtra("outputY", bt.getHeight());
+        		intent.putExtra("return-data", true);  
+        		startActivityForResult(intent, 3);
+        	}else {
+        		Toast.makeText(context, getResources().getString(R.string.sdcard), Toast.LENGTH_SHORT).show();
 			}
-			Cursor cursor = cr.query(imgUri, null,MediaStore.Images.Media.DISPLAY_NAME + "='"+ mCurrentPhotoFile.getName() + "'",null, null);
-			Uri uri = null;
-			if (cursor != null && cursor.getCount() > 0) {
-				cursor.moveToLast();
-				long id = cursor.getLong(0);
-				uri = ContentUris.withAppendedId(imgUri, id);
-			}
-			Intent in = new Intent("com.android.camera.action.CROP");
-			in.setDataAndType(uri, "image/*");
-			in.putExtra("crop", "true");
-			in.putExtra("aspectX", 1);
-			in.putExtra("aspectY", 1);
-			in.putExtra("outputX", bt.getWidth());
-			in.putExtra("outputY", bt.getHeight());
-			in.putExtra("return-data", true);
-			startActivityForResult(in, 3);
 			break;
         case 3:
         	Bundle ex = data.getExtras();
@@ -543,7 +530,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			    head.setImageBitmap(bitmap);
 //			    Drawable drawable=new BitmapDrawable(bitmap);
 //			    head.setBackgroundDrawable(drawable);
-			    head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//			    head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			}
 			break;
 		case 100:
@@ -569,7 +556,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			    Drawable drawable=new BitmapDrawable(photo);
 			    Tools.saveMyBitmap("joy/admin", "bg.png", photo);
 			    beijing.setBackgroundDrawable(drawable);
-			    beijing.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//			    beijing.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			}
 			break;
 		case 200:
@@ -577,28 +564,16 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 				Bitmap bt1=BitmapFactory.decodeResource(getResources(), R.drawable.head);
 	        	System.out.println(bt1.getWidth()+"==============="+bt1.getHeight());
 				Intent intent1 = new Intent("com.android.camera.action.CROP");
-				intent1.setData(data.getData());     //data是图库选取文件传回的参数
+				intent1.setDataAndType(data.getData(),"image/*");     //data是图库选取文件传回的参数
 				intent1.putExtra("crop", "true");
 				intent1.putExtra("aspectX", 1);
 				intent1.putExtra("aspectY", 1);
 				intent1.putExtra("outputX", bt1.getWidth());
 				intent1.putExtra("outputY", bt1.getHeight());
-				intent1.putExtra("noFaceDetection", true);
 				intent1.putExtra("return-data", true);
-				startActivityForResult(intent1, 201);
+				startActivityForResult(intent1, 3);
 			} catch (Exception e) {
 				Toast.makeText(context, getResources().getString(R.string.error_file), Toast.LENGTH_SHORT).show();
-			}
-			break;
-		case 201:
-			Bundle extras1 = data.getExtras();
-			if(extras1 != null ) {
-			    Bitmap photo = extras1.getParcelable("data");
-			    Bitmap bitmap=Tools.toRoundCorner(photo, 360);
-			    Tools.saveMyBitmap("joy/admin", "head.png", bitmap);
-//			    Drawable drawable=new BitmapDrawable(bitmap);
-			    head.setImageBitmap(bitmap);
-			    head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			}
 			break;
 		}

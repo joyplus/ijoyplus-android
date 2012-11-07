@@ -20,6 +20,9 @@ public class GetThird_AccessToken extends Application {
 	String Sina_Expires_in = "";
 	String QQ_Token = "";
 	String QQ_OpenID = "";
+	int movType=0;
+	int movType1=0;
+	String seachURL="";
 	int bitmapW=0;
 	WeiboDialogListener WeiboDialogListener;
 	Context context;
@@ -40,6 +43,25 @@ public class GetThird_AccessToken extends Application {
 	
 	int jujiliebiaoXianshi = 0;
 	
+	
+	public String getseachURL(){
+		return seachURL;
+	}
+	public void setseachURL(String seachURL){
+		this.seachURL=seachURL;
+	}
+	public int getmovType1(){
+		return movType1;
+	}
+	public void setmovType1(int movType1){
+		this.movType1=movType1;
+	}
+	public int getmovType(){
+		return movType;
+	}
+	public void setmovType(int movType){
+		this.movType=movType;
+	}
 	public int getjujiliebiaoXianshi(){
 		return jujiliebiaoXianshi;
 	}

@@ -89,6 +89,9 @@ public class Sousuo extends Activity implements OnFooterRefreshListener{
 			public void onClick(View v) {
 				if (sousuoEditText.getText().toString().trim().length()!=0) {
 					getThird_AccessToken.setdinayingName(sousuoEditText.getText().toString().trim());
+					getThird_AccessToken.setmovType(1);
+					getThird_AccessToken.setmovType1(2);
+					getThird_AccessToken.setseachURL("http://www.circler.cn/uploads/allimg/100423/1-1004231602500-l.jpg");
 					Intent intent=new Intent();
 					intent.setClass(context, Sousuojieguo.class);
 					startActivity(intent);

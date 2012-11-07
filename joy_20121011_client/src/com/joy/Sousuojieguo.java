@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,10 +21,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.SearchAdapter;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
@@ -37,6 +41,7 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
 	TextView youguandeyingpin,youguandeshipin,titleName,doubanpinfen,shichang,text;
 	Button btn_sousuo;
 	EditText editText;
+	ImageView imageView;
 	List<Map<String, Object>> listItems=new ArrayList<Map<String, Object>>();;
 	private String images[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
@@ -82,12 +87,14 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
 			"8:10分钟",
 			"8:10分钟"
 	};
+	String type[]={"电影","电视剧","综艺节目"};
 	ProgressDialog progressBar;
 	private int page_count = 6;
 	private int current_page = 0;
     private int index =0;
     SearchAdapter adapter;
     PullToRefreshView mPullToRefreshView;
+    AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
     final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -104,8 +111,8 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
 		    	progressBar.dismiss();
 				break;
 			case 111:
-				youguandeyingpin.setText("和"+"《"+editText.getText().toString().trim()+"》"+getResources().getString(R.string.youguandeyingpian));
-		        youguandeshipin.setText("和"+"《"+editText.getText().toString().trim()+"》"+getResources().getString(R.string.youguandeshipin));
+				youguandeyingpin.setText("和"+"《"+editText.getText().toString().trim()+"》"+getResources().getString(R.string.youguandeyingpian)+type[getThird_AccessToken.getmovType()]);
+		        youguandeshipin.setText("和"+"《"+editText.getText().toString().trim()+"》"+getResources().getString(R.string.youguandeyingpian)+type[getThird_AccessToken.getmovType1()]);
 		        //影片名
 		        titleName.setText("《"+editText.getText().toString().trim()+"》");
 		        //豆瓣评分
@@ -144,9 +151,26 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
         text=(TextView)findViewById(R.id.sousuojieguo_txt);
         shichang=(TextView)findViewById(R.id.sousuojieguo_time);
         editText=(EditText)findViewById(R.id.sousuojieguo_edit);
+        imageView=(ImageView)findViewById(R.id.sousuojieguo_img);
         
-        youguandeyingpin.setText("和"+"《"+getThird_AccessToken.getdinayingName()+"》"+getResources().getString(R.string.youguandeyingpian));
-        youguandeshipin.setText("和"+"《"+getThird_AccessToken.getdinayingName()+"》"+getResources().getString(R.string.youguandeshipin));
+        
+        Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, getThird_AccessToken.getseachURL(), 0, new ImageCallBack() {
+			
+			@Override
+			public void imageLoad(ImageView imageView, Bitmap bitmap) {
+				if (bitmap!=null) {
+					imageView.setImageBitmap(bitmap);
+				}
+			}
+		});
+        if (bitmap!=null) {
+        	imageView.setImageBitmap(bitmap);
+		}else {
+			imageView.setImageResource(R.drawable.pic_bg);
+		}
+        
+        youguandeyingpin.setText("和"+"《"+getThird_AccessToken.getdinayingName()+"》"+getResources().getString(R.string.youguandeyingpian)+type[getThird_AccessToken.getmovType()]);
+        youguandeshipin.setText("和"+"《"+getThird_AccessToken.getdinayingName()+"》"+getResources().getString(R.string.youguandeyingpian)+type[getThird_AccessToken.getmovType1()]);
         //影片名
         titleName.setText("《"+getThird_AccessToken.getdinayingName()+"》");
         //豆瓣评分

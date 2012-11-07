@@ -63,6 +63,16 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 							"哥是好爷们，铁血真汉子，不需要备胎",
 							"清理QQ好友时发现某个三年没动静的好友。最后一条签名是：自从买了保险，过马路再也不用左右看了..."};
     String user_time[] = {"12:45","12:46","12:47","12:48","12:49","12:50","12:51","12:52"};
+    String headURL[]={
+    		"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573742.jpg",
+			"http://www.qqtai.com/qqhead/uploadfiles_3178/200901/2009011503573886.jpg",
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573759.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_14.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_6.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_7.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_2.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_4.jpg"
+    };
     Context context;
     int linearlayoutWidth;
     int index = 0;
@@ -257,7 +267,19 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			LayoutInflater inflater = ( LayoutInflater ) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE );
 			View lo = ( View ) inflater.inflate( R.layout.sigle_recomment, null );
 			RelativeLayout sigle_relat = (RelativeLayout) lo.findViewById(R.id.sigle_relat);
-			//ImageView user_image = (ImageView) findViewById(R.id.user_image);
+//			ImageView user_image = (ImageView) findViewById(R.id.user_image);
+//			Bitmap bitmap=asyncBitmapLoader.loadBitmap(user_image, headURL[i], 0, new ImageCallBack() {
+//				
+//				@Override
+//				public void imageLoad(ImageView imageView, Bitmap bitmap) {
+//					if (bitmap!=null) {
+//						imageView.setImageBitmap(bitmap);
+//					}
+//				}
+//			});
+//			if (bitmap!=null) {
+//				user_image.setImageBitmap(bitmap);
+//			}
 			TextView user_name_view = (TextView) lo.findViewById(R.id.user_name);
 			user_name_view.setText(user_name[i]);
 			TextView user_content_view = (TextView) lo.findViewById(R.id.user_content);

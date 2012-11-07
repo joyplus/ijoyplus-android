@@ -86,8 +86,7 @@
     <string name="yingpianmingzi">影片名字</string>
     <string name="sousuojilu">搜索记录</string>
     <string name="remensousuo">热门搜索</string>
-    <string name="youguandeyingpian">有关的影片</string>
-    <string name="youguandeshipin">有关的视频</string>
+    <string name="youguandeyingpian">有关的</string>
     <string name="doubanpingfen">豆瓣评分：</string>
     <string name="shichang">时长：</string>
     <string name="pingfen">评分：</string>
@@ -150,7 +149,7 @@
         <string name="pleaseenterwords">pleaseenterwords</string>
         <string name="jiazai">加载完成</string>
         <string name="shuaxin">刷新完成</string>
-         
+        <string name="sdcard">未找到存储卡</string>
          
        <!-- <友盟 -->
 </resources>
