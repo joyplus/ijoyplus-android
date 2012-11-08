@@ -2,17 +2,18 @@ package com.joy.msg;
 
 
 public class ChatMsgEntity {
-	private int head;
+	private String head;
 	private String name;
     private String date;
     private String URL;
     private String time;
     private String how;
+    private String name1;
     
-    public int gethead() {
+    public String gethead() {
         return head;
     }
-    public void sethead(int head) {
+    public void sethead(String head) {
         this.head = head;
     }
     public String getName() {
@@ -20,6 +21,12 @@ public class ChatMsgEntity {
     }
     public void setName(String name) {
         this.name = name;
+    }
+    public String getName1() {
+        return name1;
+    }
+    public void setName1(String name1) {
+        this.name1 = name1;
     }
     public String getDate() {
         return date;
@@ -49,7 +56,7 @@ public class ChatMsgEntity {
 	public ChatMsgEntity() {
     }
 
-    public ChatMsgEntity(int head,String name, String date, String URL,String time,String how) {
+    public ChatMsgEntity(String head,String name, String date, String URL,String time,String how,String name1) {
         super();
         this.head=head;
         this.name = name;
@@ -57,5 +64,6 @@ public class ChatMsgEntity {
         this.URL=URL;
         this.time = time;
         this.how=how;
+        this.name1 = name1;
     }
 }

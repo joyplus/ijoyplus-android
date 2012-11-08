@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -21,7 +23,8 @@ import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.joy.Tools.*;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.mobclick.android.MobclickAgent;
 
 public class ReplyActivity extends Activity{
@@ -45,6 +48,8 @@ public class ReplyActivity extends Activity{
     int srcollY = 0,srcollY2 = 0;
     ProgressDialog progressBar;
     GetThird_AccessToken getThird_AccessToken;
+    Bitmap bitmap_user;
+    AsyncBitmapLoader asyncBitmapLoader2=new AsyncBitmapLoader();
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -160,6 +165,25 @@ public class ReplyActivity extends Activity{
 			TextView user_time_view = (TextView) lo.findViewById(R.id.user_time);
 			user_time_view.setText(user_time[i]);
 			ImageView user_image_view = (ImageView) lo.findViewById(R.id.user_image);
+			//动态加载头像
+			bitmap_user=asyncBitmapLoader2.loadBitmap(user_image_view, getThird_AccessToken.getuser_image_head()[i], getWindowManager().getDefaultDisplay().getWidth(), new ImageCallBack() {
+				
+				@Override
+				public void imageLoad(ImageView imageView, Bitmap bitmap) {
+					if (bitmap==null) {
+						imageView.setImageResource(R.drawable.head);
+					}
+					else {
+						imageView.setImageBitmap(BitmapZoom.bitmapZoomByWidth(Tools.toRoundCorner(bitmap, 360), BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()));
+					}
+				}
+			});
+	        if (bitmap_user==null) {
+	        	user_image_view.setImageResource(R.drawable.head);
+			}
+	        else {
+	        	user_image_view.setImageBitmap(BitmapZoom.bitmapZoomByWidth(Tools.toRoundCorner(bitmap_user, 360), BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()));
+			}
 			user_image_view.setId((i+1));
 			user_image_view.setOnClickListener(new OnClickListener() {
 				
@@ -168,7 +192,6 @@ public class ReplyActivity extends Activity{
 					Intent intent = new Intent();
 					intent.setClass(context, OtherPersonActivity.class);
 					startActivity(intent);
-					finish();
 				}
 			});
 //			LinearLayout reply_layout = (LinearLayout) lo.findViewById(R.id.sigle_linear);

@@ -789,7 +789,51 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 		MobclickAgent.onResume(this); 
 	} 
 	public void onPause() { 
+		System.out.println("selectIndex====>"+selectIndex);
+		switch (selectIndex) {
+		case 1:
+			linearLayout1.removeAllViews();
+			linearLayout2.removeAllViews();
+			linearLayout3.removeAllViews();
+			Tools.ClearBitmap(BigBitmap);
+			current_page=0;
+			index=0;
+			scrollView.fullScroll(ScrollView.FOCUS_UP);
+			addBitmaps(current_page, page_count,images_dianying,name_dianying);
+			break;
+		case 2:
+			linearLayout1.removeAllViews();
+			linearLayout2.removeAllViews();
+			linearLayout3.removeAllViews();
+			Tools.ClearBitmap(BigBitmap);
+			current_page=0;
+			index=0;
+			scrollView.fullScroll(ScrollView.FOCUS_UP);
+			addBitmaps(current_page, page_count,images_juji,name_juji);
+			break;
+		case 3:
+			linearLayout1.removeAllViews();
+			linearLayout2.removeAllViews();
+			linearLayout3.removeAllViews();
+			Tools.ClearBitmap(BigBitmap);
+			current_page=0;
+			index=0;
+			scrollView.fullScroll(ScrollView.FOCUS_UP);
+			addBitmaps(current_page, page_count,images_zongyi,name_zongyi);
+			break;
+		case 4:
+			linearLayout1.removeAllViews();
+			linearLayout2.removeAllViews();
+			linearLayout3.removeAllViews();
+			Tools.ClearBitmap(BigBitmap);
+			current_page=0;
+			index=0;
+			scrollView.fullScroll(ScrollView.FOCUS_UP);
+			addBitmaps(current_page, page_count,images_shipin,name_shipin);
+			break;
+		}
 		super.onPause(); 
 		MobclickAgent.onPause(this); 
 	}
+	
 }

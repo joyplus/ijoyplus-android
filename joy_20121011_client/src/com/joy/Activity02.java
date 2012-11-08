@@ -390,6 +390,12 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 		MobclickAgent.onResume(this); 
 	} 
 	public void onPause() { 
+		linearLayout1.removeAllViews();
+		linearLayout2.removeAllViews();
+		linearLayout3.removeAllViews();
+		current_page=0;
+		index=0;
+		addBitmaps(current_page, page_count,images,name_dianying);
 		super.onPause(); 
 		MobclickAgent.onPause(this); 
 	}

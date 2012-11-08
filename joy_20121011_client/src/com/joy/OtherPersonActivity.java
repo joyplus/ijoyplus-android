@@ -300,7 +300,6 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 		                handler.sendMessage(msg); 
 					}
 				}, 1000);
-				
 			}
 		});
 

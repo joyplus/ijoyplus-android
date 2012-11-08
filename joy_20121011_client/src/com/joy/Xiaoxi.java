@@ -9,6 +9,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,6 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.BitmapZoom;
+import com.joy.Tools.Tools;
+import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
 import com.joy.view.PullToRefreshView.OnHeaderRefreshListener;
@@ -53,6 +58,17 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
 			"内容title",
 			"内容title"	
     };
+    private String images_head[] = {
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573742.jpg",
+			"http://www.qqtai.com/qqhead/uploadfiles_3178/200901/2009011503573886.jpg",
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573759.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_14.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_6.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_7.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_2.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_4.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_1.jpg"
+			};
     private String data[] = {
 			"",
 			"",
@@ -152,7 +168,7 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
 	private List<Map<String, Object>> getListItems(int pageindex, int pagecount) {
         for(int i = index; i < pagecount * (pageindex + 1)&&i<time.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>(); 
-            map.put("head", R.drawable.head);
+            map.put("head", images_head[i]);
             map.put("title", title[i]);
             map.put("data", data[i]);
             map.put("who", who[i]);
@@ -250,7 +266,24 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
 				holder = (ViewHolder)convertView.getTag();
 			}
 			
-			holder.head.setBackgroundResource((Integer)listItems.get(position).get("head"));
+			Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.head, (String)listItems.get(position).get("head"), 0, new ImageCallBack() {
+				
+				@Override
+				public void imageLoad(ImageView imageView, Bitmap bitmap) {
+					if (bitmap!=null) {
+						holder.head.setImageBitmap(Tools.toRoundCorner(BitmapZoom.bitmapZoomByWidth(bitmap, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()), 360));
+					}else {
+						holder.head.setImageResource(R.drawable.head);
+					}
+				}
+			});
+			if (bitmap!=null) {
+				holder.head.setImageBitmap(Tools.toRoundCorner(BitmapZoom.bitmapZoomByWidth(bitmap, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()), 360));
+			}
+			else {
+				holder.head.setImageResource(R.drawable.head);
+			}
+//			holder.head.setBackgroundResource((Integer)listItems.get(position).get("head"));
 			holder.head.setTag((position+1));
 			holder.head.setOnClickListener(new View.OnClickListener() {
 				

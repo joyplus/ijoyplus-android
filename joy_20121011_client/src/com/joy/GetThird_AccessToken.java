@@ -38,6 +38,16 @@ public class GetThird_AccessToken extends Application {
 	String PicName="";
 	String PicURL="";
 	
+	String user_image_head[];
+	
+	
+	public String[] getuser_image_head(){
+		return user_image_head;
+	}
+	public void setuser_image_head(String[] user_image_head){
+		this.user_image_head=user_image_head;
+	}
+	
 	int editTextVisable = 0;
 	
 	

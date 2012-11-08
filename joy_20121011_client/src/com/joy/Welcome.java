@@ -421,7 +421,7 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 				break;
 			case 999:
 				Intent intent = new Intent();
-					getThird_AccessToken.setcontext(context);
+				getThird_AccessToken.setcontext(context);
 				intent.setClass(context, DetailActivity.class);
 				startActivity(intent);
 				progressBar.dismiss();

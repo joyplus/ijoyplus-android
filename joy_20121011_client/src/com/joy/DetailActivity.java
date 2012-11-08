@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
+import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.Tools;
 import com.joy.view.PullToRefreshView;
 import com.joy.view.PullToRefreshView.OnFooterRefreshListener;
@@ -63,16 +65,6 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 							"哥是好爷们，铁血真汉子，不需要备胎",
 							"清理QQ好友时发现某个三年没动静的好友。最后一条签名是：自从买了保险，过马路再也不用左右看了..."};
     String user_time[] = {"12:45","12:46","12:47","12:48","12:49","12:50","12:51","12:52"};
-    String headURL[]={
-    		"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573742.jpg",
-			"http://www.qqtai.com/qqhead/uploadfiles_3178/200901/2009011503573886.jpg",
-			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573759.jpg",
-			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_14.jpg",
-			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_6.jpg",
-			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_7.jpg",
-			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_2.jpg",
-			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_4.jpg"
-    };
     Context context;
     int linearlayoutWidth;
     int index = 0;
@@ -81,6 +73,16 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
     int count = 0;
     int page = 0;
     Bitmap bitmap;
+    private String images[] = {
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573742.jpg",
+			"http://www.qqtai.com/qqhead/uploadfiles_3178/200901/2009011503573886.jpg",
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573759.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_14.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_6.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_7.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_2.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_4.jpg",
+			};
 //    天生王牌-100611-石小群
 //    天生王牌-100521-孙兴
 //    天生王牌-100528-孙兴王喜
@@ -91,8 +93,10 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 //    						"天生王牌-100507-黄品源","天生王牌-100618-五强晋级赛"};
     String juji_Name[]={"1","2","3","4","5","6","7","8"};
     AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
+    AsyncBitmapLoader asyncBitmapLoader2=new AsyncBitmapLoader();
     GetThird_AccessToken getThird_AccessToken;
     ProgressDialog progressBar;
+    Bitmap bitmap_user;
     final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -119,7 +123,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
         setContentView(R.layout.detailact);
         context = this;
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
-        
+        getThird_AccessToken.setuser_image_head(images);
         //linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/pinglun_nub;
         into();
         into_juji();
@@ -267,24 +271,41 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			LayoutInflater inflater = ( LayoutInflater ) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE );
 			View lo = ( View ) inflater.inflate( R.layout.sigle_recomment, null );
 			RelativeLayout sigle_relat = (RelativeLayout) lo.findViewById(R.id.sigle_relat);
-//			ImageView user_image = (ImageView) findViewById(R.id.user_image);
-//			Bitmap bitmap=asyncBitmapLoader.loadBitmap(user_image, headURL[i], 0, new ImageCallBack() {
-//				
-//				@Override
-//				public void imageLoad(ImageView imageView, Bitmap bitmap) {
-//					if (bitmap!=null) {
-//						imageView.setImageBitmap(bitmap);
-//					}
-//				}
-//			});
-//			if (bitmap!=null) {
-//				user_image.setImageBitmap(bitmap);
-//			}
+			ImageView user_image = (ImageView) lo.findViewById(R.id.user_image);
+			//动态加载头像
+			bitmap_user=asyncBitmapLoader2.loadBitmap(user_image, getThird_AccessToken.getuser_image_head()[i], getWindowManager().getDefaultDisplay().getWidth(), new ImageCallBack() {
+				
+				@Override
+				public void imageLoad(ImageView imageView, Bitmap bitmap) {
+					if (bitmap==null) {
+						imageView.setImageResource(R.drawable.head);
+					}
+					else {
+						imageView.setImageBitmap(BitmapZoom.bitmapZoomByWidth(Tools.toRoundCorner(bitmap, 360), BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()));
+					}
+				}
+			});
+	        if (bitmap_user==null) {
+	        	user_image.setImageResource(R.drawable.head);
+			}
+	        else {
+	        	user_image.setImageBitmap(BitmapZoom.bitmapZoomByWidth(Tools.toRoundCorner(bitmap_user, 360), BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()));
+			}
+	        user_image.setId((count+1));
+	        user_image.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent();
+					intent.setClass(context, OtherPersonActivity.class);
+					startActivity(intent);
+				}
+			});
 			TextView user_name_view = (TextView) lo.findViewById(R.id.user_name);
 			user_name_view.setText(user_name[i]);
 			TextView user_content_view = (TextView) lo.findViewById(R.id.user_content);
 			user_content_view.setText(user_content[i]);
-			user_content_view.setId((count+1)*100);
+			user_content_view.setId((count+1)*10000);
 			user_content_view.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -295,10 +316,11 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 							.setMessage(getString(R.string.nologin)).setCancelable(false)
 							.setPositiveButton("确认", new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int which) {
+									((Welcome) getThird_AccessToken.getcontext()).finish();
 									Intent intent = new Intent();
 									intent.setClass(context, Welcome.class);
 									startActivity(intent);
-									//finish();
+									finish();
 								}
 							}).setNegativeButton(getString(R.string.quxiao), new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int which) {
@@ -328,7 +350,7 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			TextView user_time_view = (TextView) lo.findViewById(R.id.user_time);
 			user_time_view.setText(user_time[i]);
 			TextView user_reply_view = (TextView) lo.findViewById(R.id.user_reply);
-			user_reply_view.setId((count+1)*1000);
+			user_reply_view.setId((count+1)*100000);
 			user_reply_view.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -339,10 +361,11 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 							.setMessage(getString(R.string.nologin)).setCancelable(false)
 							.setPositiveButton("确认", new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int which) {
+									((Welcome) getThird_AccessToken.getcontext()).finish();
 									Intent intent = new Intent();
 									intent.setClass(context, Welcome.class);
 									startActivity(intent);
-									//finish();
+									finish();
 								}
 							}).setNegativeButton(getString(R.string.quxiao), new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int which) {

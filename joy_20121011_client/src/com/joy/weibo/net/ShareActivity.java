@@ -736,7 +736,12 @@ public class AuthReceiver extends BroadcastReceiver {
 						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								dismissDialog(PROGRESS);
+								try{
+									dismissDialog(PROGRESS);
+								}catch(Exception e)
+								{
+									
+								}
 								TDebug.msg(msg, getApplicationContext());
 							}
 						});

@@ -117,5 +117,5 @@ public class AsyncBitmapLoader {
     public interface ImageCallBack    
     {    
         public void imageLoad(ImageView imageView, Bitmap bitmap);    
-    }    
+    }   
 }

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
@@ -49,17 +49,28 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://www.circler.cn/uploads/allimg/100419/1-100419215p40-l.jpg",
 			"http://www.circler.cn/uploads/allimg/100407/1-10040G319430-L.jpg"
 	};
-//	private String images_head[] = {
-//			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
-//			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
-//			"http://img11.pplive.cn/2009/01/29/14123973014_230X306.jpg",
-//			"http://img5.pplive.cn/2008/11/26/15290531087_230X306.jpg",
-//			"http://img11.pplive.cn/2009/05/15/17152279731_230X306.jpg",
-//			"http://img5.pplive.cn/2011/09/23/10405710241_230X306.jpg",
-//			"http://img15.pplive.cn/2010/04/06/13492503957_230X306.jpg",
-//			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
-//			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
-//			};
+	private String images_name[] = {
+			"动态提醒电影1",
+			"动态提醒电影2",
+			"动态提醒电影3",
+			"动态提醒电影4",
+			"动态提醒电影5",
+			"动态提醒电影6",
+			"动态提醒电影7",
+			"动态提醒电影8",
+			"动态提醒电影9"
+	};
+	private String images_head[] = {
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573742.jpg",
+			"http://www.qqtai.com/qqhead/uploadfiles_3178/200901/2009011503573886.jpg",
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573759.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_14.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_6.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_7.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_2.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_4.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_1.jpg"
+			};
 	private String how[] = {
 			"删除",
 			"回复",
@@ -114,6 +125,7 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
     ViewHolder	holder;
     MyAdapter adapter;
     int select;
+    String selectURL="";
     private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
     GetThird_AccessToken getThird_AccessToken;
     final Handler handler = new Handler(){
@@ -137,6 +149,16 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				Intent intent=new Intent();
 				intent.setClass(context, OtherPersonActivity.class);
 				startActivity(intent);
+				progressBar.dismiss();
+				break;
+			case 1002:
+				String a=selectURL.substring(0, selectURL.indexOf("|"));
+				String b=selectURL.substring(selectURL.indexOf("|")+1, selectURL.length());
+				getThird_AccessToken.setPicURL(a);
+				getThird_AccessToken.setPicName(b);
+				Intent intent2=new Intent();
+				intent2.setClass(context, DetailActivity.class);
+				startActivity(intent2);
 				progressBar.dismiss();
 				break;
 			case 444:
@@ -180,12 +202,13 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 	public void initData(int pageindex, int pagecount){
     	for(int i = index; i < pagecount * (pageindex + 1)&&i<images.length; i++){
     		ChatMsgEntity entity = new ChatMsgEntity();
-    		entity.sethead(R.drawable.head);
+    		entity.sethead(images_head[i]);
     		entity.setName(who[i]);
     		entity.setDate(what[i]);
     		entity.setURL(images[i]);
     		entity.settime(time[i]);
     		entity.sethow(how[i]);
+    		entity.setName1(images_name[i]);
     		mDataArrays.add(entity);
     		index++;
     	}
@@ -300,7 +323,22 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 				holder = (ViewHolder)convertView.getTag();
 			}
 			
-			holder.head.setImageResource(entity.gethead());
+			Bitmap headBitmap=asyncBitmapLoader.loadBitmap(holder.head, entity.gethead(), getWindowManager().getDefaultDisplay().getWidth()/2, new ImageCallBack() {
+				
+				@Override
+				public void imageLoad(ImageView imageView, Bitmap bitmap) {
+					Bitmap bitmap1=Tools.toRoundCorner(bitmap, 360);
+					Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap1, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth());
+					imageView.setImageBitmap(bitmap2);
+				}
+			});
+			if (headBitmap!=null) {
+				Bitmap bitmap1=Tools.toRoundCorner(headBitmap, 360);
+				Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap1, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth());
+				holder.head.setImageBitmap(bitmap2);
+			}
+			
+//			holder.head.setImageResource(entity.gethead());
 			holder.title.setText(entity.getName());
 			holder.info.setText(entity.getDate());
 			Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.img1, entity.getURL(), getWindowManager().getDefaultDisplay().getWidth()/3,new ImageCallBack() {
@@ -317,15 +355,32 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 			else {
 				holder.img1.setImageResource(R.drawable.pic_bg);
 			}
+			holder.img1.setTag(entity.getURL()+"|"+entity.getName1());
+			holder.img1.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					selectURL=(String)v.getTag();
+					progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
+					new Handler().postDelayed(new Runnable(){
+						@Override
+						public void run(){
+							Message msg = new Message(); 
+			                msg.what = 1002;
+			                handler.sendMessage(msg);
+						}
+					}, 1000);
+				}
+			});
 			holder.time.setText(entity.gettime());
 			holder.viewBtn.setText(entity.gethow());
-			holder.head.setTag((position+1));
+			holder.head.setTag(entity.gethead());
 			holder.head.setOnClickListener(new View.OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
+					selectURL=(String)v.getTag();
 					progressBar = ProgressDialog.show(context, getResources().getString(R.string.shaohou), getResources().getString(R.string.pull_to_refresh_footer_refreshing_label));
-					Toast.makeText(context, v.getTag()+"", Toast.LENGTH_SHORT).show();
 					new Handler().postDelayed(new Runnable(){
 						@Override
 						public void run(){
@@ -377,6 +432,12 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 		MobclickAgent.onResume(this); 
 	} 
 	public void onPause() { 
+		index=0;
+		current_page=0;
+		mDataArrays.clear();
+		initData(current_page, page_count);
+		adapter.notifyDataSetChanged();
+		listView.setSelection(0);
 		super.onPause(); 
 		MobclickAgent.onPause(this); 
 	}

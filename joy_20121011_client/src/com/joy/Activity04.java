@@ -63,6 +63,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
     private File mCurrentPhotoFile;
     GetThird_AccessToken getThird_AccessToken;
     ProgressDialog progressBar;
+    int bitmaph,bitmapw;
 	private String images_kanguodeyingpian[] = {
 			"http://online.sccnn.com/img2/384/s010.jpg",
 			"http://img01.tooopen.com/Product/thumbnails/2009/11/12/x_20091112173541287022.jpg",
@@ -307,7 +308,9 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 		mPullToRefreshView = (PullToRefreshView_foot)findViewById(R.id.act04_main_pull_refresh_view);
 //		mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
-		
+        Bitmap bt=BitmapFactory.decodeResource(getResources(), R.drawable.head);
+        bitmaph=bt.getHeight();
+        bitmapw=bt.getWidth();
         list=new ArrayList<String>();
         
         beijing=(ImageView)findViewById(R.id.act04_beijing);
@@ -339,13 +342,11 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
         if (bitmap!=null) {
         	Drawable drawable=new BitmapDrawable(bitmap);
         	beijing.setBackgroundDrawable(drawable);
-//        	beijing.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 		}
         if (bitmap2!=null) {
         	Bitmap bitmap3=Tools.toRoundCorner(bitmap2, 360);
-//        	Drawable drawable=new BitmapDrawable(bitmap3);
-        	head.setImageBitmap(bitmap3);
-//        	head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        	Bitmap bitmap4=BitmapZoom.bitmapZoomByWidth(bitmap3, bitmapw);
+        	head.setImageBitmap(bitmap4);
 		}
         addBitmaps(current_page, page_count,images_kanguodeyingpian,name_kanguodeyingpian);
         beijing.setOnClickListener(new OnClickListener() {
@@ -503,7 +504,6 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
         }
         switch (requestCode) {
         case 1:
-        	Bitmap bt=BitmapFactory.decodeResource(getResources(), R.drawable.head);
         	if (Tools.hasSdcard()) {
         		Intent intent = new Intent("com.android.camera.action.CROP");  
         		intent.setDataAndType(Uri.fromFile(mCurrentPhotoFile), "image/*");  
@@ -513,8 +513,8 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
         		intent.putExtra("aspectX", 1);  
         		intent.putExtra("aspectY", 1);  
         		// outputX outputY 是裁剪图片宽高  
-        		intent.putExtra("outputX", bt.getWidth());  
-        		intent.putExtra("outputY", bt.getHeight());
+        		intent.putExtra("outputX", bitmapw);  
+        		intent.putExtra("outputY", bitmaph);
         		intent.putExtra("return-data", true);  
         		startActivityForResult(intent, 3);
         	}else {
@@ -526,8 +526,9 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
         	if(ex != null ) {
         		Bitmap photo = ex.getParcelable("data");
 			    Bitmap bitmap=Tools.toRoundCorner(photo, 360);
-			    Tools.saveMyBitmap("joy/admin", "head.png", bitmap);
-			    head.setImageBitmap(bitmap);
+			    Bitmap bitmap2=BitmapZoom.bitmapZoomByWidth(bitmap, bitmapw);
+			    Tools.saveMyBitmap("joy/admin", "head.png", bitmap2);
+			    head.setImageBitmap(bitmap2);
 //			    Drawable drawable=new BitmapDrawable(bitmap);
 //			    head.setBackgroundDrawable(drawable);
 //			    head.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -561,15 +562,13 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			break;
 		case 200:
 			try {
-				Bitmap bt1=BitmapFactory.decodeResource(getResources(), R.drawable.head);
-	        	System.out.println(bt1.getWidth()+"==============="+bt1.getHeight());
 				Intent intent1 = new Intent("com.android.camera.action.CROP");
 				intent1.setDataAndType(data.getData(),"image/*");     //data是图库选取文件传回的参数
 				intent1.putExtra("crop", "true");
 				intent1.putExtra("aspectX", 1);
 				intent1.putExtra("aspectY", 1);
-				intent1.putExtra("outputX", bt1.getWidth());
-				intent1.putExtra("outputY", bt1.getHeight());
+				intent1.putExtra("outputX", bitmapw);
+				intent1.putExtra("outputY", bitmaph);
 				intent1.putExtra("return-data", true);
 				startActivityForResult(intent1, 3);
 			} catch (Exception e) {
@@ -793,6 +792,35 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 		MobclickAgent.onResume(this); 
 	} 
 	public void onPause() { 
+		switch (selectIndex) {
+		case 1:
+			linearLayout1.removeAllViews();
+			linearLayout2.removeAllViews();
+			linearLayout3.removeAllViews();
+			Tools.ClearBitmap(BigBitmap);
+			current_page=0;
+			index=0;
+			addBitmaps(current_page, page_count,images_kanguodeyingpian,name_kanguodeyingpian);
+			break;
+		case 2:
+			linearLayout1.removeAllViews();
+			linearLayout2.removeAllViews();
+			linearLayout3.removeAllViews();
+			Tools.ClearBitmap(BigBitmap);
+			current_page=0;
+			index=0;
+			addBitmaps(current_page, page_count,images_shoucangdeyingpian,name_shoucangdeyingpian);
+			break;
+		case 3:
+			linearLayout1.removeAllViews();
+			linearLayout2.removeAllViews();
+			linearLayout3.removeAllViews();
+			Tools.ClearBitmap(BigBitmap);
+			current_page=0;
+			index=0;
+			addBitmaps(current_page, page_count,images_tuijiandeyingpian,name_tuijiandeyingpian);
+			break;
+		}
 		super.onPause(); 
 		MobclickAgent.onPause(this); 
 	}
