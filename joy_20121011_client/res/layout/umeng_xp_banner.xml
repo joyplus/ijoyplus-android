@@ -57,7 +57,6 @@
                 android:id="@+id/umeng_xp_banner_bg"
                 android:layout_width="fill_parent"
                 android:layout_height="67dp"
-                android:layout_below="@+id/top_ban"
                 android:scaleType="fitXY"
                 android:src="@drawable/umeng_xp_standalone_bg"
                 android:visibility="visible" >

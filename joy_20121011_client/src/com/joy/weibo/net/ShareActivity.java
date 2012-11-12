@@ -114,7 +114,7 @@ public class ShareActivity extends Activity implements OnClickListener, RequestL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        this.setContentView(R.layout.share_mblog_view);
+        this.setContentView(R.layout.shareactivity);
         context = this;
         linearlayout_width =  getWindowManager().getDefaultDisplay().getWidth()/3;
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();

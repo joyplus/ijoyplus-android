@@ -41,7 +41,7 @@ public class Login_Activity extends Activity implements OnClickListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.login);
+		setContentView(R.layout.loginactivity);
 		context=this;
 		getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
 		into();

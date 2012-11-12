@@ -184,6 +184,7 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.oherperson);
 		getThird_AccessToken=(GetThird_AccessToken)getApplicationContext();
+		System.out.println("this:"+getThird_AccessToken.getwhere_gologin());
 		context=this;
 		asyncBitmapLoader=new AsyncBitmapLoader();
 		Tools.creat("joy/admin");
@@ -314,6 +315,7 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 		/*Intent intent = new Intent();
 		intent.setClass(context, ReplyActivity.class);
 		startActivity(intent);*/
+		getThird_AccessToken.setwhere_gologin(4);
 		finish();
 	}
 	//关注按钮
@@ -496,6 +498,8 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 	}
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			System.out.println("this:"+getThird_AccessToken.getwhere_gologin());
+			getThird_AccessToken.setwhere_gologin(4);
 			finish();
 			return true;
 		}

@@ -151,6 +151,8 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			"http://www.circler.cn/uploads/allimg/100419/1-100419215p40-l.jpg",
 			"http://www.circler.cn/uploads/allimg/100407/1-10040G319430-L.jpg"
 			};
+	/*private String images_kanguodeyingpian[];
+	private String name_kanguodeyingpian[];*/
 	private String name_kanguodeyingpian[] = {
 			"看过的影片1",
 			"看过的影片2",
@@ -327,6 +329,14 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
         linearLayout3 = (LinearLayout)findViewById(R.id.act04_linearlayout3);
         scrollView=(ScrollView)findViewById(R.id.act04_sco);
         linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/3;
+        
+        /*images_kanguodeyingpian=new String[100];
+    	name_kanguodeyingpian=new String[100];
+    	for (int i = 0; i < images_kanguodeyingpian.length; i++) {
+    		images_kanguodeyingpian[i]="http://www.circler.cn/uploads/allimg/100407/1-10040G319430-L.jpg";
+    		name_kanguodeyingpian[i]="看过的电影"+(i+1);
+		}*/
+        
         
         images_kanguodeyingpian=SetSaveData("where_4_1", images_kanguodeyingpian);
         name_kanguodeyingpian=SetSaveName("where_4_1", name_kanguodeyingpian);

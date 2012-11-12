@@ -9,7 +9,7 @@
 	</RelativeLayout>
 
 
-	<WebView android:id="@+id/umeng_xp_webview" android:layout_above="@+id/umeng_xp_footer" android:layout_below="@+id/umeng_xp_message" android:layout_height="fill_parent" android:layout_width="fill_parent"/>
+	<WebView android:id="@+id/umeng_xp_webview"  android:layout_below="@+id/umeng_xp_message" android:layout_height="fill_parent" android:layout_width="fill_parent"/>
 
 	<!--
 		<RelativeLayout android:layout_alignParentBottom="true"

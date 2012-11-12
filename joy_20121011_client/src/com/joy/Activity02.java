@@ -109,6 +109,8 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 			"电影26",
 			"电影27"
 	};
+    /*private String images[];
+    private String name_dianying[];*/
     AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
     ProgressDialog progressBar;
 	final Handler handler = new Handler(){
@@ -154,6 +156,13 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
         linearLayout2 = (LinearLayout)findViewById(R.id.act02_linearlayout2);
         linearLayout3 = (LinearLayout)findViewById(R.id.act02_linearlayout3);
         linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/3;
+        
+        /*images=new String[100];
+        name_dianying=new String[100];
+        for (int i = 0; i < images.length; i++) {
+        	images[i]="http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg";
+			name_dianying[i]="电影"+(i+1);
+		}*/
         
         images=SetSaveData("where_2_1", images);
         name_dianying=SetSaveName("where_2_1", name_dianying);

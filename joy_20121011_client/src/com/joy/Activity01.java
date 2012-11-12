@@ -3,6 +3,8 @@ package com.joy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -170,6 +172,8 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			"http://img11.pplive.cn/2010/05/18/14370589655_230X306.jpg",
 			"http://img7.pplive.cn/2010/05/08/10045437836_230X306.jpg"
 	};
+//	private String images_dianying[];
+//	private String name_dianying[];*/
 	private String name_dianying[] = {
 			"电影1",
 			"电影2",
@@ -288,6 +292,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 	};
 	AsyncBitmapLoader asyncBitmapLoader;
 	ProgressDialog progressBar;
+	Random random;
 	final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -371,7 +376,6 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 				progressBar.dismiss();
 				break;
 			case 13:
-				
 				linearLayout1.removeAllViews();
 				linearLayout2.removeAllViews();
 				linearLayout3.removeAllViews();
@@ -414,6 +418,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 		mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
         
+        random=new Random();
 		btn_dianying=(Button)findViewById(R.id.act01_dianying);
 		btn_dianying.setEnabled(false);
 		btn_dianying.setBackgroundResource(R.drawable.topleft1);
@@ -426,6 +431,14 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
         linearLayout3 = (LinearLayout)findViewById(R.id.act01_linearlayout3);
         scrollView=(ScrollView)findViewById(R.id.act01_sco);
         linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/3;
+        
+        /*images_dianying=new String[100];
+        name_dianying=new String[100];
+        for (int i = 0; i < 100; i++) {
+			images_dianying[i]=images_juji[Math.abs(random.nextInt()%images_juji.length)];
+			name_dianying[i]="电影"+(i+1);
+		}*/
+        
         
         images_dianying=SetSaveData(where, images_dianying);
         name_dianying=SetSaveName(where, name_dianying);

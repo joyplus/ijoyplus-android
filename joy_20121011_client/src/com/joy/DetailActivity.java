@@ -55,7 +55,8 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 	int lin_han = 0;
 	LinearLayout detail_all_comment;
 	ImageView pic;
-	String user_name[]={"张3","张4","张5","张6","张7","张8","张9","张0"};
+	//String user_name[]={"张3","张4","张5","张6","张7","张8","张9","张0"};
+	String user_name[];
 	String user_content[]={"夏日炎炎",
 							"马上要光棍节了",
 							"星期八小镇，3岁至15岁孩子玩角色扮演",
@@ -104,6 +105,12 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			case 1500:
 				into_jiazai(++page);
 				break;
+			case 999:
+				page = 0;
+				count = 0;
+				detail_all_comment.removeAllViews();
+				into_jiazai(page);
+				break;
 			case 300:
 				progressBar.dismiss();
 				getThird_AccessToken.setActivitytype("");
@@ -125,9 +132,14 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
         getThird_AccessToken.setuser_image_head(images);
         //linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/pinglun_nub;
+        System.out.println("this:"+getThird_AccessToken.getwhere_gologin());
+        user_name = new String[]{"张3","张4","张5","张6","张7","张8","张9","张0"};
+        //user_name = new String[0];
         into();
         into_juji();
-        into_jiazai(page);
+        if (user_name.length>0) {
+        	into_jiazai(page);
+        }
     }
     public void into()
     {
@@ -534,6 +546,9 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 			
 			@Override
 			public void run() {
+				Message msg = new Message(); 
+                msg.what = 999; 
+                handler.sendMessage(msg); 
 				mPullToRefreshView.onHeaderRefreshComplete();
 			}
 		},1000);
@@ -559,6 +574,11 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 		                handler.sendMessage(msg); 
 					}
 				}, 1000);
+        	}
+        	else if(getThird_AccessToken.getwhere_gologin()==4)
+        	{
+        		getThird_AccessToken.setwhere_gologin(1);
+        		finish();
         	}
         	break;
     	}

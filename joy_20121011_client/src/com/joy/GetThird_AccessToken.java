@@ -7,38 +7,33 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.joy.weibo.net.*;
 public class GetThird_AccessToken extends Application {
-	String AccessToken = "";
-	String VerificationCode = "";
-	String phoneName="";
-	String phoneNum="";
-	String Activitytype="";
-	String dinayingName="";
-	String Expires_in = "";
-	String Button_Name = "";
-	String OpenID = "";
-	Token SinaToken = null;
-	String Sina_Expires_in = "";
-	String QQ_Token = "";
-	String QQ_OpenID = "";
-	int movType=0;
-	int movType1=0;
-	String seachURL="";
-	int bitmapW=0;
-	WeiboDialogListener WeiboDialogListener;
-	Context context;
-	String go_detail = "";
+	String AccessToken = "";	//新浪token值
+	String phoneName="";//传递电话名字
+	String phoneNum="";//传递电话号码
+	String Activitytype="";//用于判断darentuij.class是从那进去的
+	String dinayingName="";//传递搜索中的电影名字
+	String Expires_in = "";//新浪Expires_in值
+	String Button_Name = "";		//切换分享和评论button的名字
+	String OpenID = "";				//腾讯的open_id
+	Token SinaToken = null;			//新浪Token值(临时)
+	String Sina_Expires_in = "";	//新浪Expires_in值(临时)
+	String QQ_Token = "";			//腾讯token值
+	//String QQ_OpenID = "";			//
+	int movType=0;//传递搜索中的电影类型
+	int movType1=0;//传递搜索中的电影类型
+	String seachURL="";					//传递搜索url地址
+	WeiboDialogListener WeiboDialogListener;//weibo监听器，用于weibodiallog2中
+	Context context;				//保存零时context，用于关闭activity
 	
-	int mTab_Where = 0;
-	int mTab_ID = R.id.channel1;
-	String url = "";
+	String url = "";				//用于weibodiallog2中
 	
-	Weibo Weibo;
+	Weibo Weibo;					//用于weibodiallog2中
 	
-	String exit = "false";
-	String PicName="";
-	String PicURL="";
+	String exit = "false";			//用于判断用户是否为正常退出
+	String PicName="";//传递搜索结果中的电影名字
+	String PicURL="";//传递搜索结果中的电影URL
 	
-	String user_image_head[];
+	String user_image_head[];		//用于临时储存用户头像的url地址
 	
 	
 	public String[] getuser_image_head(){
@@ -128,12 +123,6 @@ public class GetThird_AccessToken extends Application {
 		this.WeiboDialogListener=WeiboDialogListener;
 	}
 	
-	public int getbitmapW(){
-		return bitmapW;
-	}
-	public void setbitmapW(int n){
-		bitmapW=n;
-	}
 	
 	int where_gologin = 2;
 	
@@ -151,33 +140,8 @@ public class GetThird_AccessToken extends Application {
 		return context;
 	}
 	
-	public void setmTab_ID(int mTab_ID){
-		this.mTab_ID=mTab_ID;
-	}
-	public int getmTab_ID(){
-		return mTab_ID;
-	}
-	public void setgo_detail(String go_detail){
-		this.go_detail=go_detail;
-	}
-	public String getgo_detail(){
-		return go_detail;
-	}
-	
-	public void setmTab_Where(int mTab_Where){
-		this.mTab_Where=mTab_Where;
-	}
-	public int getmTab_Where(){
-		return mTab_Where;
-	}
 	
 	
-	public void setQQ_OpenID(String QQ_OpenID){
-		this.QQ_OpenID=QQ_OpenID;
-	}
-	public String getQQ_OpenID(){
-		return QQ_OpenID;
-	}
 	
 	public void setQQ_Token(String QQ_Token){
 		this.QQ_Token=QQ_Token;
@@ -200,8 +164,8 @@ public class GetThird_AccessToken extends Application {
 		return SinaToken;
 	}
 	
-	String IMG_Name="";
-	String Name_URL="";
+	String IMG_Name="";//保存当前Activity的图片名字
+	String Name_URL="";//保存当前Activity的图片URL
 	
 	
 	public String getName_URL(){
@@ -281,16 +245,6 @@ public class GetThird_AccessToken extends Application {
 	public String getAccessToken()
 	{
 		return AccessToken;
-	}
-	//验证码
-	public void setVerificationCode(String VerificationCode)
-	{
-		this.VerificationCode = VerificationCode;
-		
-	}
-	public String getVerificationCode()
-	{
-		return VerificationCode;
 	}
 	
 	public void SaveName(String where)

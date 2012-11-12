@@ -59,7 +59,7 @@ public class JoyActivity extends TabActivity implements OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.tab);
+        setContentView(R.layout.joyactivity);
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
         getThird_AccessToken.setexit(getString(R.string.exit_false));
         getThird_AccessToken.SaveExit();

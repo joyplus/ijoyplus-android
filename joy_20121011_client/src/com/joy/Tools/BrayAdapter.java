@@ -463,7 +463,8 @@ public class BrayAdapter<T> extends BaseAdapter implements Filterable {
             return results;
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             //noinspection unchecked
         	

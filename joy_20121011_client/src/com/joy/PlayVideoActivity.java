@@ -29,7 +29,7 @@ public class PlayVideoActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.webview);
+        setContentView(R.layout.playvideoactivity);
         context = this;
         textName = (TextView)findViewById(R.id.textName);
         textName.setText(getString(R.string.move_name));
