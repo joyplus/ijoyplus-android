@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
+import com.joy.Tools.AsyncImageLoader;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.Tools;
 import com.joy.view.PullToRefreshView;
@@ -51,14 +53,15 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 	List<String> list;
 	Context context;
 	AsyncBitmapLoader asyncBitmapLoader;
-	private int USE_LINEAR_INTERVAL = 0;
-    private int linearlayoutWidth = 0;
+	private int USE_LINEAR_INTERVAL = 0;//控制图片添加到那一个LinearLayout中
+    private int linearlayoutWidth = 0;//根据屏幕的大小来计算每一张图片的宽度
 	private int page_count = 9;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
-    private int index =0;
-    int select_index=1;
+    private int index =0;//加载的张数
+    int select_index=1;//记录在哪一种类型的电影中
     Bitmap BigBitmap;
     ProgressDialog progressBar;
+    long overPlus=100;//判断剩余SD卡剩余MB
     private String images_dianying[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
@@ -591,18 +594,21 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
     				RelativeLayout rll = (RelativeLayout)view.findViewById(R.id.RelativeLayout02);
     				final ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
-    				
-    				Bitmap bitmap=setImage(imageView, list.get(index));
-    				if (bitmap==null) {
-    					imageView.setImageResource(R.drawable.pic_bg);
-					}
-    				else {
-    					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
-    					imageView.setImageBitmap(BigBitmap);
-                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
-                        layoutParams.setMargins(4, 1, 4, 1);
-                        imageView.setLayoutParams(layoutParams);
-    					imageView.setImageBitmap(bitmap);
+    				if (Tools.hasSdcard()==false||(Tools.getAvailableStore("/mnt/sdcard/joy/")>>20)<overPlus) {
+    					setViewImage(imageView, list.get(index));
+					}else {
+						Bitmap bitmap=setImage(imageView, list.get(index));
+						if (bitmap==null) {
+							imageView.setImageResource(R.drawable.pic_bg);
+						}
+						else {
+							BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+							imageView.setImageBitmap(BigBitmap);
+							RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+							layoutParams.setMargins(4, 1, 4, 1);
+							imageView.setLayoutParams(layoutParams);
+							imageView.setImageBitmap(bitmap);
+						}
 					}
     				textView.setText(name[index]);
     				//点击了影片，用到ontouch方法是为了有点击效果
@@ -706,6 +712,22 @@ public class Welcome extends Activity implements OnHeaderRefreshListener,OnFoote
 			}
 		});
 	}
+	public void setViewImage(final ImageView v, String url) {
+        new AsyncImageLoader().loadDrawable(url, new AsyncImageLoader.ImageCallback() {
+            public void imageLoaded(Drawable imageDrawable) {
+                if(imageDrawable!=null) {
+                	BigBitmap=BitmapZoom.bitmapZoomByWidth(Tools.drawableToBitamp(imageDrawable), linearlayoutWidth);
+                	v.setImageBitmap(BigBitmap);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+                    layoutParams.setMargins(4, 1, 4, 1);
+                    v.setLayoutParams(layoutParams);
+                }
+                else {
+            		v.setImageResource(R.drawable.pic_bg);
+				}
+            }
+        });
+    }
 	//登录按钮
 	public void Btndenglu(View v){
 		Intent intent=new Intent();

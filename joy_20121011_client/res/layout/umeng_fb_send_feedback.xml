@@ -75,23 +75,25 @@
     </RelativeLayout>
  -->    
 	
-	<RelativeLayout android:orientation="horizontal"
+	<LinearLayout android:orientation="horizontal"
 		android:layout_width="fill_parent" android:layout_height="55dip"
 		android:layout_marginTop="2dip">
 		<Spinner android:id="@+id/umeng_fb_age_spinner"
-			android:layout_alignParentLeft="true" android:layout_width="wrap_content"
+		    android:layout_weight="1"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:layout_marginLeft="8dip"
 			android:layout_centerVertical="true" />
 		<Spinner android:id="@+id/umeng_fb_gender_spinner"
-			android:layout_toRightOf="@id/umeng_fb_age_spinner"
-			android:layout_marginLeft="7dip" android:layout_width="wrap_content"
+			android:layout_weight="1"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:layout_centerVertical="true" />
 		<TextView android:id="@+id/umeng_fb_submit"
 			android:background="@drawable/umeng_fb_submit_selector"
-			android:layout_alignParentRight="true" android:layout_width="70dip"
+			android:layout_width="70dip"
 			android:layout_height="43dip" android:text="提交" android:gravity="center"
 			android:layout_alignBaseline="@id/umeng_fb_age_spinner"
+			android:layout_weight="1"
 			android:textColor="#FFFFFF" android:layout_marginRight="8dip" />
-	</RelativeLayout>
+	</LinearLayout>
 </LinearLayout>
 

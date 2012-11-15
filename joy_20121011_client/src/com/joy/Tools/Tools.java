@@ -34,6 +34,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.StatFs;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.ImageView;
@@ -50,6 +51,18 @@ public class Tools {
             return false;  
         }  
     } 
+	public static long getAvailableStore(String filePath) {
+		// 取得sdcard文件路径
+		StatFs statFs = new StatFs(filePath);
+		// 获取block的SIZE
+		long blocSize = statFs.getBlockSize();
+		// 获取BLOCK数量
+		// long totalBlocks = statFs.getBlockCount();
+		// 可使用的Block的数量
+		long availaBlock = statFs.getAvailableBlocks();
+		long availableSpare = availaBlock * blocSize;
+		return availableSpare;
+	}
 	public static void changeLight(ImageView imageView, int brightness) {
         ColorMatrix cMatrix = new ColorMatrix();
         cMatrix.set(new float[] { 1, 0, 0, 0, brightness, 0, 1, 0, 0,

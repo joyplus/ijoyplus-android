@@ -10,6 +10,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,8 +26,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncImageLoader;
+import com.joy.Tools.Tools;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.SearchAdapter;
 import com.joy.view.PullToRefreshView;
@@ -42,6 +44,7 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
 	Button btn_sousuo;
 	EditText editText;
 	ImageView imageView;
+	long overPlus=100;//判断剩余SD卡剩余MB
 	List<Map<String, Object>> listItems=new ArrayList<Map<String, Object>>();;
 	private String images[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
@@ -89,9 +92,9 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
 	};
 	String type[]={"电影","电视剧","综艺节目"};
 	ProgressDialog progressBar;
-	private int page_count = 6;
-	private int current_page = 0;
-    private int index =0;
+	private int page_count = 6;// 每次加载x张图片
+	private int current_page = 0;// 当前页数
+    private int index =0;//加载的张数
     SearchAdapter adapter;
     PullToRefreshView mPullToRefreshView;
     AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
@@ -153,20 +156,33 @@ public class Sousuojieguo extends Activity implements OnHeaderRefreshListener,On
         editText=(EditText)findViewById(R.id.sousuojieguo_edit);
         imageView=(ImageView)findViewById(R.id.sousuojieguo_img);
         
-        
-        Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, getThird_AccessToken.getseachURL(), 0, new ImageCallBack() {
-			
-			@Override
-			public void imageLoad(ImageView imageView, Bitmap bitmap) {
-				if (bitmap!=null) {
-					imageView.setImageBitmap(bitmap);
-				}
-			}
-		});
-        if (bitmap!=null) {
-        	imageView.setImageBitmap(bitmap);
+      //没有SD卡或者SD卡容量小于100MB直接显示网络图片
+		if (Tools.hasSdcard()==false||(Tools.getAvailableStore("/mnt/sdcard/joy/")>>20)<overPlus) {
+			new AsyncImageLoader().loadDrawable(getThird_AccessToken.getseachURL(), new AsyncImageLoader.ImageCallback() {
+	            public void imageLoaded(Drawable imageDrawable) {
+	                if(imageDrawable!=null) {
+	                	imageView.setImageBitmap(Tools.drawableToBitamp(imageDrawable));
+	                }
+	                else {
+	                	imageView.setImageResource(R.drawable.pic_bg);
+	                }
+	            }
+	        });
 		}else {
-			imageView.setImageResource(R.drawable.pic_bg);
+			Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, getThird_AccessToken.getseachURL(), 0, new ImageCallBack() {
+				
+				@Override
+				public void imageLoad(ImageView imageView, Bitmap bitmap) {
+					if (bitmap!=null) {
+						imageView.setImageBitmap(bitmap);
+					}
+				}
+			});
+			if (bitmap!=null) {
+				imageView.setImageBitmap(bitmap);
+			}else {
+				imageView.setImageResource(R.drawable.pic_bg);
+			}
 		}
         
         youguandeyingpin.setText("和"+"《"+getThird_AccessToken.getdinayingName()+"》"+getResources().getString(R.string.youguandeyingpian)+type[getThird_AccessToken.getmovType()]);

@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
+import com.joy.Tools.AsyncImageLoader;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.Tools;
 import com.joy.msg.ChatMsgEntity;
@@ -115,17 +117,18 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人",
 			"是夏日，葱绿的森林，四散的流光都会感染上秀绿。你戴着奇怪的面具，明明看不到眉毛，却一眼就觉得是个可爱的人"
 			};
-	private int page_count = 3;
-	private int current_page = 0;
-    private int index =0;
+	private int page_count = 6;// 每次加载x张图片
+	private int current_page = 0;// 当前页数
+    private int index =0;//加载的张数
     Bitmap BigBitmap;
     ProgressDialog progressBar;
     PullToRefreshView mPullToRefreshView;
     AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
     ViewHolder	holder;
     MyAdapter adapter;
-    int select;
+    int select;//判断listview属于那里行的零时变量
     String selectURL="";
+    long overPlus=100;//判断剩余SD卡剩余MB
     private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
     GetThird_AccessToken getThird_AccessToken;
     final Handler handler = new Handler(){
@@ -322,38 +325,80 @@ public class Activity03 extends Activity implements OnHeaderRefreshListener,OnFo
 			}else{
 				holder = (ViewHolder)convertView.getTag();
 			}
-			
-			Bitmap headBitmap=asyncBitmapLoader.loadBitmap(holder.head, entity.gethead(), getWindowManager().getDefaultDisplay().getWidth()/2, new ImageCallBack() {
-				
-				@Override
-				public void imageLoad(ImageView imageView, Bitmap bitmap) {
-					Bitmap bitmap1=Tools.toRoundCorner(bitmap, 360);
+			//没有SD卡或者SD卡容量小于100MB直接显示网络图片
+			if (Tools.hasSdcard()==false||(Tools.getAvailableStore("/mnt/sdcard/joy/")>>20)<overPlus) {
+				new AsyncImageLoader().loadDrawable(entity.gethead(), new AsyncImageLoader.ImageCallback() {
+					
+					@Override
+					public void imageLoaded(Drawable imageDrawable) {
+						if (imageDrawable!=null) {
+							Bitmap bitmap1=Tools.toRoundCorner(Tools.drawableToBitamp(imageDrawable), 360);
+							Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap1, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth());
+							holder.head.setImageBitmap(bitmap2);
+						}else {
+							holder.head.setImageResource(R.drawable.head);
+						}
+					}
+				});
+			}else {
+				Bitmap headBitmap=asyncBitmapLoader.loadBitmap(holder.head, entity.gethead(), getWindowManager().getDefaultDisplay().getWidth()/2, new ImageCallBack() {
+					
+					@Override
+					public void imageLoad(ImageView imageView, Bitmap bitmap) {
+						if (bitmap!=null) {
+							Bitmap bitmap1=Tools.toRoundCorner(bitmap, 360);
+							Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap1, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth());
+							imageView.setImageBitmap(bitmap2);
+						}else {
+							imageView.setImageResource(R.drawable.head);
+						}
+					}
+				});
+				if (headBitmap!=null) {
+					Bitmap bitmap1=Tools.toRoundCorner(headBitmap, 360);
 					Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap1, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth());
-					imageView.setImageBitmap(bitmap2);
+					holder.head.setImageBitmap(bitmap2);
+				}else {
+					holder.head.setImageResource(R.drawable.head);
 				}
-			});
-			if (headBitmap!=null) {
-				Bitmap bitmap1=Tools.toRoundCorner(headBitmap, 360);
-				Bitmap bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap1, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth());
-				holder.head.setImageBitmap(bitmap2);
 			}
 			
 //			holder.head.setImageResource(entity.gethead());
 			holder.title.setText(entity.getName());
 			holder.info.setText(entity.getDate());
-			Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.img1, entity.getURL(), getWindowManager().getDefaultDisplay().getWidth()/3,new ImageCallBack() {
-				
-				public void imageLoad(ImageView imageView, Bitmap bitmap) {
+			//没有SD卡或者SD卡容量小于100MB直接显示网络图片
+			if (Tools.hasSdcard()==false||(Tools.getAvailableStore("/mnt/sdcard/joy/")>>20)<overPlus) {
+				new AsyncImageLoader().loadDrawable(entity.getURL(), new AsyncImageLoader.ImageCallback() {
+					
+					@Override
+					public void imageLoaded(Drawable imageDrawable) {
+						if (imageDrawable!=null) {
+							BigBitmap = BitmapZoom.bitmapZoomByWidth(Tools.drawableToBitamp(imageDrawable), getWindowManager().getDefaultDisplay().getWidth()/3);
+							holder.img1.setImageBitmap(BigBitmap);
+						}else{
+							holder.img1.setImageResource(R.drawable.pic_bg);
+						}
+					}
+				});
+			}else {
+				Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.img1, entity.getURL(), getWindowManager().getDefaultDisplay().getWidth()/3,new ImageCallBack() {
+					
+					public void imageLoad(ImageView imageView, Bitmap bitmap) {
+						if (bitmap!=null) {
+							BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
+							imageView.setImageBitmap(BigBitmap);
+						}else {
+							imageView.setImageResource(R.drawable.pic_bg);
+						}
+					}
+				});
+				if (bitmap!=null) {
 					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
-					imageView.setImageBitmap(BigBitmap);
+					holder.img1.setImageBitmap(BigBitmap);
 				}
-			});
-			if (bitmap!=null) {
-				BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, getWindowManager().getDefaultDisplay().getWidth()/3);
-				holder.img1.setImageBitmap(BigBitmap);
-			}
-			else {
-				holder.img1.setImageResource(R.drawable.pic_bg);
+				else {
+					holder.img1.setImageResource(R.drawable.pic_bg);
+				}
 			}
 			holder.img1.setTag(entity.getURL()+"|"+entity.getName1());
 			holder.img1.setOnClickListener(new View.OnClickListener() {

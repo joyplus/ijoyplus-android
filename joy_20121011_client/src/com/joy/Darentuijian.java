@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncImageLoader;
+import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
 import com.joy.Tools.Tools;
 import com.joy.view.PullToRefreshView_foot;
@@ -42,11 +45,12 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
     private  LinearLayout linearLayout2 = null;
     private  LinearLayout linearLayout3 = null;
     private int USE_LINEAR_INTERVAL = 0;
-    private int linearlayoutWidth = 0;
+    private int linearlayoutWidth = 0;//根据屏幕的大小来计算每一张图片的宽度
 	private int page_count = 6;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
-    private int index =0;
+    private int index =0;//加载的张数
     Bitmap bitmap2;
+    long overPlus=100;//判断剩余SD卡剩余MB
     GetThird_AccessToken getThird_AccessToken;
     List<String> list;
 	private String images[] = {
@@ -175,28 +179,47 @@ public class Darentuijian extends Activity implements OnFooterRefreshListener{
     				final ImageView imageView = (ImageView)view.findViewById(R.id.darenview_image);
     				TextView textView = (TextView)view.findViewById(R.id.darenview_text);
     				Button button=(Button)view.findViewById(R.id.darenview_button);
-    				Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, list.get(index),linearlayoutWidth, new ImageCallBack() {  
-  	                  
-    	                @Override  
-    	                public void imageLoad(ImageView imageView, Bitmap bitmap) {  
-    	                	Bitmap myBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.daren);
-    	                	bitmap2=Tools.toRoundCorner(bitmap, 360);
-        					imageView.setImageBitmap(bitmap2);
-        					LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(myBitmap.getWidth()-2, (myBitmap.getHeight()-2)+40);
-        					params.setMargins(5, 1, 5, 1);
-                            imageView.setLayoutParams(params);
-    	                }  
-    	            });  
-    				if (bitmap==null) {
-    					imageView.setImageResource(R.drawable.daren);
-					}
-    				else {
-    					Bitmap myBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.daren);
-    					bitmap2 = Tools.toRoundCorner(bitmap, 360);
-    					imageView.setImageBitmap(bitmap2);
-    					LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(myBitmap.getWidth()-2, (myBitmap.getHeight()-2)+40);
-    					params.setMargins(5, 1, 5, 1);
-                        imageView.setLayoutParams(params);
+    				//没有SD卡或者SD卡容量小于100MB直接显示网络图片
+    				if (Tools.hasSdcard()==false||(Tools.getAvailableStore("/mnt/sdcard/joy/")>>20)<overPlus) {
+    					new AsyncImageLoader().loadDrawable(list.get(index), new AsyncImageLoader.ImageCallback() {
+    			            public void imageLoaded(Drawable imageDrawable) {
+    			                if(imageDrawable!=null) {
+    			                	Bitmap myBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.daren);
+    		    					bitmap2 = Tools.toRoundCorner(Tools.drawableToBitamp(imageDrawable), 360);
+    		    					imageView.setImageBitmap(bitmap2);
+    		    					LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(myBitmap.getWidth()-2, (myBitmap.getHeight()-2)+40);
+    		    					params.setMargins(5, 1, 5, 1);
+    		                        imageView.setLayoutParams(params);
+    			                }
+    			                else {
+    			                	imageView.setImageResource(R.drawable.daren);
+    							}
+    			            }
+    			        });
+    				}else {
+    					Bitmap bitmap=asyncBitmapLoader.loadBitmap(imageView, list.get(index),linearlayoutWidth, new ImageCallBack() {  
+    						
+    						@Override  
+    						public void imageLoad(ImageView imageView, Bitmap bitmap) {  
+    							Bitmap myBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.daren);
+    							bitmap2=Tools.toRoundCorner(bitmap, 360);
+    							imageView.setImageBitmap(bitmap2);
+    							LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(myBitmap.getWidth()-2, (myBitmap.getHeight()-2)+40);
+    							params.setMargins(5, 1, 5, 1);
+    							imageView.setLayoutParams(params);
+    						}  
+    					});  
+    					if (bitmap==null) {
+    						imageView.setImageResource(R.drawable.daren);
+    					}
+    					else {
+    						Bitmap myBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.daren);
+    						bitmap2 = Tools.toRoundCorner(bitmap, 360);
+    						imageView.setImageBitmap(bitmap2);
+    						LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(myBitmap.getWidth()-2, (myBitmap.getHeight()-2)+40);
+    						params.setMargins(5, 1, 5, 1);
+    						imageView.setLayoutParams(params);
+    					}
 					}
     				textView.setText(names[index]);
     				button.setId(index*100);

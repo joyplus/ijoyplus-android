@@ -40,10 +40,10 @@ public class Guanzhuderen extends Activity implements OnFooterRefreshListener{
     private  LinearLayout linearLayout2 = null;
     private  LinearLayout linearLayout3 = null;
     private int USE_LINEAR_INTERVAL = 0;
-    private int linearlayoutWidth = 0;
+    private int linearlayoutWidth = 0;//根据屏幕的大小来计算每一张图片的宽度
 	private int page_count = 6;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
-    private int index =0;
+    private int index =0;//加载的张数
 	Bitmap bitmap2;
     GetThird_AccessToken getThird_AccessToken;
     List<String> list;

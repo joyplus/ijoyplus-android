@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
+import com.joy.Tools.AsyncImageLoader;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.Tools;
 import com.joy.view.PullToRefreshView_foot;
@@ -50,15 +51,15 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
     private ScrollView	scrollView;
     Button btn_kanguodeyingpian,btn_shoucangdeyingpian,btn_tuijiandeyingpian;
     LinearLayout guanzhu,fensi;
-    private int USE_LINEAR_INTERVAL = 0;
-    private int linearlayoutWidth = 0;
+    private int USE_LINEAR_INTERVAL = 0;//控制图片添加到那一个LinearLayout中
+    private int linearlayoutWidth = 0;//根据屏幕的大小来计算每一张图片的宽度
 	private int page_count = 6;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
-    private int index =0;
+    private int index =0;//加载的张数
     List<String> list;
     public Context context;
     ImageView beijing,head;
-    int selectIndex=1;
+    int selectIndex=1;//记录在哪一种类型的电影中
     String bitString[]={"拍照","相册"};
     private File mCurrentPhotoFile;
     GetThird_AccessToken getThird_AccessToken;
@@ -241,6 +242,7 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			"推荐的影片27"
 	};
 	PullToRefreshView_foot mPullToRefreshView;
+	long overPlus=100;//判断剩余SD卡剩余MB
 	Bitmap BigBitmap;
 	AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
 	final Handler handler = new Handler(){
@@ -599,17 +601,22 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
     				RelativeLayout rll = (RelativeLayout)view. findViewById(R.id.RelativeLayout02);
     				final ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
-    				Bitmap bitmap=setImage(imageView, list.get(index));
-    				if (bitmap==null) {
-    					imageView.setImageResource(R.drawable.pic_bg);
-					}
-    				else {
-    					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
-    					imageView.setImageBitmap(BigBitmap);
-                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
-                        layoutParams.setMargins(4, 1, 4, 1);
-                        imageView.setLayoutParams(layoutParams);
-    					imageView.setImageBitmap(bitmap);
+    				//没有SD卡或者SD卡容量小于100MB直接显示网络图片
+    				if (Tools.hasSdcard()==false||(Tools.getAvailableStore("/mnt/sdcard/joy/")>>20)<overPlus) {
+    					setViewImage(imageView, list.get(index));
+    				}else {
+    					Bitmap bitmap=setImage(imageView, list.get(index));
+    					if (bitmap==null) {
+    						imageView.setImageResource(R.drawable.pic_bg);
+    					}
+    					else {
+    						BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    						imageView.setImageBitmap(BigBitmap);
+    						RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+    						layoutParams.setMargins(4, 1, 4, 1);
+    						imageView.setLayoutParams(layoutParams);
+    						imageView.setImageBitmap(bitmap);
+    					}
 					}
 //    				textView.setText("第"+(index+1)+"张");
     				textView.setText(name[index]);
@@ -708,6 +715,22 @@ public class Activity04 extends Activity implements OnFooterRefreshListener{
 			}
 		});
 	}
+	public void setViewImage(final ImageView v, String url) {
+        new AsyncImageLoader().loadDrawable(url, new AsyncImageLoader.ImageCallback() {
+            public void imageLoaded(Drawable imageDrawable) {
+                if(imageDrawable!=null) {
+                	BigBitmap=BitmapZoom.bitmapZoomByWidth(Tools.drawableToBitamp(imageDrawable), linearlayoutWidth);
+                	v.setImageBitmap(BigBitmap);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+                    layoutParams.setMargins(4, 1, 4, 1);
+                    v.setLayoutParams(layoutParams);
+                }
+                else {
+            		v.setImageResource(R.drawable.pic_bg);
+				}
+            }
+        });
+    }
 	//保存URL地址，没网络的情况从内存拿之前保存过的地址来显示图片
 	public String[] SetSaveData(String where,String URL[]){
 		if (Tools.isNetworkAvailable(context)==false) {

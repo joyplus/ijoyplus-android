@@ -39,9 +39,9 @@ public class Sousuo extends Activity implements OnFooterRefreshListener{
     private List<String> moreList = new ArrayList<String>();
     private static List<String> list = null;
     private DragListAdapter adapter = null;
-    private int page_count = 5;
-	private int current_page = 0;
-    private int index =0;
+    private int page_count = 5;// 每次加载x张图片
+	private int current_page = 0;// 当前页数
+    private int index =0;//加载的张数
 	private String remenStr[]={ "开心魔法", "奋斗", "导火索", "碟中谍4", "碟中碟3",
 				"美人心计", "倒霉熊", "火影忍者", "喜洋洋", "北京爱情故事" 
 	};

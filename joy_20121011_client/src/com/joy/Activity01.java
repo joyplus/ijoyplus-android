@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -12,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,8 +28,8 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncImageLoader;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.Tools;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
@@ -45,16 +45,17 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
     private  LinearLayout linearLayout3 = null;
     private ScrollView	scrollView;
 	PullToRefreshView mPullToRefreshView;
-	private int USE_LINEAR_INTERVAL = 0;
-    private int linearlayoutWidth = 0;
+	private int USE_LINEAR_INTERVAL = 0;//控制图片添加到那一个LinearLayout中
+    private int linearlayoutWidth = 0;//根据屏幕的大小来计算每一张图片的宽度
 	private int page_count = 9;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
-    private int index =0;
+    private int index =0;//加载的张数
     List<String> IMG_list;
     Context context;
-    int selectIndex=1;
+    int selectIndex=1;//记录在哪一种类型的电影中
     Bitmap BigBitmap;
     GetThird_AccessToken getThird_AccessToken;
+    long overPlus=100;//判断剩余SD卡剩余MB
     String where="where_1_1";
     private String images_dianying[] = {
 			"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
@@ -418,7 +419,7 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 		mPullToRefreshView.setOnHeaderRefreshListener(this);
         mPullToRefreshView.setOnFooterRefreshListener(this);
         
-        random=new Random();
+//        random=new Random();
 		btn_dianying=(Button)findViewById(R.id.act01_dianying);
 		btn_dianying.setEnabled(false);
 		btn_dianying.setBackgroundResource(R.drawable.topleft1);
@@ -587,17 +588,22 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
     				RelativeLayout rll = (RelativeLayout)view.findViewById(R.id.RelativeLayout02);
     				final ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
-    				Bitmap bitmap=setImage(imageView, IMG_list.get(index));
-    				if (bitmap==null) {
-    					imageView.setImageResource(R.drawable.pic_bg);
-					}
-    				else {
-    					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
-    					imageView.setImageBitmap(BigBitmap);
-                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
-                        layoutParams.setMargins(4, 1, 4, 1);
-                        imageView.setLayoutParams(layoutParams);
-    					imageView.setImageBitmap(bitmap);
+    				//没有SD卡或者SD卡容量小于100MB直接显示网络图片
+    				if (Tools.hasSdcard()==false||(Tools.getAvailableStore("/mnt/sdcard/joy/")>>20)<overPlus) {
+    					setViewImage(imageView, IMG_list.get(index));
+					}else {
+						Bitmap bitmap=setImage(imageView, IMG_list.get(index));
+						if (bitmap==null) {
+							imageView.setImageResource(R.drawable.pic_bg);
+						}
+						else {
+							BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+							imageView.setImageBitmap(BigBitmap);
+							RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+							layoutParams.setMargins(4, 1, 4, 1);
+							imageView.setLayoutParams(layoutParams);
+							imageView.setImageBitmap(bitmap);
+						}
 					}
     				textView.setText(name[index]);
     				//点击了影片，用到ontouch方法是为了有点击效果
@@ -699,6 +705,22 @@ public class Activity01 extends Activity implements OnHeaderRefreshListener,OnFo
 			}
 		});
 	}
+	public void setViewImage(final ImageView v, String url) {
+        new AsyncImageLoader().loadDrawable(url, new AsyncImageLoader.ImageCallback() {
+            public void imageLoaded(Drawable imageDrawable) {
+                if(imageDrawable!=null) {
+                	BigBitmap=BitmapZoom.bitmapZoomByWidth(Tools.drawableToBitamp(imageDrawable), linearlayoutWidth);
+                	v.setImageBitmap(BigBitmap);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+                    layoutParams.setMargins(4, 1, 4, 1);
+                    v.setLayoutParams(layoutParams);
+                }
+                else {
+            		v.setImageResource(R.drawable.pic_bg);
+				}
+            }
+        });
+    }
 	//保存URL地址，没网络的情况从内存拿之前保存过的地址来显示图片
 	public String[] SetSaveData(String where,String URL[]){
 		if (Tools.isNetworkAvailable(context)==false) {

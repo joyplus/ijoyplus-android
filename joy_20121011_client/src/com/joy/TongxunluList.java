@@ -42,19 +42,18 @@ public class TongxunluList extends Activity implements OnFooterRefreshListener{
 	AutoCompleteTextView autoCompleteTextView;
 	List<Map<String, String>> list= new ArrayList<Map<String,String>>();
 	List<Map<String, String>> Alllist= new ArrayList<Map<String,String>>();
-//	SimpleAdapter adapter;
     DragAdapters adapters;
-    Vector<String>vName=new Vector<String>();
-    Vector<String>vNum=new Vector<String>();
+    Vector<String>vName=new Vector<String>();//电话本名字
+    Vector<String>vNum=new Vector<String>();//电话本号码
 	PullToRefreshView_foot mPullToRefreshView;
 	GetThird_AccessToken GetThird_AccessToken;
-	public static List<String> groupKey= new ArrayList<String>();
-    private List<String> haoyoulList = new ArrayList<String>();
-    private List<String> yaoqingList = new ArrayList<String>();
+	public static List<String> groupKey= new ArrayList<String>();//标签List
+    private List<String> haoyoulList = new ArrayList<String>();//好友列表list
+    private List<String> yaoqingList = new ArrayList<String>();//通讯录列表list
     private static List<String> lists = null;
     public static String friends[]={ "好友1", "好友2", "好友3", "好友4", "好友5"};
-    public static String yaoqing[];
-    public static String yaoqingNum[];
+    public static String yaoqing[];//电话本名字
+    public static String yaoqingNum[];//电话本号码
 	final Handler handler = new Handler(){
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);

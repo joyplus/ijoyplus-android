@@ -44,19 +44,19 @@ import com.mobclick.android.MobclickAgent;
 
 public class DetailActivity extends Activity implements OnClickListener,OnHeaderRefreshListener,OnFooterRefreshListener{
 	PullToRefreshView mPullToRefreshView;
-	RelativeLayout login_goback,recommend,seen,favorite,comment,share;
+	RelativeLayout login_goback,recommend,seen,favorite,comment,share;//底部的四个button以及左上的返回
 	LinearLayout myGridView;
 	SimpleAdapter adapter;
 	List<Map<String, Object>> items;
-	TextView nameTextView;
+	TextView nameTextView;//剧集或影片或综艺或视频名字
 	Map<String, Object> item;
 	//int juji = 5;
-	int button_wigth = 60;
-	int lin_han = 0;
+	int lin_han = 0;//判断如果有剧集列表，则判断有多少行，具体查看getLie()和into_juji()两个方法
 	LinearLayout detail_all_comment;
 	ImageView pic;
 	//String user_name[]={"张3","张4","张5","张6","张7","张8","张9","张0"};
-	String user_name[];
+	String user_name[];//评论的用户id
+	//用户评论内容
 	String user_content[]={"夏日炎炎",
 							"马上要光棍节了",
 							"星期八小镇，3岁至15岁孩子玩角色扮演",
@@ -65,15 +65,18 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
 							"今晚饮得尽兴啊，听日休息，可以训大觉",
 							"哥是好爷们，铁血真汉子，不需要备胎",
 							"清理QQ好友时发现某个三年没动静的好友。最后一条签名是：自从买了保险，过马路再也不用左右看了..."};
-    String user_time[] = {"12:45","12:46","12:47","12:48","12:49","12:50","12:51","12:52"};
+    //评论时间
+	String user_time[] = {"12:45","12:46","12:47","12:48","12:49","12:50","12:51","12:52"};
     Context context;
-    int linearlayoutWidth;
-    int index = 0;
-    int juji_nub = 5;
-    int pinglun_nub = 5;
-    int count = 0;
-    int page = 0;
+    int linearlayoutWidth;//如果有剧集列表的话，判断每一个剧集button的宽度，具体查看getLie()和into_juji()两个方法
+    int index = 0;//如果有剧集列表的话，用于给每个button设置的一个id
+    int juji_nub = 5;//判断每行显示几个剧集的button，默认为5
+    int pinglun_nub = 5;//每次加载5条评论数
+    int count = 0;//用于设置评论的id
+    int page = 0;//相当于一个翻页的int，默认为0，表示第一页，加载更多后，++，表示多加载5条
     Bitmap bitmap;
+    //评论用户的头像
+    long overPlus=100;
     private String images[] = {
 			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573742.jpg",
 			"http://www.qqtai.com/qqhead/uploadfiles_3178/200901/2009011503573886.jpg",
@@ -133,8 +136,8 @@ public class DetailActivity extends Activity implements OnClickListener,OnHeader
         getThird_AccessToken.setuser_image_head(images);
         //linearlayoutWidth =  getWindowManager().getDefaultDisplay().getWidth()/pinglun_nub;
         System.out.println("this:"+getThird_AccessToken.getwhere_gologin());
-        user_name = new String[]{"张3","张4","张5","张6","张7","张8","张9","张0"};
-        //user_name = new String[0];
+      //  user_name = new String[]{"张3","张4","张5","张6","张7","张8","张9","张0"};
+        user_name = new String[0];
         into();
         into_juji();
         if (user_name.length>0) {

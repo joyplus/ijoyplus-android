@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.R.integer;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,6 +30,7 @@ import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
+import com.joy.Tools.AsyncImageLoader;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.Tools;
 import com.joy.view.PullToRefreshView_foot;
@@ -53,6 +56,7 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
     ImageView beijing,head;
     int selectIndex=1;
     Bitmap BigBitmap;
+    long overPlus=100;
     GetThird_AccessToken getThird_AccessToken;
 	private String images_kanguodeyingpian[] = {
 			"http://pic1a.nipic.com/20090319/1988006_183521008_2.jpg",
@@ -315,7 +319,13 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 		/*Intent intent = new Intent();
 		intent.setClass(context, ReplyActivity.class);
 		startActivity(intent);*/
-		getThird_AccessToken.setwhere_gologin(4);
+		if (getThird_AccessToken.getwhere_gologin()==3)
+		{
+			
+		}else
+		{
+			getThird_AccessToken.setwhere_gologin(4);
+		}
 		finish();
 	}
 	//关注按钮
@@ -341,6 +351,22 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 			}
 		});
 	}
+	public void setViewImage(final ImageView v, String url) {
+        new AsyncImageLoader().loadDrawable(url, new AsyncImageLoader.ImageCallback() {
+            public void imageLoaded(Drawable imageDrawable) {
+                if(imageDrawable!=null) {
+                	BigBitmap=BitmapZoom.bitmapZoomByWidth(Tools.drawableToBitamp(imageDrawable), linearlayoutWidth);
+                	v.setImageBitmap(BigBitmap);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+                    layoutParams.setMargins(4, 1, 4, 1);
+                    v.setLayoutParams(layoutParams);
+                }
+                else {
+            		v.setImageResource(R.drawable.pic_bg);
+				}
+            }
+        });
+    }
 	//添加主界面中的图片
 	private void addBitmaps(int pageindex, int pagecount,String img[],String name[]){
 		list=Arrays.asList(img);
@@ -352,16 +378,21 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
     				RelativeLayout rll = (RelativeLayout)view. findViewById(R.id.RelativeLayout02);
     				final ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
-    				Bitmap bitmap=setImage(imageView, list.get(index));
-    				if (bitmap==null) {
-    					imageView.setImageResource(R.drawable.pic_bg);
-					}
-    				else {
-    					BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
-    					imageView.setImageBitmap(BigBitmap);
-                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
-                        layoutParams.setMargins(4, 1, 4, 1);
-                        imageView.setLayoutParams(layoutParams);
+    				//没有SD卡或者SD卡容量小于100MB直接显示网络图片
+    				if (Tools.hasSdcard()==false||(Tools.getAvailableStore("/mnt/sdcard/joy/")>>20)<overPlus) {
+    					setViewImage(imageView, list.get(index));
+    				}else {
+    					Bitmap bitmap=setImage(imageView, list.get(index));
+    					if (bitmap==null) {
+    						imageView.setImageResource(R.drawable.pic_bg);
+    					}
+    					else {
+    						BigBitmap = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+    						imageView.setImageBitmap(BigBitmap);
+    						RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BigBitmap.getWidth(), BigBitmap.getHeight()+40);
+    						layoutParams.setMargins(4, 1, 4, 1);
+    						imageView.setLayoutParams(layoutParams);
+    					}
 					}
     				textView.setText(name[index]);
     				imageView.setTag(new Integer(index));
@@ -499,7 +530,13 @@ public class OtherPersonActivity extends Activity implements OnFooterRefreshList
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 			System.out.println("this:"+getThird_AccessToken.getwhere_gologin());
-			getThird_AccessToken.setwhere_gologin(4);
+			if (getThird_AccessToken.getwhere_gologin()==3)
+			{
+				
+			}else
+			{
+				getThird_AccessToken.setwhere_gologin(4);
+			}
 			finish();
 			return true;
 		}

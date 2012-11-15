@@ -43,12 +43,12 @@ public class GetThird_AccessToken extends Application {
 		this.user_image_head=user_image_head;
 	}
 	
-	int editTextVisable = 0;
+	int editTextVisable = 0;	//判断用户评论是点击回复还是回复内容，具体查阅detailactivity和replyactivity
 	
 	
-	int jujiliebiaoXianshi = 0;
+	int jujiliebiaoXianshi = 0;	//剧集列表的显示
 	
-	
+	int where_gologin = 2; 	//判断进入detailactivity的进入入口
 	public String getseachURL(){
 		return seachURL;
 	}
@@ -124,7 +124,7 @@ public class GetThird_AccessToken extends Application {
 	}
 	
 	
-	int where_gologin = 2;
+	
 	
 	public void setwhere_gologin(int where_gologin){
 		this.where_gologin=where_gologin;

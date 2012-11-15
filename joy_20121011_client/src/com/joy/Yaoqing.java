@@ -87,7 +87,7 @@ public class Yaoqing extends Activity {
 		MobclickAgent.onResume(this); 
 	} 
 	@Override
-	public void onPause() { 
+	public void onPause() {
 		super.onPause(); 
 		MobclickAgent.onPause(this); 
 	}

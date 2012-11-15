@@ -29,13 +29,15 @@ import com.mobclick.android.MobclickAgent;
 
 public class ReplyActivity extends Activity{
 	Context context;
-	EditText reply_editText;
-	Button reply_button;
-	RelativeLayout login_goback;
+	EditText reply_editText;//输入框
+	Button reply_button;//回复按键
+	RelativeLayout login_goback;//返回键
 	ScrollView reply_listview;
 	SimpleAdapter adapter;
 	LinearLayout reply_linearlayout;
+	//评论用户的id
 	String user_name[]={"张3","张4","张5","张6","张7","张8","张9","张0"};
+	//评论内容
 	String user_content[]={"夏日炎炎",
 			"马上要光棍节了",
 			"星期八小镇，3岁至15岁孩子玩角色扮演",
@@ -43,18 +45,28 @@ public class ReplyActivity extends Activity{
 			"上帝之手没有瑕疵",
 			"今晚饮得尽兴啊，听日休息，可以训大觉",
 			"哥是好爷们，铁血真汉子，不需要备胎",
-			"清理QQ好友时发现某个三年没动静的好友。最后一条签名是：自从买了保险，过马路再也不用左右看了..."};    
+			"清理QQ好友时发现某个三年没动静的好友。最后一条签名是：自从买了保险，过马路再也不用左右看了..."};  
+	//评论时间
 	String user_time[] = {"12:45","12:46","12:47","12:48","12:49","12:50","12:51","12:52"};
-    int srcollY = 0,srcollY2 = 0;
-    ProgressDialog progressBar;
     GetThird_AccessToken getThird_AccessToken;
     Bitmap bitmap_user;
     AsyncBitmapLoader asyncBitmapLoader2=new AsyncBitmapLoader();
+    private String images[] = {
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573742.jpg",
+			"http://www.qqtai.com/qqhead/uploadfiles_3178/200901/2009011503573886.jpg",
+			"http://www.qqtai.com/qqhead/UploadFiles_3178/200901/2009011503573759.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_14.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_6.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_7.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_2.jpg",
+			"http://www.2qqtouxiang.cn/uploads/allimg/110903/1_110903203627_4.jpg",
+			};
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getThird_AccessToken = (GetThird_AccessToken) getApplicationContext();
+        getThird_AccessToken.setuser_image_head(images);
 //        if (getThird_AccessToken.geteditTextVisable()==0) {
 //        	getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 //        }
@@ -64,6 +76,7 @@ public class ReplyActivity extends Activity{
         reply_listview = (ScrollView) findViewById(R.id.reply_listview);
         reply_linearlayout = (LinearLayout) findViewById(R.id.reply_linearlayout);
         into_listContent();
+        //判断用户是点击评论内容进入此activity的还是点击回复之后进入的
         if (getThird_AccessToken.geteditTextVisable()==1) {
 //        	reply_editText.setFocusable(true);
 //			reply_editText.setFocusableInTouchMode(true); 
@@ -152,6 +165,7 @@ public class ReplyActivity extends Activity{
 //		}, 1000);
 		
 	}
+	//加载用户评论内容
 	public void into_listContent()
 	{
 		for (int i = 0; i < user_name.length;i++) {

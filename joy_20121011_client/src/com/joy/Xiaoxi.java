@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncImageLoader;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.Tools;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
@@ -44,9 +45,10 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
     AsyncBitmapLoader asyncBitmapLoader=new AsyncBitmapLoader();
     List<Map<String, Object>> listItems=new ArrayList<Map<String, Object>>();
     ViewHolder holder;
-    private int page_count = 3;
-	private int current_page = 0;
-    private int index =0;
+    private int page_count = 3;// 每次加载x张图片
+	private int current_page = 0;// 当前页数
+    private int index =0;//加载的张数
+    long overPlus=100;//判断剩余SD卡剩余MB
     private String title[]={
     		"Joy小编 关注了您",
 			"您收藏的剧集《天使之城》更新了第12集。",
@@ -266,22 +268,36 @@ public class Xiaoxi extends Activity implements OnHeaderRefreshListener,OnFooter
 				holder = (ViewHolder)convertView.getTag();
 			}
 			
-			Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.head, (String)listItems.get(position).get("head"), 0, new ImageCallBack() {
-				
-				@Override
-				public void imageLoad(ImageView imageView, Bitmap bitmap) {
-					if (bitmap!=null) {
-						holder.head.setImageBitmap(Tools.toRoundCorner(BitmapZoom.bitmapZoomByWidth(bitmap, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()), 360));
-					}else {
-						holder.head.setImageResource(R.drawable.head);
+			//没有SD卡或者SD卡容量小于100MB直接显示网络图片
+			if (Tools.hasSdcard()==false||(Tools.getAvailableStore("/mnt/sdcard/joy/")>>20)<overPlus) {
+				new AsyncImageLoader().loadDrawable((String)listItems.get(position).get("head"), new AsyncImageLoader.ImageCallback() {
+		            public void imageLoaded(Drawable imageDrawable) {
+		                if(imageDrawable!=null) {
+		                	holder.head.setImageBitmap(Tools.toRoundCorner(BitmapZoom.bitmapZoomByWidth(Tools.drawableToBitamp(imageDrawable), BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()), 360));
+		                }
+		                else {
+		                	holder.head.setImageResource(R.drawable.head);
+		                }
+		            }
+		        });
+			}else {
+				Bitmap bitmap=asyncBitmapLoader.loadBitmap(holder.head, (String)listItems.get(position).get("head"), 0, new ImageCallBack() {
+					
+					@Override
+					public void imageLoad(ImageView imageView, Bitmap bitmap) {
+						if (bitmap!=null) {
+							holder.head.setImageBitmap(Tools.toRoundCorner(BitmapZoom.bitmapZoomByWidth(bitmap, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()), 360));
+						}else {
+							holder.head.setImageResource(R.drawable.head);
+						}
 					}
+				});
+				if (bitmap!=null) {
+					holder.head.setImageBitmap(Tools.toRoundCorner(BitmapZoom.bitmapZoomByWidth(bitmap, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()), 360));
 				}
-			});
-			if (bitmap!=null) {
-				holder.head.setImageBitmap(Tools.toRoundCorner(BitmapZoom.bitmapZoomByWidth(bitmap, BitmapFactory.decodeResource(getResources(), R.drawable.head).getWidth()), 360));
-			}
-			else {
-				holder.head.setImageResource(R.drawable.head);
+				else {
+					holder.head.setImageResource(R.drawable.head);
+				}
 			}
 //			holder.head.setBackgroundResource((Integer)listItems.get(position).get("head"));
 			holder.head.setTag((position+1));

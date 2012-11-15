@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.joy.Tools.AsyncBitmapLoader;
+import com.joy.Tools.AsyncImageLoader;
 import com.joy.Tools.BitmapZoom;
 import com.joy.Tools.Tools;
 import com.joy.Tools.AsyncBitmapLoader.ImageCallBack;
@@ -20,6 +21,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -42,15 +44,16 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
     private  LinearLayout linearLayout2 = null;
     private  LinearLayout linearLayout3 = null;
 	PullToRefreshView mPullToRefreshView;
-	private int USE_LINEAR_INTERVAL = 0;
-    private int linearlayoutWidth = 0;
+	private int USE_LINEAR_INTERVAL = 0;//控制图片添加到那一个LinearLayout中
+    private int linearlayoutWidth = 0;//根据屏幕的大小来计算每一张图片的宽度
 	private int page_count = 6;// 每次加载x张图片
 	private int current_page = 0;// 当前页数
-    private int index =0;
+    private int index =0;//加载的张数
     List<String> list;
     Context context;
     Bitmap bitmap2;
     GetThird_AccessToken getThird_AccessToken;
+    long overPlus=100;//判断剩余SD卡剩余MB
     private String images[] = {
     		"http://img16.pplive.cn/2009/12/08/13521044515_230X306.jpg",
 			"http://img15.pplive.cn/2009/11/13/18032661617_230X306.jpg",
@@ -196,17 +199,22 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
     				RelativeLayout rll = (RelativeLayout)view.findViewById(R.id.RelativeLayout02);
     				final ImageView imageView = (ImageView)view.findViewById(R.id.wall_image);
     				TextView textView = (TextView)view.findViewById(R.id.wall_text);
-    				Bitmap bitmap=setImage(imageView, list.get(index));
-    				if (bitmap==null) {
-    					imageView.setImageResource(R.drawable.pic_bg);
-					}
-    				else {
-    					bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
-    					imageView.setImageBitmap(bitmap2);
-                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
-                        layoutParams.setMargins(4, 1, 4, 1);
-                        imageView.setLayoutParams(layoutParams);
-    					imageView.setImageBitmap(bitmap);
+    				//没有SD卡或者SD卡容量小于100MB直接显示网络图片
+    				if (Tools.hasSdcard()==false||(Tools.getAvailableStore("/mnt/sdcard/joy/")>>20)<overPlus) {
+    					setViewImage(imageView, list.get(index));
+					}else {
+						Bitmap bitmap=setImage(imageView, list.get(index));
+						if (bitmap==null) {
+							imageView.setImageResource(R.drawable.pic_bg);
+						}
+						else {
+							bitmap2 = BitmapZoom.bitmapZoomByWidth(bitmap, linearlayoutWidth);
+							imageView.setImageBitmap(bitmap2);
+							RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
+							layoutParams.setMargins(4, 1, 4, 1);
+							imageView.setLayoutParams(layoutParams);
+							imageView.setImageBitmap(bitmap);
+						}
 					}
     				textView.setText(name[index]);
     				
@@ -369,6 +377,22 @@ public class Activity02 extends Activity implements OnHeaderRefreshListener,OnFo
 			}
 		});
 	}
+	public void setViewImage(final ImageView v, String url) {
+        new AsyncImageLoader().loadDrawable(url, new AsyncImageLoader.ImageCallback() {
+            public void imageLoaded(Drawable imageDrawable) {
+                if(imageDrawable!=null) {
+                	bitmap2=BitmapZoom.bitmapZoomByWidth(Tools.drawableToBitamp(imageDrawable), linearlayoutWidth);
+                	v.setImageBitmap(bitmap2);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(bitmap2.getWidth(), bitmap2.getHeight()+40);
+                    layoutParams.setMargins(4, 1, 4, 1);
+                    v.setLayoutParams(layoutParams);
+                }
+                else {
+            		v.setImageResource(R.drawable.pic_bg);
+				}
+            }
+        });
+    }
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
