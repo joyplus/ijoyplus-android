@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:background="#1A1A1A"
+    >
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:layout_alignParentTop="true"
+    android:id="@+id/act01_lin"
+    android:background="@drawable/title"
+    >
+<Button
+    android:id="@+id/act01_dlna"
+    android:layout_alignParentLeft="true"
+    android:layout_marginLeft="10dp"
+    android:layout_width="65dp"
+    android:layout_height="wrap_content"
+    android:text="DLNA"
+    android:layout_centerVertical="true"
+    android:background="@drawable/btn_top_right"
+    android:textColor="@color/white"
+    android:textSize="15sp"
+    />
+<TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/yue"
+     android:layout_centerInParent="true"
+     android:textSize="20sp"		
+	android:textColor="@color/white" /> 
+<Button
+    android:id="@+id/act01_sousuo"
+    android:layout_alignParentRight="true"
+    android:layout_marginRight="10dp"
+    android:layout_width="65dp"
+    android:layout_height="wrap_content"
+    android:text="@string/sousuo"
+    android:layout_centerVertical="true"
+    android:background="@drawable/btn_top_right"
+    android:textColor="@color/white"
+    android:textSize="15sp"
+    />
+</RelativeLayout>
+<RelativeLayout
+    android:id="@+id/act01_main_pull_refresh_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:layout_below="@id/act01_lin"
+    android:orientation="vertical"
+    >
+<ScrollView
+    android:id="@+id/act01_sco"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:fadingEdge="none"
+    android:scrollbars="none">
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_weight="1" 
+    android:id="@+id/act01_linearlayout1"/>
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_weight="1" 
+    android:id="@+id/act01_linearlayout2"/>
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_weight="1" 
+    android:id="@+id/act01_linearlayout3"
+    />
+</LinearLayout>
+</ScrollView>
+
+</RelativeLayout>
+
+</RelativeLayout>

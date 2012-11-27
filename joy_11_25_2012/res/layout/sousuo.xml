@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:background="#1A1A1A"
+    >
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:layout_alignParentTop="true"
+    android:id="@+id/sousuo_lin"
+    android:background="@drawable/title"
+    >
+<TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/sousuo"
+     android:layout_centerInParent="true"
+     android:textSize="20sp"		
+	android:textColor="@color/white" /> 
+<RelativeLayout 
+    android:onClick="Btn_sousuo_back"
+    android:layout_alignParentLeft="true"
+    android:layout_marginLeft="10dp"
+    android:layout_width="64dp"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    android:background="@drawable/btn_top_left"
+    >
+ <TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/back"
+     android:layout_alignParentRight="true"
+     android:layout_marginRight="12dp"
+     android:textSize="15sp"		
+     android:layout_centerVertical="true"
+	android:textColor="@color/white" />   
+</RelativeLayout>
+</RelativeLayout>
+
+<LinearLayout
+    android:id="@+id/sousuo_lin2"
+    android:layout_width="fill_parent"
+    android:layout_height="45dp"
+    android:orientation="horizontal" 
+    android:background="#4A4A4A"
+    android:gravity="center_vertical"
+    >
+<EditText
+    android:id="@+id/sousuo_edit"
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:hint="@string/yingpianmingzi"
+     android:layout_alignParentLeft="true"
+     android:layout_weight="1"
+     android:paddingLeft="10dp"
+     android:drawableLeft="@drawable/edittext_search_image"
+     android:background="@drawable/editbg"
+     android:textColor="@color/white"
+     /> 
+<Button
+    android:layout_alignParentRight="true"
+    android:layout_marginRight="10dp"
+    android:layout_marginLeft="5dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/sousuo_sousuo" 
+    android:text="@string/sousuo"
+    android:textColor="@color/white"
+    android:background="@drawable/btn_sousuo"
+    />
+</LinearLayout>
+
+<com.joy.view.PullToRefreshView_foot
+    android:id="@+id/sousuo_main_pull_refresh_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    >
+<ListView 
+    android:id="@+id/sousuo_listview"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fadingEdge="none"
+    android:cacheColorHint="#00000000"
+    android:divider="#313132"
+    android:dividerHeight="1px"
+    >
+    
+</ListView>
+</com.joy.view.PullToRefreshView_foot>
+</LinearLayout>
