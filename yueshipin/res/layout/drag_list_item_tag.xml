@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="15dip"
+    android:background="#222222">
+    
+    <TextView
+        android:textColor="@color/grey"
+       android:id="@+id/drag_list_item_text"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:textSize = "16sp"
+       android:gravity="center_vertical"/>
+</LinearLayout>

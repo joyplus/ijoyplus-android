@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:background="#1A1A1A"
+    >
+<RelativeLayout
+    android:layout_width="fill_parent"
+  	android:layout_height="wrap_content"
+  	android:id="@+id/title" 
+  	android:background="@drawable/title"
+    >
+<TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/person_imformation"
+     android:layout_centerInParent="true"
+     android:textSize="20sp"		
+	android:textColor="@color/white" /> 
+<Button 
+	 android:id="@+id/finish"
+	 android:layout_width="wrap_content" 
+     android:layout_height="wrap_content"
+     android:layout_alignParentRight="true"
+     android:layout_centerVertical="true"
+     android:layout_marginRight="5dp"
+     android:text="@string/finish"
+     android:background="@drawable/btn_top_right"
+     android:textColor="@color/white"
+	/>
+</RelativeLayout>
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_below="@id/title"
+    >
+<TextView
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:text="@string/imformation"
+    android:textSize="20sp"
+    android:textColor="@color/white" 
+    android:layout_marginTop="25dp"
+    android:layout_marginLeft="15dp"
+    />
+	<EditText 
+	    android:id="@+id/imformation_name"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:textColor="#000"
+	    android:textSize="15sp"
+	    android:layout_marginTop="10dp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:paddingLeft="10dp"
+	    android:paddingRight="10dp"
+	    android:maxLength="16"
+	    android:singleLine="true"
+	    android:hint="@string/imformation_name"
+	    android:background="@drawable/ic_preference_first_normal"/>
+	<EditText 
+	    android:id="@+id/imformation_email"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/imformation_name"
+	    android:textColor="#000"
+	    android:textSize="15sp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:paddingLeft="10dp"
+	    android:paddingRight="10dp"
+	    android:singleLine="true"
+	    android:hint="@string/imformation_email"
+	    android:background="@drawable/ic_preference_normal"/>
+	<EditText 
+	    android:id="@+id/imformation_password"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/imformation_name"
+	    android:textColor="#000"
+	    android:textSize="15sp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:paddingLeft="10dp"
+	    android:paddingRight="10dp"
+	    android:password="true"
+	    android:singleLine="true"
+	    android:background="@drawable/ic_preference_last_normal"
+	    android:hint="@string/imformation_password"/>
+</LinearLayout>
+</RelativeLayout>

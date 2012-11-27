@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:background="#1A1A1A"
+    >
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/guanzhuderen_lin"
+    android:background="@drawable/title"
+    >
+<TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:layout_centerInParent="true"
+     android:textSize="20sp"
+     android:text="@string/woguanzhu"
+	android:textColor="@color/white" /> 
+
+
+<RelativeLayout 
+    android:layout_alignParentLeft="true"
+    android:layout_marginLeft="10dp"
+    android:layout_width="64dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/guanzhuderen_back"
+    android:layout_centerVertical="true"
+    android:background="@drawable/btn_top_left"
+    >
+ <TextView
+     android:layout_width="wrap_content" 
+     android:layout_height="wrap_content" 
+     android:text="@string/back"
+     android:layout_alignParentRight="true"
+     android:layout_marginRight="12dp"
+     android:textSize="15sp"		
+     android:layout_centerVertical="true"
+	android:textColor="@color/white" />   
+</RelativeLayout>
+</RelativeLayout>
+
+<com.joy.view.PullToRefreshView_foot
+    android:id="@+id/guanzhuderen_main_pull_refresh_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:layout_below="@id/guanzhuderen_lin"
+    android:layout_marginBottom="20dp"
+    android:orientation="vertical">
+<ScrollView
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:fadingEdge="none"
+    android:scrollbars="none">
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_weight="1" 
+    android:id="@+id/darentuijian_linearlayout1"/>
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_weight="1" 
+    android:id="@+id/darentuijian_linearlayout2"/>
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical"
+    android:layout_weight="1" 
+    android:id="@+id/darentuijian_linearlayout3"
+    />
+</LinearLayout>
+</ScrollView>
+</com.joy.view.PullToRefreshView_foot>
+</RelativeLayout>
