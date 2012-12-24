@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#F2F2F2">
+
+    <LinearLayout
+        android:id="@+id/LayoutTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="false"
+        android:background="@drawable/title_background"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <ImageButton
+                android:id="@+id/Tab1TopRightImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/search_search_top_right"
+                android:onClick="OnClickSearch"/>
+
+            <EditText
+                android:id="@+id/editText1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="10dp"
+                android:ems="13"
+                android:hint=" 影片 / 电视剧 / 综艺"
+                android:singleLine="true" >
+
+                <requestFocus/>
+            </EditText>
+              <ImageButton
+                android:id="@+id/Tab1TopRightImage2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/tab3_p3_c2_top_right"
+                android:onClick="OnClickFinished"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/tab3_page3_create_top_logo" 
+                android:visibility="gone"/>
+        </RelativeLayout>
+     
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/LinearLayoutTab"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/LayoutTitle"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:scaleType="centerInside"
+           android:visibility="gone"
+            />
+
+         <TextView
+             android:id="@+id/textViewNoResult"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentTop="true"
+             android:layout_centerHorizontal="true"
+             android:layout_gravity="center_horizontal"
+             android:layout_marginTop="80dp"
+             android:visibility="gone" 
+             android:text="抱歉，没有找到相关结果！"
+             android:textAppearance="?android:attr/textAppearanceLarge"
+             android:textColor="#444444" />
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             android:fadingEdge="none"
+            android:background="#F2F2F2"
+            android:cacheColorHint="#F2F2F2"
+            android:descendantFocusability="blocksDescendants"
+            android:divider="@drawable/tab1_divider">
+        </ListView>
+
+        <TextView
+            android:id="@+id/ProgressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progress"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="加载中..."
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#444444" 
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
