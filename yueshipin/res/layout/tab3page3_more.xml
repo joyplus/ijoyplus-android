@@ -87,7 +87,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                  android:fadingEdge="none"
-                android:cacheColorHint="#00000000"
+            android:background="#F2F2F2"
+            android:cacheColorHint="#F2F2F2"
                 android:divider="@drawable/tab3_page1_see_bg_fenge">
             </ListView>
         </LinearLayout>

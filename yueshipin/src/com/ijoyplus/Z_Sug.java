@@ -14,10 +14,16 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ijoyplus.Service.Return.ReturnTops;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.NotificationType;
+import com.umeng.fb.UMFeedbackService;
+import com.umeng.fb.util.FeedBackListener;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 public class Z_Sug extends Activity {
 	/** Called when the activity is first created. */
@@ -31,6 +37,7 @@ public class Z_Sug extends Activity {
 		setContentView(R.layout.z_sug);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		UMFeedbackService.enableNewReplyNotification(this, NotificationType.AlertDialog);
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -38,22 +45,28 @@ public class Z_Sug extends Activity {
 
 	}
 	public void OnClickSend(View v) {
-		String content = aq.id(R.id.editText2).getText().toString();
-		String url = Constant.BASE_URL + "user/feedback";
+//		UMFeedbackService.enableNewReplyNotification(
+//				this, NotificationType.AlertDialog);
+//		// 如果您程序界面是iOS风格，我们还提供了左上角的“返回”按钮，用于退出友盟反馈模块。启动友盟反馈模块前，您需要增加如下语句来设置“返回”按钮可见：
+//		UMFeedbackService.setGoBackButtonVisible();
 
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("content", content);
-
-		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
-
-		cb.params(params).url(url).type(JSONObject.class)
-				.weakHandler(this, "SugResult");
-
-		aq.ajax(cb);
+		UMFeedbackService.openUmengFeedbackSDK(this);
+//		String content = aq.id(R.id.editText2).getText().toString();
+//		String url = Constant.BASE_URL + "user/feedback";
+//
+//		Map<String, Object> params = new HashMap<String, Object>();
+//		params.put("content", content);
+//
+//		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+//		cb.header("User-Agent",
+//				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+//		cb.header("app_key", Constant.APPKEY);
+//		cb.header("user_id", app.UserID);
+//
+//		cb.params(params).url(url).type(JSONObject.class)
+//				.weakHandler(this, "SugResult");
+//
+//		aq.ajax(cb);
 
 	}
 	public void SugResult(String url, JSONObject json, AjaxStatus status) {

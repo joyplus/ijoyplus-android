@@ -143,7 +143,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		NotifyDataAnalysisFinished();
 
 		String m_order = app.GetPlayData("order");
-		if (m_order != null) {
+		if (m_order != null && m_order.trim().length() >0) {
 
 			String[] m_id = m_order.split("\\|");
 			for (m_num = 0; m_num < m_id.length && m_num < 4; m_num++) {

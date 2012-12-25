@@ -275,7 +275,10 @@ public class Detail_Show extends Activity {
 					.image(m_ReturnProgramView.show.poster, true, true);
 			aq.id(R.id.textView5).text(m_ReturnProgramView.show.publish_date);
 			aq.id(R.id.textView6).text(m_ReturnProgramView.show.area);
-			aq.id(R.id.textView7).text(m_ReturnProgramView.show.stars);
+			if(m_ReturnProgramView.show.stars.trim().length()>0)
+				aq.id(R.id.textView7).text(m_ReturnProgramView.show.stars);
+			else
+				aq.id(R.id.textView7).text(m_ReturnProgramView.show.directors);
 			m_FavorityNum = Integer
 					.parseInt(m_ReturnProgramView.show.favority_num);
 			aq.id(R.id.button2).text("收藏(" + m_FavorityNum + ")");
@@ -304,7 +307,7 @@ public class Detail_Show extends Activity {
 				}
 				if (i < 4) {
 					for (j = i; j < 4; j++) {
-						m_j = Integer.toString(j + 4);// m_ReturnProgramView.show.episodes[i].name;
+						m_j = Integer.toString(j);// m_ReturnProgramView.show.episodes[i].name;
 						Button m_button = (Button) this
 								.findViewById(getResources().getIdentifier(
 										"show_button" + m_j, "id",
@@ -313,6 +316,9 @@ public class Detail_Show extends Activity {
 					}
 				}
 
+			}
+			if(m_ReturnProgramView.show.episodes.length <= 1 && m_ReturnProgramView.show.episodes[0].name.trim().equalsIgnoreCase("1")){
+				aq.id(R.id.LinearLayoutXGYD).gone();
 			}
 			if (m_ReturnProgramView.show.episodes != null
 					&& m_ReturnProgramView.show.episodes[0].video_urls != null
@@ -326,6 +332,7 @@ public class Detail_Show extends Activity {
 						&& app.IfSupportFormat(m_ReturnProgramView.show.episodes[i].down_urls[0].urls[0].url)) {
 
 					PROD_SOURCE = m_ReturnProgramView.show.episodes[i].down_urls[0].urls[0].url;
+					break;
 
 				}
 			}

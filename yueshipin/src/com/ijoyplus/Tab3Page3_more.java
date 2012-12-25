@@ -67,7 +67,7 @@ public class Tab3Page3_more extends Activity {
 					int arg2, long arg3) {
 				// TODO Auto-generated method stub
 				OnDeleteListItem(arg2);
-				return false;
+				return true;// 如果返回false那么onItemClick仍然会被调用
 			}
 		});
 		//CheckSaveData();
@@ -291,8 +291,10 @@ public class Tab3Page3_more extends Activity {
 	public void TopDelResult(String url, JSONObject json, AjaxStatus status) {
 		if (json != null) {
 			try {
-				if (json.getString("res_code").trim().equalsIgnoreCase("00000"))
+				if (json.getString("res_code").trim().equalsIgnoreCase("00000")){
 					app.MyToast(this, "删除成功!");
+					GetServiceData();
+				}
 				else
 					app.MyToast(this, "删除失败!");
 			} catch (JSONException e) {

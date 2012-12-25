@@ -50,5 +50,6 @@
 
     <!-- Movie View Start Playing button "Beginning" -->
     <string name="resume_playing_restart">重新开始</string>
+    
 
 </resources>

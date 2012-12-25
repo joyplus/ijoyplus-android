@@ -101,7 +101,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		CheckSaveData();
+		GetServiceData();
 		MobclickAgent.onResume(this);
 	}
 
@@ -186,7 +186,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
-			app.SaveServiceData("user_tops", json.toString());
+			app.SaveServiceData("user_tops33", json.toString());
 			aq.id(R.id.linearLayout1).visible();
 			// 创建数据源对象
 			GetVideoMovies();
@@ -254,7 +254,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	private void CheckSaveData() {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
-		SaveData = app.GetServiceData("user_tops");
+		SaveData = app.GetServiceData("user_tops33");
 		if (SaveData == null) {
 			GetServiceData();
 		} else {

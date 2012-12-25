@@ -99,6 +99,12 @@ public class Main extends TabActivity {
 		});
 	}
 	@Override
+	protected void onDestroy() {
+		if (aq != null)
+			aq.dismiss();
+		super.onDestroy();
+	}
+	@Override
 	public void onResume() {
 		super.onResume();
 	}

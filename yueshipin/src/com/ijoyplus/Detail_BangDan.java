@@ -274,8 +274,20 @@ public class Detail_BangDan extends Activity implements
 					"prod_name");
 			m_BangDanListData.prod_type = JSON_items.getJSONObject(i)
 					.getString("prod_type");
-			m_BangDanListData.Text_Zhuyan = JSON_items.getJSONObject(i)
-					.getString("stars");
+			if(Integer.valueOf(JSON_items.getJSONObject(i)
+					.getString("prod_type")) == 3){
+				if(JSON_items.getJSONObject(i)
+						.getString("stars").trim().length()>0)
+					m_BangDanListData.Text_Zhuyan =JSON_items.getJSONObject(i)
+							.getString("stars");
+				else
+					m_BangDanListData.Text_Zhuyan =JSON_items.getJSONObject(i)
+							.getString("director");
+			}
+			else
+				m_BangDanListData.Text_Zhuyan = JSON_items.getJSONObject(i)
+				.getString("stars");
+			
 			m_BangDanListData.Text_Year = JSON_items.getJSONObject(i)
 					.getString("publish_date");
 			m_BangDanListData.Text_Area = JSON_items.getJSONObject(i)

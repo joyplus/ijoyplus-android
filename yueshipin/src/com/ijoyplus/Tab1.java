@@ -74,7 +74,7 @@ public class Tab1 extends Activity implements
 			}
 		});
 		CheckSaveData();
-		MobclickAgent.setDebugMode(true);
+		//MobclickAgent.setDebugMode(true);
 	}
 
 	public void OnClickTab1TopLeft(View v) {

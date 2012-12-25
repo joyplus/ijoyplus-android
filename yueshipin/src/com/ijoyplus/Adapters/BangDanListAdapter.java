@@ -51,8 +51,9 @@ public class BangDanListAdapter extends ArrayAdapter {
 			aq.id(R.id.TextViewScore).text(m_BangDanListData.Text_Score+ "分");
 
 			if (Integer.valueOf(m_BangDanListData.prod_type) == 3) {
-
-				aq.id(R.id.txt_1).text("主持人：");
+				
+				aq.id(R.id.txt_1).text("主持/嘉宾：");
+				aq.id(R.id.TextView02).text("地    区：");
 
 			}
 			aq.id(R.id.video_preview_img)

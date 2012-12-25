@@ -60,7 +60,9 @@ public class SearchListAdapter extends ArrayAdapter {
 							break;
 						case 3:
 							aq.id(R.id.TextView05).text("综艺");
-							aq.id(R.id.txt_1).text("主持人：");
+							aq.id(R.id.txt_1).text("主持/嘉宾：");
+							aq.id(R.id.TextView01).text("地    区：");
+							aq.id(R.id.TextView02).text("分    类：");
 							break;
 						case 4:
 							aq.id(R.id.TextView05).text("视频");

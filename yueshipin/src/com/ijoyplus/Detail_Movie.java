@@ -300,15 +300,30 @@ public class Detail_Movie extends Activity {
 					&& m_ReturnProgramView.movie.episodes[0].video_urls != null
 					&& m_ReturnProgramView.movie.episodes[0].video_urls[0].url != null)
 				PROD_URI = m_ReturnProgramView.movie.episodes[0].video_urls[0].url;
+			for (int i = 0; i < m_ReturnProgramView.movie.episodes.length; i++) {
 
-			if (m_ReturnProgramView.movie.episodes[0].down_urls != null
-					&& m_ReturnProgramView.movie.episodes[0].down_urls[0].urls.length > 0
-					&& m_ReturnProgramView.movie.episodes[0].down_urls[0].urls[0].url != null
-					&& app.IfSupportFormat(m_ReturnProgramView.movie.episodes[0].down_urls[0].urls[0].url)) {
+				if (m_ReturnProgramView.movie.episodes[i].down_urls != null
+						&& m_ReturnProgramView.movie.episodes[i].down_urls[0].urls.length > 0
+						&& m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[0].url != null
+						&& app.IfSupportFormat(m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[0].url)) {
 
-				PROD_SOURCE = m_ReturnProgramView.movie.episodes[0].down_urls[0].urls[0].url;
-
+					PROD_SOURCE = m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[0].url;
+					break;
+				}
 			}
+//			if (m_ReturnProgramView.movie.episodes != null
+//					&& m_ReturnProgramView.movie.episodes[0].video_urls != null
+//					&& m_ReturnProgramView.movie.episodes[0].video_urls[0].url != null)
+//				PROD_URI = m_ReturnProgramView.movie.episodes[0].video_urls[0].url;
+//
+//			if (m_ReturnProgramView.movie.episodes[0].down_urls != null
+//					&& m_ReturnProgramView.movie.episodes[0].down_urls[0].urls.length > 0
+//					&& m_ReturnProgramView.movie.episodes[0].down_urls[0].urls[0].url != null
+//					&& app.IfSupportFormat(m_ReturnProgramView.movie.episodes[0].down_urls[0].urls[0].url)) {
+//
+//				PROD_SOURCE = m_ReturnProgramView.movie.episodes[0].down_urls[0].urls[0].url;
+//
+//			}
 
 			if (m_ReturnProgramView.topics != null) {
 				for (int i = 0; i < m_ReturnProgramView.topics.length && i < 4; i++) {

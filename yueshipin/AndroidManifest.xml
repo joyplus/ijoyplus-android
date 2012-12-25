@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ijoyplus"
     android:versionCode="1"
-    android:versionName="1.0">
+    android:versionName="0.9.1">
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -77,6 +77,12 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar">
         </activity>
+        <activity
+            android:name=".Z_About_mianzhe"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar">
+        </activity>
+        
         <activity
             android:name=".Z_Pingjia"
             android:screenOrientation="portrait"
@@ -199,8 +205,17 @@
                 android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
            
         </activity>
-        <meta-data android:value="0937e6c5270151fc8000003" android:name="UMENG_APPKEY"></meta-data>
-		<meta-data android:value="Channel ID" android:name="UMENG_CHANNEL"/>
+        <activity android:name="com.umeng.fb.ui.SendFeedback"
+    android:windowSoftInputMode="adjustResize" />
+<activity android:name="com.umeng.fb.ui.FeedbackConversations" />
+<activity android:name="com.umeng.fb.ui.FeedbackConversation"
+    android:configChanges="keyboard" />
+<service            android:name="com.umeng.common.net.DownloadingService"        
+            android:exported="true"
+            android:process=":DownloadingService" >
+        </service>
+        <meta-data android:value="50937e6c5270151fc8000003" android:name="UMENG_APPKEY"></meta-data>
+		<meta-data android:value="a002001" android:name="UMENG_CHANNEL"/>
     </application>
 
 </manifest>

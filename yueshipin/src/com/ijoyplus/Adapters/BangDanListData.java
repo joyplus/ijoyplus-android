@@ -2,6 +2,7 @@ package com.ijoyplus.Adapters;
 
 public class BangDanListData {
 	public String Pic_ID;
+	public String Item_ID;
 	public String Pic_url;
 	public String Pic_name;
 	public String prod_type;

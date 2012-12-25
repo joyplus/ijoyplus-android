@@ -148,8 +148,11 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 			aq.id(R.id.Layout1).gone();
 			aq.id(R.id.Layout2).gone();
 		} else if (m_ReturnUserFavorities.favorities.length <= 3) {
+			aq.id(R.id.imageNoitemBG).gone();
+			aq.id(R.id.Layout1).visible();
 			aq.id(R.id.Layout2).gone();
 		} else {
+			aq.id(R.id.imageNoitemBG).gone();
 			aq.id(R.id.Layout1).visible();
 			aq.id(R.id.Layout2).visible();
 		}
@@ -182,8 +185,8 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 
 			// 创建数据源对象
 			GetVideoMovies();
-			aq.id(R.id.Layout1).visible();
-			aq.id(R.id.Layout2).visible();
+//			aq.id(R.id.Layout1).visible();
+//			aq.id(R.id.Layout2).visible();
 
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block

@@ -6,11 +6,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.NotificationType;
+import com.umeng.fb.UMFeedbackService;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +43,7 @@ public class Setting extends Activity {
 		setContentView(R.layout.setting);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		UMFeedbackService.enableNewReplyNotification(this, NotificationType.AlertDialog);
 		
 		/*
 		 * Switch switchTest = (Switch) findViewById(R.id.switch1); switchTest
@@ -90,7 +95,60 @@ public class Setting extends Activity {
 		finish();
 
 	}
+	public void OnClickMianZhe(View v) {
+		Intent intent = new Intent(this, Z_About_mianzhe.class);
+		try {
+			startActivity(intent);
+		} catch (ActivityNotFoundException ex) {
+			Log.e("Setting", "Call OnClickMianZhe failed", ex);
+		}
 
+	}
+
+	public void OnClickGuanzhu(View v) {
+		if (app.GetServiceData("Sina_Access_Token") != null) {
+			String m_PostURL = "https://api.weibo.com/2/friendships/create.json";
+
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("access_token", app.GetServiceData("Sina_Access_Token"));
+			params.put("screen_name", "悦视频");
+
+			//save to local
+			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+			cb.header("User-Agent",
+					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+
+			cb.params(params).url(m_PostURL).type(JSONObject.class)
+					.weakHandler(this, "GuanzhuResult");
+
+			aq.ajax(cb);
+
+		} else {
+			String m_URI = "http://weibo.com/signup/signup.php?inviteCode=3058636171";
+			Intent intent = new Intent();
+			intent.setAction("android.intent.action.VIEW");
+			Uri content_url = Uri.parse(m_URI);
+			intent.setData(content_url);
+			startActivity(intent);
+		}
+
+	}
+	public void GuanzhuResult(String url, JSONObject json,
+			AjaxStatus status) {
+		if (json != null) {
+			try {
+				if (json.getString("id").trim().length() >0 ){
+					app.MyToast(this, "关注成功");
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+		} else {
+			app.MyToast(this, getResources().getString(R.string.networknotwork));
+		}
+	}
+	
 	public void OnClickClearMemery(View v) {
 		BitmapAjaxCallback.clearCache();
 		app.MyToast(this, "清除缓存成功");
@@ -98,12 +156,18 @@ public class Setting extends Activity {
 	}
 
 	public void OnClickSug(View v) {
-		Intent intent = new Intent(this, Z_Sug.class);
-		try {
-			startActivity(intent);
-		} catch (ActivityNotFoundException ex) {
-			Log.e("Setting", "Call Z_Sug failed", ex);
-		}
+//		UMFeedbackService.enableNewReplyNotification(
+//		this, NotificationType.AlertDialog);
+//// 如果您程序界面是iOS风格，我们还提供了左上角的“返回”按钮，用于退出友盟反馈模块。启动友盟反馈模块前，您需要增加如下语句来设置“返回”按钮可见：
+		UMFeedbackService.setGoBackButtonVisible();
+
+		UMFeedbackService.openUmengFeedbackSDK(this);
+//		Intent intent = new Intent(this, Z_Sug.class);
+//		try {
+//			startActivity(intent);
+//		} catch (ActivityNotFoundException ex) {
+//			Log.e("Setting", "Call Z_Sug failed", ex);
+//		}
 
 	}
 
@@ -157,6 +221,23 @@ public class Setting extends Activity {
 								public void onClick(DialogInterface dialog,
 										int which) {
 									app.DeleteServiceData("Sina_Access_Token");
+									//account/unbindAccount  取消第三方账号绑定
+//									String m_PostURL = Constant.BASE_URL + "account/unbindAccount";
+//
+//									Map<String, Object> params = new HashMap<String, Object>();
+//									params.put("source_type", "1");
+//
+//									//save to local
+//									AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+//									cb.header("User-Agent",
+//											"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+//									cb.header("app_key", Constant.APPKEY);
+//									cb.header("user_id", app.UserID);
+//
+//									cb.params(params).url(m_PostURL).type(JSONObject.class)
+//											.weakHandler(this, "CancelAccountBindAccountResult");
+//
+//									aq.ajax(cb);
 								}
 							})
 					.setNegativeButton(
@@ -172,7 +253,23 @@ public class Setting extends Activity {
 		}
 
 	}
-
+//	public void CancelAccountBindAccountResult(String url, JSONObject json,
+//			AjaxStatus status) {
+//		if (json != null) {
+//			try {
+//				if (json.getString("res_code").trim().equalsIgnoreCase("00000")){
+//					app.MyToast(this, "取消绑定成功!");
+//				}
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			}
+//
+//		} else {
+//
+//			// ajax error, show error code
+//			app.MyToast(this, getResources().getString(R.string.networknotwork));
+//		}
+//	}
 	// 第三方新浪登录
 	class AuthDialogListener implements WeiboDialogListener {
 
@@ -189,25 +286,25 @@ public class Setting extends Activity {
 			// save access_token
 			app.SaveServiceData("Sina_Access_Token", token);
 			UploadSinaHeadAndScreen_nameUrl(token,uid);
-			app.MyToast(getApplicationContext(), "新浪微博已绑定");
+			
 		}
 
 	
 		@Override
 		public void onError(DialogError e) {
-			app.MyToast(getApplicationContext(),
-					"Auth error : " + e.getMessage());
+			app.MyToast(getApplicationContext(), 
+					getResources().getString(R.string.networknotwork));
 		}
 
 		@Override
 		public void onCancel() {
-			app.MyToast(getApplicationContext(), "Auth cancel");
+			app.MyToast(getApplicationContext(), "绑定取消");
 		}
 
 		@Override
 		public void onWeiboException(WeiboException e) {
-			app.MyToast(getApplicationContext(),
-					"Auth exception : " + e.getMessage());
+			app.MyToast(getApplicationContext(), 
+					getResources().getString(R.string.networknotwork));
 		}
 
 	}
@@ -263,7 +360,7 @@ public class Setting extends Activity {
 				if (json.getString("res_code").trim().equalsIgnoreCase("00000")){
 					
 					//reload the userinfo
-					String url2 = Constant.BASE_URL + "user/view";
+					String url2 = Constant.BASE_URL + "user/view?userid="+ app.UserID;
 
 					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 					cb.url(url2).type(JSONObject.class).weakHandler(this, "AccountBindAccountResult3");
@@ -271,7 +368,7 @@ public class Setting extends Activity {
 					cb.header("User-Agent",
 							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
 					cb.header("app_key", Constant.APPKEY);
-					cb.header("user_id", app.UserID);
+					//cb.header("user_id", app.UserID);
 
 					aq.ajax(cb);
 				}
@@ -288,11 +385,20 @@ public class Setting extends Activity {
 			app.MyToast(this, getResources().getString(R.string.networknotwork));
 		}
 	}
-	public void AccountBindAccountResult3(String url, JSONObject json, AjaxStatus status) {
+
+	public void AccountBindAccountResult3(String url, JSONObject json,
+			AjaxStatus status) {
 
 		if (json != null) {
-			app.SaveServiceData("UserInfo", json.toString());
-//			app.MyToast(this, "更新头像成功!");
+			try {
+			if (json.getString("nickname").trim().length() >0) {
+				app.SaveServiceData("UserInfo", json.toString());
+				app.MyToast(getApplicationContext(), "新浪微博已绑定");
+				// app.MyToast(this, "更新头像成功!");
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
 		} else {
 

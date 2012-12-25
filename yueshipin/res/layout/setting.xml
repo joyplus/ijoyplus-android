@@ -59,32 +59,22 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:layout_width="307dp"
-            android:layout_height="37dp"
-            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
             android:layout_marginLeft="13dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/setting_textview_border2">
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="18dp"
-                android:text="新浪微博"
-                android:textColor="#5A5A5A"/>
+            android:paddingRight="11dp"
+            android:background="@drawable/setting_xin_lang">
 
                         <CheckBox
-                android:id="@+id/checkBox1"
-                android:layout_width="52dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="11dp"
-                android:button="@drawable/setting_weibo_button"
-                android:onClick="OnClickSinaWeibo" />
+                            android:id="@+id/checkBox1"
+                            android:layout_width="52dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentTop="true"
+                            android:button="@drawable/setting_weibo_button"
+                            android:onClick="OnClickSinaWeibo" />
          
         </RelativeLayout>
     </LinearLayout>
@@ -103,14 +93,15 @@
             android:background="@drawable/setting_button_cache"
             android:onClick="OnClickClearMemery"/>
     </LinearLayout>
-
+
     <LinearLayout
         android:layout_width="333dp"
-        android:layout_height="157dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="9dp"
         android:background="@drawable/setting_textview_border"
-        android:orientation="vertical">
+        android:orientation="vertical" 
+        android:paddingBottom="9dp">
 
         <ImageButton
             android:id="@+id/button3"
@@ -121,17 +112,24 @@
             android:background="@drawable/setting_button_yj"
             android:onClick="OnClickSug"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/button4"
-            android:layout_width="307dp"
-            android:layout_height="36dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="13dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/setting_button"
-            android:onClick="OnClickPingjia"
-            android:text="给我们评价"
-            android:visibility="gone"/>
+            android:background="@drawable/setting_button_mianzhe"
+            android:onClick="OnClickMianZhe"/>
 
+           <ImageButton
+            android:id="@+id/button6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="13dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/setting_button_guanzhu"
+            android:onClick="OnClickGuanzhu"/>
+           
         <ImageButton
             android:id="@+id/button5"
             android:layout_width="wrap_content"

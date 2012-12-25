@@ -89,7 +89,7 @@ public class Tab3Page3_Create1 extends Activity {
 	}
 
 	public void OnClickNext(View v) {
-		title = aq.id(R.id.editText1).getText().toString();
+		title = aq.id(R.id.editText1).getText().toString().trim();
 		content = aq.id(R.id.editText2).getText().toString();
 
 		if (title == null || title.length() == 0) {
@@ -147,8 +147,9 @@ public class Tab3Page3_Create1 extends Activity {
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					app.MyToast(aq.getContext(), "不能建立同名悦单");
 				}
-				app.MyToast(aq.getContext(), "不能建立同名悦单");
+				
 
 			} else {
 				app.MyToast(aq.getContext(), "不能建立同名悦单");

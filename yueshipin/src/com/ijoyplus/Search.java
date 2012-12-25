@@ -179,7 +179,15 @@ public class Search extends Activity implements
 					m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url;
 					m_SearchListData.Pic_name = m_ReturnSearch.results[i].prod_name;
 					m_SearchListData.prod_type = m_ReturnSearch.results[i].prod_type;
-					m_SearchListData.Text_Zhuyan = m_ReturnSearch.results[i].star;
+					if(Integer.valueOf(m_ReturnSearch.results[i].prod_type) == 3){
+						if(m_ReturnSearch.results[i].star.trim().length()>0)
+							m_SearchListData.Text_Zhuyan = m_ReturnSearch.results[i].star;
+						else
+							m_SearchListData.Text_Zhuyan = m_ReturnSearch.results[i].director;
+					}
+					else
+						m_SearchListData.Text_Zhuyan = m_ReturnSearch.results[i].star;
+					
 					m_SearchListData.Text_Year = m_ReturnSearch.results[i].publish_date;
 					m_SearchListData.Text_Area = m_ReturnSearch.results[i].area;
 					m_SearchListData.Text_Ding = m_ReturnSearch.results[i].support_num;
@@ -191,6 +199,9 @@ public class Search extends Activity implements
 		if(dataStruct.size() == 0){
 			aq.id(R.id.listView1).gone();
 			aq.id(R.id.textViewNoResult).visible();
+		}
+		else{
+			aq.id(R.id.listView1).visible();
 		}
 
 	}

@@ -235,6 +235,8 @@ public class Tab3Page3_Create2 extends Activity {
 
 		for (int i = 0; i < JSON_items.length(); i++) {
 			BangDanListData m_BangDanListData = new BangDanListData();
+			m_BangDanListData.Item_ID = JSON_items.getJSONObject(i).getString(
+					"id");
 			m_BangDanListData.Pic_ID = JSON_items.getJSONObject(i).getString(
 					"prod_id");
 			topic_id_ready_have = topic_id_ready_have +m_BangDanListData.Pic_ID +"|";
@@ -302,17 +304,17 @@ public class Tab3Page3_Create2 extends Activity {
 				.getItemAtPosition(item);
 		String program_name = "你确定删除  " + m_BangDanListData.Pic_name + "  吗？";
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("我的收藏").setMessage(program_name)
+		builder.setTitle("我的悦单").setMessage(program_name)
 				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						dataStruct.remove(item);
+						dataStruct= null;
 						BangDanAdapter.notifyDataSetChanged();
-
 						ItemsListView.invalidate();
+						
 						// 删除数据
-						DeleteVideo(m_BangDanListData.Pic_ID);
-
+						DeleteVideo(m_BangDanListData.Item_ID);
+						
 					}
 				}).setNegativeButton("取消", null).create();
 		builder.show();
@@ -337,8 +339,10 @@ public class Tab3Page3_Create2 extends Activity {
 	public void DeleteVideoResult(String url, JSONObject json, AjaxStatus status) {
 		if (json != null) {
 			try {
-				if (json.getString("res_code").trim().equalsIgnoreCase("00000"))
+				if (json.getString("res_code").trim().equalsIgnoreCase("00000")){
 					app.MyToast(this, "删除成功!");
+					GetServiceData();
+				}
 				else
 					app.MyToast(this, "删除失败!");
 			} catch (JSONException e) {

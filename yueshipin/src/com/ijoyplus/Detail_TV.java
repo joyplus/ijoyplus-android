@@ -356,7 +356,7 @@ public class Detail_TV extends Activity {
 						&& app.IfSupportFormat(m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url)) {
 
 					PROD_SOURCE = m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url;
-
+					break;
 				}
 			}
 		}
