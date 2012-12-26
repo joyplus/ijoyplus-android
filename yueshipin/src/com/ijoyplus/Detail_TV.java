@@ -69,6 +69,7 @@ public class Detail_TV extends Activity {
 		aq.id(R.id.scrollView1).gone();
 
 		InitTVButtom();
+		MobclickAgent.updateOnlineConfig(this);
 		if (prod_id != null)
 			GetServiceData();
 
@@ -515,7 +516,10 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickPlay(View v) {
-		//
+		if(MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim().equalsIgnoreCase("1")){
+			app.MyToast(this, "暂无播放链接!");
+			return;
+		}
 		CallVideoPlayActivity();
 
 	}
@@ -600,6 +604,10 @@ public class Detail_TV extends Activity {
 
 	public void OnClickTVPlay(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
+		if(MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim().equalsIgnoreCase("1")){
+			app.MyToast(this, "暂无播放链接!");
+			return;
+		}
 		if (m_ReturnProgramView.tv.episodes != null
 				&& m_ReturnProgramView.tv.episodes[index].video_urls != null
 				&& m_ReturnProgramView.tv.episodes[index].video_urls[0].url != null)

@@ -66,7 +66,9 @@ public class Detail_Movie extends Activity {
 		prod_id = intent.getStringExtra("prod_id");
 		aq = new AQuery(this);
 		aq.id(R.id.scrollView1).gone();
-
+		
+		MobclickAgent.updateOnlineConfig(this);
+		
 		if (prod_id != null)
 			GetServiceData();
 
@@ -526,7 +528,11 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void OnClickPlay(View v) throws JSONException {
-
+		String m_str = MobclickAgent.getConfigParams(this, "playBtnSuppressed");
+		if(MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim().equalsIgnoreCase("1")){
+			app.MyToast(this, "暂无播放链接!");
+			return;
+		}
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 			// save to local
 			// prod_id|PROD_SOURCE |

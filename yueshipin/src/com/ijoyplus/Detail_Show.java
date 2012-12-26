@@ -62,6 +62,7 @@ public class Detail_Show extends Activity {
 
 		aq.id(R.id.scrollView1).gone();
 
+		MobclickAgent.updateOnlineConfig(this);
 		if (prod_id != null)
 			GetServiceData();
 
@@ -481,7 +482,10 @@ public class Detail_Show extends Activity {
 	}
 
 	public void OnClickPlay(View v) {
-		//
+		if(MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim().equalsIgnoreCase("1")){
+			app.MyToast(this, "暂无播放链接!");
+			return;
+		}
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 			// save to local
 			// prod_id|PROD_SOURCE | Pro_url|Pro_name|Pro_name1|Pro_time
@@ -587,6 +591,11 @@ public class Detail_Show extends Activity {
 
 	public void OnClickShowPlay(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
+		
+		if(MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim().equalsIgnoreCase("1")){
+			app.MyToast(this, "暂无播放链接!");
+			return;
+		}
 		if (m_ReturnProgramView.show.episodes != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls[0].url != null)
