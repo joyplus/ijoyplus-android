@@ -12,7 +12,7 @@ public class Constant {
 	public static String PATH_XML = Environment.getExternalStorageDirectory()
 			+ "/joy/";
 
-	public static final String APPKEY = "ijoyplus_android_0001";
+	public static final String APPKEY = "";
 
 	// 我们的sina账号
 	public static String SINA_CONSUMER_KEY = "1490285522";
