@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="86dp"
+    android:paddingTop="2dp">
+
+    <ImageView
+        android:id="@+id/video_preview_img"
+        android:layout_width="40dp"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="9dip"
+        android:layout_marginTop="12dp"
+        android:scaleType="fitXY"/>
+
+    <TextView
+        android:id="@+id/txt_video_caption"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="76dp"
+        android:layout_marginTop="15dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="444444"
+        android:textColor="#444444"
+        android:textSize="18dip" />
+
+    <TextView
+        android:id="@+id/txt_1"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/txt_video_caption"
+        android:layout_marginLeft="76dp"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="主演："
+        android:textColor="#9f9f9f"
+        android:textSize="13dip"/>
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/txt_1"
+        android:layout_below="@id/txt_1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="年代："
+        android:textColor="#9f9f9f"
+        android:textSize="13dip"/>
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/txt_video_caption"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="9f9f9f"
+        android:textColor="#9f9f9f"
+        android:textSize="13dip"/>
+
+    <TextView
+        android:id="@+id/TextView04"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView03"
+        android:layout_below="@+id/TextView03"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="9f9f9f"
+        android:textColor="#9f9f9f"
+        android:textSize="13dip"/>
+
+</RelativeLayout>

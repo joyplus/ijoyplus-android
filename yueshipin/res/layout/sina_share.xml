@@ -2,27 +2,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#F2F2F2">
+    android:background="#F2F2F2" >
 
     <LinearLayout
         android:id="@+id/LayoutTitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/title_background">
+        android:background="@drawable/title_background" >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:onClick="OnClickTab1TopLeft">
+            android:onClick="OnClickTab1TopLeft" >
 
             <ImageView
                 android:id="@+id/imageView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/top_icon_return"/>
+                android:src="@drawable/top_icon_return" />
         </LinearLayout>
 
         <LinearLayout
@@ -30,7 +30,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="3"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal" >
 
             <TextView
                 android:id="@+id/program_name"
@@ -39,7 +39,7 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="Name"
-                android:textAppearance="?android:attr/textAppearanceLarge"/>
+                android:textAppearance="?android:attr/textAppearanceLarge" />
         </LinearLayout>
 
         <LinearLayout
@@ -47,7 +47,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal" >
         </LinearLayout>
     </LinearLayout>
 
@@ -55,23 +55,22 @@
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/LayoutTitle">
+        android:layout_below="@id/LayoutTitle" >
 
         <LinearLayout
             android:id="@+id/LinearLayoutTab"
             android:layout_width="match_parent"
-            android:layout_height="319dp"
-            android:orientation="vertical">
-
+            android:layout_height="320dp"
+            android:orientation="vertical" >
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent" >
 
                 <ImageView
                     android:id="@+id/imageView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/sina_share_bg"/>
+                    android:src="@drawable/sina_share_bg" />
 
                 <ImageView
                     android:id="@+id/imageView4"
@@ -81,7 +80,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_marginBottom="28dp"
                     android:layout_marginLeft="21dp"
-                    android:src="@drawable/sina_share_b2_pressed"/>
+                    android:src="@drawable/sina_share_b2_pressed" />
 
                 <ImageButton
                     android:id="@+id/imageButton1"
@@ -91,22 +90,49 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="21dp"
                     android:background="@drawable/sina_share_bt_share"
-                    android:onClick="OnClickShare"/>
+                    android:onClick="OnClickShare" />
 
                 <MultiAutoCompleteTextView
                     android:id="@+id/multiAutoCompleteTextView1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="96dp"
                     android:layout_alignLeft="@+id/imageView4"
                     android:layout_alignParentTop="true"
                     android:layout_alignRight="@+id/imageView3"
                     android:layout_marginRight="27dp"
-                    android:layout_marginTop="61dp"
+                    android:layout_marginTop="58dp"
                     android:background="@null"
-                    android:ems="10">
+                    android:ems="10"
+                    android:maxLength="120" >
 
-                    <requestFocus/>
+                    <requestFocus />
                 </MultiAutoCompleteTextView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/multiAutoCompleteTextView1"
+                    android:layout_alignRight="@+id/imageButton1"
+                    android:gravity="right"
+                    android:padding="1dp"
+                    android:text="/120"
+                    android:textColor="@color/black"
+                    android:textSize="10.0sp"
+                    android:id="@+id/maxtextlines" />
+
+                <TextView
+                    android:id="@+id/count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/maxtextlines"
+                    android:layout_alignBottom="@+id/maxtextlines"
+                    android:layout_toLeftOf="@+id/maxtextlines"
+                    android:gravity="right"
+                    android:padding="1dp"
+                    android:text="120"
+                    android:textColor="@color/black"
+                    android:textSize="10.0sp" />
+
             </RelativeLayout>
 
             <LinearLayout
@@ -115,12 +141,12 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal" >
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="1" >
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

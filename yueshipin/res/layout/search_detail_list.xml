@@ -14,7 +14,8 @@
         android:layout_marginLeft="22dip"
         android:scaleType="centerInside"
         android:visibility="gone"/>
-
+
+
     <ImageView
         android:id="@+id/video_preview_img"
         android:layout_width="60dp"
@@ -75,7 +76,7 @@
         android:textColor="#9f9f9f"
         android:textSize="13dip"/>
 
-      <TextView
+     <TextView
         android:id="@+id/TextView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -32,8 +32,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_weight="0.37"
-            android:gravity="center">
+            android:layout_weight="0.63"
+            android:gravity="center" >
 
             <ImageButton
                 android:id="@+id/Tab1TopLeftImage"
@@ -65,16 +65,15 @@
             android:layout_weight="0.37"
             android:gravity="center"
             android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/Tab1TopRightImage"
+            
+            <Button 
+                android:id="@+id/DownloadPage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:background="@drawable/tab_rignt_download"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/tab1_r"
-                android:onClick="OnClickTab1TopRight"/>
+                android:onClick="OnClickDownloadTopRight"/>
         </LinearLayout>
     </LinearLayout>
 

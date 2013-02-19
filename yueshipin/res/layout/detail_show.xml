@@ -2,46 +2,47 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#F2F2F2">
+    android:background="#F2F2F2" >
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:scaleType="centerInside"
-        android:visibility="gone"/>
-       <TextView
-            android:id="@+id/ProgressText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/progress"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:text="加载中..."
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#444444" 
-            android:visibility="gone"/>
-   
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/ProgressText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progress"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="加载中..."
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#444444"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/LayoutTitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/title_background">
+        android:background="@drawable/title_background" >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:onClick="OnClickTab1TopLeft">
+            android:onClick="OnClickTab1TopLeft" >
 
             <ImageView
                 android:id="@+id/imageView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/top_icon_return"/>
+                android:src="@drawable/top_icon_return" />
         </LinearLayout>
 
         <LinearLayout
@@ -49,17 +50,16 @@
             android:layout_height="fill_parent"
             android:layout_weight="3"
             android:gravity="center"
-            android:orientation="horizontal">
-
+            android:orientation="horizontal" >
+
             <TextView
                 android:id="@+id/program_name"
                 android:layout_width="216dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:ellipsize="end"
+                android:gravity="center"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -68,13 +68,13 @@
             android:layout_weight="1"
             android:gravity="center"
             android:onClick="OnClickTab1TopRight"
-            android:orientation="horizontal">
+            android:orientation="horizontal" >
 
             <ImageView
                 android:id="@+id/imageView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/top_icon_share"/>
+                android:src="@drawable/top_icon_share" />
         </LinearLayout>
     </LinearLayout>
 
@@ -82,35 +82,38 @@
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/LayoutTitle">
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/LayoutTitle" >
 
         <LinearLayout
             android:id="@+id/LinearLayoutTab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical" >
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                 android:paddingRight="16dp">
- 
-                              <ImageView
+                android:paddingRight="16dp" >
+
+                <ImageView
                     android:id="@+id/imageViewBG"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="13dp"
                     android:layout_marginTop="10dp"
                     android:src="@drawable/detail_picture_bg" />
-                 <ImageView
+
+                <ImageView
                     android:id="@+id/imageView3"
                     android:layout_width="94dp"
                     android:layout_height="141dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="13dp"
-                    android:scaleType="fitXY"/>
-
-                <ImageButton
+                    android:scaleType="fitXY" />
+
+                <!--
+                     ImageButton
                     android:id="@+id/button1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -118,17 +121,42 @@
                     android:layout_marginTop="20dp"
                     android:background="@drawable/detail_movie_play"
                     android:onClick="OnClickPlay" />
-
+                -->
+                <!-- 2 -->
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="128dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/collecteviedo"
+                    android:drawableLeft="@drawable/detail_movie_fa"
+                    android:onClick="OnClickFavorityNum"
+                    android:text="收藏" />
+                <!-- 3 -->
+
+                <Button
+                    android:id="@+id/button3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="220dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/pushviedo"
+                    android:drawableLeft="@drawable/detail_movie_ding"
+                    android:onClick="OnClickSupportNum"
+                    android:text="顶" />
+
                 <TextView
                     android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/button1"
+                    android:layout_below="@+id/button2"
                     android:layout_marginLeft="129dp"
                     android:layout_marginTop="14dp"
                     android:text="主持/嘉宾：" />
-
+
                 <TextView
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
@@ -138,7 +166,7 @@
                     android:layout_marginLeft="129dp"
                     android:layout_marginTop="5dp"
                     android:text="首    播：" />
-
+
                 <TextView
                     android:id="@+id/textView4"
                     android:layout_width="wrap_content"
@@ -148,17 +176,17 @@
                     android:layout_marginLeft="129dp"
                     android:layout_marginTop="5dp"
                     android:text="地    区：" />
-
+
                 <TextView
                     android:id="@+id/textView7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/button1"
+                    android:layout_below="@+id/button2"
                     android:layout_marginTop="14dp"
                     android:layout_toRightOf="@+id/textView1"
                     android:ellipsize="end"
                     android:singleLine="true" />
-
+
                 <TextView
                     android:id="@+id/textView5"
                     android:layout_width="wrap_content"
@@ -168,7 +196,7 @@
                     android:layout_toRightOf="@+id/textView2"
                     android:ellipsize="end"
                     android:singleLine="true" />
-
+
                 <TextView
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
@@ -178,7 +206,6 @@
                     android:layout_toRightOf="@+id/textView4"
                     android:ellipsize="end"
                     android:singleLine="true" />
-
             </RelativeLayout>
 
             <LinearLayout
@@ -187,74 +214,93 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal" >
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
-
+                    android:layout_weight="1"
+                    android:padding="2dp" >
+
                     <Button
-                        android:id="@+id/button2"
+                        android:id="@+id/report_button11"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
-                        android:drawableLeft="@drawable/detail_movie_fa"
-                        android:onClick="OnClickFavorityNum"
-                        android:text="收藏" />
-
+                        android:background="@drawable/report_problem"
+                        android:onClick="OnClickReportProblem" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
-
+                    android:layout_weight="1"
+                    android:padding="2dp" >
+
                     <Button
-                        android:id="@+id/button3"
+                        android:id="@+id/button1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/playmovie"
+                        android:onClick="OnClickPlay" />
+                </LinearLayout>
 
-                        android:drawableLeft="@drawable/detail_movie_ding"
-                        android:onClick="OnClickSupportNum"
-                        android:text="顶" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="2dp" >
 
+                    <!--
+                         Button 
+                        android:id="@+id/cache_button9"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:onClick="OnClickCacheDown"
+                        android:background="@drawable/cache_download"/>
+                    -->
+
+                    <Button
+                        android:id="@+id/cache_button9"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/cache_download"
+                        android:onClick="OnClickCacheDown" />
                 </LinearLayout>
             </LinearLayout>
-
+			
+            
             <LinearLayout
                 android:id="@+id/LinearLayoutXGYD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="11dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="16dp"
-                android:orientation="vertical">
+                android:layout_marginTop="11dp"
+                android:orientation="vertical" >
 
-               <ImageView
-                        android:id="@+id/imageView_zxbf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/detail_tv_zxbf"/>
+                <ImageView
+                    android:id="@+id/imageView_zxbf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/detail_tv_zxbf" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="9dp">
+                    android:layout_marginTop="9dp" >
 
                     <LinearLayout
                         android:id="@+id/linearLayout21"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:orientation="vertical" >
 
                         <ImageButton
                             android:id="@+id/button4"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.71"
+                            android:layout_height="match_parent"
                             android:background="@drawable/detail_show_more_left"
-                            android:onClick="OnClickPre4"/>
+                            android:onClick="OnClickPre4" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -263,14 +309,16 @@
                         android:layout_height="match_parent"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
-                        android:layout_marginRight="13dp">
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginRight="13dp" >
 
                         <ImageButton
                             android:id="@+id/button9"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:background="@drawable/detail_show_more_right"
-                            android:onClick="OnClickNext4"/>
+                            android:onClick="OnClickNext4" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -282,55 +330,54 @@
                         android:layout_marginRight="10dp"
                         android:layout_toLeftOf="@+id/linearLayout22"
                         android:layout_toRightOf="@+id/linearLayout21"
-                        android:orientation="vertical">
-
+                        android:orientation="vertical" >
+
                         <Button
                             android:id="@+id/show_button0"
                             style="?android:attr/buttonStyleSmall"
                             android:layout_width="match_parent"
-                            android:layout_height="30dp"
-                            android:background="@drawable/detail_show_button"
-                            android:ellipsize="end"
-                            android:onClick="OnClickShowPlay"
-                            android:singleLine="true"
-                            android:text="加载中..." />
-
-                        <Button
-                            android:id="@+id/show_button1"
-                            style="?android:attr/buttonStyleSmall"
-                            android:layout_width="match_parent"
-                            android:layout_height="30dp"
-                            android:layout_marginTop="2dp"
-                            android:background="@drawable/detail_show_button"
-                            android:ellipsize="end"
-                            android:onClick="OnClickShowPlay"
-                            android:singleLine="true"
-                            android:text="加载中..." />
-
-                        <Button
-                            android:id="@+id/show_button2"
-                            style="?android:attr/buttonStyleSmall"
-                            android:layout_width="match_parent"
-                            android:layout_height="30dp"
-                            android:layout_marginTop="2dp"
-                            android:background="@drawable/detail_show_button"
-                            android:ellipsize="end"
-                            android:onClick="OnClickShowPlay"
-                            android:singleLine="true"
-                            android:text="加载中..." />
-
-                        <Button
-                            android:id="@+id/show_button3"
-                            style="?android:attr/buttonStyleSmall"
-                            android:layout_width="match_parent"
-                            android:layout_height="30dp"
-                            android:layout_marginTop="2dp"
+                            android:layout_height="28dp"
                             android:background="@drawable/detail_show_button"
                             android:ellipsize="end"
                             android:onClick="OnClickShowPlay"
                             android:singleLine="true"
                             android:text="加载中..." />
 
+                        <Button
+                            android:id="@+id/show_button1"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="28dp"
+                            android:layout_marginTop="1dp"
+                            android:background="@drawable/detail_show_button"
+                            android:ellipsize="end"
+                            android:onClick="OnClickShowPlay"
+                            android:singleLine="true"
+                            android:text="加载中..." />
+
+                        <Button
+                            android:id="@+id/show_button2"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="28dp"
+                            android:layout_marginTop="1dp"
+                            android:background="@drawable/detail_show_button"
+                            android:ellipsize="end"
+                            android:onClick="OnClickShowPlay"
+                            android:singleLine="true"
+                            android:text="加载中..." />
+
+                        <Button
+                            android:id="@+id/show_button3"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="28dp"
+                            android:layout_marginTop="1dp"
+                            android:background="@drawable/detail_show_button"
+                            android:ellipsize="end"
+                            android:onClick="OnClickShowPlay"
+                            android:singleLine="true"
+                            android:text="加载中..." />
                     </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
@@ -339,29 +386,30 @@
                 android:id="@+id/LinearLayoutJianjie"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                  android:layout_marginTop="13dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="16dp"
-                android:orientation="vertical">
+                android:layout_marginTop="13dp"
+                android:orientation="vertical" >
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical" >
 
-                     <ImageView
+                    <ImageView
                         android:id="@+id/imageView_jianjie"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/detail_movie_jianjie"/>
+                        android:src="@drawable/detail_movie_jianjie" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:orientation="vertical">
-
+                    android:orientation="vertical"
+                    android:paddingBottom="2dp" >
+
                     <TextView
                         android:id="@+id/textView11"
                         android:layout_width="match_parent"
@@ -372,7 +420,6 @@
                         android:maxLines="4"
                         android:onClick="OnClickContent"
                         android:text="简介内容加载中..." />
-
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

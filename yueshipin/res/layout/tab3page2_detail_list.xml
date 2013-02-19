@@ -14,7 +14,6 @@
         android:layout_marginLeft="9dip"
         android:layout_marginTop="12dp"
         android:scaleType="fitXY"/>
-
     <TextView
         android:id="@+id/txt_video_caption"
         android:layout_width="120dp"
@@ -45,7 +44,7 @@
 
     <TextView
         android:id="@+id/TextView01"
-        android:layout_width="40dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/txt_1"
         android:layout_below="@id/txt_1"
@@ -74,11 +73,12 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/TextView03"
+        android:layout_alignRight="@+id/txt_video_caption"
         android:layout_below="@+id/TextView03"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="9f9f9f"
         android:textColor="#9f9f9f"
-        android:textSize="13dip"/>
+        android:textSize="13dip" />
 
 </RelativeLayout>
