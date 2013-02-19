@@ -74,19 +74,23 @@ public class Tab1 extends Activity implements
 			}
 		});
 		CheckSaveData();
-		//MobclickAgent.setDebugMode(true);
+		// MobclickAgent.setDebugMode(true);
 	}
 
 	public void OnClickTab1TopLeft(View v) {
+		
 		Intent i = new Intent(this, Search.class);
 		startActivity(i);
+	}
 
+	public void OnClickDownloadTopRight(View v) {
+		Intent intent = new Intent(this, Video_Cache.class);
+		startActivity(intent);
 	}
 
 	public void OnClickTab1TopRight(View v) {
 		Intent i = new Intent(this, Setting.class);
 		startActivity(i);
-
 	}
 
 	@Override
@@ -217,6 +221,7 @@ public class Tab1 extends Activity implements
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
+		
 		if (json == null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -274,6 +279,7 @@ public class Tab1 extends Activity implements
 	}
 
 	// listview的点击事件接口函数
+	@Override
 	public void onItemClick(AdapterView adapterview, View view, int i, long l) {
 		Tab1ListData m_Tab1ListData = (Tab1ListData) ItemsListView
 				.getItemAtPosition(i);
@@ -306,6 +312,7 @@ public class Tab1 extends Activity implements
 				// 创建数据源对象
 				GetVideoMovies();
 				new Handler().postDelayed(new Runnable() {
+					@Override
 					public void run() {
 						// execute the task
 						dataStruct = null;

@@ -1,4 +1,5 @@
 package com.joyplus;
+
 import com.umeng.analytics.MobclickAgent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class Tab2Page1 extends Activity implements
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private Tab2Page1ListAdapter Tab2Page1Adapter;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +56,11 @@ public class Tab2Page1 extends Activity implements
 	public void OnClickTab1TopLeft(View v) {
 		Intent i = new Intent(this, Search.class);
 		startActivity(i);
-
 	}
 
 	public void OnClickTab1TopRight(View v) {
 		Intent i = new Intent(this, Setting.class);
 		startActivity(i);
-
 	}
 
 	@Override
@@ -81,6 +81,7 @@ public class Tab2Page1 extends Activity implements
 		super.onPause();
 		MobclickAgent.onPause(this);
 	}
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -148,15 +149,14 @@ public class Tab2Page1 extends Activity implements
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		if (json == null) {
 			aq.id(R.id.ProgressText).gone();
-			app.MyToast(
-					aq.getContext(),
+			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
-			if(m_ReturnTops .tops.length >0)
+			if (m_ReturnTops.tops.length > 0)
 				app.SaveServiceData("tv_tops", json.toString());
 			// 创建数据源对象
 			GetVideoMovies();
@@ -201,19 +201,20 @@ public class Tab2Page1 extends Activity implements
 	}
 
 	// listview的点击事件接口函数
+	@Override
 	public void onItemClick(AdapterView adapterview, View view, int i, long l) {
 		Tab2Page1ListData m_Tab2Page1ListData = (Tab2Page1ListData) ItemsListView
 				.getItemAtPosition(i);
 		if (m_ReturnTops != null) {
-//			app.MyToast(this, m_Tab2Page1ListData.Pic_name,
-//					Toast.LENGTH_LONG).show();
+			// app.MyToast(this, m_Tab2Page1ListData.Pic_name,
+			// Toast.LENGTH_LONG).show();
 			Intent intent = new Intent(this, Detail_BangDan.class);
 			intent.putExtra("BangDan_id", m_Tab2Page1ListData.Pic_ID);
 			intent.putExtra("BangDan_name", m_Tab2Page1ListData.Pic_name);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG,"Call Detail_BangDan failed", ex);
+				Log.e(TAG, "Call Detail_BangDan failed", ex);
 			}
 		} else {
 			app.MyToast(this, "ReturnTops is empty.");
@@ -233,6 +234,7 @@ public class Tab2Page1 extends Activity implements
 				// 创建数据源对象
 				GetVideoMovies();
 				new Handler().postDelayed(new Runnable() {
+					@Override
 					public void run() {
 						// execute the task
 						GetServiceData();

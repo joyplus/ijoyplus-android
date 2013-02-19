@@ -29,6 +29,7 @@ public class BangDanListAdapter extends ArrayAdapter {
 	}
 
 	// 获取显示当前的view
+	@Override
 	public View getView(int i, View view, ViewGroup viewgroup) {
 		Integer integer = Integer.valueOf(i);
 		View view1 = (View) viewMap.get(integer);
@@ -48,17 +49,16 @@ public class BangDanListAdapter extends ArrayAdapter {
 			aq.id(R.id.TextView05).text(m_BangDanListData.Text_Area);
 			aq.id(R.id.button1).text(m_BangDanListData.Text_Ding + "人顶");
 			aq.id(R.id.button2).text(m_BangDanListData.Text_Favority + "人收藏");
-			aq.id(R.id.TextViewScore).text(m_BangDanListData.Text_Score+ "分");
+			aq.id(R.id.TextViewScore).text(m_BangDanListData.Text_Score + "分");
 
 			if (Integer.valueOf(m_BangDanListData.prod_type) == 3) {
-				
+
 				aq.id(R.id.txt_1).text("主持/嘉宾：");
 				aq.id(R.id.TextView02).text("地    区：");
 
 			}
-			aq.id(R.id.video_preview_img)
-					.image(m_BangDanListData.Pic_url, true, true, 0,
-							R.drawable.default_image_bg);
+			aq.id(R.id.video_preview_img).image(m_BangDanListData.Pic_url,
+					true, true, 0, R.drawable.default_image_bg);
 
 			Integer integer1 = Integer.valueOf(i);
 			Object obj = viewMap.put(integer1, view1);

@@ -1,4 +1,5 @@
 package com.joyplus;
+
 import com.umeng.analytics.MobclickAgent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class Tab3Page3_more extends Activity {
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Goto_Tab3Page3_Create2(position);
@@ -70,7 +72,7 @@ public class Tab3Page3_more extends Activity {
 				return true;// 如果返回false那么onItemClick仍然会被调用
 			}
 		});
-		//CheckSaveData();
+		// CheckSaveData();
 		GetServiceData();
 	}
 
@@ -78,7 +80,6 @@ public class Tab3Page3_more extends Activity {
 		setResult(101);
 		finish();
 	}
-
 
 	@Override
 	protected void onDestroy() {
@@ -98,6 +99,7 @@ public class Tab3Page3_more extends Activity {
 		super.onPause();
 		MobclickAgent.onPause(this);
 	}
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -110,7 +112,7 @@ public class Tab3Page3_more extends Activity {
 		NotifyDataAnalysisFinished();
 		if (m_ReturnTops.tops == null)
 			return;
-		
+
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 			Tab3Page3ListData m_Tab3Page3ListData = new Tab3Page3ListData();
 			m_Tab3Page3ListData.Pic_ID = m_ReturnTops.tops[i].id;
@@ -199,31 +201,32 @@ public class Tab3Page3_more extends Activity {
 		return Tab3Page3Adapter;
 	}
 
-//	// listview的点击事件接口函数
-//	public void onItemClick(AdapterView adapterview, View view, int i, long l) {
-//		Tab3Page3ListData m_Tab3Page3ListData = (Tab3Page3ListData) ItemsListView
-//				.getItemAtPosition(i);
-//		if (m_ReturnTops != null) {
-//			app.MyToast(this, m_Tab3Page3ListData.Pic_name,
-//					Toast.LENGTH_LONG).show();
-//			Intent intent = new Intent(this, Detail_BangDan.class);
-//			intent.putExtra("BangDan_id", m_Tab3Page3ListData.Pic_ID);
-//			intent.putExtra("BangDan_name", m_Tab3Page3ListData.Pic_name);
-//			try {
-//				startActivity(intent);
-//			} catch (ActivityNotFoundException ex) {
-//				Log.e(TAG,"Call Detail_BangDan failed", ex);
-//			}
-//		} else {
-//			app.MyToast(this, "ReturnTops is empty.", Toast.LENGTH_LONG)
-//					.show();
-//		}
-//
-//	}
+	// // listview的点击事件接口函数
+	// public void onItemClick(AdapterView adapterview, View view, int i, long
+	// l) {
+	// Tab3Page3ListData m_Tab3Page3ListData = (Tab3Page3ListData) ItemsListView
+	// .getItemAtPosition(i);
+	// if (m_ReturnTops != null) {
+	// app.MyToast(this, m_Tab3Page3ListData.Pic_name,
+	// Toast.LENGTH_LONG).show();
+	// Intent intent = new Intent(this, Detail_BangDan.class);
+	// intent.putExtra("BangDan_id", m_Tab3Page3ListData.Pic_ID);
+	// intent.putExtra("BangDan_name", m_Tab3Page3ListData.Pic_name);
+	// try {
+	// startActivity(intent);
+	// } catch (ActivityNotFoundException ex) {
+	// Log.e(TAG,"Call Detail_BangDan failed", ex);
+	// }
+	// } else {
+	// app.MyToast(this, "ReturnTops is empty.", Toast.LENGTH_LONG)
+	// .show();
+	// }
+	//
+	// }
 
 	// InitListData
 	public void GetServiceData() {
-		String url = Constant.BASE_URL + "user/tops";
+		String url = Constant.BASE_URL + "user/tops?page_num=1&page_size=60";
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
@@ -250,6 +253,7 @@ public class Tab3Page3_more extends Activity {
 				// 创建数据源对象
 				GetVideoMovies();
 				new Handler().postDelayed(new Runnable() {
+					@Override
 					public void run() {
 						// execute the task
 						GetServiceData();
@@ -291,11 +295,10 @@ public class Tab3Page3_more extends Activity {
 	public void TopDelResult(String url, JSONObject json, AjaxStatus status) {
 		if (json != null) {
 			try {
-				if (json.getString("res_code").trim().equalsIgnoreCase("00000")){
+				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
 					app.MyToast(this, "删除成功!");
 					GetServiceData();
-				}
-				else
+				} else
 					app.MyToast(this, "删除失败!");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -329,6 +332,7 @@ public class Tab3Page3_more extends Activity {
 				}).setNegativeButton("取消", null).create();
 		builder.show();
 	}
+
 	private void Goto_Tab3Page3_Create2(int item) {
 		Tab3Page3ListData m_Tab3Page3ListData = (Tab3Page3ListData) ItemsListView
 				.getItemAtPosition(item);
@@ -339,7 +343,7 @@ public class Tab3Page3_more extends Activity {
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException ex) {
-			Log.e(TAG,"Call Tab3Page3_Create2 failed", ex);
+			Log.e(TAG, "Call Tab3Page3_Create2 failed", ex);
 		}
 	}
 }

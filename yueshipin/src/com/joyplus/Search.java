@@ -13,9 +13,10 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -47,7 +48,7 @@ public class Search extends Activity implements
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private SearchListAdapter SearchAdapter;
-
+	JSONObject jsontemp;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,38 +61,52 @@ public class Search extends Activity implements
 		aq = new AQuery(this);
 		Intent intent = getIntent();
 		topic_id = intent.getStringExtra("topic_id");
-		type =  intent.getStringExtra("type");
-		
-		topic_id_ready_have =  intent.getStringExtra("topic_id_ready_have");
-		
-
-		// if (topic_id == null)
+		type = intent.getStringExtra("type");
+		topic_id_ready_have = intent.getStringExtra("topic_id_ready_have");
+		if (isNetworkAvailable()==false) {
+			app.MyToast(aq.getContext(),
+					getResources().getString(R.string.networknotwork));
+		}
 	}
-
+	
+	// NETWORK
+		public boolean isNetworkAvailable() {
+			Context context = getApplicationContext();
+			ConnectivityManager connect = (ConnectivityManager) context
+					.getSystemService(Context.CONNECTIVITY_SERVICE);
+			if (connect == null) {
+				return false;
+			} else// get all network info
+			{
+				NetworkInfo[] info = connect.getAllNetworkInfo();
+				if (info != null) {
+					for (int i = 0; i < info.length; i++) {
+						if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+	
 	public void OnClickAdd(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
 		SearchListData m_SearchListData = (SearchListData) ItemsListView
 				.getItemAtPosition(index);
 		if (m_ReturnSearch != null) {
-			// app.MyToast(this, m_SearchListData.Pic_name,
-			// Toast.LENGTH_LONG)
-			// .show();
-			// AddVideo
 			AddVideo(topic_id, m_SearchListData.Pic_ID);
-			// View view1 = ItemsListView.getChildAt(index);
-			// View click = view1.findViewById(R.id.button1);
 			v.setVisibility(View.GONE);
 
 		} else {
 			app.MyToast(this, "ReturnSearch is empty.");
 		}
-
 	}
 
 	public void OnClickSearch(View v) {
 		String search_word = aq.id(R.id.editText1).getText().toString();
 		if (search_word.length() > 0) {
-			//clear
+			// clear
 			if (dataStruct != null && dataStruct.size() > 0) {
 				dataStruct.clear();
 				SearchAdapter.notifyDataSetChanged();
@@ -104,9 +119,9 @@ public class Search extends Activity implements
 			imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
 			GetServiceData(search_word);
-		} else{
-			 app.MyToast(this, "请输入你要搜索的内容.");
-		
+		} else {
+			app.MyToast(this, "请输入你要搜索的内容.");
+
 		}
 
 	}
@@ -167,40 +182,39 @@ public class Search extends Activity implements
 
 		for (int i = 0; i < m_ReturnSearch.results.length; i++) {
 			if (Integer.parseInt(m_ReturnSearch.results[i].prod_type) < 4) {
-					SearchListData m_SearchListData = new SearchListData();
-					
-					m_SearchListData.Pic_ID = m_ReturnSearch.results[i].prod_id;
-					if (topic_id_ready_have != null && topic_id_ready_have
-							.indexOf(m_ReturnSearch.results[i].prod_id + "|") != -1) {
-						m_SearchListData.Is_Ready_Have = true;
-					}
-					else
-						m_SearchListData.Is_Ready_Have = false;
-					m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url;
-					m_SearchListData.Pic_name = m_ReturnSearch.results[i].prod_name;
-					m_SearchListData.prod_type = m_ReturnSearch.results[i].prod_type;
-					if(Integer.valueOf(m_ReturnSearch.results[i].prod_type) == 3){
-						if(m_ReturnSearch.results[i].star.trim().length()>0)
-							m_SearchListData.Text_Zhuyan = m_ReturnSearch.results[i].star;
-						else
-							m_SearchListData.Text_Zhuyan = m_ReturnSearch.results[i].director;
-					}
-					else
-						m_SearchListData.Text_Zhuyan = m_ReturnSearch.results[i].star;
-					
-					m_SearchListData.Text_Year = m_ReturnSearch.results[i].publish_date;
-					m_SearchListData.Text_Area = m_ReturnSearch.results[i].area;
-					m_SearchListData.Text_Ding = m_ReturnSearch.results[i].support_num;
-					m_SearchListData.Text_Score = m_ReturnSearch.results[i].score;
+				SearchListData m_SearchListData = new SearchListData();
 
-					dataStruct.add(m_SearchListData);
+				m_SearchListData.Pic_ID = m_ReturnSearch.results[i].prod_id;
+				if (topic_id_ready_have != null
+						&& topic_id_ready_have
+								.indexOf(m_ReturnSearch.results[i].prod_id
+										+ "|") != -1) {
+					m_SearchListData.Is_Ready_Have = true;
+				} else
+					m_SearchListData.Is_Ready_Have = false;
+				m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url;
+				m_SearchListData.Pic_name = m_ReturnSearch.results[i].prod_name;
+				m_SearchListData.prod_type = m_ReturnSearch.results[i].prod_type;
+				if (Integer.valueOf(m_ReturnSearch.results[i].prod_type) == 3) {
+					if (m_ReturnSearch.results[i].star.trim().length() > 0)
+						m_SearchListData.Text_Zhuyan = m_ReturnSearch.results[i].star;
+					else
+						m_SearchListData.Text_Zhuyan = m_ReturnSearch.results[i].director;
+				} else
+					m_SearchListData.Text_Zhuyan = m_ReturnSearch.results[i].star;
+
+				m_SearchListData.Text_Year = m_ReturnSearch.results[i].publish_date;
+				m_SearchListData.Text_Area = m_ReturnSearch.results[i].area;
+				m_SearchListData.Text_Ding = m_ReturnSearch.results[i].support_num;
+				m_SearchListData.Text_Score = m_ReturnSearch.results[i].score;
+
+				dataStruct.add(m_SearchListData);
 			}
 		}
-		if(dataStruct.size() == 0){
+		if (dataStruct.size() == 0) {
 			aq.id(R.id.listView1).gone();
 			aq.id(R.id.textViewNoResult).visible();
-		}
-		else{
+		} else {
 			aq.id(R.id.listView1).visible();
 		}
 
@@ -219,12 +233,10 @@ public class Search extends Activity implements
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		aq.id(R.id.ProgressText).gone();
+		jsontemp = json;
 		if (json == null) {
-			
-			app.MyToast(
-					aq.getContext(),
-					getResources().getString(R.string.networknotwork)
-							);
+			app.MyToast(aq.getContext(),
+					getResources().getString(R.string.networknotwork));
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
@@ -234,7 +246,7 @@ public class Search extends Activity implements
 
 			// 创建数据源对象
 			GetVideoMovies();
-		
+
 			aq.id(R.id.editText1).getTextView().setCursorVisible(true);// 光标
 			if (topic_id != null) {
 				aq.id(R.id.Tab1TopRightImage).gone();
@@ -292,25 +304,26 @@ public class Search extends Activity implements
 	}
 
 	// listview的点击事件接口函数
+	@Override
 	public void onItemClick(AdapterView adapterview, View view, int i, long l) {
 		SearchListData m_SearchListData = (SearchListData) ItemsListView
 				.getItemAtPosition(i);
 		if (topic_id != null) {
 			// AddVideo
-//			dataStruct.remove(i);
-//			SearchAdapter.notifyDataSetChanged();
-			//ItemsListView.invalidate();
-			//view.setVisibility(View.GONE);
+			// dataStruct.remove(i);
+			// SearchAdapter.notifyDataSetChanged();
+			// ItemsListView.invalidate();
+			// view.setVisibility(View.GONE);
 			ImageView m_image = (ImageView) view.findViewById(R.id.button1);
 			m_image.setImageResource(R.drawable.search_addon_icon);
 			view.setBackgroundColor(color.darker_gray);
-			
+
 			AddVideo(topic_id, m_SearchListData.Pic_ID);
 
 			return;
 		}
 		if (m_ReturnSearch != null) {
-		//	app.MyToast(this, m_SearchListData.Pic_name);
+			// app.MyToast(this, m_SearchListData.Pic_name);
 			Intent intent = new Intent();
 			// 1：电影，2：电视剧，3：综艺，4：视频
 			switch (Integer.valueOf(m_SearchListData.prod_type)) {
@@ -354,14 +367,12 @@ public class Search extends Activity implements
 		String url = Constant.BASE_URL + "search?keyword=" + search_word
 				+ "&page_num=1&page_size=50";
 
-
 		Map<String, Object> params = new HashMap<String, Object>();
-		if(type != null && type.equalsIgnoreCase("tv")){
+		if (type != null && type.equalsIgnoreCase("tv")) {
 			params.put("type", 2);
-		}
-		else if(type != null &&  type.equalsIgnoreCase("movie"))
+		} else if (type != null && type.equalsIgnoreCase("movie"))
 			params.put("type", 1);
-		
+
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.header("User-Agent",
 				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
@@ -370,7 +381,7 @@ public class Search extends Activity implements
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "InitListData");
-		
+
 		aq.id(R.id.ProgressText).visible();
 		aq.progress(R.id.progress).ajax(cb);
 

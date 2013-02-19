@@ -1,6 +1,5 @@
 package com.joyplus.Service.Return;
 
-
 public class ReturnBangDanList {
 	/*
 	 * { "items": [ { "id": 榜单项id, "prod_id": 视频id, "prod_name": 视频名称,

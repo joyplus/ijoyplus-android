@@ -1,4 +1,5 @@
 package com.joyplus;
+
 import com.umeng.analytics.MobclickAgent;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,9 +10,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
+import android.widget.MultiAutoCompleteTextView;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -21,7 +25,10 @@ public class Sina_Share extends Activity {
 	private App app;
 	private AQuery aq;
 	private String prod_name = null;
-
+	private static final int MAX_COUNT = 120;
+	private MultiAutoCompleteTextView mEditText = null;
+	private TextView tv_count = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -31,17 +38,78 @@ public class Sina_Share extends Activity {
 		Intent intent = getIntent();
 		prod_name = intent.getStringExtra("prod_name");
 		aq.id(R.id.program_name).text(prod_name);
-		prod_name = "我刚看了<" + prod_name + ">,分享一下吧。";
-
+		prod_name = "我在用#悦视频#Android版观看<" + prod_name
+				+ ">，推荐给大家哦！更多精彩尽在悦视频，快来和我一起看吧！";
 		aq.id(R.id.multiAutoCompleteTextView1).text(prod_name);
 		aq.id(R.id.multiAutoCompleteTextView1).getEditText()
-				.setSelection(prod_name.length());
+		.setSelection(prod_name.length());
+		tv_count = (TextView)findViewById(R.id.count);
+		mEditText = (MultiAutoCompleteTextView)findViewById(R.id.multiAutoCompleteTextView1);
+		mEditText.addTextChangedListener(mTextWatcher);
+		//(TextWatcher) aq.id(R.id.multiAutoCompleteTextView1).dataChanged();
+		setLeftCount();
+		
+	}
+	
+	private TextWatcher mTextWatcher = new TextWatcher() {
 
+		private int editStart;
+
+		private int editEnd;
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			editStart =  mEditText.getSelectionStart();
+			editEnd = mEditText.getSelectionEnd();
+			
+			mEditText.removeTextChangedListener(mTextWatcher);
+
+			while (calculateLength(s.toString()) > MAX_COUNT) { // �������ַ��������ƵĴ�Сʱ�����нضϲ���
+				s.delete(editStart - 1, editEnd);
+				editStart--;
+				editEnd--;
+			}
+			//aq.id(R.id.multiAutoCompleteTextView1).text(s);
+			aq.id(R.id.multiAutoCompleteTextView1).setSelection(editStart);
+
+			// �ָ�������
+			mEditText.addTextChangedListener(mTextWatcher);
+
+			setLeftCount();
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+
+		}
+
+	};
+	private long calculateLength(CharSequence c) {
+		double len = 0;
+		for (int i = 0; i < c.length(); i++) {
+			int tmp = c.charAt(i);
+			len++;
+		}
+		return Math.round(len);
+	}
+	private void setLeftCount() {
+		tv_count.setText(String.valueOf((MAX_COUNT - getInputCount())));
 	}
 
+	private long getInputCount() {
+		return calculateLength(aq.id(R.id.multiAutoCompleteTextView1).getText().toString());
+	}
+
+	
 	public void OnClickTab1TopLeft(View v) {
 		finish();
-
 	}
 
 	// source false string 采用OAuth授权方式不需要此参数，其他授权方式为必填参数，数值为应用的AppKey。
@@ -76,7 +144,6 @@ public class Sina_Share extends Activity {
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "ShareResult");
-
 		aq.progress(R.id.progress).ajax(cb);
 
 	}
@@ -98,6 +165,7 @@ public class Sina_Share extends Activity {
 		super.onPause();
 		MobclickAgent.onPause(this);
 	}
+
 	@Override
 	protected void onStart() {
 		super.onStart();

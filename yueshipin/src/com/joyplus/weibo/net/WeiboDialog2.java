@@ -190,6 +190,7 @@ public class WeiboDialog2 extends Activity {
 			mWebView.setVisibility(View.VISIBLE);
 		}
 
+		@Override
 		public void onReceivedSslError(WebView view, SslErrorHandler handler,
 				SslError error) {
 			handler.proceed();
@@ -254,10 +255,12 @@ public class WeiboDialog2 extends Activity {
 		}
 	}
 
+	@Override
 	public void onResume() {
 		super.onResume();
 	}
 
+	@Override
 	public void onPause() {
 		super.onPause();
 	}

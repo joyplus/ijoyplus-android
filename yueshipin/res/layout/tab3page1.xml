@@ -26,14 +26,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
         	android:layout_marginTop="5dp"
-             android:fadingEdge="none"
+            android:fadingEdge="none"
             android:cacheColorHint="#00000000"
             android:divider="@drawable/tab3_page1_see_bg_fenge"
             android:longClickable="true">
         </ListView>
     </LinearLayout>
 
-    <RelativeLayout
+    <!-- RelativeLayout
          android:id="@+id/Layout2"
         android:layout_width="match_parent"
         android:layout_height="47dp"
@@ -50,6 +50,22 @@
             android:layout_centerVertical="true"
             android:text="查看更多记录"
             android:textColorHint="#808080"/>
+    </RelativeLayout> -->
+     <RelativeLayout
+        android:id="@+id/Layout2"
+        android:layout_width="300dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <ImageButton
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab3_p1_button"
+            android:gravity="center_horizontal"
+            android:onClick="OnClickMore" />
     </RelativeLayout>
 
 </LinearLayout>

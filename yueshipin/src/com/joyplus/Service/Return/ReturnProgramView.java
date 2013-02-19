@@ -228,6 +228,7 @@ public class ReturnProgramView {
 		public static class URLS {
 			public String type;
 			public String url;
+			public String file;
 		}
 	}
 

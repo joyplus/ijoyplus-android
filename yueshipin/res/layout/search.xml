@@ -27,17 +27,14 @@
                 android:layout_marginRight="20dp"
                 android:background="@drawable/search_search_top_right"
                 android:onClick="OnClickSearch"/>
-
             <EditText
                 android:id="@+id/editText1"
-                android:layout_width="wrap_content"
+                android:layout_width="240dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="14dp"
                 android:layout_marginTop="10dp"
-                android:ems="13"
-                android:hint=" 影片 / 电视剧 / 综艺"
+                android:hint=" 电影 / 电视剧 / 综艺"
                 android:singleLine="true" >
-
                 <requestFocus/>
             </EditText>
               <ImageButton
@@ -69,7 +66,11 @@
         android:layout_height="fill_parent"
         android:layout_below="@id/LayoutTitle"
         android:orientation="vertical">
-
+
+
+
+
+
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="wrap_content"
@@ -80,7 +81,12 @@
             android:scaleType="centerInside"
            android:visibility="gone"
             />
-
+
+
+
+
+
+
          <TextView
              android:id="@+id/textViewNoResult"
              android:layout_width="wrap_content"
@@ -104,7 +110,8 @@
             android:descendantFocusability="blocksDescendants"
             android:divider="@drawable/tab1_divider">
         </ListView>
-
+
+
         <TextView
             android:id="@+id/ProgressText"
             android:layout_width="wrap_content"

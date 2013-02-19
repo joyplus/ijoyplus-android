@@ -13,7 +13,7 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,8 +24,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -35,6 +35,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Video.MovieActivity;
+import com.joyplus.download.DownloadTask;
+//import com.joyplus.download.LoadInfo;
 import com.joyplus.weibo.net.AccessToken;
 import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
@@ -48,14 +50,22 @@ public class Detail_Movie extends Activity {
 	private String TAG = "Detail_Movie";
 	private ReturnProgramView m_ReturnProgramView = null;
 	private String prod_id = null;
-	private String PROD_SOURCE = null;
+	public String PROD_SOURCE = null;
 	private String PROD_URI = null;
+	private String index ;
+	private String download_index = "movie";
 	private int m_FavorityNum = 0;
 	private int m_SupportNum = 0;
 
 	private String uid = null;
 	private String token = null;
 	private String expires_in = null;
+	private int sum = 0;
+	String name;
+	private Drawable downloaddisable= null;
+	/**
+	 * 利用消息处理机制适时更新APP里的数据
+	 */
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,17 +76,16 @@ public class Detail_Movie extends Activity {
 		prod_id = intent.getStringExtra("prod_id");
 		aq = new AQuery(this);
 		aq.id(R.id.scrollView1).gone();
-		
+		//添加下载按钮的暂无下载的效果图
+		downloaddisable = this.getResources().getDrawable(R.drawable.tab2_video_8);
 		MobclickAgent.updateOnlineConfig(this);
-		
+
 		if (prod_id != null)
 			GetServiceData();
-
 	}
 
 	public void OnClickTab1TopLeft(View v) {
 		finish();
-
 	}
 
 	public void OnClickTab1TopRight(View v) {
@@ -138,12 +147,14 @@ public class Detail_Movie extends Activity {
 
 	}
 
-	public boolean UploadSinaHeadAndScreen_nameUrl(String access_token, String uid) {
+	public boolean UploadSinaHeadAndScreen_nameUrl(String access_token,
+			String uid) {
 		String m_GetURL = "https://api.weibo.com/2/users/show.json?access_token="
 				+ access_token + "&uid=" + uid;
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.url(m_GetURL).type(JSONObject.class).weakHandler(this, "UploadSinaHeadAndScreen_nameUrlResult");
+		cb.url(m_GetURL).type(JSONObject.class)
+				.weakHandler(this, "UploadSinaHeadAndScreen_nameUrlResult");
 
 		cb.header("User-Agent",
 				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
@@ -153,8 +164,8 @@ public class Detail_Movie extends Activity {
 		return false;
 	}
 
-	public void UploadSinaHeadAndScreen_nameUrlResult(String url, JSONObject json,
-			AjaxStatus status) {
+	public void UploadSinaHeadAndScreen_nameUrlResult(String url,
+			JSONObject json, AjaxStatus status) {
 		String head_url = json.optString("avatar_large");
 		String screen_name = json.optString("screen_name");
 		if (head_url != null && screen_name != null) {
@@ -165,8 +176,8 @@ public class Detail_Movie extends Activity {
 			params.put("source_type", "1");
 			params.put("pic_url", head_url);
 			params.put("nickname", screen_name);
-			
-			//save to local
+
+			// save to local
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 			cb.header("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
@@ -178,37 +189,34 @@ public class Detail_Movie extends Activity {
 
 			aq.ajax(cb);
 		}
-		
-		
+
 	}
+
 	public void AccountBindAccountResult(String url, JSONObject json,
 			AjaxStatus status) {
 		if (json != null) {
 			try {
-				if (json.getString("res_code").trim().equalsIgnoreCase("00000")){
-					
-					//reload the userinfo
-					String url2 = Constant.BASE_URL + "user/view?userid="+ app.UserID;
-
+				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
+					// reload the userinfo
+					String url2 = Constant.BASE_URL + "user/view?userid="
+							+ app.UserID;
 					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-					cb.url(url2).type(JSONObject.class).weakHandler(this, "AccountBindAccountResult3");
+					cb.url(url2).type(JSONObject.class)
+							.weakHandler(this, "AccountBindAccountResult3");
 
 					cb.header("User-Agent",
 							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
 					cb.header("app_key", Constant.APPKEY);
-					//cb.header("user_id", app.UserID);
-
+					// cb.header("user_id", app.UserID);
 					aq.ajax(cb);
 				}
-//				else
-//					app.MyToast(this, "更新头像失败!");
+				// else
+				// app.MyToast(this, "更新头像失败!");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		} else {
-
 			// ajax error, show error code
 			app.MyToast(this, getResources().getString(R.string.networknotwork));
 		}
@@ -219,17 +227,17 @@ public class Detail_Movie extends Activity {
 
 		if (json != null) {
 			try {
-			if (json.getString("nickname").trim().length() >0) {
-				app.SaveServiceData("UserInfo", json.toString());
-				app.MyToast(getApplicationContext(), "新浪微博已绑定");
-				Intent i = new Intent(this, Sina_Share.class);
-				i.putExtra("prod_name", aq.id(R.id.program_name).getText()
-						.toString());
-				startActivity(i);
+				if (json.getString("nickname").trim().length() > 0) {
+					app.SaveServiceData("UserInfo", json.toString());
+					app.MyToast(getApplicationContext(), "新浪微博已绑定");
+					Intent i = new Intent(this, Sina_Share.class);
+					i.putExtra("prod_name", aq.id(R.id.program_name).getText()
+							.toString());
+					startActivity(i);
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
 			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 
 		} else {
 
@@ -246,7 +254,6 @@ public class Detail_Movie extends Activity {
 		lp.alpha = 0.6f;
 		window.setAttributes(lp);
 		alertDialog.show();
-
 	}
 
 	@Override
@@ -281,8 +288,8 @@ public class Detail_Movie extends Activity {
 		String m_j = null;
 		if (m_ReturnProgramView.movie != null) {
 			aq.id(R.id.program_name).text(m_ReturnProgramView.movie.name);
-			aq.id(R.id.imageView3)
-					.image(m_ReturnProgramView.movie.poster, true, true);
+			aq.id(R.id.imageView3).image(m_ReturnProgramView.movie.poster,
+					true, true);
 			// m_j = m_ReturnProgramView.movie.stars;
 			// m_j.replace(" ", "\n");
 			aq.id(R.id.textView5).text(m_ReturnProgramView.movie.stars);
@@ -297,36 +304,38 @@ public class Detail_Movie extends Activity {
 			aq.id(R.id.button3).text("顶(" + m_SupportNum + ")");
 			aq.id(R.id.textView11).text(
 					"    " + m_ReturnProgramView.movie.summary);
-			// aq.id(R.id.Layout_comment).text(m_ReturnProgramView.movie.comments.);
-
 			if (m_ReturnProgramView.movie.episodes != null
 					&& m_ReturnProgramView.movie.episodes[0].video_urls != null
 					&& m_ReturnProgramView.movie.episodes[0].video_urls[0].url != null)
 				PROD_URI = m_ReturnProgramView.movie.episodes[0].video_urls[0].url;
 			for (int i = 0; i < m_ReturnProgramView.movie.episodes.length; i++) {
-
-				if (m_ReturnProgramView.movie.episodes[i].down_urls != null
-						&& m_ReturnProgramView.movie.episodes[i].down_urls[0].urls.length > 0
-						&& m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[0].url != null
-						&& app.IfSupportFormat(m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[0].url)) {
-
-					PROD_SOURCE = m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[0].url;
-					break;
+				// if (m_ReturnProgramView.movie.episodes[i].down_urls != null
+				// &&
+				// m_ReturnProgramView.movie.episodes[i].down_urls[0].urls.length
+				// > 0
+				// &&
+				// m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[0].url
+				// != null
+				// &&
+				// app.IfSupportFormat(m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[0].url))
+				// {
+				// PROD_SOURCE =
+				// m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[0].url;
+				// break;
+				// add for auto_playing
+				if (m_ReturnProgramView.movie.episodes[i].down_urls != null) {
+					for (int k = 0; k < m_ReturnProgramView.movie.episodes[i].down_urls[0].urls.length; k++) {
+						if (m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[k].url != null
+								&& m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[k].file
+										.equalsIgnoreCase("MP4")
+								&& app.IfSupportFormat(m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[k].url)) {
+							PROD_SOURCE = m_ReturnProgramView.movie.episodes[i].down_urls[0].urls[k].url;
+							break;
+						}
+						break;
+					}
 				}
 			}
-//			if (m_ReturnProgramView.movie.episodes != null
-//					&& m_ReturnProgramView.movie.episodes[0].video_urls != null
-//					&& m_ReturnProgramView.movie.episodes[0].video_urls[0].url != null)
-//				PROD_URI = m_ReturnProgramView.movie.episodes[0].video_urls[0].url;
-//
-//			if (m_ReturnProgramView.movie.episodes[0].down_urls != null
-//					&& m_ReturnProgramView.movie.episodes[0].down_urls[0].urls.length > 0
-//					&& m_ReturnProgramView.movie.episodes[0].down_urls[0].urls[0].url != null
-//					&& app.IfSupportFormat(m_ReturnProgramView.movie.episodes[0].down_urls[0].urls[0].url)) {
-//
-//				PROD_SOURCE = m_ReturnProgramView.movie.episodes[0].down_urls[0].urls[0].url;
-//
-//			}
 
 			if (m_ReturnProgramView.topics != null) {
 				for (int i = 0; i < m_ReturnProgramView.topics.length && i < 4; i++) {
@@ -375,6 +384,14 @@ public class Detail_Movie extends Activity {
 			} else {
 				aq.id(R.id.imageView_comment).gone();
 				aq.id(R.id.Layout_comment).gone();
+			}
+			
+			if(PROD_SOURCE == null)
+			{
+				Button m_download = (Button) this.findViewById(getResources()
+						.getIdentifier("button9", "id",
+								getPackageName()));
+				m_download.setBackgroundDrawable(downloaddisable);
 			}
 		}
 
@@ -431,6 +448,7 @@ public class Detail_Movie extends Activity {
 
 		if (json != null) {
 			try {
+				// woof is "00000",now "20024",by yyc
 				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
 					m_FavorityNum++;
 					aq.id(R.id.button2).text(
@@ -438,6 +456,7 @@ public class Detail_Movie extends Activity {
 					app.MyToast(this, "收藏成功!");
 				} else
 					app.MyToast(this, "收藏失败!");
+				// Toast.makeText(Detail_Movie.this,json.getString("res_code"),Toast.LENGTH_LONG).show();
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -446,7 +465,8 @@ public class Detail_Movie extends Activity {
 		} else {
 
 			// ajax error, show error code
-			app.MyToast(aq.getContext(), getResources().getString(R.string.networknotwork));
+			app.MyToast(aq.getContext(),
+					getResources().getString(R.string.networknotwork));
 		}
 
 	}
@@ -465,9 +485,45 @@ public class Detail_Movie extends Activity {
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallServiceFavorityResult");
-
 		aq.ajax(cb);
+	}
 
+	public void OnClickCacheDown(View v) {
+		/*
+		 * 
+		 */
+		if (PROD_SOURCE != null) {
+			String urlstr = PROD_SOURCE;
+			String urlposter = m_ReturnProgramView.movie.poster;
+			String localfile = App.SD_PATH+prod_id+"_"+download_index+".mp4";
+			String my_name = m_ReturnProgramView.movie.name;
+			String download_state = "wait";
+			DownloadTask downloadTask = new DownloadTask(v,this,Detail_Movie.this,prod_id,download_index,PROD_SOURCE,localfile);
+			downloadTask.execute(prod_id,download_index,PROD_SOURCE,urlposter,my_name,download_state);
+			Toast.makeText(Detail_Movie.this,"视频已加入下载队列",Toast.LENGTH_SHORT).show();
+		}
+		else
+		{
+			Toast.makeText(Detail_Movie.this,"该视频不支持下载",Toast.LENGTH_SHORT).show();
+		}
+	}
+	//看服务列表到底是什么东西,为什么不行
+	public void OnClickReportProblem(View v) {
+		String url = Constant.BASE_URL + "program/invalid";
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("prod_id", prod_id);
+
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.header("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+		cb.header("app_key", Constant.APPKEY);
+		//cb.header("user_id", app.UserID);
+
+		cb.params(params).url(url).type(JSONObject.class)
+				.weakHandler(this, "CallServiceResultReportProblem");
+		aq.ajax(cb);
+		Toast.makeText(Detail_Movie.this, "您反馈的问题已提交，我们会尽快处理，感谢您的支持！", Toast.LENGTH_LONG).show();
 	}
 
 	public void CallServiceResultSupportNum(String url, JSONObject json,
@@ -490,7 +546,8 @@ public class Detail_Movie extends Activity {
 		} else {
 
 			// ajax error, show error code
-			app.MyToast(aq.getContext(), getResources().getString(R.string.networknotwork));
+			app.MyToast(aq.getContext(),
+					getResources().getString(R.string.networknotwork));
 		}
 
 	}
@@ -509,9 +566,7 @@ public class Detail_Movie extends Activity {
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallServiceResultSupportNum");
-
 		aq.ajax(cb);
-
 	}
 
 	public void OnClickMovieBangdan(View v) throws JSONException {
@@ -529,7 +584,8 @@ public class Detail_Movie extends Activity {
 
 	public void OnClickPlay(View v) throws JSONException {
 		String m_str = MobclickAgent.getConfigParams(this, "playBtnSuppressed");
-		if(MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim().equalsIgnoreCase("1")){
+		if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
+				.equalsIgnoreCase("1")) {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
@@ -633,12 +689,13 @@ public class Detail_Movie extends Activity {
 				RelativeLayout subLayout = new RelativeLayout(this);
 
 				RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
-						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 				params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
 						RelativeLayout.TRUE);
 
 				TextView valueName = new TextView(this);
-				//valueName.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
+				// valueName.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
 				valueName.setTextColor(Color.BLACK);
 				if (!m_ReturnProgramView.comments[i].owner_name
 						.equalsIgnoreCase("EMPTY"))
@@ -650,7 +707,8 @@ public class Detail_Movie extends Activity {
 				subLayout.addView(valueName, params1);
 
 				RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
-						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 				params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
 						RelativeLayout.TRUE);
 
@@ -660,28 +718,29 @@ public class Detail_Movie extends Activity {
 				subLayout.addView(valueTime, params2);
 
 				LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
-						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 				params3.topMargin = 10;
-				
-				linearLayout.addView(subLayout,params3);
-				
+
+				linearLayout.addView(subLayout, params3);
+
 				TextView valueContent = new TextView(this);
 				valueContent.setText(m_ReturnProgramView.comments[i].content);
 				linearLayout.addView(valueContent);
 
 				if (i != m_ReturnProgramView.comments.length - 1) {
 					LinearLayout.LayoutParams params4 = new LinearLayout.LayoutParams(
-							LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+							android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+							android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 					params4.topMargin = 10;
-					
+
 					ImageView m_image = new ImageView(this);
 					m_image.setBackgroundResource(R.drawable.tab1_divider);
-					
-					linearLayout.addView(m_image,params4);
+
+					linearLayout.addView(m_image, params4);
 				}
 			}
 		}
-
 	}
 
 	public void CallVideoPlayActivity(String m_uri) {

@@ -29,7 +29,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Video.VideoColumns;
+import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -100,7 +100,7 @@ public class MovieActivity extends Activity {
 									+ URLEncoder
 											.encode(m_ReturnProgramView.tv.episodes[index].down_urls[0].urls[0].url)
 									+ "|" + m_ReturnProgramView.tv.name + "|"
-									+ "µÚ" + Integer.toString(index + 1) + "¼¯"
+									+ "ï¿½ï¿½" + Integer.toString(index + 1) + "ï¿½ï¿½"
 									+ "|" + "null" + "|2";
 							app.SavePlayData(m_ReturnProgramView.tv.id,
 									datainfo);
@@ -151,7 +151,7 @@ public class MovieActivity extends Activity {
 			Cursor cursor = null;
 			try {
 				cursor = getContentResolver().query(mUri,
-						new String[] { VideoColumns.TITLE }, null, null, null);
+						new String[] { MediaColumns.TITLE }, null, null, null);
 				if (cursor != null && cursor.moveToNext()) {
 					title = cursor.getString(0);
 				}

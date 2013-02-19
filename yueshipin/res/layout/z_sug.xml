@@ -50,22 +50,19 @@
         android:layout_below="@id/LayoutTitle"
         android:padding="28dp"
         android:orientation="vertical">
-
-
-            <EditText
-                android:id="@+id/editText2"
-                android:layout_width="fill_parent"
-                android:layout_height="102dp"
-                android:gravity="top"
-                android:ems="10"
-                android:inputType="textMultiLine"
-                android:textColor="#9f9f9f"
-                android:textSize="14dp" >
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="fill_parent"
+            android:layout_height="102dp"
+            android:gravity="top"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:textColor="#9f9f9f"
+            android:textSize="14dp" >
 
                 <requestFocus />
             </EditText>
     </RelativeLayout>
-
     <ImageButton
         android:id="@+id/button1"
         android:layout_width="wrap_content"
@@ -74,6 +71,6 @@
         android:layout_below="@+id/LinearLayoutTab"
         android:layout_marginRight="22dp"
 		android:onClick="OnClickSend"
-        android:background="@drawable/sug_send_buttom" />
-
+        android:background="@drawable/sug_send_buttom"/>
+         -->
 </RelativeLayout>

@@ -17,7 +17,7 @@
             android:layout_weight="0.37"
             android:gravity="center">
 
-           	    <TextView
+           <TextView
 	        android:id="@+id/umeng_fb_goback_btn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -62,25 +62,18 @@
         android:layout_below="@id/LayoutTitle"
         android:padding="28dp"
         android:orientation="vertical">
-
-
-
-
-
-
-            <EditText
-                android:id="@+id/umeng_fb_content"
-                android:layout_width="fill_parent"
-                android:layout_height="102dp"
-                android:gravity="top"
-                android:ems="10"
-                android:hint="请输入您的反馈意见"
-                android:inputType="textMultiLine"
-                android:textColor="#9f9f9f"
-                android:textSize="14dp" >
-
-                <requestFocus />
-            </EditText>
+        <EditText
+            android:id="@+id/umeng_fb_content"
+            android:layout_width="fill_parent"
+            android:layout_height="102dp"
+           	android:gravity="top"
+            android:ems="10"
+            android:hint="请输入您的反馈意见"
+            android:inputType="textMultiLine"
+            android:textColor="#9f9f9f"
+            android:textSize="14dp" >
+				<requestFocus />
+          </EditText>
     </RelativeLayout>
 
 
@@ -142,7 +135,7 @@
 			android:layout_alignParentRight="true" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:gravity="center"
 			android:layout_alignBaseline="@id/umeng_fb_age_spinner"
-			android:textColor="#FFFFFF" android:layout_marginRight="8dip" />
+			android:textColor="#FFFFFF" android:layout_marginRight="28dp" />
 	</RelativeLayout>
 </LinearLayout>
 

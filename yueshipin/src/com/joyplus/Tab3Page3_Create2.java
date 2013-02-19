@@ -1,6 +1,6 @@
 package com.joyplus;
+
 import com.umeng.analytics.MobclickAgent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -27,20 +26,14 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.BangDanListAdapter;
 import com.joyplus.Adapters.BangDanListData;
-import com.joyplus.Adapters.BangDanListData;
-import com.joyplus.Adapters.BangDanListData;
-import com.joyplus.Service.Return.ReturnTops;
 
 public class Tab3Page3_Create2 extends Activity {
 	private String TAG = "Tab3Page3_Create2";
 	private AQuery aq;
 	private App app;
-	//private ReturnTops m_ReturnTops = null;
+	// private ReturnTops m_ReturnTops = null;
 	private String title = null;
 	private String content = null;
 	private String topic_id = null;
@@ -50,7 +43,6 @@ public class Tab3Page3_Create2 extends Activity {
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private BangDanListAdapter BangDanAdapter;
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,31 +50,31 @@ public class Tab3Page3_Create2 extends Activity {
 		setContentView(R.layout.tab3page3_create2);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-		
+
 		ItemsListView = (ListView) findViewById(R.id.listView1);
-		
+
 		Intent intent = getIntent();
 		title = intent.getStringExtra("title");
 		content = intent.getStringExtra("content");
-		//use topic_id 区分是否是新添加的悦单
-		topic_id  = intent.getStringExtra("topic_id");
-		type =  intent.getStringExtra("type");
+		// use topic_id 区分是否是新添加的悦单
+		topic_id = intent.getStringExtra("topic_id");
+		type = intent.getStringExtra("type");
 		aq.id(R.id.textView2).text(title);
 		aq.id(R.id.textView1).text(content);
-		if (intent.getBooleanExtra("Create", false) ) {
+		if (intent.getBooleanExtra("Create", false)) {
 			aq.id(R.id.Tab1TopLeftImage).gone();
 			aq.id(R.id.button1).visible();
 			aq.id(R.id.Tab1TopRightImage).visible();
-//			AddBangDan();
-		}
-		else {
+			// AddBangDan();
+		} else {
 			aq.id(R.id.Tab1TopLeftImage).visible();
 			aq.id(R.id.Tab1TopRightImage).gone();
 			GetServiceData();
 		}
-		
+
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				GotoDetail(position);
@@ -107,16 +99,18 @@ public class Tab3Page3_Create2 extends Activity {
 			Intent i = new Intent(this, Search.class);
 			i.putExtra("topic_id", topic_id);
 			i.putExtra("type", type);
-			if(topic_id_ready_have != null)
+			if (topic_id_ready_have != null)
 				i.putExtra("topic_id_ready_have", topic_id_ready_have);
 			startActivityForResult(i, 1);
 		}
 
 	}
+
 	public void OnClickTab1TopLeft(View v) {
 		finish();
 
 	}
+
 	public void OnClickTab1TopRight(View v) {
 		Intent i = new Intent(this, Setting.class);
 		startActivity(i);
@@ -151,8 +145,7 @@ public class Tab3Page3_Create2 extends Activity {
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		if (json == null) {
 			aq.id(R.id.ProgressText).gone();
-			app.MyToast(
-					aq.getContext(),
+			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
 			return;
 		}
@@ -199,7 +192,6 @@ public class Tab3Page3_Create2 extends Activity {
 		return BangDanAdapter;
 	}
 
-
 	// InitListData
 	public void GetServiceData() {
 		String url = Constant.BASE_URL + "top_items?top_id=" + topic_id;
@@ -224,6 +216,7 @@ public class Tab3Page3_Create2 extends Activity {
 		// GetServiceData(search_word);
 
 	}
+
 	private void ShowList(String SaveData) throws JSONException {
 		dataStruct = new ArrayList();
 
@@ -239,7 +232,8 @@ public class Tab3Page3_Create2 extends Activity {
 					"id");
 			m_BangDanListData.Pic_ID = JSON_items.getJSONObject(i).getString(
 					"prod_id");
-			topic_id_ready_have = topic_id_ready_have +m_BangDanListData.Pic_ID +"|";
+			topic_id_ready_have = topic_id_ready_have
+					+ m_BangDanListData.Pic_ID + "|";
 			m_BangDanListData.Pic_url = JSON_items.getJSONObject(i).getString(
 					"prod_pic_url");
 			m_BangDanListData.Pic_name = JSON_items.getJSONObject(i).getString(
@@ -262,6 +256,7 @@ public class Tab3Page3_Create2 extends Activity {
 		}
 
 	}
+
 	private void GotoDetail(int item) {
 		BangDanListData m_BangDanListData = (BangDanListData) ItemsListView
 				.getItemAtPosition(item);
@@ -299,6 +294,7 @@ public class Tab3Page3_Create2 extends Activity {
 			break;
 		}
 	}
+
 	private void OnDeleteListItem(final int item) {
 		final BangDanListData m_BangDanListData = (BangDanListData) ItemsListView
 				.getItemAtPosition(item);
@@ -308,17 +304,18 @@ public class Tab3Page3_Create2 extends Activity {
 				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						dataStruct= null;
+						dataStruct = null;
 						BangDanAdapter.notifyDataSetChanged();
 						ItemsListView.invalidate();
-						
+
 						// 删除数据
 						DeleteVideo(m_BangDanListData.Item_ID);
-						
+
 					}
 				}).setNegativeButton("取消", null).create();
 		builder.show();
 	}
+
 	private void DeleteVideo(String prod_id) {
 		String url = Constant.BASE_URL + "top/removeItem";
 
@@ -336,14 +333,14 @@ public class Tab3Page3_Create2 extends Activity {
 
 		aq.ajax(cb);
 	}
+
 	public void DeleteVideoResult(String url, JSONObject json, AjaxStatus status) {
 		if (json != null) {
 			try {
-				if (json.getString("res_code").trim().equalsIgnoreCase("00000")){
+				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
 					app.MyToast(this, "删除成功!");
 					GetServiceData();
-				}
-				else
+				} else
 					app.MyToast(this, "删除失败!");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -356,6 +353,7 @@ public class Tab3Page3_Create2 extends Activity {
 			app.MyToast(this, getResources().getString(R.string.networknotwork));
 		}
 	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		GetServiceData();

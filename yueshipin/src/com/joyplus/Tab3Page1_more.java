@@ -4,15 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -55,8 +51,43 @@ public class Tab3Page1_more extends Activity {
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				Tab3Page1ListData m_Tab3Page1ListData = (Tab3Page1ListData) ItemsListView
+						.getItemAtPosition(position);
+				/*Intent intent = new Intent();
+				// 1：电影，2：电视剧，3：综艺，4：视频
+				if(m_Tab3Page1ListData.Pro_type.equalsIgnoreCase("1"))
+				{
+					intent.setClass(Tab3Page1_more.this, Detail_Movie.class);
+					intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
+					try {
+						startActivity(intent);
+					} catch (ActivityNotFoundException ex) {
+						Log.e(TAG, "Call Detail_Movie failed", ex);
+					}
+				}
+				else if(m_Tab3Page1ListData.Pro_type.equalsIgnoreCase("2"))
+				{
+					intent.setClass(Tab3Page1_more.this, Detail_TV.class);
+					intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
+					try {
+						startActivity(intent);
+					} catch (ActivityNotFoundException ex) {
+						Log.e(TAG, "Call Detail_TV failed", ex);
+					}
+				}
+				else if(m_Tab3Page1ListData.Pro_type.equalsIgnoreCase("3"))
+				{
+					intent.setClass(Tab3Page1_more.this, Detail_Show.class);
+					intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
+					try {
+						startActivity(intent);
+					} catch (ActivityNotFoundException ex) {
+						Log.e(TAG, "Call Detail_Show failed", ex);
+					}
+				}*/
 				OnClickPlayIndex(position);
 			}
 		});
@@ -143,7 +174,7 @@ public class Tab3Page1_more extends Activity {
 		if (m_order != null) {
 
 			String[] m_id = m_order.split("\\|");
-			for (m_num = 0; m_num < m_id.length ; m_num++) {
+			for (m_num = 0; m_num < m_id.length; m_num++) {
 				Tab3Page1ListData m_Tab3Page1ListData = new Tab3Page1ListData();
 				m_Value = app.GetPlayData(m_id[m_num].trim());
 				if (m_Value != null) {
@@ -166,7 +197,7 @@ public class Tab3Page1_more extends Activity {
 			}
 			m_num = m_id.length;
 		}
-	
+
 	}
 
 	// 数据更新
@@ -221,7 +252,7 @@ public class Tab3Page1_more extends Activity {
 					public void onClick(DialogInterface dialog, int which) {
 						// 删除数据
 						app.DeletePlayData(m_Tab3Page1ListData.Pro_ID);
-						
+
 						InitListData();
 
 					}
@@ -291,7 +322,7 @@ public class Tab3Page1_more extends Activity {
 			DataInputStream dis = new DataInputStream(new ByteArrayInputStream(
 					data));
 
-			String uriString = dis.readUTF(dis);
+			String uriString = DataInputStream.readUTF(dis);
 			int bookmark = dis.readInt();
 			int duration = dis.readInt();
 
@@ -299,10 +330,10 @@ public class Tab3Page1_more extends Activity {
 				return null;
 			}
 
-			 if ((bookmark < HALF_MINUTE) || (duration < TWO_MINUTES)
-			 || (bookmark > (duration - HALF_MINUTE))) {
-			 return null;
-			 }
+			if ((bookmark < HALF_MINUTE) || (duration < TWO_MINUTES)
+					|| (bookmark > (duration - HALF_MINUTE))) {
+				return null;
+			}
 			if ((duration - bookmark) < TWO_MINUTES)
 				return null;
 			else

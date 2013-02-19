@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="120dp"
+    android:padding="2.0dip" >
+
+    <ImageView
+        android:id="@+id/video_preview_img"
+        android:layout_width="60dp"
+        android:layout_height="90dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="9dip"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/default_image_bg"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/txt_video_caption"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="7dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="444444"
+        android:textColor="#444444"
+        android:textSize="18dip" />
+
+    <TextView
+        android:id="@+id/TextViewScore"
+        android:layout_width="35dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/TextViewDou"
+        android:layout_alignBottom="@+id/TextViewDou"
+        android:layout_toLeftOf="@+id/TextViewDou"
+        android:text="8.7分"
+        android:textColor="#3B7BC6"
+        android:textSize="13dip" />
+
+    <ImageView
+        android:id="@+id/TextViewDou"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="7dp"
+        android:background="@drawable/list_numeral_watercress" />
+
+    <TextView
+        android:id="@+id/txt_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/txt_video_caption"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="5dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="主演："
+        android:textColor="#9f9f9f"
+        android:textSize="13dip" />
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txt_1"
+        android:layout_below="@+id/txt_1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="地区："
+        android:textColor="#9f9f9f"
+        android:textSize="13dip" />
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_video_caption"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/txt_1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="9f9f9f"
+        android:textColor="#9f9f9f"
+        android:textSize="13dip" />
+
+    <TextView
+        android:id="@+id/TextView05"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView03"
+        android:layout_below="@+id/TextView03"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="9f9f9f"
+        android:textColor="#9f9f9f"
+        android:textSize="13dip" />
+
+    <Button
+        android:id="@+id/button1"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView02"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/detail_bangdan_button"
+        android:focusable="false"
+        android:text="1043人顶" />
+
+    <Button
+        android:id="@+id/button2"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="18dp"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/button1"
+        android:background="@drawable/detail_bangdan_recommend"
+        android:focusable="false"
+        android:text="2783人收藏" />
+
+</RelativeLayout>
