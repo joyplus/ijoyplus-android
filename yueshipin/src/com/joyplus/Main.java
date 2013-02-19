@@ -21,8 +21,6 @@ import android.view.Window;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TabHost;
-import android.widget.Toast;
-
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -42,13 +40,13 @@ public class Main extends TabActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
 		setContentView(R.layout.main);
+		// MobclickAgent.onError(this);//if there's a exception the
+		// application'll shutdown
 		app = (App) getApplicationContext();
 		aq = new AQuery(this);
 		CheckLogin();
 		setupIntent();
-	
 	}
 
 	private TabHost.TabSpec buildTabSpec(String tag, String resLabel,
@@ -81,6 +79,7 @@ public class Main extends TabActivity {
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
 				// TODO Auto-generated method stub
 				switch (checkedId) {
+
 				case R.id.radio0:
 					mTabHost.setCurrentTabByTag(TAB_1);
 					break;
@@ -90,20 +89,22 @@ public class Main extends TabActivity {
 				case R.id.radio2:
 					mTabHost.setCurrentTabByTag(TAB_3);
 					break;
-
 				default:
-					// tabHost.setCurrentTabByTag(TAB_1);
+					mTabHost.setCurrentTabByTag(TAB_1);
 					break;
+
 				}
 			}
 		});
 	}
+
 	@Override
 	protected void onDestroy() {
 		if (aq != null)
 			aq.dismiss();
 		super.onDestroy();
 	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -113,6 +114,7 @@ public class Main extends TabActivity {
 	public void onPause() {
 		super.onPause();
 	}
+
 	// NETWORK
 	public boolean isNetworkAvailable() {
 		Context context = getApplicationContext();
@@ -155,9 +157,9 @@ public class Main extends TabActivity {
 	}
 
 	public boolean CheckLogin() {
-
 		String UserInfo = null;
-		UserInfo = app.GetServiceData("UserInfo");
+		//UserInfo = app.GetServiceData("UserInfo");
+
 		if (UserInfo == null) {
 			// 1. 在客户端生成一个唯一的UUID
 			String macAddress = null;
@@ -187,8 +189,36 @@ public class Main extends TabActivity {
 			JSONObject json;
 			try {
 				json = new JSONObject(UserInfo);
+				// edited by yyc
+				/*
+				 * if(json.getString("user_id").trim()==null) { // 1.
+				 * 在客户端生成一个唯一的UUID String macAddress = null; WifiManager wifiMgr
+				 * = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+				 * WifiInfo info = (null == wifiMgr ? null : wifiMgr
+				 * .getConnectionInfo()); if (info != null) { macAddress =
+				 * info.getMacAddress(); // 2. 通过调用 service
+				 * account/generateUIID把UUID传递到服务器 String url =
+				 * Constant.BASE_URL + "account/generateUIID";
+				 * 
+				 * Map<String, Object> params = new HashMap<String, Object>();
+				 * params.put("uiid", macAddress); params.put("device_type",
+				 * "Android");
+				 * 
+				 * AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+				 * cb.header("User-Agent",
+				 * "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2"
+				 * ); cb.header("app_key", Constant.APPKEY);
+				 * 
+				 * cb.params(params).url(url).type(JSONObject.class)
+				 * .weakHandler(this, "CallServiceResult");
+				 * aq.id(R.id.ProgressText).visible();
+				 * aq.progress(R.id.progress).ajax(cb); }
+				 */
+				// else
+				// {
 				app.UserID = json.getString("user_id").trim();
-
+				// }
+				// }
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -204,51 +234,53 @@ public class Main extends TabActivity {
 			app.SaveServiceData("UserInfo", json.toString());
 			try {
 				app.UserID = json.getString("user_id").trim();
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 		} else {
-
 			// ajax error, show error code
 			aq.id(R.id.ProgressText).gone();
-			app.MyToast(
-					aq.getContext(),
-					getResources().getString(R.string.networknotwork)
-							);
-			finish();
+			app.MyToast(aq.getContext(),
+					getResources().getString(R.string.networknotwork));
+			//解决没有网络时程序不能关闭的问题
+			//finish();
 		}
 	}
-	@Override 
-	public boolean dispatchKeyEvent(KeyEvent event) { 
-	    if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) { 
-	        if (event.getAction() == KeyEvent.ACTION_DOWN 
-	                && event.getRepeatCount() == 0) { 
-	        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+			if (event.getAction() == KeyEvent.ACTION_DOWN
+					&& event.getRepeatCount() == 0) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle(getResources().getString(R.string.tishi));
-				builder.setMessage(getResources().getString(R.string.shifoutuichu))
+				builder.setMessage(
+						getResources().getString(R.string.shifoutuichu))
 						.setPositiveButton(
 								getResources().getString(R.string.queding),
 								new DialogInterface.OnClickListener() {
+									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
-										 finish();
+										finish();
 									}
 								})
 						.setNegativeButton(
 								getResources().getString(R.string.quxiao),
 								new DialogInterface.OnClickListener() {
+									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
-
 									}
-								});	  
+								});
 				builder.show();
-	            return true; 
-	        } 
-	    } 
-	    return super.dispatchKeyEvent(event); 
-	} 
-	
+				return true;
+			}
+		}
+		return super.dispatchKeyEvent(event);
+	}
+
 }

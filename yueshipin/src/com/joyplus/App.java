@@ -1,8 +1,11 @@
 package com.joyplus;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-
+import java.util.Map;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,6 +18,9 @@ import android.widget.Toast;
 
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
+import com.joyplus.download.DownloadTask;
+import com.joyplus.download.Downloader;
+//import com.joyplus.download.LoadInfo;
 import com.joyplus.weibo.net.Weibo;
 import com.joyplus.weibo.net.WeiboDialogListener;
 
@@ -27,6 +33,15 @@ public class App extends Application {
 	private Weibo Weibo; // 用于weibodiallog2中
 	private String url = ""; // 用于weibodiallog2中
 	private WeiboDialogListener WeiboDialogListener;// weibo监听器，用于weibodiallog2中
+	public static int percentDown = 0;
+	public static String urlDown = null;
+	//public List urlList = new ArrayList();		//每个视频下载地址
+	public List prodIdList = new ArrayList();
+	public static Map<String,DownloadTask> downloadtasks = new HashMap<String ,DownloadTask>();
+	public static  Map<String, Downloader> downloaders = new HashMap<String, Downloader>();
+	// 固定存放下载的音乐的路径：SD卡目录下
+	public static final String SD_PATH = "/mnt/sdcard/";
+	public boolean ThreadStartFlag = false;
 
 	@Override
 	public void onCreate() {
@@ -53,7 +68,6 @@ public class App extends Application {
 			getBaseContext().getResources().updateConfiguration(config,
 					getBaseContext().getResources().getDisplayMetrics());
 		}
-
 		instance = this;
 	}
 
@@ -65,7 +79,6 @@ public class App extends Application {
 		super.onLowMemory();
 		BitmapAjaxCallback.clearCache();
 		Log.w(TAG, "System is running low on memory");
-
 	}
 
 	/**
@@ -96,6 +109,22 @@ public class App extends Application {
 
 	public String geturl() {
 		return url;
+	}
+
+	public void setpercentDown(int percentDown) {
+		App.percentDown = percentDown;
+	}
+
+	public int getpercentDown() {
+		return percentDown;
+	}
+
+	public void seturlDown(String urlDown) {
+		App.urlDown = urlDown;
+	}
+
+	public String geturlDown() {
+		return urlDown;
 	}
 
 	public WeiboDialogListener getWeiboDialogListener() {

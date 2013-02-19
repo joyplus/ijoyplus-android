@@ -1,4 +1,5 @@
 package com.joyplus;
+
 import com.umeng.analytics.MobclickAgent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -150,15 +151,14 @@ public class Tab2Page2 extends Activity implements
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		if (json == null) {
 			aq.id(R.id.ProgressText).gone();
-			app.MyToast(
-					aq.getContext(),
+			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
-			if(m_ReturnTops .tops.length >0)
+			if (m_ReturnTops.tops.length > 0)
 				app.SaveServiceData("movie_tops", json.toString());
 
 			// 创建数据源对象
@@ -205,19 +205,20 @@ public class Tab2Page2 extends Activity implements
 	}
 
 	// listview的点击事件接口函数
+	@Override
 	public void onItemClick(AdapterView adapterview, View view, int i, long l) {
 		Tab2Page2ListData m_Tab2Page2ListData = (Tab2Page2ListData) ItemsListView
 				.getItemAtPosition(i);
 		if (m_ReturnTops != null) {
-//			app.MyToast(this, m_Tab2Page2ListData.Pic_name,
-//					Toast.LENGTH_LONG).show();
+			// app.MyToast(this, m_Tab2Page2ListData.Pic_name,
+			// Toast.LENGTH_LONG).show();
 			Intent intent = new Intent(this, Detail_BangDan.class);
 			intent.putExtra("BangDan_id", m_Tab2Page2ListData.Pic_ID);
 			intent.putExtra("BangDan_name", m_Tab2Page2ListData.Pic_name);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG,"Call Detail_BangDan failed", ex);
+				Log.e(TAG, "Call Detail_BangDan failed", ex);
 			}
 		} else {
 			app.MyToast(this, "ReturnTops is empty.");
@@ -237,6 +238,7 @@ public class Tab2Page2 extends Activity implements
 				// 创建数据源对象
 				GetVideoMovies();
 				new Handler().postDelayed(new Runnable() {
+					@Override
 					public void run() {
 						// execute the task
 						GetServiceData();

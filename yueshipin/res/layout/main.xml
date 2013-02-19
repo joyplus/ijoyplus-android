@@ -2,36 +2,38 @@
 <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/tabhost"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent" >
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#F2F2F2"
-        android:orientation="vertical">
+        android:orientation="vertical" >
+
         <FrameLayout
             android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:background="#F2F2F2">
+            android:background="#F2F2F2" >
         </FrameLayout>
+
         <TabWidget
             android:id="@android:id/tabs"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <FrameLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" >
 
             <RadioGroup
                 android:id="@+id/radioGroup1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal" >
 
                 <RadioButton
                     android:id="@+id/radio0"
@@ -40,8 +42,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/tab_bottom1"
                     android:button="@null"
-                    android:checked="true"
-                   />
+                    android:checked="true" />
 
                 <RadioButton
                     android:id="@+id/radio1"
@@ -49,8 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/tab_bottom2"
-                    android:button="@null"
-                    />
+                    android:button="@null" />
 
                 <RadioButton
                     android:id="@+id/radio2"
@@ -58,8 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/tab_bottom3"
-                    android:button="@null"
-                    />
+                    android:button="@null" />
             </RadioGroup>
         </FrameLayout>
     </LinearLayout>

@@ -101,7 +101,8 @@
         android:text="9f9f9f"
         android:textColor="#9f9f9f"
         android:textSize="13dip"/>
-
+
+
     <Button
         android:id="@+id/button1"
         style="?android:attr/buttonStyleSmall"
@@ -110,21 +111,22 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="18dp"
         android:layout_alignLeft="@+id/TextView02"
-        android:background="@drawable/detail_bangdan_button"
+        android:drawableLeft="@drawable/push_disable"
+        android:background="@drawable/collect_number"
         android:focusable="false"
         android:text="1043人顶" />
-
+
     <Button
         android:id="@+id/button2"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-       
         android:layout_marginBottom="18dp"
         android:layout_toRightOf="@+id/button1"
          android:layout_marginLeft="10dp"
-        android:background="@drawable/detail_bangdan_recommend"
+        android:drawableLeft="@drawable/collect_disable"
+        android:background="@drawable/collect_number"
         android:focusable="false"
         android:text="2783人收藏" />
 

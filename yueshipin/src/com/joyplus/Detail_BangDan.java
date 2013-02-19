@@ -1,4 +1,5 @@
 package com.joyplus;
+
 import com.umeng.analytics.MobclickAgent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,7 +64,6 @@ public class Detail_BangDan extends Activity implements
 
 	public void OnClickTab1TopLeft(View v) {
 		finish();
-
 	}
 
 	public void OnClickTab1TopRight(View v) {
@@ -110,14 +110,12 @@ public class Detail_BangDan extends Activity implements
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		if (json == null) {
 			aq.id(R.id.ProgressText).gone();
-			app.MyToast(this, 
-					getResources().getString(R.string.networknotwork));
+			app.MyToast(this, getResources().getString(R.string.networknotwork));
 			return;
 		}
 		try {
 			if (json.getJSONArray("items") != null) {
-				app.SaveServiceData("top_items_" + BangDan_id,
-						json.toString());
+				app.SaveServiceData("top_items_" + BangDan_id, json.toString());
 
 				// 创建数据源对象
 				try {
@@ -142,8 +140,7 @@ public class Detail_BangDan extends Activity implements
 			BangDanListAdapter listviewdetailadapter = getAdapter();
 			ItemsListView.setAdapter(listviewdetailadapter);
 		} else {
-			app.MyToast(this, 
-					"ItemsListView empty.");
+			app.MyToast(this, "ItemsListView empty.");
 		}
 	}
 
@@ -163,11 +160,12 @@ public class Detail_BangDan extends Activity implements
 	}
 
 	// listview的点击事件接口函数
+	@Override
 	public void onItemClick(AdapterView adapterview, View view, int i, long l) {
 		BangDanListData m_BangDanListData = (BangDanListData) ItemsListView
 				.getItemAtPosition(i);
-		//app.MyToast(this, m_BangDanListData.Pic_name, Toast.LENGTH_LONG)
-		//		.show();
+		// app.MyToast(this, m_BangDanListData.Pic_name, Toast.LENGTH_LONG)
+		// .show();
 		Intent intent = new Intent();
 		// 1：电影，2：电视剧，3：综艺，4：视频
 		switch (Integer.valueOf(m_BangDanListData.prod_type)) {
@@ -177,7 +175,7 @@ public class Detail_BangDan extends Activity implements
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG,"Call Detail_Movie failed", ex);
+				Log.e(TAG, "Call Detail_Movie failed", ex);
 			}
 			break;
 		case 2:
@@ -186,7 +184,7 @@ public class Detail_BangDan extends Activity implements
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG,"Call Detail_TV failed", ex);
+				Log.e(TAG, "Call Detail_TV failed", ex);
 			}
 			break;
 		case 3:
@@ -195,7 +193,7 @@ public class Detail_BangDan extends Activity implements
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG,"Call Detail_Show failed", ex);
+				Log.e(TAG, "Call Detail_Show failed", ex);
 			}
 			break;
 		}
@@ -219,6 +217,7 @@ public class Detail_BangDan extends Activity implements
 					e.printStackTrace();
 				}
 				new Handler().postDelayed(new Runnable() {
+					@Override
 					public void run() {
 						// execute the task
 						GetServiceData();
@@ -240,7 +239,8 @@ public class Detail_BangDan extends Activity implements
 
 	// InitListData
 	public void GetServiceData() {
-		String url = Constant.BASE_URL + "top_items?top_id=" + BangDan_id + "&page_num=1&page_size=50";
+		String url = Constant.BASE_URL + "top_items?top_id=" + BangDan_id
+				+ "&page_num=1&page_size=50";
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
@@ -274,20 +274,19 @@ public class Detail_BangDan extends Activity implements
 					"prod_name");
 			m_BangDanListData.prod_type = JSON_items.getJSONObject(i)
 					.getString("prod_type");
-			if(Integer.valueOf(JSON_items.getJSONObject(i)
-					.getString("prod_type")) == 3){
-				if(JSON_items.getJSONObject(i)
-						.getString("stars").trim().length()>0)
-					m_BangDanListData.Text_Zhuyan =JSON_items.getJSONObject(i)
+			if (Integer.valueOf(JSON_items.getJSONObject(i).getString(
+					"prod_type")) == 3) {
+				if (JSON_items.getJSONObject(i).getString("stars").trim()
+						.length() > 0)
+					m_BangDanListData.Text_Zhuyan = JSON_items.getJSONObject(i)
 							.getString("stars");
 				else
-					m_BangDanListData.Text_Zhuyan =JSON_items.getJSONObject(i)
+					m_BangDanListData.Text_Zhuyan = JSON_items.getJSONObject(i)
 							.getString("director");
-			}
-			else
+			} else
 				m_BangDanListData.Text_Zhuyan = JSON_items.getJSONObject(i)
-				.getString("stars");
-			
+						.getString("stars");
+
 			m_BangDanListData.Text_Year = JSON_items.getJSONObject(i)
 					.getString("publish_date");
 			m_BangDanListData.Text_Area = JSON_items.getJSONObject(i)

@@ -29,6 +29,7 @@ public class Tab2Page3ListAdapter extends ArrayAdapter {
 	}
 
 	// 获取显示当前的view
+	@Override
 	public View getView(int i, View view, ViewGroup viewgroup) {
 		Integer integer = Integer.valueOf(i);
 		View view1 = (View) viewMap.get(integer);
@@ -45,9 +46,8 @@ public class Tab2Page3ListAdapter extends ArrayAdapter {
 			aq.id(R.id.txt_video_caption).text(Tab2Page3ListData.Pic_name);
 			aq.id(R.id.txt_1).text(Tab2Page3ListData.Pic_list1);
 
-			aq.id(R.id.video_preview_img)
-					.image(Tab2Page3ListData.Pic_url, true, true, 0,
-							R.drawable.tab2_page3_show_pic);
+			aq.id(R.id.video_preview_img).image(Tab2Page3ListData.Pic_url,
+					true, true, 0, R.drawable.tab2_page3_show_pic);
 
 			Integer integer1 = Integer.valueOf(i);
 			Object obj = viewMap.put(integer1, view1);

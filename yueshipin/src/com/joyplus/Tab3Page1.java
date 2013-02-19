@@ -4,15 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,18 +50,48 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		setContentView(R.layout.tab3page1);
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
-		ItemsListView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				OnClickPlayIndex(position);
-				// switch(view.getId()){
-				// case R.id.button1:
-				// OnClickPlayIndex(position);
-				// break;
-				// }
-			}
-		});
-		ItemsListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+        ItemsListView.setOnItemClickListener(new OnItemClickListener() {
+ 			@Override
+ 			public void onItemClick(AdapterView<?> parent, View view,
+ 					int position, long id) {
+ 					Tab3Page1ListData m_Tab3Page1ListData = (Tab3Page1ListData) ItemsListView
+ 							.getItemAtPosition(position);
+ 					/*Intent intent = new Intent();
+ 					// 1：电影，2：电视剧，3：综艺，4：视频
+ 					if(m_Tab3Page1ListData.Pro_type.equalsIgnoreCase("1"))
+ 					{
+ 						intent.setClass(Tab3Page1.this, Detail_Movie.class);
+ 						intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
+ 						try {
+ 							startActivity(intent);
+ 						} catch (ActivityNotFoundException ex) {
+ 							Log.e(TAG, "Call Detail_Movie failed", ex);
+ 						}
+ 					}
+ 					else if(m_Tab3Page1ListData.Pro_type.equalsIgnoreCase("2"))
+ 					{
+ 						intent.setClass(Tab3Page1.this, Detail_TV.class);
+ 						intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
+ 						try {
+ 							startActivity(intent);
+ 						} catch (ActivityNotFoundException ex) {
+ 							Log.e(TAG, "Call Detail_TV failed", ex);
+ 						}
+ 					}
+ 					else if(m_Tab3Page1ListData.Pro_type.equalsIgnoreCase("3"))
+ 					{
+ 						intent.setClass(Tab3Page1.this, Detail_Show.class);
+ 						intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
+ 						try {
+ 							startActivity(intent);
+ 						} catch (ActivityNotFoundException ex) {
+ 							Log.e(TAG, "Call Detail_Show failed", ex);
+ 						}
+ 					}*/
+ 					OnClickPlayIndex(position);
+ 			}
+ 		});
+ 		ItemsListView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
@@ -143,7 +169,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		NotifyDataAnalysisFinished();
 
 		String m_order = app.GetPlayData("order");
-		if (m_order != null && m_order.trim().length() >0) {
+		if (m_order != null && m_order.trim().length() > 0) {
 
 			String[] m_id = m_order.split("\\|");
 			for (m_num = 0; m_num < m_id.length && m_num < 4; m_num++) {
@@ -223,7 +249,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					public void onClick(DialogInterface dialog, int which) {
 						// 删除数据
 						app.DeletePlayData(m_Tab3Page1ListData.Pro_ID);
-						
+
 						InitListData();
 
 					}
@@ -253,8 +279,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				startActivity(intent);
 			}
 
-			// v.setVisibility(View.GONE);
-
 		} else {
 			app.MyToast(this, "m_Tab3Page1ListData is empty.");
 		}
@@ -265,7 +289,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		Intent intent = new Intent(this, MovieActivity.class);
 		intent.putExtra("prod_url", m_uri);
 		intent.putExtra("prod_id", prod_id);
-
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException ex) {
@@ -287,7 +310,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			DataInputStream dis = new DataInputStream(new ByteArrayInputStream(
 					data));
 
-			String uriString = dis.readUTF(dis);
+			String uriString = DataInputStream.readUTF(dis);
 			int bookmark = dis.readInt();
 			int duration = dis.readInt();
 

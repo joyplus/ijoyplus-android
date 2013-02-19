@@ -74,10 +74,12 @@ public class MovieControllerOverlay extends FrameLayout implements
 
 		state = State.LOADING;
 
-		LayoutParams wrapContent = new LayoutParams(LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
-		LayoutParams matchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT);
+		LayoutParams wrapContent = new LayoutParams(
+				android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+				android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+		LayoutParams matchParent = new LayoutParams(
+				android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+				android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 
 		LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -114,6 +116,7 @@ public class MovieControllerOverlay extends FrameLayout implements
 
 		handler = new Handler();
 		startHidingRunnable = new Runnable() {
+			@Override
 			public void run() {
 				startHiding();
 			}
@@ -124,43 +127,52 @@ public class MovieControllerOverlay extends FrameLayout implements
 		hideAnimation.setAnimationListener(this);
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+				android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+				android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 		setLayoutParams(params);
 		hide();
 	}
 
+	@Override
 	public void setListener(Listener listener) {
 		this.listener = listener;
 	}
 
+	@Override
 	public void setCanReplay(boolean canReplay) {
 		this.canReplay = canReplay;
 	}
 
+	@Override
 	public View getView() {
 		return this;
 	}
 
+	@Override
 	public void showPlaying() {
 		state = State.PLAYING;
 		showMainView(playPauseReplayView);
 	}
 
+	@Override
 	public void showPaused() {
 		state = State.PAUSED;
 		showMainView(playPauseReplayView);
 	}
 
+	@Override
 	public void showEnded() {
 		state = State.ENDED;
 		showMainView(playPauseReplayView);
 	}
 
+	@Override
 	public void showLoading() {
 		state = State.LOADING;
 		showMainView(loadingView);
 	}
 
+	@Override
 	public void showErrorMessage(String message) {
 		state = State.ERROR;
 		int padding = (int) (getMeasuredWidth() * ERROR_MESSAGE_RELATIVE_PADDING);
@@ -169,14 +181,17 @@ public class MovieControllerOverlay extends FrameLayout implements
 		showMainView(errorView);
 	}
 
+	@Override
 	public void resetTime() {
 		timeBar.resetTime();
 	}
 
+	@Override
 	public void setTimes(int currentTime, int totalTime) {
 		timeBar.setTime(currentTime, totalTime);
 	}
 
+	@Override
 	public void hide() {
 		boolean wasHidden = hidden;
 		hidden = true;
@@ -204,6 +219,7 @@ public class MovieControllerOverlay extends FrameLayout implements
 		show();
 	}
 
+	@Override
 	public void show() {
 		boolean wasHidden = hidden;
 		hidden = false;
@@ -241,18 +257,22 @@ public class MovieControllerOverlay extends FrameLayout implements
 		playPauseReplayView.setAnimation(null);
 	}
 
+	@Override
 	public void onAnimationStart(Animation animation) {
 		// Do nothing.
 	}
 
+	@Override
 	public void onAnimationRepeat(Animation animation) {
 		// Do nothing.
 	}
 
+	@Override
 	public void onAnimationEnd(Animation animation) {
 		hide();
 	}
 
+	@Override
 	public void onClick(View view) {
 		if (listener != null) {
 			if (view == playPauseReplayView) {
@@ -368,16 +388,19 @@ public class MovieControllerOverlay extends FrameLayout implements
 
 	// TimeBar listener
 
+	@Override
 	public void onScrubbingStart() {
 		cancelHiding();
 		listener.onSeekStart();
 	}
 
+	@Override
 	public void onScrubbingMove(int time) {
 		cancelHiding();
 		listener.onSeekMove(time);
 	}
 
+	@Override
 	public void onScrubbingEnd(int time) {
 		maybeStartHiding();
 		listener.onSeekEnd(time);

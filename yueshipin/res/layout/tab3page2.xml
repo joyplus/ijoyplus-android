@@ -3,23 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F2F2F2"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
-       <ImageView
+    <ImageView
         android:id="@+id/imageNoitemBG"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:background="@drawable/tab3_page2_bg" 
-      android:visibility="gone"  />
+        android:background="@drawable/tab3_page2_bg"
+        android:visibility="gone" />
+
     <LinearLayout
-         android:id="@+id/Layout1"
+        android:id="@+id/Layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/tab3_p1_border"
         android:orientation="vertical"
-        android:padding="6dp">
+        android:padding="6dp" >
 
         <ProgressBar
             android:id="@+id/progress"
@@ -27,33 +28,35 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:scaleType="centerInside"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <ListView
             android:id="@+id/listView1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-             android:fadingEdge="none"
-             android:cacheColorHint="#00000000"
+            android:cacheColorHint="#00000000"
             android:descendantFocusability="blocksDescendants"
             android:divider="@drawable/tab3_page1_see_bg_fenge"
-            android:longClickable="true">
+            android:fadingEdge="none"
+            android:longClickable="true" >
         </ListView>
     </LinearLayout>
 
     <RelativeLayout
-         android:id="@+id/Layout2"
-        android:layout_width="match_parent"
+        android:id="@+id/Layout2"
+        android:layout_width="300dp"
         android:layout_height="47dp"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical">
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:orientation="vertical" >
 
         <ImageButton
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/tab3_p2_button"
-            android:onClick="OnClickMore"/>
+            android:gravity="center_horizontal"
+            android:onClick="OnClickMore" />
     </RelativeLayout>
 
 </LinearLayout>

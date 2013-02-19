@@ -16,19 +16,19 @@
  */
 package com.joyplus.weibo.net;
 
-
 /**
- * An AcessToken class contains accesstoken and tokensecret.Child class of com.weibo.net.Token.
+ * An AcessToken class contains accesstoken and tokensecret.Child class of
+ * com.weibo.net.Token.
  * 
- * @author  ZhangJie (zhangjie2@staff.sina.com.cn)
+ * @author ZhangJie (zhangjie2@staff.sina.com.cn)
  */
 public class AccessToken extends Token {
-	
-	public AccessToken(String rlt){
+
+	public AccessToken(String rlt) {
 		super(rlt);
 	}
-	
-	public AccessToken(String token , String secret){
+
+	public AccessToken(String token, String secret) {
 		super(token, secret);
 	}
 }

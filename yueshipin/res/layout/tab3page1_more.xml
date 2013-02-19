@@ -54,7 +54,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/LayoutTitle"
         android:orientation="vertical">
-
+
+
         <LinearLayout
             android:layout_width="333dp"
             android:layout_height="fill_parent"

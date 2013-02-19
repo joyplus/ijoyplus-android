@@ -16,20 +16,17 @@
  */
 package com.joyplus.weibo.net;
 
-
 /**
- * A RequestToken class contains oauth_token and oauth_secret. Child class of com.weibo.net.Token.
+ * A RequestToken class contains oauth_token and oauth_secret. Child class of
+ * com.weibo.net.Token.
  * 
- * @author  ZhangJie (zhangjie2@staff.sina.com.cn)
+ * @author ZhangJie (zhangjie2@staff.sina.com.cn)
  */
 
-
 public class RequestToken extends Token {
-	
-	
-	public RequestToken(String authResult){
+
+	public RequestToken(String authResult) {
 		super(authResult);
 	}
-	
-	
+
 }
