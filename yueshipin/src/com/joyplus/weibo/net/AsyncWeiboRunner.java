@@ -20,49 +20,51 @@ import java.io.IOException;
 
 import android.content.Context;
 
-
 /**
- * Encapsulation main Weibo APIs, Include: 1. getRquestToken , 2. getAccessToken, 3. url request.
- * Implements a weibo api as a asynchronized way. Every object used this runner should implement interface RequestListener.
- *
- * @author  ZhangJie (zhangjie2@staff.sina.com.cn)
+ * Encapsulation main Weibo APIs, Include: 1. getRquestToken , 2.
+ * getAccessToken, 3. url request. Implements a weibo api as a asynchronized
+ * way. Every object used this runner should implement interface
+ * RequestListener.
+ * 
+ * @author ZhangJie (zhangjie2@staff.sina.com.cn)
  */
 public class AsyncWeiboRunner {
-	
+
 	private Weibo mWeibo;
-	
-	public AsyncWeiboRunner(Weibo weibo){
+
+	public AsyncWeiboRunner(Weibo weibo) {
 		this.mWeibo = weibo;
 	}
-	
-	public void request(final Context context, 
-			final String url, 
-			final WeiboParameters params, 
-			final String httpMethod, 
-			final RequestListener listener){
-		new Thread(){
-			@Override public void run() {
-                try {
-                	System.out.println(1+"/"+httpMethod+"/"+params.toString()+"/"+httpMethod+"/"+mWeibo.getAccessToken().getToken());
-					String resp = mWeibo.request(context, url, params, httpMethod, mWeibo.getAccessToken());
-                    listener.onComplete(resp);
-                } catch (WeiboException e) {
-                    listener.onError(e);
-                }
-            }
+
+	public void request(final Context context, final String url,
+			final WeiboParameters params, final String httpMethod,
+			final RequestListener listener) {
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					System.out.println(1 + "/" + httpMethod + "/"
+							+ params.toString() + "/" + httpMethod + "/"
+							+ mWeibo.getAccessToken().getToken());
+					String resp = mWeibo.request(context, url, params,
+							httpMethod, mWeibo.getAccessToken());
+					listener.onComplete(resp);
+				} catch (WeiboException e) {
+					listener.onError(e);
+				}
+			}
 		}.run();
-		
+
 	}
-	
-	
-    public static interface RequestListener {
 
-        public void onComplete(String response);
+	public static interface RequestListener {
 
-        public void onIOException(IOException e);
+		public void onComplete(String response);
 
-        public void onError(WeiboException e);
+		public void onIOException(IOException e);
 
-    }
-	
+		public void onError(WeiboException e);
+
+	}
+
 }

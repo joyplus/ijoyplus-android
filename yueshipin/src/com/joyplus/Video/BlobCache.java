@@ -171,6 +171,7 @@ public class BlobCache implements Closeable {
 
 	// Close the cache. All resources are released. No other method should be
 	// called after this is called.
+	@Override
 	public void close() {
 		syncAll();
 		closeAll();

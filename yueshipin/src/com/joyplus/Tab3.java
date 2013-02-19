@@ -23,7 +23,6 @@ public class Tab3 extends TabActivity {
 	private String TAB3_PAGE2 = "TAB3_PAGE2";
 	private String TAB3_PAGE3 = "TAB3_PAGE3";
 	private TabHost mTabHost;
-
 	private Intent mTab1, mTab2, mTab3;
 
 	@Override
@@ -35,7 +34,7 @@ public class Tab3 extends TabActivity {
 		aq = new AQuery(this);
 		prepareIntent();
 		setupIntent();
-		 CheckLogin();
+		CheckLogin();
 	}
 
 	private void prepareIntent() {
@@ -88,17 +87,21 @@ public class Tab3 extends TabActivity {
 				.setIndicator(resLabel, getResources().getDrawable(resIcon))
 				.setContent(content);
 	}
+
 	@Override
 	protected void onDestroy() {
 		if (aq != null)
 			aq.dismiss();
 		super.onDestroy();
 	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 
 	}
 
+	@Override
 	public void onPause() {
 		super.onPause();
 	}
@@ -114,6 +117,7 @@ public class Tab3 extends TabActivity {
 		startActivityForResult(i, 100);
 
 	}
+
 	public boolean CheckLogin() {
 
 		String UserInfo = null;
@@ -122,28 +126,28 @@ public class Tab3 extends TabActivity {
 			JSONObject json;
 			try {
 				json = new JSONObject(UserInfo);
-				if (json.getString("nickname").trim().length() >0 ) {
-					aq.id(R.id.textView4).text(json.getString("nickname").trim());
+				if (json.getString("nickname").trim().length() > 0) {
+					aq.id(R.id.textView4).text(
+							json.getString("nickname").trim());
 					aq.id(R.id.textView5).gone();
-					aq.id(R.id.imageView4)
-							.image(json.getString("pic_url").trim(), true, true,
-									0, R.drawable.default_header);
+					aq.id(R.id.imageView4).image(
+							json.getString("pic_url").trim(), true, true, 0,
+							R.drawable.default_header);
+				} else {
+					aq.id(R.id.textView5)
+							.text(json.getString("user_id").trim());
+					aq.id(R.id.imageView4).image(
+							json.getString("pic_url").trim(), true, true, 0,
+							R.drawable.default_header);
 				}
-				else{
-				aq.id(R.id.textView5).text(json.getString("user_id").trim());
-				aq.id(R.id.imageView4)
-						.image(json.getString("pic_url").trim(), true, true,
-								0, R.drawable.default_header);
-				}
-
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
 		}
 		return false;
 	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 100 && resultCode == 101) {
@@ -162,5 +166,5 @@ public class Tab3 extends TabActivity {
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
+
 }

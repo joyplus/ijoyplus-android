@@ -58,6 +58,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				GotoDetail(position);
@@ -185,8 +186,8 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 
 			// 创建数据源对象
 			GetVideoMovies();
-//			aq.id(R.id.Layout1).visible();
-//			aq.id(R.id.Layout2).visible();
+			// aq.id(R.id.Layout1).visible();
+			// aq.id(R.id.Layout2).visible();
 
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -227,22 +228,6 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		return Tab3Page2Adapter;
 	}
 
-	// // listview的点击事件接口函数
-	// public void onItemClick(AdapterView adapterview, View view, int i, long
-	// l) {
-	// Tab3Page2ListData m_Tab3Page2ListData = (Tab3Page2ListData) ItemsListView
-	// .getItemAtPosition(i);
-	// if (m_ReturnUserFavorities != null) {
-	// app.MyToast(this, m_Tab3Page2ListData.Pic_name,
-	// Toast.LENGTH_LONG).show();
-	//
-	// } else {
-	// app.MyToast(this, "ReturnUserFavorities is empty.",
-	// Toast.LENGTH_LONG).show();
-	// }
-	//
-	// }
-
 	private void CheckSaveData() {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -256,6 +241,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 				// 创建数据源对象
 				GetVideoMovies();
 				new Handler().postDelayed(new Runnable() {
+					@Override
 					public void run() {
 						// execute the task
 						GetServiceData();

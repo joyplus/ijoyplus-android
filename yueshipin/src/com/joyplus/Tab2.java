@@ -2,6 +2,8 @@ package com.joyplus;
 
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+
 import android.app.ActivityGroup;
 import android.content.Intent;
 import android.os.Bundle;
@@ -83,13 +85,11 @@ public class Tab2 extends ActivityGroup {
 	public void OnClickTab1TopLeft(View v) {
 		Intent i = new Intent(this, Search.class);
 		startActivity(i);
-
 	}
 
 	public void OnClickTab1TopRight(View v) {
 		Intent i = new Intent(this, Setting.class);
 		startActivity(i);
-
 	}
 
 }

@@ -59,6 +59,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Goto_Tab3Page3_Create2(position);
@@ -263,6 +264,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 				// 创建数据源对象
 				GetVideoMovies();
 				new Handler().postDelayed(new Runnable() {
+					@Override
 					public void run() {
 						// execute the task
 						GetServiceData();

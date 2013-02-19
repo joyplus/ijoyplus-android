@@ -1,4 +1,5 @@
 package com.joyplus;
+
 import com.umeng.analytics.MobclickAgent;
 import android.app.Activity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ public class Z_About_mianzhe extends Activity {
 		finish();
 
 	}
+
 	@Override
 	public void onResume() {
 		super.onResume();

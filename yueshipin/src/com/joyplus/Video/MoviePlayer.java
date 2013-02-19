@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -42,7 +41,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.VideoView;
 
-import com.joyplus.App;
 import com.joyplus.R;
 
 public class MoviePlayer implements MediaPlayer.OnErrorListener,
@@ -69,7 +67,7 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 	private final Uri mUri;
 	private final Handler mHandler = new Handler();
 	private final AudioBecomingNoisyReceiver mAudioBecomingNoisyReceiver;
-//	private final ActionBar mActionBar;
+	// private final ActionBar mActionBar;
 	private final ControllerOverlay mController;
 
 	private long mResumeableTime = Long.MAX_VALUE;
@@ -83,6 +81,7 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 	private boolean mShowing;
 
 	private final Runnable mPlayingChecker = new Runnable() {
+		@Override
 		public void run() {
 			if (mVideoView.isPlaying()) {
 				mController.showPlaying();
@@ -93,6 +92,7 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 	};
 
 	private final Runnable mProgressChecker = new Runnable() {
+		@Override
 		public void run() {
 			int pos = setProgress();
 			mHandler.postDelayed(mProgressChecker, 1000 - (pos % 1000));
@@ -104,7 +104,7 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 		mContext = movieActivity.getApplicationContext();
 		mVideoView = (VideoView) rootView.findViewById(R.id.surface_view);
 		mBookmarker = new Bookmarker(movieActivity);
-//		mActionBar = movieActivity.getActionBar();
+		// mActionBar = movieActivity.getActionBar();
 		mUri = videoUri;
 
 		mController = new MovieControllerOverlay(mContext);
@@ -116,6 +116,7 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 		mVideoView.setOnCompletionListener(this);
 		mVideoView.setVideoURI(mUri);
 		mVideoView.setOnTouchListener(new View.OnTouchListener() {
+			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				mController.show();
 				return true;
@@ -127,6 +128,7 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 		// the media control at this point.
 		mVideoView
 				.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+					@Override
 					public void onSystemUiVisibilityChange(int visibility) {
 						if ((visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
 							mController.show();
@@ -175,12 +177,14 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 		builder.setMessage(String.format(
 				context.getString(R.string.resume_playing_message), 30));
 		builder.setOnCancelListener(new OnCancelListener() {
+			@Override
 			public void onCancel(DialogInterface dialog) {
 				onCompletion();
 			}
 		});
 		builder.setPositiveButton(R.string.resume_playing_resume,
 				new OnClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						mVideoView.seekTo(bookmark);
 						startVideo();
@@ -188,6 +192,7 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 				});
 		builder.setNegativeButton(R.string.resume_playing_restart,
 				new OnClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						startVideo();
 					}
@@ -263,6 +268,7 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 	}
 
 	// Below are notifications from VideoView
+	@Override
 	public boolean onError(MediaPlayer player, int arg1, int arg2) {
 		mHandler.removeCallbacksAndMessages(null);
 		// VideoView will show an error dialog if we return false, so no need
@@ -271,6 +277,7 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 		return false;
 	}
 
+	@Override
 	public void onCompletion(MediaPlayer mp) {
 		mController.showEnded();
 		onCompletion();
@@ -280,6 +287,7 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 	}
 
 	// Below are notifications from ControllerOverlay
+	@Override
 	public void onPlayPause() {
 		if (mVideoView.isPlaying()) {
 			pauseVideo();
@@ -288,33 +296,39 @@ public class MoviePlayer implements MediaPlayer.OnErrorListener,
 		}
 	}
 
+	@Override
 	public void onSeekStart() {
 		mDragging = true;
 	}
 
+	@Override
 	public void onSeekMove(int time) {
 		mVideoView.seekTo(time);
 	}
 
+	@Override
 	public void onSeekEnd(int time) {
 		mDragging = false;
 		mVideoView.seekTo(time);
 		setProgress();
 	}
 
+	@Override
 	public void onShown() {
 		mShowing = true;
-//		mActionBar.show();
+		// mActionBar.show();
 		showSystemUi(true);
 		setProgress();
 	}
 
+	@Override
 	public void onHidden() {
 		mShowing = false;
-//		mActionBar.hide();
+		// mActionBar.hide();
 		showSystemUi(false);
 	}
 
+	@Override
 	public void onReplay() {
 		startVideo();
 	}
@@ -437,7 +451,7 @@ class Bookmarker {
 			DataInputStream dis = new DataInputStream(new ByteArrayInputStream(
 					data));
 
-			String uriString = dis.readUTF(dis);
+			String uriString = DataInputStream.readUTF(dis);
 			int bookmark = dis.readInt();
 			int duration = dis.readInt();
 

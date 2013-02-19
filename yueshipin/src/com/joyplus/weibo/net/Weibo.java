@@ -266,6 +266,7 @@ public class Weibo {
 		CookieSyncManager.createInstance(activity);
 		dialog(activity, params, new WeiboDialogListener() {
 
+			@Override
 			public void onComplete(Bundle values) {
 				// ensure any cookies set by the dialog are saved
 				CookieSyncManager.getInstance().sync();
@@ -286,16 +287,19 @@ public class Weibo {
 				}
 			}
 
+			@Override
 			public void onError(DialogError error) {
 				Log.d("Weibo-authorize", "Login failed: " + error);
 				mAuthDialogListener.onError(error);
 			}
 
+			@Override
 			public void onWeiboException(WeiboException error) {
 				Log.d("Weibo-authorize", "Login failed: " + error);
 				mAuthDialogListener.onWeiboException(error);
 			}
 
+			@Override
 			public void onCancel() {
 				Log.d("Weibo-authorize", "Login canceled");
 				mAuthDialogListener.onCancel();

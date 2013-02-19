@@ -1,4 +1,5 @@
 package com.joyplus;
+
 import com.umeng.analytics.MobclickAgent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class Tab3Page2_more extends Activity {
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				GotoDetail(position);
@@ -70,13 +72,13 @@ public class Tab3Page2_more extends Activity {
 				return true;// 如果返回false那么onItemClick仍然会被调用
 			}
 		});
-		//CheckSaveData();
+		// CheckSaveData();
 		GetServiceData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
 		Intent i = new Intent();
-		
+
 		this.setResult(101, i);
 		this.finish();
 	}
@@ -105,6 +107,7 @@ public class Tab3Page2_more extends Activity {
 		super.onPause();
 		MobclickAgent.onPause(this);
 	}
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -149,8 +152,7 @@ public class Tab3Page2_more extends Activity {
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		if (json == null) {
 			aq.id(R.id.ProgressText).gone();
-			app.MyToast(
-					aq.getContext(),
+			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
 			return;
 		}
@@ -162,7 +164,7 @@ public class Tab3Page2_more extends Activity {
 
 			// 创建数据源对象
 			GetVideoMovies();
-			
+
 			aq.id(R.id.ProgressText).gone();
 
 		} catch (JsonParseException e) {
@@ -204,20 +206,21 @@ public class Tab3Page2_more extends Activity {
 		return Tab3Page2Adapter;
 	}
 
-//	// listview的点击事件接口函数
-//	public void onItemClick(AdapterView adapterview, View view, int i, long l) {
-//		Tab3Page2ListData m_Tab3Page2ListData = (Tab3Page2ListData) ItemsListView
-//				.getItemAtPosition(i);
-//		if (m_ReturnUserFavorities != null) {
-//			app.MyToast(this, m_Tab3Page2ListData.Pic_name,
-//					Toast.LENGTH_LONG).show();
-//
-//		} else {
-//			app.MyToast(this, "ReturnUserFavorities is empty.",
-//					Toast.LENGTH_LONG).show();
-//		}
-//
-//	}
+	// // listview的点击事件接口函数
+	// public void onItemClick(AdapterView adapterview, View view, int i, long
+	// l) {
+	// Tab3Page2ListData m_Tab3Page2ListData = (Tab3Page2ListData) ItemsListView
+	// .getItemAtPosition(i);
+	// if (m_ReturnUserFavorities != null) {
+	// app.MyToast(this, m_Tab3Page2ListData.Pic_name,
+	// Toast.LENGTH_LONG).show();
+	//
+	// } else {
+	// app.MyToast(this, "ReturnUserFavorities is empty.",
+	// Toast.LENGTH_LONG).show();
+	// }
+	//
+	// }
 
 	private void CheckSaveData() {
 		String SaveData = null;
@@ -232,6 +235,7 @@ public class Tab3Page2_more extends Activity {
 				// 创建数据源对象
 				GetVideoMovies();
 				new Handler().postDelayed(new Runnable() {
+					@Override
 					public void run() {
 						// execute the task
 						GetServiceData();
@@ -312,7 +316,8 @@ public class Tab3Page2_more extends Activity {
 
 	// InitListData
 	public void GetServiceData() {
-		String url = Constant.BASE_URL + "/user/favorities";
+		String url = Constant.BASE_URL
+				+ "/user/favorities?page_num=1&page_size=60";
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
@@ -330,9 +335,9 @@ public class Tab3Page2_more extends Activity {
 	private void GotoDetail(int item) {
 		Tab3Page2ListData m_Tab3Page2ListData = (Tab3Page2ListData) ItemsListView
 				.getItemAtPosition(item);
-//		System.out.println("Item clicked. Position:" + item);
-//		app.MyToast(this, m_Tab3Page2ListData.Pic_name, Toast.LENGTH_LONG)
-//				.show();
+		// System.out.println("Item clicked. Position:" + item);
+		// app.MyToast(this, m_Tab3Page2ListData.Pic_name, Toast.LENGTH_LONG)
+		// .show();
 		Intent intent = new Intent();
 		// 1：电影，2：电视剧，3：综艺，4：视频
 		switch (Integer.valueOf(m_Tab3Page2ListData.prod_type)) {
@@ -342,7 +347,7 @@ public class Tab3Page2_more extends Activity {
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG,"Call Detail_Movie failed", ex);
+				Log.e(TAG, "Call Detail_Movie failed", ex);
 			}
 			break;
 		case 2:
@@ -351,7 +356,7 @@ public class Tab3Page2_more extends Activity {
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG,"Call Detail_TV failed", ex);
+				Log.e(TAG, "Call Detail_TV failed", ex);
 			}
 			break;
 		case 3:
@@ -360,7 +365,7 @@ public class Tab3Page2_more extends Activity {
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG,"Call Detail_Show failed", ex);
+				Log.e(TAG, "Call Detail_Show failed", ex);
 			}
 			break;
 		}

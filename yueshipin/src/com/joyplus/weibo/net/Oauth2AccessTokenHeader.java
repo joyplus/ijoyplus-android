@@ -16,40 +16,40 @@
  */
 package com.joyplus.weibo.net;
 
-
-
-
 /**
- * Encapsulation a http accessToken headers. the order of weiboParameters will not be changed.
- * Otherwise the signature should not be calculated right.
-
- * @author  ZhangJie (zhangjie2@staff.sina.com.cn)
+ * Encapsulation a http accessToken headers. the order of weiboParameters will
+ * not be changed. Otherwise the signature should not be calculated right.
+ * 
+ * @author ZhangJie (zhangjie2@staff.sina.com.cn)
  */
 public class Oauth2AccessTokenHeader extends HttpHeaderFactory {
 
-    @Override
-    public String getWeiboAuthHeader(String method, String url, WeiboParameters params,
-            String app_key, String app_secret, Token token) throws WeiboException {
-        if(token == null){
-            return null;
-        }
-        return "OAuth2 " + token.getToken();
-        
-    }
 	@Override
-	public WeiboParameters generateSignatureList(WeiboParameters bundle) {
-	    return null;
+	public String getWeiboAuthHeader(String method, String url,
+			WeiboParameters params, String app_key, String app_secret,
+			Token token) throws WeiboException {
+		if (token == null) {
+			return null;
+		}
+		return "OAuth2 " + token.getToken();
+
 	}
 
 	@Override
-	public String generateSignature(String data, Token token) throws WeiboException{
+	public WeiboParameters generateSignatureList(WeiboParameters bundle) {
+		return null;
+	}
+
+	@Override
+	public String generateSignature(String data, Token token)
+			throws WeiboException {
 		return "";
 	}
 
 	@Override
 	public void addAdditionalParams(WeiboParameters des, WeiboParameters src) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

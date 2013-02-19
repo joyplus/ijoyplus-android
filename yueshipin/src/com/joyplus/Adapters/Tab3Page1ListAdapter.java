@@ -29,6 +29,7 @@ public class Tab3Page1ListAdapter extends ArrayAdapter {
 	}
 
 	// 获取显示当前的view
+	@Override
 	public View getView(int i, View view, ViewGroup viewgroup) {
 		Integer integer = Integer.valueOf(i);
 		View view1 = (View) viewMap.get(integer);
