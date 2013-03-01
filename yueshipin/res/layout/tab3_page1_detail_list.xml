@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout1"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+	android:descendantFocusability="blocksDescendants">
 
         <ImageView
             android:id="@+id/imageView_line"
@@ -36,14 +37,13 @@
         android:text="9f9f9f"
         android:textColor="#9f9f9f"
         android:textSize="13dip"/>
-        <ImageView
+        <com.joyplus.widget.DontPressWithParentButton
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
-            android:background="@drawable/tab3_page1_icon_see"
-            android:gravity="center_vertical" />
+            android:background="@drawable/tab3_page1_icon_see"/>
 
 </RelativeLayout>

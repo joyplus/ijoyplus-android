@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#F2F2F2"
-    android:id="@+id/parent" >
+    android:background="#F2F2F2" >
+
+    <LinearLayout
+        android:id="@+id/none_net"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/none_net"
+        android:visibility="gone" >
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progress"
@@ -291,10 +299,166 @@
                         android:textSize="12dp" />
                 </LinearLayout>
 
-                <RelativeLayout
+                <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="11dp" >
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" >
+
+                        <Button
+                            android:id="@+id/tv_button4"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button5"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button6"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button7"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button8"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" >
+
+                        <Button
+                            android:id="@+id/tv_button9"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button10"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button11"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button12"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button13"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" >
+
+                        <Button
+                            android:id="@+id/tv_button14"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button15"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button16"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button17"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+
+                        <Button
+                            android:id="@+id/tv_button18"
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/tv_play_btn"
+                            android:onClick="OnClickTVPlay"
+                            android:text="01" />
+                    </TableRow>
+                </TableLayout>
+                <!--
+                RelativeLayout
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_marginTop="11dp" >
 
                     <Button
                         android:id="@+id/tv_button4"
@@ -455,6 +619,7 @@
                         android:onClick="OnClickTVPlay"
                         android:text="01" />
                 </RelativeLayout>
+                -->
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -523,6 +688,29 @@
                         android:maxLines="4"
                         android:onClick="OnClickContent"
                         android:text="简介内容加载中..." />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="16dp"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/imageView_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:src="@drawable/detail_movie_comment" />
+
+                <LinearLayout
+                    android:id="@+id/Layout_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/detail_movie_comments"
+                    android:orientation="vertical" >
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

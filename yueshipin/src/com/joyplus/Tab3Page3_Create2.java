@@ -143,7 +143,7 @@ public class Tab3Page3_Create2 extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (json == null) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -268,28 +268,31 @@ public class Tab3Page3_Create2 extends Activity {
 		case 1:
 			intent.setClass(this, Detail_Movie.class);
 			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
+			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e("Tab1", "Call Detail_Movie failed", ex);
+				Log.e(TAG, "Call Detail_Movie failed", ex);
 			}
 			break;
 		case 2:
 			intent.setClass(this, Detail_TV.class);
 			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
+			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e("Tab1", "Call Detail_TV failed", ex);
+				Log.e(TAG, "Call Detail_TV failed", ex);
 			}
 			break;
 		case 3:
 			intent.setClass(this, Detail_Show.class);
 			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
+			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
-				Log.e("Tab1", "Call Detail_Show failed", ex);
+				Log.e(TAG, "Call Detail_Show failed", ex);
 			}
 			break;
 		}
@@ -350,6 +353,7 @@ public class Tab3Page3_Create2 extends Activity {
 		} else {
 
 			// ajax error, show error code
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR) 
 			app.MyToast(this, getResources().getString(R.string.networknotwork));
 		}
 	}

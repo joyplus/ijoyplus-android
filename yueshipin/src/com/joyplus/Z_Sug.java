@@ -77,6 +77,7 @@ public class Z_Sug extends Activity {
 		} else {
 
 			// ajax error, show error code
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR) 
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
 		}

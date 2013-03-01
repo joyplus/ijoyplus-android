@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/downloadlayer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/download_bg"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp" >
+
+        <Button
+            android:id="@+id/download_prevbtn"
+            android:layout_width="36dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/download_prevbtn" />
+
+        <Button
+            android:id="@+id/download_btn_page1"
+            android:layout_width="54dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="40dp"
+            android:background="@android:color/transparent"
+            android:text="01" />
+
+        <Button
+            android:id="@+id/download_btn_page2"
+            android:layout_width="54dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="98dp"
+            android:background="@android:color/transparent"
+            android:text="01" />
+
+        <Button
+            android:id="@+id/download_btn_page3"
+            android:layout_width="54dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="156dp"
+            android:background="@android:color/transparent"
+            android:text="01" />
+
+        <Button
+            android:id="@+id/download_btn_page4"
+            android:layout_width="54dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="212dp"
+            android:background="@android:color/transparent"
+            android:text="01" />
+
+        <Button
+            android:id="@+id/download_nextbtn"
+            android:layout_width="36dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="260dp"
+            android:background="@drawable/download_nextbtn" />
+    </RelativeLayout>
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="85dp" >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

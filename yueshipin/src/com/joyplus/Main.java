@@ -24,6 +24,8 @@ import android.widget.TabHost;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengUpdateAgent;
 
 public class Main extends TabActivity {
 
@@ -45,6 +47,7 @@ public class Main extends TabActivity {
 		// application'll shutdown
 		app = (App) getApplicationContext();
 		aq = new AQuery(this);
+		ReadLocalAppKey();
 		CheckLogin();
 		setupIntent();
 	}
@@ -155,11 +158,18 @@ public class Main extends TabActivity {
 		builder.show();
 
 	}
-
+	
+	public void ReadLocalAppKey() {
+		// online 获取APPKEY
+		MobclickAgent.updateOnlineConfig(this);
+		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
+		if (OnLine_Appkey != null) {
+			Constant.APPKEY = OnLine_Appkey;
+		}
+	}
 	public boolean CheckLogin() {
 		String UserInfo = null;
-		//UserInfo = app.GetServiceData("UserInfo");
-
+		UserInfo = app.GetServiceData("UserInfo");
 		if (UserInfo == null) {
 			// 1. 在客户端生成一个唯一的UUID
 			String macAddress = null;
@@ -189,36 +199,9 @@ public class Main extends TabActivity {
 			JSONObject json;
 			try {
 				json = new JSONObject(UserInfo);
-				// edited by yyc
-				/*
-				 * if(json.getString("user_id").trim()==null) { // 1.
-				 * 在客户端生成一个唯一的UUID String macAddress = null; WifiManager wifiMgr
-				 * = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-				 * WifiInfo info = (null == wifiMgr ? null : wifiMgr
-				 * .getConnectionInfo()); if (info != null) { macAddress =
-				 * info.getMacAddress(); // 2. 通过调用 service
-				 * account/generateUIID把UUID传递到服务器 String url =
-				 * Constant.BASE_URL + "account/generateUIID";
-				 * 
-				 * Map<String, Object> params = new HashMap<String, Object>();
-				 * params.put("uiid", macAddress); params.put("device_type",
-				 * "Android");
-				 * 
-				 * AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-				 * cb.header("User-Agent",
-				 * "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2"
-				 * ); cb.header("app_key", Constant.APPKEY);
-				 * 
-				 * cb.params(params).url(url).type(JSONObject.class)
-				 * .weakHandler(this, "CallServiceResult");
-				 * aq.id(R.id.ProgressText).visible();
-				 * aq.progress(R.id.progress).ajax(cb); }
-				 */
-				// else
-				// {
-				app.UserID = json.getString("user_id").trim();
-				// }
-				// }
+
+				app.UserID = json.getString("id").trim();
+
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -242,9 +225,11 @@ public class Main extends TabActivity {
 
 		} else {
 			// ajax error, show error code
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
+			}
 			//解决没有网络时程序不能关闭的问题
 			//finish();
 		}

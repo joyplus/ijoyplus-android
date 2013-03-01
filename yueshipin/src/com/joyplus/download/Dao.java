@@ -38,13 +38,13 @@ public class Dao {
 	/**
 	 * 查看数据库中是否有数据
 	 */
-	public synchronized boolean isHasInfors(String prod_id,String my_index) {
+	public synchronized boolean isHasInfors(String prod_id, String my_index) {
 		SQLiteDatabase database = getConnection();
 		int count = -1;
 		Cursor cursor = null;
 		try {
 			String sql = "select count(*)  from download_info where prod_id=? and my_index=?";
-			cursor = database.rawQuery(sql, new String[] {prod_id,my_index});
+			cursor = database.rawQuery(sql, new String[] { prod_id, my_index });
 			if (cursor.moveToFirst()) {
 				count = cursor.getInt(0);
 			}
@@ -60,7 +60,7 @@ public class Dao {
 		}
 		return count == 0;
 	}
-	
+
 	/**
 	 * 查看数据库中是否有正在下载的数据
 	 */
@@ -70,7 +70,7 @@ public class Dao {
 		Cursor cursor = null;
 		try {
 			String sql = "select count(*)  from download_info where download_state=?";
-			cursor = database.rawQuery(sql, new String[] {download_state});
+			cursor = database.rawQuery(sql, new String[] { download_state });
 			if (cursor.moveToFirst()) {
 				count = cursor.getInt(0);
 			}
@@ -87,15 +87,18 @@ public class Dao {
 		return count == 0;
 	}
 	
+	/*
+	 * 保存缓存记录
+	 */
 	public synchronized void saveInfos(List<DownloadInfo> infos) {
 		SQLiteDatabase database = getConnection();
 		try {
 			for (DownloadInfo info : infos) {
 				String sql = "insert into download_info(compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state) values (?,?,?,?,?,?,?,?)";
-				Object[] bindArgs = { info.getCompeleteSize(), info.getFileSize(),
-						info.getProdId(), info.getIndex(),
-						info.getUrl() ,info.getPoster(),
-						info.getName(),info.getState()};
+				Object[] bindArgs = { info.getCompeleteSize(),
+						info.getFileSize(), info.getProdId(), info.getIndex(),
+						info.getUrl(), info.getPoster(), info.getName(),
+						info.getState() };
 				database.execSQL(sql, bindArgs);
 			}
 		} catch (Exception e) {
@@ -107,16 +110,17 @@ public class Dao {
 		}
 	}
 	
-	public synchronized void InsertOneInfo(DownloadInfo info)
-	{
+	/*
+	 * 插入一条记录
+	 */
+	public synchronized void InsertOneInfo(DownloadInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
-				String sql = "insert into download_info(compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state) values (?,?,?,?,?,?,?,?)";
-				Object[] bindArgs = { info.getCompeleteSize(), info.getFileSize(),
-						info.getProdId(), info.getIndex(),
-						info.getUrl() ,info.getPoster(),
-						info.getName(),info.getState()};
-				database.execSQL(sql, bindArgs);
+			String sql = "insert into download_info(compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state) values (?,?,?,?,?,?,?,?)";
+			Object[] bindArgs = { info.getCompeleteSize(), info.getFileSize(),
+					info.getProdId(), info.getIndex(), info.getUrl(),
+					info.getPoster(), info.getName(), info.getState() };
+			database.execSQL(sql, bindArgs);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -125,19 +129,24 @@ public class Dao {
 			}
 		}
 	}
-
-	public synchronized List<DownloadInfo> getInfos(String prod_id,String my_index) {
+	
+	/*
+	 * 获取某一个记录,返回一个DownloadInfo list类型
+	 */
+	public synchronized List<DownloadInfo> getInfos(String prod_id,
+			String my_index) {
 		List<DownloadInfo> list = new ArrayList<DownloadInfo>();
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
 			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info where prod_id=? and my_index=?";
-			cursor = database.rawQuery(sql, new String[] { prod_id,my_index});
+			cursor = database.rawQuery(sql, new String[] { prod_id, my_index });
 			while (cursor.moveToNext()) {
 				DownloadInfo info = new DownloadInfo(cursor.getInt(0),
-						cursor.getInt(1), cursor.getString(2), cursor.getString(3),
-						cursor.getString(4),cursor.getString(5),
-						cursor.getString(6),cursor.getString(7));
+						cursor.getInt(1), cursor.getString(2),
+						cursor.getString(3), cursor.getString(4),
+						cursor.getString(5), cursor.getString(6),
+						cursor.getString(7));
 				list.add(info);
 			}
 		} catch (Exception e) {
@@ -152,19 +161,19 @@ public class Dao {
 		}
 		return list;
 	}
-	
-	public synchronized DownloadInfo getOneInfo(String prod_id,String my_index) {
+
+	public synchronized DownloadInfo getOneInfo(String prod_id, String my_index) {
 		DownloadInfo info = null;
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
 			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info where prod_id=? and my_index=?";
-			cursor = database.rawQuery(sql, new String[] { prod_id,my_index});
+			cursor = database.rawQuery(sql, new String[] { prod_id, my_index });
 			while (cursor.moveToNext()) {
 				info = new DownloadInfo(cursor.getInt(0), cursor.getInt(1),
 						cursor.getString(2), cursor.getString(3),
-						cursor.getString(4),cursor.getString(5),
-						cursor.getString(6),cursor.getString(7));
+						cursor.getString(4), cursor.getString(5),
+						cursor.getString(6), cursor.getString(7));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -179,18 +188,21 @@ public class Dao {
 		return info;
 	}
 	
+	/*
+	 * 获取某一个状态的某一条记录
+	 */
 	public synchronized DownloadInfo getOneStateInfo(String download_state) {
 		DownloadInfo info = null;
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
 			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info where download_state=?";
-			cursor = database.rawQuery(sql, new String[] { download_state});
+			cursor = database.rawQuery(sql, new String[] { download_state });
 			while (cursor.moveToNext()) {
 				info = new DownloadInfo(cursor.getInt(0), cursor.getInt(1),
 						cursor.getString(2), cursor.getString(3),
-						cursor.getString(4),cursor.getString(5),
-						cursor.getString(6),cursor.getString(7));
+						cursor.getString(4), cursor.getString(5),
+						cursor.getString(6), cursor.getString(7));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -204,20 +216,23 @@ public class Dao {
 		}
 		return info;
 	}
-	
-	public synchronized List<DownloadInfo> getDownloadInfos()
-	{
+
+	/*
+	 * 返回数据库中所有的数据
+	 */
+	public synchronized List<DownloadInfo> getDownloadInfos() {
 		List<DownloadInfo> list = new ArrayList<DownloadInfo>();
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
 			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info";
-			cursor = database.rawQuery(sql,null);
+			cursor = database.rawQuery(sql, null);
 			while (cursor.moveToNext()) {
 				DownloadInfo info = new DownloadInfo(cursor.getInt(0),
-						cursor.getInt(1), cursor.getString(2), cursor.getString(3),
-						cursor.getString(4),cursor.getString(5),
-						cursor.getString(6),cursor.getString(7));
+						cursor.getInt(1), cursor.getString(2),
+						cursor.getString(3), cursor.getString(4),
+						cursor.getString(5), cursor.getString(6),
+						cursor.getString(7));
 				list.add(info);
 			}
 		} catch (Exception e) {
@@ -232,8 +247,70 @@ public class Dao {
 		}
 		return list;
 	}
-	
-	public synchronized void updataInfos(int compeleteSize,String prod_id,String my_index) {
+
+	// 根据prod_id进行分组
+	public synchronized List<DownloadInfo> getDownloadInfosGroup() {
+		List<DownloadInfo> list = new ArrayList<DownloadInfo>();
+		SQLiteDatabase database = getConnection();
+		Cursor cursor = null;
+		try {
+			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info group by prod_id";
+			cursor = database.rawQuery(sql, null);
+			while (cursor.moveToNext()) {
+				DownloadInfo info = new DownloadInfo(cursor.getInt(0),
+						cursor.getInt(1), cursor.getString(2),
+						cursor.getString(3), cursor.getString(4),
+						cursor.getString(5), cursor.getString(6),
+						cursor.getString(7));
+				list.add(info);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+			if (null != cursor) {
+				cursor.close();
+			}
+		}
+		return list;
+	}
+
+	// 获取某一个prod_id的所有数据,通常用于电视剧和节目
+	public synchronized List<DownloadInfo> getInfosOfProd_id(String prod_id) {
+		List<DownloadInfo> list = new ArrayList<DownloadInfo>();
+		SQLiteDatabase database = getConnection();
+		Cursor cursor = null;
+		try {
+			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info where prod_id=?";
+			cursor = database.rawQuery(sql, new String[] { prod_id });
+			while (cursor.moveToNext()) {
+				DownloadInfo info = new DownloadInfo(cursor.getInt(0),
+						cursor.getInt(1), cursor.getString(2),
+						cursor.getString(3), cursor.getString(4),
+						cursor.getString(5), cursor.getString(6),
+						cursor.getString(7));
+				list.add(info);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+			if (null != cursor) {
+				cursor.close();
+			}
+		}
+		return list;
+	}
+
+	/*
+	 * 更新某一个下载记录下载了多少
+	 */
+	public synchronized void updataInfos(int compeleteSize, String prod_id,
+			String my_index) {
 		SQLiteDatabase database = getConnection();
 		try {
 			String sql = "update download_info set compeleteSize=? where prod_id=? and my_index=?";
@@ -247,8 +324,12 @@ public class Dao {
 			}
 		}
 	}
-	
-	public synchronized void updataInfoState(String download_state,String prod_id,String my_index) {
+
+	/*
+	 * 更新某一条下载记录的状态
+	 */
+	public synchronized void updataInfoState(String download_state,
+			String prod_id, String my_index) {
 		SQLiteDatabase database = getConnection();
 		try {
 			String sql = "update download_info set download_state=? where prod_id=? and my_index=?";
@@ -262,11 +343,15 @@ public class Dao {
 			}
 		}
 	}
-	
-	public synchronized void delete(String prod_id,String my_index) {
+
+	/*
+	 * 删除某一个记录
+	 */
+	public synchronized void delete(String prod_id, String my_index) {
 		SQLiteDatabase database = getConnection();
 		try {
-			database.delete("download_info", "prod_id=? and my_index=?", new String[] { prod_id,my_index});
+			database.delete("download_info", "prod_id=? and my_index=?",
+					new String[] { prod_id, my_index });
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

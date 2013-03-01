@@ -38,7 +38,6 @@ public class Detail_BangDan extends Activity implements
 	private String BangDan_id = null;
 	private String BangDan_name = null;
 
-	private int Fromepage;
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private BangDanListAdapter BangDanAdapter;
@@ -108,9 +107,10 @@ public class Detail_BangDan extends Activity implements
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (json == null) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(this, getResources().getString(R.string.networknotwork));
+			aq.id(R.id.none_net).visible();
 			return;
 		}
 		try {
@@ -172,6 +172,7 @@ public class Detail_BangDan extends Activity implements
 		case 1:
 			intent.setClass(this, Detail_Movie.class);
 			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
+			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
@@ -181,6 +182,7 @@ public class Detail_BangDan extends Activity implements
 		case 2:
 			intent.setClass(this, Detail_TV.class);
 			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
+			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {
@@ -190,6 +192,7 @@ public class Detail_BangDan extends Activity implements
 		case 3:
 			intent.setClass(this, Detail_Show.class);
 			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
+			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {

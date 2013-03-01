@@ -8,13 +8,14 @@ import com.joyplus.R;
 import com.joyplus.R.id;
 
 import android.content.Context;
+import android.text.TextPaint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -67,8 +68,7 @@ public class DownLoadAdapter extends BaseAdapter{
 			holder.resouceDownloadState = (TextView)convertView.findViewById(R.id.download_state);
 			holder.resourceImage = (ImageView)convertView.findViewById(R.id.movieImageview);
 			holder.resourceDownProgress =(ProgressBar)convertView.findViewById(R.id.downloadprogress);
-			holder.resourcePercentDown = (TextView)convertView.findViewById(R.id.precentDownload);
-			
+			holder.resourcePercentDown = (TextView)convertView.findViewById(R.id.precentDownload); 
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -83,26 +83,34 @@ public class DownLoadAdapter extends BaseAdapter{
 			String posterurl = info.getPoster();
 			holder.resourceDownloadName.setText(info.getName());
 			//aq.id(R.id.downloadfilename).text(info.getName());
-			if(info.getState().equalsIgnoreCase("wait"))
+			if(info.getIndex().equalsIgnoreCase("movie"))
 			{
-				holder.resouceDownloadState.setText("等待下载");
+				if(info.getState().equalsIgnoreCase("wait"))
+				{
+					holder.resouceDownloadState.setText("等待下载");
+				}
+				else if(info.getState().equalsIgnoreCase("downloading"))
+				{
+					holder.resouceDownloadState.setText("正在下载");
+				}
+				else if(info.getState().equalsIgnoreCase("stop"))
+				{
+					holder.resouceDownloadState.setText("暂停下载");
+				}
+				holder.resourceDownProgress.setMax(MAX);
+				holder.resourceDownProgress.setSecondaryProgress((int) (completesize*MAX/filesize));
+				holder.resourcePercentDown.setText((percent)+"%");
+				if(info.getCompeleteSize()==info.getFileSize())
+				{
+					holder.resouceDownloadState.setText("");
+					holder.resourcePercentDown.setText("");
+					aqtemp.id(R.id.downloadprogress).gone();
+				}
 			}
-			else if(info.getState().equalsIgnoreCase("downloading"))
+			else
 			{
-				holder.resouceDownloadState.setText("正在下载");
-			}
-			else if(info.getState().equalsIgnoreCase("stop"))
-			{
-				holder.resouceDownloadState.setText("暂停下载");
-			}
-			holder.resourceDownProgress.setMax(MAX);
-			holder.resourceDownProgress.setSecondaryProgress((int) (completesize*MAX/filesize));
-			holder.resourcePercentDown.setText((percent)+"%");
-			if(info.getCompeleteSize()==info.getFileSize())
-			{
-				holder.resouceDownloadState.setText("");
-				holder.resourcePercentDown.setText("");
 				aqtemp.id(R.id.downloadprogress).gone();
+				aqtemp.id(R.id.state_layer).gone();
 			}
 			aqtemp.id(R.id.movieImageview).image(posterurl,true,true);
 		}

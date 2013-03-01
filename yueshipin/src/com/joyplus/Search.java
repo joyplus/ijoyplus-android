@@ -1,6 +1,7 @@
 package com.joyplus;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +49,6 @@ public class Search extends Activity implements
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private SearchListAdapter SearchAdapter;
-	JSONObject jsontemp;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -63,32 +63,11 @@ public class Search extends Activity implements
 		topic_id = intent.getStringExtra("topic_id");
 		type = intent.getStringExtra("type");
 		topic_id_ready_have = intent.getStringExtra("topic_id_ready_have");
-		if (isNetworkAvailable()==false) {
+		if (app.isNetworkAvailable()==false) {
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
 		}
 	}
-	
-	// NETWORK
-		public boolean isNetworkAvailable() {
-			Context context = getApplicationContext();
-			ConnectivityManager connect = (ConnectivityManager) context
-					.getSystemService(Context.CONNECTIVITY_SERVICE);
-			if (connect == null) {
-				return false;
-			} else// get all network info
-			{
-				NetworkInfo[] info = connect.getAllNetworkInfo();
-				if (info != null) {
-					for (int i = 0; i < info.length; i++) {
-						if (info[i].getState() == NetworkInfo.State.CONNECTED) {
-							return true;
-						}
-					}
-				}
-			}
-			return false;
-		}
 	
 	public void OnClickAdd(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
@@ -104,7 +83,11 @@ public class Search extends Activity implements
 	}
 
 	public void OnClickSearch(View v) {
-		String search_word = aq.id(R.id.editText1).getText().toString();
+		String search_word =null;
+		if(aq.id(R.id.editText1).getText()!=null)
+		{
+			search_word = aq.id(R.id.editText1).getText().toString().trim();
+		}
 		if (search_word.length() > 0) {
 			// clear
 			if (dataStruct != null && dataStruct.size() > 0) {
@@ -117,13 +100,10 @@ public class Search extends Activity implements
 					.getSystemService(Context.INPUT_METHOD_SERVICE);
 			aq.id(R.id.editText1).getTextView().setCursorVisible(false);// 失去光标
 			imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
 			GetServiceData(search_word);
 		} else {
 			app.MyToast(this, "请输入你要搜索的内容.");
-
 		}
-
 	}
 
 	public void OnClickTab1TopRight(View v) {
@@ -133,12 +113,6 @@ public class Search extends Activity implements
 	}
 
 	public void OnClickFinished(View v) {
-		// 数据是使用Intent返回
-		// Intent intent = new Intent();
-		// 把返回数据存入Intent
-		// intent.putExtra("result", "My name is linjiqin");
-		// 设置返回数据
-		// this.setResult(RESULT_OK, intent);
 		finish();
 
 	}
@@ -168,9 +142,7 @@ public class Search extends Activity implements
 	}
 
 	public void GetVideoMovies() {
-		String m_j = null;
 		dataStruct = new ArrayList();
-
 		NotifyDataAnalysisFinished();
 		if (m_ReturnSearch.results == null
 				|| m_ReturnSearch.results.length == 0) {
@@ -233,10 +205,19 @@ public class Search extends Activity implements
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		aq.id(R.id.ProgressText).gone();
-		jsontemp = json;
-		if (json == null) {
-			app.MyToast(aq.getContext(),
-					getResources().getString(R.string.networknotwork));
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
+			if(app.isNetworkAvailable())
+			{
+				aq.id(R.id.editText1).getTextView().setCursorVisible(true);
+				aq.id(R.id.listView1).gone();
+				aq.id(R.id.textViewNoResult).visible();
+			}
+			else
+			{
+				app.MyToast(aq.getContext(),
+						getResources().getString(R.string.networknotwork));
+				aq.id(R.id.editText1).getTextView().setCursorVisible(true);
+			}
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
@@ -247,11 +228,11 @@ public class Search extends Activity implements
 			// 创建数据源对象
 			GetVideoMovies();
 
-			aq.id(R.id.editText1).getTextView().setCursorVisible(true);// 光标
+			aq.id(R.id.editText1).getTextView().setCursorVisible(true);
 			if (topic_id != null) {
-				aq.id(R.id.Tab1TopRightImage).gone();
+				aq.id(R.id.Tab1TopRightImage).background(R.drawable.tab3_p3_c2_top_right);
 				aq.id(R.id.editText1).gone();
-				aq.id(R.id.Tab1TopRightImage2).visible();
+//				aq.id(R.id.Tab1TopRightImage2).visible();
 				aq.id(R.id.imageView1).visible();
 			}
 		} catch (JsonParseException e) {
@@ -269,7 +250,6 @@ public class Search extends Activity implements
 
 	// 数据更新
 	public void NotifyDataAnalysisFinished() {
-		Toast toast;
 		if (dataStruct != null && ItemsListView != null) {
 			SearchListAdapter listviewdetailadapter = getAdapter();
 			ItemsListView.setAdapter(listviewdetailadapter);
@@ -309,11 +289,6 @@ public class Search extends Activity implements
 		SearchListData m_SearchListData = (SearchListData) ItemsListView
 				.getItemAtPosition(i);
 		if (topic_id != null) {
-			// AddVideo
-			// dataStruct.remove(i);
-			// SearchAdapter.notifyDataSetChanged();
-			// ItemsListView.invalidate();
-			// view.setVisibility(View.GONE);
 			ImageView m_image = (ImageView) view.findViewById(R.id.button1);
 			m_image.setImageResource(R.drawable.search_addon_icon);
 			view.setBackgroundColor(color.darker_gray);
@@ -330,6 +305,7 @@ public class Search extends Activity implements
 			case 1:
 				intent.setClass(this, Detail_Movie.class);
 				intent.putExtra("prod_id", m_SearchListData.Pic_ID);
+				intent.putExtra("prod_name", m_SearchListData.Pic_name);
 				try {
 					startActivity(intent);
 				} catch (ActivityNotFoundException ex) {
@@ -339,6 +315,7 @@ public class Search extends Activity implements
 			case 2:
 				intent.setClass(this, Detail_TV.class);
 				intent.putExtra("prod_id", m_SearchListData.Pic_ID);
+				intent.putExtra("prod_name", m_SearchListData.Pic_name);
 				try {
 					startActivity(intent);
 				} catch (ActivityNotFoundException ex) {
@@ -348,6 +325,7 @@ public class Search extends Activity implements
 			case 3:
 				intent.setClass(this, Detail_Show.class);
 				intent.putExtra("prod_id", m_SearchListData.Pic_ID);
+				intent.putExtra("prod_name", m_SearchListData.Pic_name);
 				try {
 					startActivity(intent);
 				} catch (ActivityNotFoundException ex) {
@@ -364,7 +342,10 @@ public class Search extends Activity implements
 
 	// InitListData
 	public void GetServiceData(String search_word) {
-		String url = Constant.BASE_URL + "search?keyword=" + search_word
+		/*
+		 * 搜索关键字如果有空格不会返回结果
+		 */
+		String url = Constant.BASE_URL + "search?keyword=" + URLEncoder.encode(search_word)
 				+ "&page_num=1&page_size=50";
 
 		Map<String, Object> params = new HashMap<String, Object>();

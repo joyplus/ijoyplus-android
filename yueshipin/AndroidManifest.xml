@@ -1,51 +1,49 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.joyplus"
-    android:versionCode="5"
-    android:versionName="0.9.5">
+    android:versionCode="8"
+    android:versionName="0.9.8alpha" >
 
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="9"/>
+        android:minSdkVersion="14"
+        android:targetSdkVersion="17" />
 
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" >
     </uses-permission>
-    <uses-permission android:name="android.permission.WRITE_APN_SETTINGS">
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" >
     </uses-permission>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE">
+    <uses-permission android:name="android.permission.READ_LOGS" >
     </uses-permission>
-    <uses-permission android:name="android.permission.READ_LOGS">
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
     </uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE">
+    <uses-permission android:name="android.permission.INTERNET" >
     </uses-permission>
-    <uses-permission android:name="android.permission.INTERNET">
-    </uses-permission>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
     <application
         android:name="com.joyplus.App"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:uiOptions="splitActionBarWhenNarrow">
+            android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
@@ -53,166 +51,195 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:uiOptions="splitActionBarWhenNarrow">
+            android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                 <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".Search"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Setting"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Z_About_us"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Z_About_mianzhe"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-        
         <activity
             android:name=".Z_Pingjia"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Z_Sug"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab1"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab2"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab2Page1"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab2Page2"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab2Page3"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab3"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab3Page1"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab3Page1_more"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab3Page2"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab3Page2_more"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab3Page3"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab3Page3_more"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Detail_BangDan"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Detail_Movie"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Detail_Show"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Detail_TV"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab3Page3_Create1"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Tab3Page3_Create2"
             android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.joyplus.Video_Cache"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar">
         </activity>
+
+        <activity
+            android:name="com.joyplus.Video_Cache_Detail"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar">
+        </activity>
+
         <activity
             android:name="com.joyplus.weibo.net.WeiboDialog2"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.joyplus.weibo.net.WeiboDialog"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name=".Sina_Share"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-         <activity android:name=".Video.MovieActivity"
-                android:label="@string/movie_view_label"
-                android:screenOrientation="landscape"
-                android:configChanges="keyboardHidden|orientation"
-                android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
-           
+         <activity
+            android:name=".Video.VideoPlayerActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
         </activity>
-        <activity android:name="com.umeng.fb.ui.SendFeedback"
-    android:windowSoftInputMode="adjustResize" />
-<activity android:name="com.umeng.fb.ui.FeedbackConversations" />
-<activity android:name="com.umeng.fb.ui.FeedbackConversation"
-    android:configChanges="keyboard" />
-<service            android:name="com.umeng.common.net.DownloadingService"        
+        <activity
+            android:name=".Video.InitActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name="com.umeng.fb.ui.SendFeedback"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name="com.umeng.fb.ui.FeedbackConversations" />
+        <activity
+            android:name="com.umeng.fb.ui.FeedbackConversation"
+            android:configChanges="keyboard" />
+
+        <service
+            android:name="com.umeng.common.net.DownloadingService"
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
-        <meta-data android:value="50937e6c5270151fc8000003" android:name="UMENG_APPKEY"></meta-data>
-		<meta-data android:value="a002001" android:name="UMENG_CHANNEL"/>
-    </application>
 
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="50937e6c5270151fc8000003" >
+        </meta-data>
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="a002001" />
+    </application>
 </manifest>

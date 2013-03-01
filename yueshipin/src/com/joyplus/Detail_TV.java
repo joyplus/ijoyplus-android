@@ -2,10 +2,12 @@ package com.joyplus;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -17,6 +19,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -24,15 +27,25 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.ViewGroup.LayoutParams;
+import android.widget.AbsListView;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AbsListView.OnScrollListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -41,11 +54,14 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
+import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
-import com.joyplus.Video.MovieActivity;
+import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.download.Dao;
+import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
-//import com.joyplus.download.LoadInfo;
 import com.joyplus.weibo.net.AccessToken;
 import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
@@ -58,23 +74,37 @@ public class Detail_TV extends Activity {
 	private String TAG = "Detail_TV";
 	private App app;
 	private ReturnProgramView m_ReturnProgramView = null;
+
 	private String prod_id = null;
+	private String prod_name = null;
 	private String PROD_SOURCE = null;
+	public String DOWNLOAD_SOURCE = null;
 	private String PROD_URI = null;
+	private String tv_url = null;
+	private String tv_source = null;
 	private int current_download_pagenum = 0;
-	private int page_num=0;
+	private int page_num = 0;
 	private int m_FavorityNum = 0;
 	private int m_SupportNum = 0;
+	public List<DownloadInfo> data;
 
 	private String uid = null;
 	private String token = null;
 	private String expires_in = null;
 
 	private String TV_String = null;
+
+	private ReturnProgramComments m_ReturnProgramComments = null;
+	private ScrollView mScrollView;
+	private int isLastisNext = 2;
+	private int mLastY = 0;
+
 	// added by yyc,in order to flag the playing tv's index btn
 	Drawable focuse = null;
 	Drawable normal = null;
 	Drawable press = null;
+	Drawable download_none = null;
+	Drawable download_been = null;
 	private PopupWindow downloadpopup = null;
 	ViewGroup popupview;
 
@@ -86,12 +116,34 @@ public class Detail_TV extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.detail_tv);
 		app = (App) getApplication();
+		aq = new AQuery(this);
+
 		Intent intent = getIntent();
 		prod_id = intent.getStringExtra("prod_id");
+		prod_name = intent.getStringExtra("prod_name");
+
+		aq.id(R.id.program_name).text(prod_name);
+
 		// modify by yyc
 		focuse = this.getResources().getDrawable(R.drawable.play_focuse);
 		normal = this.getResources().getDrawable(R.drawable.play_normal);
 		press = this.getResources().getDrawable(R.drawable.play_press);
+		mScrollView = (ScrollView) findViewById(R.id.scrollView1);
+		mScrollView.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					if (mLastY == mScrollView.getScrollY()) {
+						// TODO
+						if (mScrollView.getScrollY() != 0)
+							ShowMoreComments();
+					} else {
+						mLastY = mScrollView.getScrollY();
+					}
+				}
+				return false;
+			}
+		});
 		// ReadSettingData
 		SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
 				Context.MODE_PRIVATE);
@@ -107,13 +159,11 @@ public class Detail_TV extends Activity {
 			}
 		}
 
-		aq = new AQuery(this);
 		aq.id(R.id.textView9).gone();
 		aq.id(R.id.textView13).gone();
 		aq.id(R.id.scrollView1).gone();
 
 		InitTVButtom();
-		MobclickAgent.updateOnlineConfig(this);
 		if (prod_id != null)
 			GetServiceData();
 	}
@@ -167,6 +217,7 @@ public class Detail_TV extends Activity {
 			Weibo.getInstance().setAccessToken(accessToken);
 			// save access_token
 			app.SaveServiceData("Sina_Access_Token", token);
+			app.SaveServiceData("Sina_Access_UID", uid);
 			UploadSinaHeadAndScreen_nameUrl(token, uid);
 			app.MyToast(getApplicationContext(), "新浪微博已绑定");
 		}
@@ -264,7 +315,9 @@ public class Detail_TV extends Activity {
 		} else {
 
 			// ajax error, show error code
-			app.MyToast(this, getResources().getString(R.string.networknotwork));
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(this,
+						getResources().getString(R.string.networknotwork));
 		}
 	}
 
@@ -287,7 +340,9 @@ public class Detail_TV extends Activity {
 
 		} else {
 
-			app.MyToast(this, getResources().getString(R.string.networknotwork));
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(this,
+						getResources().getString(R.string.networknotwork));
 		}
 	}
 
@@ -296,7 +351,7 @@ public class Detail_TV extends Activity {
 			AlertDialog alertDialog = new AlertDialog.Builder(this).setMessage(
 					m_ReturnProgramView.tv.summary).create();
 			Window window = alertDialog.getWindow();
-			
+
 			WindowManager.LayoutParams lp = window.getAttributes();
 			lp.alpha = 0.6f;
 			window.setAttributes(lp);
@@ -326,6 +381,22 @@ public class Detail_TV extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+	}
+
+	// added by yyc,for sort the episodesArray
+	class EComparator implements Comparator {
+
+		@Override
+		public int compare(Object first, Object second) {
+			// TODO Auto-generated method stub
+			int first_name = Integer.parseInt(((EPISODES) first).name);
+			int second_name = Integer.parseInt(((EPISODES) second).name);
+			if (first_name - second_name < 0) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
 	}
 
 	public void InitData() {
@@ -386,17 +457,21 @@ public class Detail_TV extends Activity {
 					} else {
 						m_button.setBackgroundDrawable(normal);
 					}
+					if (m_ReturnProgramView.tv.episodes != null
+							&& m_ReturnProgramView.tv.episodes[i].video_urls != null
+							&& m_ReturnProgramView.tv.episodes[i].video_urls.length > 0) {
+						tv_url = m_ReturnProgramView.tv.episodes[i].video_urls[0].url;
 
+					}
+					if (m_ReturnProgramView.tv.episodes[i].down_urls != null
+							&& m_ReturnProgramView.tv.episodes[i].down_urls[0].urls.length > 0
+							&& m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url != null
+							&& app.IfSupportFormat(m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url)) {
+
+						tv_source = m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url;
+					}
 					// lost one tv
-					if (m_ReturnProgramView.tv.episodes[i].video_urls == null
-							&& m_ReturnProgramView.tv.episodes[i].down_urls == null)// one
-																					// prod_url
-																					// lost
-																					// set
-																					// the
-																					// button
-																					// disable
-					{
+					if (tv_url == null && tv_source == null) {
 						m_button.setEnabled(false);
 					} else {
 						m_button.setEnabled(true);
@@ -420,39 +495,67 @@ public class Detail_TV extends Activity {
 					&& m_ReturnProgramView.tv.episodes[0].video_urls != null
 					&& m_ReturnProgramView.tv.episodes[0].video_urls[0].url != null)
 				PROD_URI = m_ReturnProgramView.tv.episodes[0].video_urls[0].url;
-			for (i = 0; i < m_ReturnProgramView.tv.episodes.length; i++) {
-				if (m_ReturnProgramView.tv.episodes[i].down_urls != null) {
-					for (int k = 0; k < m_ReturnProgramView.tv.episodes[i].down_urls[0].urls.length; k++) {
-						if (m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[k].url != null
-								&& m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[k].file
-										.equalsIgnoreCase("MP4")
-								&& app.IfSupportFormat(m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[k].url)) {
-							PROD_SOURCE = m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[k].url;
-							break;
+
+			// if (m_ReturnProgramView.tv.episodes[0].down_urls != null
+			// && m_ReturnProgramView.tv.episodes[0].down_urls[0].urls.length >
+			// 0
+			// && m_ReturnProgramView.tv.episodes[0].down_urls[0].urls[0].url !=
+			// null)
+			// PROD_SOURCE =
+			// m_ReturnProgramView.tv.episodes[0].down_urls[0].urls[0].url;
+			if (m_ReturnProgramView.tv.episodes[0].down_urls != null) {
+				for (i = 0; i < m_ReturnProgramView.tv.episodes[0].down_urls.length; i++) {
+					for (int k = 0; k < m_ReturnProgramView.tv.episodes[0].down_urls[i].urls.length; k++) {
+						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[0].down_urls[i].urls[k];
+						if (urls != null) {
+							if (urls.url != null
+									&& app.IfSupportFormat(urls.url)) {
+								if (PROD_SOURCE == null
+										&& !app.IfIncludeM3U(urls.url))
+									PROD_SOURCE = urls.url.trim();
+								if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"mp4"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"flv"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"hd2"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"3gp"))
+									PROD_SOURCE = urls.url.trim();
+							}
+							if (DOWNLOAD_SOURCE == null && urls.file != null
+									&& app.IfSupportFormat(urls.url)
+									&& urls.file.trim().equalsIgnoreCase("mp4"))
+								DOWNLOAD_SOURCE = urls.url.trim();
+							if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
+								break;
 						}
-						break;
+						if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
+							break;
 					}
+				}
+
+				if (DOWNLOAD_SOURCE == null) {
+					aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
+					aq.id(R.id.button20).clickable(false);
+				}
+
+				if (m_ReturnProgramView.comments != null
+						&& m_ReturnProgramView.comments.length >= 1) {
+					ShowComments();
+				} else {
+					aq.id(R.id.imageView_comment).gone();
+					aq.id(R.id.Layout_comment).gone();
 				}
 			}
 		}
-
-	}
-
-	// added by yyc,for sort the episodesArray
-	public class EComparator implements Comparator {
-
-		@Override
-		public int compare(Object first, Object second) {
-			// TODO Auto-generated method stub
-			int first_name = Integer.parseInt(((EPISODES) first).name);
-			int second_name = Integer.parseInt(((EPISODES) second).name);
-			if (first_name - second_name < 0) {
-				return -1;
-			} else {
-				return 1;
-			}
-		}
-
 	}
 
 	public void OnClickImageView(View v) {
@@ -461,10 +564,11 @@ public class Detail_TV extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (json == null) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
+			aq.id(R.id.none_net).visible();
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
@@ -508,6 +612,7 @@ public class Detail_TV extends Activity {
 		aq.progress(R.id.progress).ajax(cb);
 
 	}
+
 	public void CallServiceFavorityResult(String url, JSONObject json,
 			AjaxStatus status) {
 
@@ -530,8 +635,9 @@ public class Detail_TV extends Activity {
 		} else {
 
 			// ajax error, show error code
-			app.MyToast(aq.getContext(),
-					getResources().getString(R.string.networknotwork));
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(aq.getContext(),
+						getResources().getString(R.string.networknotwork));
 		}
 
 	}
@@ -575,8 +681,9 @@ public class Detail_TV extends Activity {
 		} else {
 
 			// ajax error, show error code
-			app.MyToast(aq.getContext(),
-					getResources().getString(R.string.networknotwork));
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(aq.getContext(),
+						getResources().getString(R.string.networknotwork));
 		}
 
 	}
@@ -610,12 +717,13 @@ public class Detail_TV extends Activity {
 		cb.header("User-Agent",
 				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
 		cb.header("app_key", Constant.APPKEY);
-		//cb.header("user_id", app.UserID);
+		// cb.header("user_id", app.UserID);
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallServiceResultReportProblem");
 		aq.ajax(cb);
-		Toast.makeText(Detail_TV.this, "您反馈的问题已提交，我们会尽快处理，感谢您的支持！", Toast.LENGTH_LONG).show();
+		Toast.makeText(Detail_TV.this, "您反馈的问题已提交，我们会尽快处理，感谢您的支持！",
+				Toast.LENGTH_LONG).show();
 	}
 
 	public void OnClickPlay(View v) {
@@ -624,7 +732,27 @@ public class Detail_TV extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		CallVideoPlayActivity();
+		// write current_index to myTvSetting file
+		SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
+				Context.MODE_PRIVATE);
+		myPreference.edit().putString(prod_id, Integer.toString(current_index))
+				.commit();
+
+		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+			SaveToServer(1, PROD_SOURCE, 1);
+			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+			// GetVideoSource(0,PROD_SOURCE);
+
+		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+			SaveToServer(2, PROD_URI, 1);
+
+			Intent intent = new Intent();
+			intent.setAction("android.intent.action.VIEW");
+			Uri content_url = Uri.parse(PROD_URI);
+			intent.setData(content_url);
+			startActivity(intent);
+		}
+
 	}
 
 	// OnClickNext15
@@ -657,14 +785,7 @@ public class Detail_TV extends Activity {
 				}
 				// lost one tv
 				if (m_ReturnProgramView.tv.episodes[i].video_urls == null
-						&& m_ReturnProgramView.tv.episodes[i].down_urls == null)// one
-																				// prod_url
-																				// lost
-																				// set
-																				// the
-																				// button
-																				// disable
-				{
+						&& m_ReturnProgramView.tv.episodes[i].down_urls == null) {
 					m_button.setEnabled(false);
 				} else {
 					m_button.setEnabled(true);
@@ -722,12 +843,6 @@ public class Detail_TV extends Activity {
 				// lost one tv
 				if (m_ReturnProgramView.tv.episodes[i].video_urls == null
 						&& m_ReturnProgramView.tv.episodes[i].down_urls == null)// one
-																				// prod_url
-																				// lost
-																				// set
-																				// the
-																				// button
-																				// disable
 
 				{
 					m_button.setEnabled(false);
@@ -750,6 +865,7 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickTVPlay(View v) {
+
 		int index = Integer.parseInt(v.getTag().toString());
 
 		current_index = index;
@@ -766,55 +882,52 @@ public class Detail_TV extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
+
 		if (m_ReturnProgramView.tv.episodes != null
 				&& m_ReturnProgramView.tv.episodes[index].video_urls != null
-				&& m_ReturnProgramView.tv.episodes[index].video_urls.length>0)
-				//&& m_ReturnProgramView.tv.episodes[index].video_urls[0].url != null)
+				&& m_ReturnProgramView.tv.episodes[index].video_urls.length > 0)
 			PROD_URI = m_ReturnProgramView.tv.episodes[index].video_urls[0].url;
-		if (m_ReturnProgramView.tv.episodes[index].down_urls != null
-				&& m_ReturnProgramView.tv.episodes[index].down_urls[0].urls.length > 0
-				&& m_ReturnProgramView.tv.episodes[index].down_urls[0].urls[0].url != null
-				&& app.IfSupportFormat(m_ReturnProgramView.tv.episodes[index].down_urls[0].urls[0].url)) {
 
-			PROD_SOURCE = m_ReturnProgramView.tv.episodes[index].down_urls[0].urls[0].url;
-		}
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			// save to local
-			// prod_id|PROD_SOURCE | Pro_url|Pro_name|Pro_name1|Pro_time
-			int current = Integer.valueOf(v.getTag().toString().trim());
-			String datainfo = prod_id + "|" + "PROD_SOURCE" + "|"
-					+ URLEncoder.encode(PROD_SOURCE) + "|"
-					+ m_ReturnProgramView.tv.name + "|" + "第"
-					+ Integer.toString(current + 1) + "集" + "|" + "null" + "|2";
-			app.SavePlayData(prod_id, datainfo);
-
-			m_ReturnProgramView.tv.current_play = current;
-
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				File cachefile = new File(Constant.PATH_XML + "TV_data"
-						+ prod_id + ".json");
-				mapper.writeValue(cachefile, m_ReturnProgramView);
-			} catch (JsonGenerationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		PROD_SOURCE = null;
+		if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
+			for (int i = 0; i < m_ReturnProgramView.tv.episodes[index].down_urls.length; i++) {
+				for (int k = 0; k < m_ReturnProgramView.tv.episodes[index].down_urls[i].urls.length; k++) {
+					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[index].down_urls[i].urls[k];
+					if (urls != null) {
+						if (urls.url != null && app.IfSupportFormat(urls.url)) {
+							if (PROD_SOURCE == null
+									&& !app.IfIncludeM3U(urls.url))
+								PROD_SOURCE = urls.url.trim();
+							if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase("mp4"))
+								PROD_SOURCE = urls.url.trim();
+							else if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase("flv"))
+								PROD_SOURCE = urls.url.trim();
+							else if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase("hd2"))
+								PROD_SOURCE = urls.url.trim();
+							else if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase("3gp"))
+								PROD_SOURCE = urls.url.trim();
+						}
+						if (PROD_SOURCE != null)
+							break;
+					}
+					if (PROD_SOURCE != null)
+						break;
+				}
 			}
+		}
 
-			CallVideoPlay(PROD_SOURCE);
+		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+
+			SaveToServer(1, PROD_SOURCE, index + 1);
+			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+			// GetVideoSource(index,PROD_SOURCE);
+
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-			// save to local
-			// prod_id|PROD_URI | Pro_url|Pro_name|Pro_name1|Pro_time
-			String datainfo = prod_id + "|" + "PROD_URI" + "|"
-					+ URLEncoder.encode(PROD_URI) + "|"
-					+ m_ReturnProgramView.tv.name + "|" + "第"
-					+ v.getTag().toString() + "集" + "|" + "null" + "|2";
-			app.SavePlayData(prod_id, datainfo);
+			SaveToServer(2, PROD_URI, index + 1);
 
 			Intent intent = new Intent();
 			intent.setAction("android.intent.action.VIEW");
@@ -822,25 +935,18 @@ public class Detail_TV extends Activity {
 			intent.setData(content_url);
 			startActivity(intent);
 		}
+
 	}
 
 	//
 	public void CallVideoPlayActivity() {
+
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			// save to local
-			// prod_id|PROD_SOURCE | Pro_url|Pro_name|Pro_name1|Pro_time
-			String datainfo = prod_id + "|" + "PROD_SOURCE" + "|"
-					+ URLEncoder.encode(PROD_SOURCE) + "|"
-					+ m_ReturnProgramView.tv.name + "|" + "null" + "|" + "null"
-					+ "|2";
-			app.SavePlayData(prod_id, datainfo);
-			CallVideoPlay(PROD_SOURCE);
+
+			GetVideoSource(0, PROD_SOURCE);
+
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-			String datainfo = prod_id + "|" + "PROD_URI" + "|"
-					+ URLEncoder.encode(PROD_URI) + "|"
-					+ m_ReturnProgramView.tv.name + "|" + "null" + "|" + "null"
-					+ "|2";
-			app.SavePlayData(prod_id, datainfo);
+			GetVideoSource(1, PROD_URI);
 
 			Intent intent = new Intent();
 			intent.setAction("android.intent.action.VIEW");
@@ -850,75 +956,388 @@ public class Detail_TV extends Activity {
 		}
 	}
 
-	public void CallVideoPlay(String m_uri) {
+	public void ShowComments() {
+		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Layout_comment);
+		if (m_ReturnProgramView.comments != null) {
+			for (int i = 0; i < m_ReturnProgramView.comments.length; i++) {
+				RelativeLayout subLayout = new RelativeLayout(this);
 
-		Intent intent = new Intent(this, MovieActivity.class);
-		intent.putExtra("prod_url", m_uri);
-		intent.putExtra("prod_id", prod_id);
+				RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+				params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
+						RelativeLayout.TRUE);
+
+				TextView valueName = new TextView(this);
+				// valueName.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
+				valueName.setTextColor(Color.BLACK);
+				if (!m_ReturnProgramView.comments[i].owner_name
+						.equalsIgnoreCase("EMPTY"))
+					valueName
+							.setText(m_ReturnProgramView.comments[i].owner_name
+									+ ":");
+				else
+					valueName.setText("网络用户:");
+				subLayout.addView(valueName, params1);
+
+				RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+				params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
+						RelativeLayout.TRUE);
+
+				TextView valueTime = new TextView(this);
+				valueTime.setText(m_ReturnProgramView.comments[i].create_date
+						.replaceAll(" 00:00:00", ""));
+				subLayout.addView(valueTime, params2);
+
+				LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+				params3.topMargin = 10;
+
+				linearLayout.addView(subLayout, params3);
+
+				TextView valueContent = new TextView(this);
+				valueContent.setText(m_ReturnProgramView.comments[i].content);
+				linearLayout.addView(valueContent);
+
+				if (i != m_ReturnProgramView.comments.length - 1) {
+					LinearLayout.LayoutParams params4 = new LinearLayout.LayoutParams(
+							android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+							android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+					params4.topMargin = 10;
+
+					ImageView m_image = new ImageView(this);
+					m_image.setBackgroundResource(R.drawable.tab1_divider);
+
+					linearLayout.addView(m_image, params4);
+				}
+			}
+		}
+	}
+
+	public void ShowMoreComments() {
+		/*
+		 * app_key required string 申请应用时分配的AppKey。 prod_id required string 节目id
+		 * page_num = 需要请求的页码（可选），默认为1 page_size = 每一页包含的记录数（可选），默认为10
+		 */
+		String url = Constant.BASE_URL + "program/comments" + "?prod_id="
+				+ prod_id + "&page_num=" + Integer.toString(isLastisNext)
+				+ "&page_size=10";
+
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.url(url).type(JSONObject.class)
+				.weakHandler(this, "MoreCommentsResult");
+
+		cb.header("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+		cb.header("app_key", Constant.APPKEY);
+		cb.header("user_id", app.UserID);
+
+		aq.id(R.id.ProgressText).visible();
+		aq.progress(R.id.progress).ajax(cb);
+	}
+
+	public void MoreCommentsResult(String url, JSONObject json,
+			AjaxStatus status) {
+		if (json == null) {
+			return;
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			if (isLastisNext > 2)
+				m_ReturnProgramComments = null;
+			m_ReturnProgramComments = mapper.readValue(json.toString(),
+					ReturnProgramComments.class);
+			// 创建数据源对象
+			AddMoreComments();
+
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void AddMoreComments() {
+		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Layout_comment);
+		if (m_ReturnProgramComments != null) {
+			for (int i = 0; i < m_ReturnProgramComments.comments.length; i++) {
+				RelativeLayout subLayout = new RelativeLayout(this);
+
+				LinearLayout.LayoutParams params4 = new LinearLayout.LayoutParams(
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+				params4.topMargin = 10;
+
+				ImageView m_image = new ImageView(this);
+				m_image.setBackgroundResource(R.drawable.tab1_divider);
+
+				linearLayout.addView(m_image, params4);
+
+				RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+				params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
+						RelativeLayout.TRUE);
+
+				TextView valueName = new TextView(this);
+				// valueName.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
+				valueName.setTextColor(Color.BLACK);
+				if (!m_ReturnProgramComments.comments[i].owner_name
+						.equalsIgnoreCase("EMPTY"))
+					valueName
+							.setText(m_ReturnProgramComments.comments[i].owner_name
+									+ ":");
+				else
+					valueName.setText("网络用户:");
+				subLayout.addView(valueName, params1);
+
+				RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+				params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
+						RelativeLayout.TRUE);
+
+				TextView valueTime = new TextView(this);
+				valueTime
+						.setText(m_ReturnProgramComments.comments[i].create_date
+								.replaceAll(" 00:00:00", ""));
+				subLayout.addView(valueTime, params2);
+
+				LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+				params3.topMargin = 10;
+
+				linearLayout.addView(subLayout, params3);
+
+				TextView valueContent = new TextView(this);
+				valueContent
+						.setText(m_ReturnProgramComments.comments[i].content);
+				linearLayout.addView(valueContent);
+
+			}
+		}
+	}
+
+	public void CallVideoPlayActivity(String m_uri, String title) {
+
+		// Intent intent = new Intent(this, MovieActivity.class);
+		// intent.putExtra("prod_url", m_uri);
+		// intent.putExtra("prod_id", prod_id);
+		Intent intent = new Intent(this, VideoPlayerActivity.class);
+		intent.putExtra("path", m_uri);
+		intent.putExtra("title", title);
 
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException ex) {
-			Log.e(TAG, "mp4 fail", ex);
+			Log.e(TAG, "VideoPlayerActivity fail", ex);
 		}
-	}
-	
-	// click which btn flag that one yy
-		public void SetPlayBtnFlag(int current_index) {
-			String m_j = null;
-			if (current_index / 15 != m_ReturnProgramView.tv.episodes.length / 15) {
-				for (int i = 0; (i < 15); i++) {
 
-					m_j = Integer.toString(i + 4);
-					Button m_button = (Button) this.findViewById(getResources()
-							.getIdentifier("tv_button" + m_j, "id",
-									getPackageName()));
-					if (i == current_index % 15) {
-						// button's shape'll change
-						m_button.setBackgroundDrawable(focuse);
-						m_button.setText("");
-					} else {
-						m_button.setBackgroundDrawable(normal);
-						m_button.setText(Integer.toString(i + 1));
+	}
+
+	private void SaveToServer(int play_type, String SourceUrl, int episodesNum) {
+
+		String url = Constant.BASE_URL + "program/play";
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("app_key", Constant.APPKEY);// required string
+												// 申请应用时分配的AppKey。
+		params.put("prod_id", m_ReturnProgramView.tv.id);// required string
+															// 视频id
+		params.put("prod_name", m_ReturnProgramView.tv.name);// required
+																// string 视频名字
+		params.put("prod_subname", Integer.toString(episodesNum));// required
+																	// string
+																	// 视频的集数
+		params.put("prod_type", 2);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
+		params.put("playback_time", 0);// _time required int 上次播放时间，单位：秒
+		params.put("duration", 0);// required int 视频时长， 单位：秒
+
+		if (play_type == 1)
+			params.put("play_type", "1");// required string
+		else
+			params.put("play_type", "2");
+
+		// 播放的类别 1: 视频地址播放
+		// 2:webview播放
+		params.put("video_url", SourceUrl);// required
+		// string
+		// 视频url
+
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.header("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+		cb.header("app_key", Constant.APPKEY);
+		cb.header("user_id", app.UserID);
+
+		cb.params(params).url(url).type(JSONObject.class)
+				.weakHandler(this, "CallProgramPlayResult");
+		// cb.params(params).url(url);
+		aq.ajax(cb);
+	}
+
+	public void CallProgramPlayResult(String url, JSONObject json,
+			AjaxStatus status) {
+		// if (json != null) {
+		// app.MyToast(this, json.toString());
+		// // // try {
+		// // // if
+		// (json.getString("res_code").trim().equalsIgnoreCase("00000"))
+		// // // {
+		// // //
+		// // // }
+		// // // }
+		// }
+	}
+
+	private void GetVideoSource(final int episodeNum, String url) {
+
+		aq.progress(R.id.progress).ajax(url, InputStream.class,
+				new AjaxCallback<InputStream>() {
+
+					public void callback(String url, InputStream is,
+							AjaxStatus status) {
+						String urlsave = Constant.BASE_URL + "program/play";
+						if (is != null) {
+
+							Map<String, Object> params = new HashMap<String, Object>();
+							params.put("app_key", Constant.APPKEY);// required
+																	// string
+																	// 申请应用时分配的AppKey。
+							params.put("prod_id", m_ReturnProgramView.tv.id);// required
+																				// string
+																				// 视频id
+							params.put("prod_name", m_ReturnProgramView.tv.name);// required
+																					// string
+																					// 视频名字
+							params.put("prod_subname",
+									m_ReturnProgramView.tv.episodes.length);// required
+																			// string
+																			// 视频的集数
+							params.put("prod_type", 2);// required int 视频类别
+														// 1：电影，2：电视剧，3：综艺，4：视频
+							params.put("playback_time", 0);// _time required int
+															// 上次播放时间，单位：秒
+							params.put("duration", 0);// required int 视频时长， 单位：秒
+							params.put("play_type", "1");// required string
+															// 播放的类别 1: 视频地址播放
+							// 2:webview播放
+							params.put("video_url", url);// required
+															// string
+															// 视频url
+
+							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+							cb.header("User-Agent",
+									"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+							cb.header("app_key", Constant.APPKEY);
+							cb.header("user_id", app.UserID);
+
+							cb.params(params).url(urlsave);
+							aq.ajax(cb);
+
+							CallVideoPlayActivity(url,
+									m_ReturnProgramView.tv.name);
+						} else {
+							if (m_ReturnProgramView.tv.episodes[episodeNum].down_urls != null) {
+								for (int k = 0; k < m_ReturnProgramView.tv.episodes[episodeNum].down_urls[0].urls.length; k++) {
+									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[episodeNum].down_urls[0].urls[k];
+									if (urls != null) {
+										if (urls.url != null) {
+											if (urls.type.trim()
+													.equalsIgnoreCase("mp4"))
+												PROD_SOURCE = urls.url.trim();
+											else if (urls.type.trim()
+													.equalsIgnoreCase("flv"))
+												PROD_SOURCE = urls.url.trim();
+											else if (urls.type.trim()
+													.equalsIgnoreCase("hd2"))
+												PROD_SOURCE = urls.url.trim();
+											else if (urls.type.trim()
+													.equalsIgnoreCase("3gp"))
+												PROD_SOURCE = urls.url.trim();
+										}
+										if (PROD_SOURCE != null) {
+											GetVideoSource(episodeNum,
+													PROD_SOURCE);
+										}
+									}
+								}
+							}
+						}
 					}
-				}
-			} else {
-				for (int i = 0; (i < m_ReturnProgramView.tv.episodes.length % 15); i++) {
-					m_j = Integer.toString(i + 4);
-					Button m_button = (Button) this.findViewById(getResources()
-							.getIdentifier("tv_button" + m_j, "id",
-									getPackageName()));
-					if (i == current_index % 15) {
-						m_button.setBackgroundDrawable(focuse);
-						m_button.setText("");
-					} else {
-						m_button.setBackgroundDrawable(normal);
-						m_button.setText(Integer.toString(i + 1));
-					}
+
+				});
+
+	}
+
+	// click which btn flag that one yy
+	public void SetPlayBtnFlag(int current_index) {
+		String m_j = null;
+		if (current_index / 15 != m_ReturnProgramView.tv.episodes.length / 15) {
+			for (int i = 0; (i < 15); i++) {
+
+				m_j = Integer.toString(i + 4);
+				Button m_button = (Button) this.findViewById(getResources()
+						.getIdentifier("tv_button" + m_j, "id",
+								getPackageName()));
+				if (i == current_index % 15) {
+					// button's shape'll change
+					m_button.setBackgroundDrawable(focuse);
+					m_button.setText("");
+				} else {
+					m_button.setBackgroundDrawable(normal);
+					m_button.setText(Integer.toString(i + 1));
 				}
 			}
-
+		} else {
+			for (int i = 0; (i < m_ReturnProgramView.tv.episodes.length % 15); i++) {
+				m_j = Integer.toString(i + 4);
+				Button m_button = (Button) this.findViewById(getResources()
+						.getIdentifier("tv_button" + m_j, "id",
+								getPackageName()));
+				if (i == current_index % 15) {
+					m_button.setBackgroundDrawable(focuse);
+					m_button.setText("");
+				} else {
+					m_button.setBackgroundDrawable(normal);
+					m_button.setText(Integer.toString(i + 1));
+				}
+			}
 		}
 
-		
+	}
+
 	public void OnClickCacheDown(View v) {
 		popupview = OpenDownloadPapup();
 	}
-	
+
 	private ViewGroup OpenDownloadPapup() {
 		// TODO Auto-generated method stub
 		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 		final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
 				R.layout.download_tv, null, true);
-		Button download_prevbtn = (Button)menuView.findViewById(R.id.download_prevbtn);
-		Button download_nextbtn = (Button)menuView.findViewById(R.id.download_nextbtn);
-		Button closebtn = (Button)menuView.findViewById(R.id.download_btn_close);
-		Button download_btn_page1 = (Button)menuView.findViewById(R.id.download_btn_page1);
-		Button download_btn_page2 = (Button)menuView.findViewById(R.id.download_btn_page2);
-		Button download_btn_page3 = (Button)menuView.findViewById(R.id.download_btn_page3);
-		Button download_btn_page4 = (Button)menuView.findViewById(R.id.download_btn_page4);
-		
-		closebtn.setOnClickListener(listener);
+		Button download_prevbtn = (Button) menuView
+				.findViewById(R.id.download_prevbtn);
+		Button download_nextbtn = (Button) menuView
+				.findViewById(R.id.download_nextbtn);
+		Button download_btn_page1 = (Button) menuView
+				.findViewById(R.id.download_btn_page1);
+		Button download_btn_page2 = (Button) menuView
+				.findViewById(R.id.download_btn_page2);
+		Button download_btn_page3 = (Button) menuView
+				.findViewById(R.id.download_btn_page3);
+		Button download_btn_page4 = (Button) menuView
+				.findViewById(R.id.download_btn_page4);
 		download_btn_page1.setOnClickListener(listener);
 		download_btn_page2.setOnClickListener(listener);
 		download_btn_page3.setOnClickListener(listener);
@@ -935,69 +1354,60 @@ public class Detail_TV extends Activity {
 		downloadpopup.update();
 		return menuView;
 	}
-	
-	public OnClickListener listener = new OnClickListener()
-	{
+
+	public OnClickListener listener = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stu
-			switch(v.getId())
-			{
+			switch (v.getId()) {
 			case R.id.download_btn_page1:
-				switchPageOfDownloadIndex(Integer.parseInt(v.getTag().toString()));
+				switchPageOfDownloadIndex(Integer.parseInt(v.getTag()
+						.toString()));
 				break;
 			case R.id.download_btn_page2:
-				switchPageOfDownloadIndex(Integer.parseInt(v.getTag().toString()));
+				switchPageOfDownloadIndex(Integer.parseInt(v.getTag()
+						.toString()));
 				break;
 			case R.id.download_btn_page3:
-				switchPageOfDownloadIndex(Integer.parseInt(v.getTag().toString()));
+				switchPageOfDownloadIndex(Integer.parseInt(v.getTag()
+						.toString()));
 				break;
 			case R.id.download_btn_page4:
-				switchPageOfDownloadIndex(Integer.parseInt(v.getTag().toString()));
+				switchPageOfDownloadIndex(Integer.parseInt(v.getTag()
+						.toString()));
 				break;
 			case R.id.download_prevbtn:
-				if(current_download_pagenum>0)
-				{
+				if (current_download_pagenum > 0) {
 					current_download_pagenum--;
 				}
 				InitDownloadData(popupview);
 				break;
 			case R.id.download_nextbtn:
-				
-				if(m_ReturnProgramView.tv.episodes.length<60)
-				{
-					return ;
-				}
-				else
-				{
-					if(m_ReturnProgramView.tv.episodes.length%60 == 0)
-					{
-						if(current_download_pagenum<(m_ReturnProgramView.tv.episodes.length/60-1))
-						{
+
+				if (m_ReturnProgramView.tv.episodes.length < 60) {
+					return;
+				} else {
+					if (m_ReturnProgramView.tv.episodes.length % 60 == 0) {
+						if (current_download_pagenum < (m_ReturnProgramView.tv.episodes.length / 60 - 1)) {
 							current_download_pagenum++;
 						}
-					}
-					else
-					{
-						if(current_download_pagenum<(m_ReturnProgramView.tv.episodes.length/60))
-						{
+					} else {
+						if (current_download_pagenum < (m_ReturnProgramView.tv.episodes.length / 60)) {
 							current_download_pagenum++;
 						}
 					}
 				}
 				InitDownloadData(popupview);
 				break;
-			case R.id.download_btn_close:
-				downloadpopup.dismiss();
-				break;
+			// case R.id.download_btn_close:
+			// downloadpopup.dismiss();
+			// break;
 			}
-		}	
+		}
 	};
-	
-	
-	void switchPageOfDownloadIndex(int index)
-	{
+
+	void switchPageOfDownloadIndex(int index) {
 		String m_j = null;
 		int i = 0;
 		int j = 0;
@@ -1008,45 +1418,65 @@ public class Detail_TV extends Activity {
 							getPackageName()));
 			m_button.setVisibility(View.GONE);
 		}
-		for (i = 0; (i + index * 15+current_download_pagenum*60) < m_ReturnProgramView.tv.episodes.length
+		for (i = 0; (i + index * 15 + current_download_pagenum * 60) < m_ReturnProgramView.tv.episodes.length
 				&& i < 15; i++) {
 			m_j = Integer.toString(i + 4);// m_ReturnProgramView.tv.episodes[i].name;
 			Button m_button = (Button) popupview.findViewById(getResources()
 					.getIdentifier("download_button" + m_j, "id",
 							getPackageName()));
-			m_j = Integer.toString(i + 1 + index * 15+current_download_pagenum*60);
+			m_j = Integer.toString(i + 1 + index * 15
+					+ current_download_pagenum * 60);
 			m_button.setTag(m_j + "");
 			m_button.setText(m_j);
 			m_button.setVisibility(View.VISIBLE);
 		}
 	}
-	
+
 	public void OnClickDownloadCacheVideo(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
 		index--;
-		if (m_ReturnProgramView.tv.episodes[index].down_urls != null
-				&& m_ReturnProgramView.tv.episodes[index].down_urls[0].urls.length > 0
-				&& m_ReturnProgramView.tv.episodes[index].down_urls[0].urls[0].url != null
-				&& app.IfSupportFormat(m_ReturnProgramView.tv.episodes[index].down_urls[0].urls[0].url)) {
+		DOWNLOAD_SOURCE = null;
+		if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
+			for (int i = 0; i < m_ReturnProgramView.tv.episodes[index].down_urls.length; i++) {
+				for (int k = 0; k < m_ReturnProgramView.tv.episodes[index].down_urls[i].urls.length; k++) {
+					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[index].down_urls[i].urls[k];
+					if (urls != null) {
 
-			PROD_SOURCE = m_ReturnProgramView.tv.episodes[index].down_urls[0].urls[0].url;
+						if (DOWNLOAD_SOURCE == null && urls.file != null
+								&& app.IfSupportFormat(urls.url)
+								&& urls.file.trim().equalsIgnoreCase("mp4"))
+//							DOWNLOAD_SOURCE = urls.url.trim();
+							DOWNLOAD_SOURCE = urls.url;
+						if (DOWNLOAD_SOURCE != null)
+							break;
+					}
+					if (DOWNLOAD_SOURCE != null)
+						break;
+				}
+			}
 		}
-		if (PROD_SOURCE != null) {
-			String urlstr = PROD_SOURCE;
-			String localfile = App.SD_PATH+prod_id+"_"+(index+1)+".mp4";
-			String urlposter = m_ReturnProgramView.tv.poster;
+		if (DOWNLOAD_SOURCE == null)
+			return;
+
+		if (DOWNLOAD_SOURCE != null) {
+			String urlstr = DOWNLOAD_SOURCE;
+			String localfile = Constant.PATH_VIDEO + prod_id + "_"
+					+ (index + 1) + ".mp4";
 			String my_name = m_ReturnProgramView.tv.name;
 			String download_state = "wait";
-			DownloadTask downloadTask = new DownloadTask(v,this,Detail_TV.this,prod_id,Integer.toString(index+1),urlstr,localfile);
-			downloadTask.execute(prod_id,Integer.toString(index+1),urlstr,m_ReturnProgramView.tv.poster,my_name,download_state);
-			Toast.makeText(Detail_TV.this,"视频已加入下载队列",Toast.LENGTH_SHORT).show();
-		}
-		else
-		{
-			Toast.makeText(Detail_TV.this,"该视频不支持下载",Toast.LENGTH_SHORT).show();
+			DownloadTask downloadTask = new DownloadTask(v, this,
+					Detail_TV.this, prod_id, Integer.toString(index + 1),
+					urlstr, localfile);
+			downloadTask.execute(prod_id, Integer.toString(index + 1), urlstr,
+					m_ReturnProgramView.tv.poster, my_name, download_state);
+			Toast.makeText(Detail_TV.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
+					.show();
+		} else {
+			Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
+					.show();
 		}
 	}
-	
+
 	// reflash the download btns
 	public void InitDownloadData(ViewGroup menuView) {
 		String m_j = null;
@@ -1054,59 +1484,67 @@ public class Detail_TV extends Activity {
 		int j = 0;
 		int k = 0;
 		int total = m_ReturnProgramView.tv.episodes.length;
-		for(int m=0;m<4;m++)
-		{
+		data = Dao.getInstance(Detail_TV.this).getInfosOfProd_id(prod_id);
+		for (int m = 0; m < 4; m++) {
 			m_j = Integer.toString(m + 1);// m_ReturnProgramView.tv.episodes[i].name;
-			Button m_button = (Button) menuView
-					.findViewById(getResources().getIdentifier(
-							"download_btn_page" + m_j, "id", getPackageName()));
+			Button m_button = (Button) menuView.findViewById(getResources()
+					.getIdentifier("download_btn_page" + m_j, "id",
+							getPackageName()));
 			m_button.setVisibility(View.GONE);
 		}
-		for(k=0;(k<4)&&(k<(total-(current_download_pagenum)*60)/15);k++)
-		{
+		for (k = 0; (k < 4)
+				&& (k < (total - (current_download_pagenum) * 60) / 15); k++) {
 			m_j = Integer.toString(k + 1);// m_ReturnProgramView.tv.episodes[i].name;
-			Button m_button = (Button) menuView
-					.findViewById(getResources().getIdentifier(
-							"download_btn_page" + m_j, "id", getPackageName()));
+			Button m_button = (Button) menuView.findViewById(getResources()
+					.getIdentifier("download_btn_page" + m_j, "id",
+							getPackageName()));
 			m_j = Integer.toString(k + 1);
-			m_j = Integer.toString(k * 15 + 1+current_download_pagenum*60) + "-"
-					+ Integer.toString((k + 1) * 15+current_download_pagenum*60);
+			m_j = Integer.toString(k * 15 + 1 + current_download_pagenum * 60)
+					+ "-"
+					+ Integer.toString((k + 1) * 15 + current_download_pagenum
+							* 60);
 			m_button.setTag(k + "");
 			m_button.setText(m_j);
 			m_button.setVisibility(View.VISIBLE);
 		}
-		if ((k * 15 +current_download_pagenum*60)< (total)&&(k<4)) {
+		if ((k * 15 + current_download_pagenum * 60) < (total) && (k < 4)) {
 			k++;
 			m_j = Integer.toString(k);// m_ReturnProgramView.tv.episodes[i].name;
-			Button m_button = (Button) menuView
-					.findViewById(getResources().getIdentifier(
-							"download_btn_page" + m_j, "id", getPackageName()));
+			Button m_button = (Button) menuView.findViewById(getResources()
+					.getIdentifier("download_btn_page" + m_j, "id",
+							getPackageName()));
 			m_j = Integer.toString(k + 1);
-			m_j = Integer.toString((k - 1) * 15 + 1+current_download_pagenum*60) + "-"
-					+ Integer.toString(total);
+			m_j = Integer.toString((k - 1) * 15 + 1 + current_download_pagenum
+					* 60)
+					+ "-" + Integer.toString(total);
 			m_button.setTag(k - 1 + "");
 			m_button.setText(m_j);
 			m_button.setVisibility(View.VISIBLE);
 		}
-		
+
 		for (i = 0; i < m_ReturnProgramView.tv.episodes.length && i < 15; i++) {
 			m_j = Integer.toString(i + 4);// m_ReturnProgramView.tv.episodes[i].name;
 			String str = m_ReturnProgramView.tv.episodes[i].name;
 			Button m_button = (Button) menuView.findViewById(getResources()
 					.getIdentifier("download_button" + m_j, "id",
 							getPackageName()));
-			m_j = Integer.toString(i + 1+current_download_pagenum*60);//特别加上的
-			//m_button.setTag(i + "");
-			m_button.setTag(i+1+current_download_pagenum*60 +"");
+			m_j = Integer.toString(i + 1 + current_download_pagenum * 60);// 特别加上的
+			// m_button.setTag(i + "");
+			m_button.setTag(i + 1 + current_download_pagenum * 60 + "");
 			m_button.setText(m_j);
 			// lost one tv
 			if (m_ReturnProgramView.tv.episodes[i].down_urls == null)
-																			
+
 			{
 				m_button.setEnabled(false);
 			} else {
 				m_button.setEnabled(true);
 			}
+			/*
+			 * for(i = 0 ;i<data.size();i++) {
+			 * if(data.get(i).getIndex().equalsIgnoreCase(m_j)) { //设置已缓存背景
+			 * //m_button.setBackgroundDrawable(d); m_button.setText("已缓存"); } }
+			 */
 			m_button.setVisibility(View.VISIBLE);
 		}
 		if (i < 15) {

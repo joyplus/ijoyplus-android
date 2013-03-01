@@ -7,7 +7,8 @@ public class Tab3Page1ListData {
 	public String Pro_urlType;
 	public String Pro_name;
 	public String Pro_name1;
-	public String Pro_time;
-	public String Pro_type;
+	public int Pro_time;
+	public int Pro_type;
+	public int Pro_duration;
 
 }

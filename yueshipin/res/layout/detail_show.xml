@@ -3,7 +3,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#F2F2F2" >
-
+	
+	<LinearLayout 
+	    android:id="@+id/none_net"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:background="@drawable/none_net"
+	    android:visibility="gone">
+	    
+	</LinearLayout>
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
@@ -420,6 +428,28 @@
                         android:maxLines="4"
                         android:onClick="OnClickContent"
                         android:text="简介内容加载中..." />
+                </LinearLayout>
+            </LinearLayout>
+               <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="16dp"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/imageView_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:src="@drawable/detail_movie_comment" />
+
+                <LinearLayout
+                    android:id="@+id/Layout_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/detail_movie_comments"
+                    android:orientation="vertical" >
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

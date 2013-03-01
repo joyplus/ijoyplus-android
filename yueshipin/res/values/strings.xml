@@ -51,5 +51,13 @@
     <!-- Movie View Start Playing button "Beginning" -->
     <string name="resume_playing_restart">重新开始</string>
     
+     <string name="init_decoders">正在进行第一次解压解码包...</string>
+     <string name="VideoView_error_title">Cannot play video</string>
+    <string name="VideoView_error_text_invalid_progressive_playback">Sorry, this video is not valid for streaming to
+		this device.</string>
+    <string name="VideoView_error_text_unknown">Sorry, this video cannot be played.</string>
+    <string name="VideoView_error_button">OK</string>
+    <string name="mediacontroller_play_pause">Play/Pause</string>
+    
 
 </resources>

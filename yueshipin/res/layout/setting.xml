@@ -39,14 +39,14 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:onClick="OnClickTab1TopRight" >
 
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/imageButtom2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="OnClickTab1TopRight"
                 android:background="@drawable/setting_button_close_top" />
 
         </LinearLayout>
@@ -54,42 +54,31 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="67dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="19dp"
-        android:layout_marginRight="15dp"
-        android:background="@drawable/setting_textview_border"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="9dp"
+        android:background="@drawable/setting_xinlang"
+        android:orientation="vertical" >
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
+        <CheckBox
+            android:id="@+id/checkBox1"
+            android:layout_width="52dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="22dp"
+            android:button="@drawable/setting_weibo_button"
+            android:onClick="OnClickSinaWeibo" />
 
-            android:layout_marginLeft="13dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="13dp"
-            android:background="@drawable/setting_xin_lang">
-
-                        <CheckBox
-                            android:id="@+id/checkBox1"
-                            android:layout_width="52dp"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentTop="true"
-                            android:button="@drawable/setting_weibo_button"
-                            android:onClick="OnClickSinaWeibo" />
-         
-        </RelativeLayout>
     </LinearLayout>
+    
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="9dp"
-        android:paddingRight="15dp"
-        
-        android:orientation="vertical">
+        android:orientation="vertical" >
 
         <ImageButton
             android:id="@+id/button2"
@@ -100,34 +89,34 @@
             android:onClick="OnClickClearMemery"/>
     </LinearLayout>
 
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:layout_marginTop="9dp"
-        android:layout_marginRight="15dp"
         android:background="@drawable/setting_textview_border"
-        android:orientation="vertical" 
-        android:paddingBottom="9dp">
+        android:orientation="vertical"
+        android:paddingBottom="9dp" >
 
         <ImageButton
             android:id="@+id/button3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="13dp"
+            android:layout_marginLeft="11dp"
+            android:layout_marginRight="11dp"
             android:layout_marginTop="15dp"
-            android:layout_marginRight="13dp"
             android:background="@drawable/setting_button_yj"
-            android:onClick="OnClickSug"/>
+            android:onClick="OnClickSug" />
 
         <ImageButton
             android:id="@+id/button4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="13dp"
+            android:layout_marginLeft="11dp"
             android:layout_marginTop="8dp"
-             android:layout_marginRight="13dp"
+             android:layout_marginRight="11dp"
             android:background="@drawable/setting_button_mianzhe"
             android:onClick="OnClickMianZhe"/>
 
@@ -135,9 +124,9 @@
             android:id="@+id/button6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="13dp"
+            android:layout_marginLeft="11dp"
             android:layout_marginTop="8dp"
-             android:layout_marginRight="13dp"
+             android:layout_marginRight="11dp"
             android:background="@drawable/setting_button_guanzhu"
             android:onClick="OnClickGuanzhu"/>
            
@@ -145,9 +134,9 @@
             android:id="@+id/button5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="13dp"
+            android:layout_marginLeft="11dp"
             android:layout_marginTop="8dp"
-            android:layout_marginRight="13dp"
+            android:layout_marginRight="11dp"
             android:background="@drawable/setting_button_aboutus"
             android:onClick="OnClickAboutUs"/>
     </LinearLayout>

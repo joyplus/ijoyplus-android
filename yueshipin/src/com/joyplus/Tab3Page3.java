@@ -11,18 +11,22 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AbsListView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -30,7 +34,6 @@ import com.androidquery.callback.AjaxStatus;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.joyplus.Adapters.Tab3Page3ListAdapter;
 import com.joyplus.Adapters.Tab3Page3ListData;
 import com.joyplus.Service.Return.ReturnTops;
 import com.umeng.analytics.MobclickAgent;
@@ -40,11 +43,11 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	private AQuery aq;
 	private App app;
 	private ReturnTops m_ReturnTops = null;
-	private static Context context;
 
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private Tab3Page3ListAdapter Tab3Page3Adapter;
+	private int isLastisNext = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		aq = new AQuery(this);
 		aq.id(R.id.linearLayout1).gone();
 		aq.id(R.id.button2).gone();
-		context = this;
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
@@ -63,6 +65,27 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Goto_Tab3Page3_Create2(position);
+
+			}
+		});
+		ItemsListView.setOnScrollListener(new OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				switch (scrollState) {
+				// 当不滚动时
+				case OnScrollListener.SCROLL_STATE_IDLE:
+					// 判断滚动到底部
+					if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
+						isLastisNext++;
+						GetServiceData(isLastisNext);
+					}
+					break;
+				}
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
 
 			}
 		});
@@ -76,8 +99,10 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 				return true;// 如果返回false那么onItemClick仍然会被调用
 			}
 		});
+		dataStruct = new ArrayList();
+		Tab3Page3Adapter = new Tab3Page3ListAdapter();
+		ItemsListView.setAdapter(Tab3Page3Adapter);
 
-		// GetServiceData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -102,7 +127,10 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		GetServiceData();
+		if (dataStruct != null && dataStruct.size() > 1)
+			dataStruct.clear();
+		isLastisNext = 1;
+		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
 	}
 
@@ -119,15 +147,13 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 	public void GetVideoMovies() {
 		String m_j = null;
-		dataStruct = new ArrayList();
 
-		NotifyDataAnalysisFinished();
 		if (m_ReturnTops.tops == null)
 			return;
 
 		// if (m_ReturnTops.tops.length < 4)
 		// aq.id(R.id.button2).gone();
-		for (int i = 0; i < m_ReturnTops.tops.length && i < 3; i++) {
+		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 			Tab3Page3ListData m_Tab3Page3ListData = new Tab3Page3ListData();
 			m_Tab3Page3ListData.Pic_ID = m_ReturnTops.tops[i].id;
 			m_Tab3Page3ListData.Pic_url = m_ReturnTops.tops[i].pic_url;
@@ -154,15 +180,14 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 			}
 			dataStruct.add(m_Tab3Page3ListData);
 		}
-		if (m_ReturnTops.tops.length == 0) {
-			aq.id(R.id.listView1).gone();
-			aq.id(R.id.button2).gone();
-		} else if (m_ReturnTops.tops.length <= 3) {
-			aq.id(R.id.button2).gone();
-		} else {
-			aq.id(R.id.listView1).visible();
-			aq.id(R.id.button2).visible();
-		}
+		Tab3Page3Adapter.notifyDataSetChanged();
+		int m_num = dataStruct.size();
+		if (m_num == 0) {
+			aq.id(R.id.linearLayout1).gone();
+		} else
+			aq.id(R.id.linearLayout1).visible();
+
+		aq.id(R.id.Layout2).gone();
 
 	}
 
@@ -178,7 +203,8 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (json == null) {
+
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -188,7 +214,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		try {
 			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
 			app.SaveServiceData("user_tops33", json.toString());
-			aq.id(R.id.linearLayout1).visible();
+
 			// 创建数据源对象
 			GetVideoMovies();
 
@@ -205,40 +231,16 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 	}
 
-	// 数据更新
-	public void NotifyDataAnalysisFinished() {
-		Toast toast;
-		if (dataStruct != null && ItemsListView != null) {
-			Tab3Page3ListAdapter listviewdetailadapter = getAdapter();
-			ItemsListView.setAdapter(listviewdetailadapter);
-		} else {
-			app.MyToast(this, "ItemsListView empty.");
-		}
-	}
-
-	private Tab3Page3ListAdapter getAdapter() {
-		if (Tab3Page3Adapter == null) {
-			ArrayList arraylist = dataStruct;
-			Tab3Page3ListAdapter listviewdetailadapter = new Tab3Page3ListAdapter(
-					this, arraylist);
-			Tab3Page3Adapter = listviewdetailadapter;
-		} else {
-			ArrayList arraylist1 = dataStruct;
-			Tab3Page3ListAdapter listviewdetailadapter1 = new Tab3Page3ListAdapter(
-					this, arraylist1);
-			Tab3Page3Adapter = listviewdetailadapter1;
-		}
-		return Tab3Page3Adapter;
-	}
-
 	// listview的点击事件接口函数
 	public void onItemClick(AdapterView adapterview, View view, int i, long l) {
 
 	}
 
 	// InitListData
-	public void GetServiceData() {
-		String url = Constant.BASE_URL + "user/tops";
+	public void GetServiceData(int index) {
+		String url = Constant.BASE_URL + "user/tops" + "?page_num="
+				+ Integer.toString(index) + "&page_size=10";
+		// String url = Constant.BASE_URL + "user/tops";
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
@@ -257,7 +259,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("user_tops33");
 		if (SaveData == null) {
-			GetServiceData();
+			GetServiceData(1);
 		} else {
 			try {
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
@@ -267,7 +269,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 					@Override
 					public void run() {
 						// execute the task
-						GetServiceData();
+						GetServiceData(1);
 					}
 				}, 10000);
 
@@ -322,7 +324,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 			try {
 				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
 					app.MyToast(this, "删除成功!");
-					GetServiceData();
+					// GetServiceData(1);
 				} else
 					app.MyToast(this, "删除失败!");
 			} catch (JSONException e) {
@@ -333,7 +335,9 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		} else {
 
 			// ajax error, show error code
-			app.MyToast(this, getResources().getString(R.string.networknotwork));
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(this,
+						getResources().getString(R.string.networknotwork));
 		}
 	}
 
@@ -377,9 +381,70 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		}
 	}
 
+	private static class ViewHolder {
+		public ImageView mImageView;
+		public TextView mName;
+		public TextView mName1;
+	}
+
+	public class Tab3Page3ListAdapter extends BaseAdapter {
+
+		@Override
+		public int getCount() {
+			return dataStruct.size();
+		}
+
+		@Override
+		public Tab3Page3ListData getItem(int position) {
+			return (Tab3Page3ListData) dataStruct.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		// 获取显示当前的view
+		@Override
+		public View getView(int i, View view, ViewGroup viewgroup) {
+			ViewHolder holder = null;
+
+			if (view == null) {
+
+				view = getLayoutInflater().inflate(
+						R.layout.tab3page3_detail_list, viewgroup, false);
+
+				holder = new ViewHolder();
+
+				holder.mImageView = (ImageView) view
+						.findViewById(R.id.video_preview_img);
+				holder.mName = (TextView) view
+						.findViewById(R.id.txt_video_caption);
+				holder.mName1 = (TextView) view.findViewById(R.id.txt_1);
+
+				view.setTag(holder);
+			} else {
+				holder = (ViewHolder) view.getTag();
+			}
+
+			// 获取当前数据项的数据
+			Tab3Page3ListData m_Tab3Page3ListData = (Tab3Page3ListData) getItem(i);
+
+			AQuery aqlist = aq.recycle(view);
+			aqlist.id(holder.mName).text(m_Tab3Page3ListData.Pic_name);
+			aqlist.id(holder.mName1).text(m_Tab3Page3ListData.Pic_list1);
+			aqlist.id(holder.mImageView).image(m_Tab3Page3ListData.Pic_url,
+					true, true);
+			// aqlist.id(holder.mImageView).image(m_Tab3Page3ListData.Pic_url,
+			// true, true, 0, 0, null, 0, 1.0f);
+
+			// aqlist.dismiss();
+			return view;
+		}
+	}
+
 	@Override
 	public void onTabActivityResult(int requestCode, int resultCode, Intent data) {
-		GetServiceData();
 	}
 
 }

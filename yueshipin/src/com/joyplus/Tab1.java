@@ -26,7 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab1ListAdapter;
 import com.joyplus.Adapters.Tab1ListData;
 import com.joyplus.Service.Return.ReturnTops;
+import com.parse.Parse;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengUpdateAgent;
 
 public class Tab1 extends Activity implements
 		android.widget.AdapterView.OnItemClickListener {
@@ -48,6 +50,14 @@ public class Tab1 extends Activity implements
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		dataStruct = new ArrayList();
+		
+		UmengUpdateAgent.setUpdateOnlyWifi(false);
+		UmengUpdateAgent.setOnDownloadListener(null);
+		UmengUpdateAgent.update(this);
+//		Parse.initialize(this, "Your Application Id", "Your Client Key");
+		Parse.initialize(this, "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB", "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl");
+		
+		
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
@@ -222,7 +232,7 @@ public class Tab1 extends Activity implements
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		
-		if (json == null) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));

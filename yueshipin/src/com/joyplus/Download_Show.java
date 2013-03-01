@@ -35,7 +35,6 @@ public class Download_Show extends Activity {
 		
 		aq.id(R.id.scrollView1).gone();
 
-		MobclickAgent.updateOnlineConfig(this);
 		if (prod_id != null)
 			//GetServiceData();
 			;

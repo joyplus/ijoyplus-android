@@ -39,7 +39,7 @@ public class Sina_Share extends Activity {
 		prod_name = intent.getStringExtra("prod_name");
 		aq.id(R.id.program_name).text(prod_name);
 		prod_name = "我在用#悦视频#Android版观看<" + prod_name
-				+ ">，推荐给大家哦！更多精彩尽在悦视频，快来和我一起看吧！";
+				+ ">，推荐给大家哦！更多精彩尽在悦视频，欢迎下载：http://ums.bz/REGLDb/，快来和我一起看吧！";
 		aq.id(R.id.multiAutoCompleteTextView1).text(prod_name);
 		aq.id(R.id.multiAutoCompleteTextView1).getEditText()
 		.setSelection(prod_name.length());
@@ -94,7 +94,7 @@ public class Sina_Share extends Activity {
 	private long calculateLength(CharSequence c) {
 		double len = 0;
 		for (int i = 0; i < c.length(); i++) {
-			int tmp = c.charAt(i);
+//			int tmp = c.charAt(i);
 			len++;
 		}
 		return Math.round(len);

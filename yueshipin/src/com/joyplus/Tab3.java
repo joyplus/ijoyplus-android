@@ -117,9 +117,7 @@ public class Tab3 extends TabActivity {
 		startActivityForResult(i, 100);
 
 	}
-
 	public boolean CheckLogin() {
-
 		String UserInfo = null;
 		UserInfo = app.GetServiceData("UserInfo");
 		if (UserInfo != null) {
@@ -130,6 +128,7 @@ public class Tab3 extends TabActivity {
 					aq.id(R.id.textView4).text(
 							json.getString("nickname").trim());
 					aq.id(R.id.textView5).gone();
+					String temp = json.getString("pic_url").trim();
 					aq.id(R.id.imageView4).image(
 							json.getString("pic_url").trim(), true, true, 0,
 							R.drawable.default_header);
@@ -150,7 +149,12 @@ public class Tab3 extends TabActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 100 && resultCode == 101) {
+		
+		if(requestCode == 100 && resultCode == 0)
+		{
+			CheckLogin();
+		}
+		if (requestCode == 100 && resultCode == 101){
 			CheckLogin();
 		} else {
 			// 获取当前活动的Activity实例

@@ -1,26 +1,39 @@
 package com.joyplus.Service.Return;
 
 /*
- * {
- comments: [
- {
- owner_id: int 鍙戣〃璇勮鐨勭敤鎴穒d
- owner_name: string 鍙戣〃璇勮鐢ㄦ埛鍚�        owner_pic_url: string 鍙戣〃璇勮鐢ㄦ埛鐨勫ご鍍�        id: int 璇勮id
- content: string 璇勮鐨勫唴瀹�        create_date: date 璇勮鏃堕棿
- }
- ......
- ]
- }
+ *参数：
+
+app_key required string 申请应用时分配的AppKey。
+prod_id required string 节目id
+page_num = 需要请求的页码（可选），默认为1
+page_size = 每一页包含的记录数（可选），默认为10
+返回值：
+
+{
+comments: [
+    {
+        owner_id: int 发表评论的用户id
+        owner_name: string 发表评论用户名
+        owner_pic_url: string 发表评论用户的头像
+        id: int 评论id
+        content: string 评论的内容
+        create_date: date 评论时间
+    }
+    ......
+  ]
+}
  */
 public class ReturnProgramComments {
 
 	public Comments[] comments;
 
 	public static class Comments {
-
-		public String owner_id;
-		public String owner_name;
-		public String content;
+		public String owner_id;//int 发表评论的用户id
+		public String owner_name;//string 发表评论用户名
+		public String owner_pic_url;//string 发表评论用户的头像
+		public String id;// int 评论id
+		public String content;//string 评论的内容
+		public String create_date;//date 评论时间
 	}
 
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:app1="http://schemas.android.com/apk/res/com.joyplus"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
@@ -23,17 +22,18 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_weight="0.63"
-            android:gravity="center" >
+            android:layout_weight="0.37"
+            android:gravity="center" 
+             android:onClick="OnClickTab1TopLeft" >
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/Tab1TopLeftImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/tab1_l"
-                android:onClick="OnClickTab1TopLeft" />
+               />
         </LinearLayout>
 
         <LinearLayout
@@ -55,9 +55,10 @@
             android:layout_height="fill_parent"
             android:layout_weight="0.37"
             android:gravity="center"
-            android:orientation="horizontal" >
+            android:orientation="horizontal" 
+             android:onClick="OnClickTab1TopRight">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/Tab1TopRightImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,7 +66,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/tab1_r"
-                android:onClick="OnClickTab1TopRight" />
+                />
         </LinearLayout>
     </LinearLayout>
 

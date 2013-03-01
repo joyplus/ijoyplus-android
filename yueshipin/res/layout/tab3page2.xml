@@ -19,8 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/tab3_p1_border"
-        android:orientation="vertical"
-        android:padding="6dp" >
+        android:orientation="vertical">
 
         <ProgressBar
             android:id="@+id/progress"

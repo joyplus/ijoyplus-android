@@ -33,16 +33,17 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="0.63"
-            android:gravity="center" >
+            android:gravity="center" 
+            android:onClick="OnClickTab1TopLeft">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/Tab1TopLeftImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/tab1_l"
-                android:onClick="OnClickTab1TopLeft"/>
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -64,16 +65,17 @@
             android:layout_height="fill_parent"
             android:layout_weight="0.37"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+             android:onClick="OnClickDownloadTopRight">
             
-            <Button 
+            <ImageView 
                 android:id="@+id/DownloadPage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/tab_rignt_download"
                 android:layout_centerVertical="true"
-                android:onClick="OnClickDownloadTopRight"/>
+               />
         </LinearLayout>
     </LinearLayout>
 

@@ -3,19 +3,16 @@
     android:id="@+id/relativeLayout1"
     android:layout_width="fill_parent"
     android:layout_height="144dp"
-    android:paddingLeft="4.0dip"
-    android:paddingTop="4.0dip"
-    android:paddingBottom="4.0dip"
-    android:paddingRight="7dip" >
-	<!-- android:padding="4.0dip" -->
+    android:padding="5.0dip">
+
     <ImageView
         android:id="@+id/video_preview_bg"
         android:layout_width="92dp"
         android:layout_height="125dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="8dip"
+        android:layout_marginLeft="11dip"
         android:scaleType="centerInside"
-        android:src="@drawable/tab1_moviecard" />
+        android:src="@drawable/tab1_moviecard"/>
 
     <ImageView
         android:id="@+id/video_preview_img"
@@ -23,9 +20,9 @@
         android:layout_height="111dp"
         android:layout_alignLeft="@id/video_preview_bg"
         android:layout_alignTop="@id/video_preview_bg"
-        android:layout_marginLeft="7dip"
+        android:layout_marginLeft="9dip"
         android:layout_marginTop="3dp"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"/>
 
     <TextView
         android:id="@+id/txt_video_caption"
@@ -33,14 +30,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignTop="@id/video_preview_bg"
-        android:layout_marginLeft="110dp"
+        android:layout_marginLeft="125dp"
         android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/thisnext"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="444444"
         android:textColor="#444444"
-        android:textSize="18dip" />
+        android:textSize="18dip"/>
 
     <TextView
         android:id="@+id/txt_1"
@@ -48,13 +45,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/txt_video_caption"
-        android:layout_marginLeft="110dp"
+        android:layout_marginLeft="125dp"
         android:layout_marginTop="20dp"
-        android:ellipsize="end"
+       android:ellipsize="end"
         android:singleLine="true"
         android:text="9f9f9f"
         android:textColor="#9f9f9f"
-        android:textSize="13dip" />
+        android:textSize="13dip"/>
 
     <TextView
         android:id="@+id/TextView01"
@@ -62,11 +59,11 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/txt_1"
         android:layout_below="@id/txt_1"
-        android:ellipsize="end"
+      android:ellipsize="end"
         android:singleLine="true"
         android:text="9f9f9f"
         android:textColor="#9f9f9f"
-        android:textSize="13dip" />
+        android:textSize="13dip"/>
 
     <TextView
         android:id="@+id/TextView02"
@@ -78,7 +75,7 @@
         android:singleLine="true"
         android:text="9f9f9f"
         android:textColor="#9f9f9f"
-        android:textSize="13dip" />
+        android:textSize="13dip"/>
 
     <TextView
         android:id="@+id/TextView03"
@@ -86,13 +83,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/txt_video_caption"
-        android:layout_marginLeft="230dp"
+        android:layout_marginLeft="240dp"
         android:layout_marginTop="20dp"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="9f9f9f"
         android:textColor="#9f9f9f"
-        android:textSize="13dip" />
+        android:textSize="13dip"/>
 
     <TextView
         android:id="@+id/TextView04"
@@ -104,16 +101,16 @@
         android:singleLine="true"
         android:text="9f9f9f"
         android:textColor="#9f9f9f"
-        android:textSize="13dip" />
+        android:textSize="13dip"/>
 
     <ImageView
         android:id="@+id/thisnext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/video_preview_bg"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_alignTop="@id/video_preview_bg"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="22dp"
         android:scaleType="center"
         android:src="@drawable/tab1_seriesflag" />
 
@@ -122,12 +119,11 @@
         android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/TextView04"
-        android:layout_alignRight="@+id/thisnext"
         android:layout_below="@+id/TextView04"
-        android:ellipsize="end"
+       android:ellipsize="end"
         android:singleLine="true"
         android:text="    • • •  • • • "
         android:textColor="#9f9f9f"
-        android:textSize="13dip" />
+        android:textSize="13dip"/>
 
 </RelativeLayout>

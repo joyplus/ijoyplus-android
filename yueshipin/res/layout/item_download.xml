@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+    <RelativeLayout android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+         <RelativeLayout 
+            android:id="@+id/Imagebg"
+            android:layout_width="76dp"
+            android:layout_height="112dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/tab2_download_picture">
+
+             <ImageView
+                 android:id="@+id/movieImageview"
+                 android:layout_width="72dp"
+                 android:layout_height="106dp"
+                 android:layout_marginLeft="2dp"
+                 android:layout_marginTop="2dp"
+                 android:scaleType="centerCrop" />
+
+             <LinearLayout
+                 android:id="@+id/state_layer"
+                 android:layout_width="72dp"
+                 android:layout_height="wrap_content"
+                 android:layout_alignParentBottom="true"
+                 android:layout_alignParentLeft="true"
+                 android:layout_marginBottom="4dp"
+                 android:layout_marginLeft="2dp"
+                 android:layout_marginTop="2dp"
+                 android:background="#7a000000"
+                 android:orientation="vertical" >
+                 <!-- android:background="#7a000000" -->
+
+                 <LinearLayout
+                     android:id="@+id/textviewlayer"
+                     android:layout_width="fill_parent"
+                     android:layout_height="wrap_content">
+
+                     <TextView
+                         android:id="@+id/download_state"
+                         android:paddingLeft="5dp"
+                         android:layout_width="45dp"
+                         android:layout_height="10dp"
+                         android:textSize="8dip" />
+
+                     <TextView
+                         android:id="@+id/precentDownload"
+                         android:layout_width="match_parent"
+                         android:layout_height="10dp"
+                         android:paddingLeft="5dp"
+                         android:textSize="8dip" />
+                 </LinearLayout>
+
+                 <ProgressBar
+                     android:id="@+id/downloadprogress"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:background="@drawable/tab2_download_1"
+                     android:indeterminate="false"
+                     android:indeterminateOnly="false"
+                     android:maxHeight="5dp"
+                     android:minHeight="5dp"
+                     android:padding="2dip"
+                     android:progressDrawable="@drawable/progress_video_download" />
+             </LinearLayout>
+
+         </RelativeLayout>
+    </RelativeLayout>
+    <TextView 
+	    android:id="@+id/downloadfilename"
+	    android:layout_width="76dp"
+	    android:layout_height="20dp"
+	    android:textColor="@color/black"
+	    android:textSize="12sp"
+	    android:ellipsize="end"
+	    android:text=""
+	    android:gravity="center"
+	    android:layout_marginBottom="1dp"
+	    android:singleLine="true" 
+        android:textAppearance="?android:attr/textAppearanceLarge"
+	    />
+</LinearLayout>
