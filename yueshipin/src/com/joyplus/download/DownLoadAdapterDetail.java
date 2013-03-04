@@ -78,8 +78,16 @@ private static final int MAX = 100;
 			long filesize = info.getFileSize();
 			long percent =completesize*MAX/filesize;
 			String posterurl = info.getPoster();
-			holder.resourceDownloadName.setText("第"+info.getIndex()+"集");
-			//aq.id(R.id.downloadfilename).text(info.getName());
+			if(info.getIndex().contains("_show"))
+			{
+				
+				holder.resourceDownloadName.setText(info.getName());
+				
+			}
+			else
+			{
+				holder.resourceDownloadName.setText("第"+info.getIndex()+"集");
+			}
 			if(info.getState().equalsIgnoreCase("wait"))
 			{
 				holder.resouceDownloadState.setText("等待下载");

@@ -68,6 +68,7 @@ public class Detail_Show extends Activity {
 	private String PROD_SOURCE = null;
 	public String DOWNLOAD_SOURCE = null;
 	private String PROD_URI = null;
+	private String download_index = null;
 	private int page_num = 0;
 	private int m_FavorityNum = 0;
 	private int m_SupportNum = 0;
@@ -1142,15 +1143,26 @@ public class Detail_Show extends Activity {
 
 				if (DOWNLOAD_SOURCE != null) {
 					String urlstr = DOWNLOAD_SOURCE;
+					download_index = (position + 1)+"_show";
+//					String localfile = Constant.PATH_VIDEO + prod_id + "_"
+//							+ (position + 1) + ".mp4";
 					String localfile = Constant.PATH_VIDEO + prod_id + "_"
-							+ (position + 1) + ".mp4";
-					String my_name = m_ReturnProgramView.show.name;
+							+ download_index + ".mp4";
+					//String my_name = m_ReturnProgramView.show.name;
+					String my_name = m_ReturnProgramView.show.episodes[position].name;
 					String download_state = "wait";
+//					DownloadTask downloadTask = new DownloadTask(arg1,
+//							Detail_Show.this, Detail_Show.this, prod_id,
+//							Integer.toString(position + 1), urlstr, localfile);
+//					downloadTask.execute(prod_id,
+//							Integer.toString(position + 1), urlstr,
+//							m_ReturnProgramView.show.poster, my_name,
+//							download_state);
 					DownloadTask downloadTask = new DownloadTask(arg1,
 							Detail_Show.this, Detail_Show.this, prod_id,
-							Integer.toString(position + 1), urlstr, localfile);
+							download_index, urlstr, localfile);
 					downloadTask.execute(prod_id,
-							Integer.toString(position + 1), urlstr,
+							download_index, urlstr,
 							m_ReturnProgramView.show.poster, my_name,
 							download_state);
 					Toast.makeText(Detail_Show.this, "视频已加入下载队列",

@@ -82,8 +82,8 @@ public class DownLoadAdapter extends BaseAdapter{
 			long percent =completesize*MAX/filesize;
 			String posterurl = info.getPoster();
 			holder.resourceDownloadName.setText(info.getName());
-			//aq.id(R.id.downloadfilename).text(info.getName());
-			if(info.getIndex().equalsIgnoreCase("movie"))
+//			if(info.getIndex().equalsIgnoreCase("movie"))
+			if(info.getIndex().contains("movie"))
 			{
 				if(info.getState().equalsIgnoreCase("wait"))
 				{

@@ -3,6 +3,8 @@ package com.joyplus;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -919,7 +921,8 @@ public class Detail_TV extends Activity {
 				}
 			}
 		}
-
+		
+		//URL str = isConnect(PROD_SOURCE);
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 
 			SaveToServer(1, PROD_SOURCE, index + 1);
@@ -937,7 +940,40 @@ public class Detail_TV extends Activity {
 		}
 
 	}
-
+	
+	/** 
+	   * 功能：检测当前URL是否可连接或是否有效, 
+	   * 描述：最多连接网络 5 次, 如果 5 次都不成功，视为该地址不可用 
+	   * @param urlStr 指定URL网络地址 
+	   * @return URL 
+	   */  
+	public synchronized URL isConnect(String urlStr) {  
+	   int state = -1;
+	   int counts = 0; 
+	   URL url = null;  
+	   HttpURLConnection con;
+	   if (urlStr == null || urlStr.length() <= 0) {                         
+	    return null;                   
+	   }  
+	   while (counts < 5) {  
+	    try {  
+	     url = new URL(urlStr);  
+	     con = (HttpURLConnection) url.openConnection();  
+	     state = con.getResponseCode();  
+	     System.out.println(counts +"= "+state);  
+	     if (state == 200) {  
+	      System.out.println("URL可用！");  
+	     }  
+	     break;  
+	    }catch (Exception ex) {  
+	     counts++;   
+	     System.out.println("URL不可用，连接第 "+counts+" 次");  
+	     urlStr = null;  
+	     continue;  
+	    }  
+	   }  
+	   return url;  
+	}  
 	//
 	public void CallVideoPlayActivity() {
 
@@ -1129,10 +1165,7 @@ public class Detail_TV extends Activity {
 	}
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
-
-		// Intent intent = new Intent(this, MovieActivity.class);
-		// intent.putExtra("prod_url", m_uri);
-		// intent.putExtra("prod_id", prod_id);
+		
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		intent.putExtra("path", m_uri);
 		intent.putExtra("title", title);
@@ -1459,7 +1492,10 @@ public class Detail_TV extends Activity {
 			return;
 
 		if (DOWNLOAD_SOURCE != null) {
+//			download_index = index + 1 + "_tv";
 			String urlstr = DOWNLOAD_SOURCE;
+//			String localfile = Constant.PATH_VIDEO + prod_id + "_"
+//					+ (index + 1) + ".mp4";
 			String localfile = Constant.PATH_VIDEO + prod_id + "_"
 					+ (index + 1) + ".mp4";
 			String my_name = m_ReturnProgramView.tv.name;
@@ -1469,6 +1505,12 @@ public class Detail_TV extends Activity {
 					urlstr, localfile);
 			downloadTask.execute(prod_id, Integer.toString(index + 1), urlstr,
 					m_ReturnProgramView.tv.poster, my_name, download_state);
+//			DownloadTask downloadTask = new DownloadTask(v, this,
+//					Detail_TV.this, prod_id, download_index,
+//					urlstr, localfile);
+//			downloadTask.execute(prod_id, Integer.toString(index + 1), urlstr,
+//					m_ReturnProgramView.tv.poster, my_name, download_state);
+			
 			Toast.makeText(Detail_TV.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
 					.show();
 		} else {

@@ -19,7 +19,7 @@ public class Logo extends Activity {
 		super.onCreate(savedInstanceState);
 
 		//
-		ReadLocalAppKey();
+//		ReadLocalAppKey();
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);// 不显示标题
 		setContentView(R.layout.logo);// 显示welcom.xml
@@ -46,37 +46,17 @@ public class Logo extends Activity {
 		timer.schedule(task, 1500); // 显示Logo图片2S后，自动跳转到主界面
 	}
 
-	public void ReadLocalAppKey() {
-		// TODO Auto-generated method stub
-		// online 获取APPKEY
-		MobclickAgent.updateOnlineConfig(this);
-		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
-//		String Local_Appkey = null;
-//		if have time ,changing this's SharedPreferences to the ServiceData
-//		SharedPreferences APPKEY_Setting = getSharedPreferences("LOCAL_APPKEY",
-//				0);
-//		Local_Appkey = APPKEY_Setting.getString("APPKEY", ""); // 取出保存的 APPKEY
-		if (OnLine_Appkey == null) {
-//			if (Local_Appkey == "") {
-//				Constant.APPKEY = Constant.DEFAULT_APPKEY;
-//				APPKEY_Setting.edit().putString("APPKEY", Constant.APPKEY)
-//						.commit();
-//			} else {
-//				Constant.APPKEY = Local_Appkey;
-//			}
-			Constant.APPKEY = Constant.DEFAULT_APPKEY;
-		} else {
-//		    if(OnLine_Appkey == Local_Appkey)
-//			if (OnLine_Appkey.equalsIgnoreCase(Local_Appkey)) {
-//				Constant.APPKEY = Local_Appkey;
-//			} else {
-//				Constant.APPKEY = OnLine_Appkey;
-//				APPKEY_Setting.edit().putString("APPKEY", Constant.APPKEY)
-//						.commit();
-//			}
-			Constant.APPKEY = OnLine_Appkey;
-		}
-	}
+//	public void ReadLocalAppKey() {
+//		// TODO Auto-generated method stub
+//		// online 获取APPKEY
+//		MobclickAgent.updateOnlineConfig(this);
+//		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
+//		if (OnLine_Appkey == null) {
+//			Constant.APPKEY = Constant.DEFAULT_APPKEY;
+//		} else {
+//			Constant.APPKEY = OnLine_Appkey;
+//		}
+//	}
 
 	@Override
 	public void onResume() {

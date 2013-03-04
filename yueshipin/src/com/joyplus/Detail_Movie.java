@@ -679,16 +679,19 @@ public class Detail_Movie extends Activity {
 		params.put("prod_type", 1);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
 		params.put("playback_time", 0);// _time required int 上次播放时间，单位：秒
 		params.put("duration", 0);// required int 视频时长， 单位：秒
-
+		
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-
+			String str = null;
+			if(PROD_SOURCE.contains("test=m3u8"))
+			{
+				PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
+			}
 			params.put("play_type", "1");// required string
 			// 播放的类别 1: 视频地址播放
 			// 2:webview播放
 			params.put("video_url", PROD_SOURCE);// required
 			// string
 			// 视频url
-
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 			cb.header("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
@@ -703,7 +706,6 @@ public class Detail_Movie extends Activity {
 			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
 
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-
 			params.put("play_type", "2");// required string 播放的类别 1: 视频地址播放
 											// 2:webview播放
 			params.put("video_url", PROD_URI);// required string 视频url
@@ -727,7 +729,7 @@ public class Detail_Movie extends Activity {
 		}
 
 	}
-
+	
 	public void ShowTopics() {
 		String m_j = null;
 		int i = 0;

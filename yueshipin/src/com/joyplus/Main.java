@@ -27,6 +27,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
 
+@SuppressWarnings("deprecation")
 public class Main extends TabActivity {
 
 	private App app;
@@ -43,11 +44,9 @@ public class Main extends TabActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
-		// MobclickAgent.onError(this);//if there's a exception the
-		// application'll shutdown
 		app = (App) getApplicationContext();
 		aq = new AQuery(this);
-		ReadLocalAppKey();
+//		ReadLocalAppKey();
 		CheckLogin();
 		setupIntent();
 	}
@@ -158,15 +157,18 @@ public class Main extends TabActivity {
 		builder.show();
 
 	}
+	/*
+	 * 添加之后关于在线的操作不成功
+	 */
 	
-	public void ReadLocalAppKey() {
-		// online 获取APPKEY
-		MobclickAgent.updateOnlineConfig(this);
-		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
-		if (OnLine_Appkey != null) {
-			Constant.APPKEY = OnLine_Appkey;
-		}
-	}
+//	public void ReadLocalAppKey() {
+//		// online 获取APPKEY
+//		MobclickAgent.updateOnlineConfig(this);
+//		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
+//		if (OnLine_Appkey != null) {
+//			Constant.APPKEY = OnLine_Appkey;
+//		}
+//	}
 	public boolean CheckLogin() {
 		String UserInfo = null;
 		UserInfo = app.GetServiceData("UserInfo");
