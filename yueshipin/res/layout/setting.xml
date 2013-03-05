@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F2F2F2"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
 
     <LinearLayout
         android:id="@+id/LayoutTitle"
@@ -51,26 +52,26 @@
 
         </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
+    
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="10dp">
+        <!-- 为了让顶部空出10dp的空隙 -->
+    </RelativeLayout>
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="9dp"
         android:background="@drawable/setting_xinlang"
-        android:orientation="vertical" >
+        android:gravity="center_vertical|right">
 
         <CheckBox
             android:id="@+id/checkBox1"
-            android:layout_width="52dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="22dp"
             android:button="@drawable/setting_weibo_button"
-            android:onClick="OnClickSinaWeibo" />
-
-    </LinearLayout>
+            android:paddingRight="30dp"
+            android:onClick="OnClickSinaWeibo"/>
+    </RelativeLayout>
     
 
     <LinearLayout

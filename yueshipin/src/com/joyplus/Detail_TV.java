@@ -3,6 +3,8 @@ package com.joyplus;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -54,9 +56,11 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyplus.Detail_Movie.EComparatorIndex;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
+import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.download.Dao;
@@ -495,14 +499,7 @@ public class Detail_TV extends Activity {
 					&& m_ReturnProgramView.tv.episodes[0].video_urls != null
 					&& m_ReturnProgramView.tv.episodes[0].video_urls[0].url != null)
 				PROD_URI = m_ReturnProgramView.tv.episodes[0].video_urls[0].url;
-
-			// if (m_ReturnProgramView.tv.episodes[0].down_urls != null
-			// && m_ReturnProgramView.tv.episodes[0].down_urls[0].urls.length >
-			// 0
-			// && m_ReturnProgramView.tv.episodes[0].down_urls[0].urls[0].url !=
-			// null)
-			// PROD_SOURCE =
-			// m_ReturnProgramView.tv.episodes[0].down_urls[0].urls[0].url;
+			videoSourceSort(0);
 			if (m_ReturnProgramView.tv.episodes[0].down_urls != null) {
 				for (i = 0; i < m_ReturnProgramView.tv.episodes[0].down_urls.length; i++) {
 					for (int k = 0; k < m_ReturnProgramView.tv.episodes[0].down_urls[i].urls.length; k++) {
@@ -882,12 +879,11 @@ public class Detail_TV extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-
+		videoSourceSort(index);
 		if (m_ReturnProgramView.tv.episodes != null
 				&& m_ReturnProgramView.tv.episodes[index].video_urls != null
 				&& m_ReturnProgramView.tv.episodes[index].video_urls.length > 0)
 			PROD_URI = m_ReturnProgramView.tv.episodes[index].video_urls[0].url;
-
 		PROD_SOURCE = null;
 		if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
 			for (int i = 0; i < m_ReturnProgramView.tv.episodes[index].down_urls.length; i++) {
@@ -920,6 +916,7 @@ public class Detail_TV extends Activity {
 			}
 		}
 
+		// URL str = isConnect(PROD_SOURCE);
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 
 			SaveToServer(1, PROD_SOURCE, index + 1);
@@ -936,6 +933,100 @@ public class Detail_TV extends Activity {
 			startActivity(intent);
 		}
 
+	}
+
+	public void videoSourceSort(int source_index) {
+		if (m_ReturnProgramView.tv.episodes[source_index].down_urls != null) {
+			for (int j = 0; j < m_ReturnProgramView.tv.episodes[source_index].down_urls.length; j++) {
+				if (m_ReturnProgramView.tv.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("letv")) {
+					m_ReturnProgramView.tv.episodes[source_index].down_urls[j].index = 0;
+				} else if (m_ReturnProgramView.tv.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("fengxing")) {
+					m_ReturnProgramView.tv.episodes[source_index].down_urls[j].index = 1;
+				} else if (m_ReturnProgramView.tv.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("qiyi")) {
+					m_ReturnProgramView.tv.episodes[source_index].down_urls[j].index = 2;
+				} else if (m_ReturnProgramView.tv.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("youku")) {
+					m_ReturnProgramView.tv.episodes[source_index].down_urls[j].index = 3;
+				} else if (m_ReturnProgramView.tv.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("sinahd")) {
+					m_ReturnProgramView.tv.episodes[source_index].down_urls[j].index = 4;
+				} else if (m_ReturnProgramView.tv.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("sohu")) {
+					m_ReturnProgramView.tv.episodes[source_index].down_urls[j].index = 5;
+				} else if (m_ReturnProgramView.tv.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("56")) {
+					m_ReturnProgramView.tv.episodes[source_index].down_urls[j].index = 6;
+				} else if (m_ReturnProgramView.tv.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("qq")) {
+					m_ReturnProgramView.tv.episodes[source_index].down_urls[j].index = 7;
+				} else if (m_ReturnProgramView.tv.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("pptv")) {
+					m_ReturnProgramView.tv.episodes[source_index].down_urls[j].index = 8;
+				} else if (m_ReturnProgramView.tv.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("m1905")) {
+					m_ReturnProgramView.tv.episodes[source_index].down_urls[j].index = 9;
+				}
+			}
+			if (m_ReturnProgramView.tv.episodes[source_index].down_urls.length > 1) {
+				Arrays.sort(
+						m_ReturnProgramView.tv.episodes[source_index].down_urls,
+						new EComparatorIndex());
+			}
+		}
+	}
+
+	// 将片源排序
+	class EComparatorIndex implements Comparator {
+
+		@Override
+		public int compare(Object first, Object second) {
+			// TODO Auto-generated method stub
+			int first_name = ((DOWN_URLS) first).index;
+			int second_name = ((DOWN_URLS) second).index;
+			if (first_name - second_name < 0) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+	}
+
+	/**
+	 * 功能：检测当前URL是否可连接或是否有效, 描述：最多连接网络 5 次, 如果 5 次都不成功，视为该地址不可用
+	 * 
+	 * @param urlStr
+	 *            指定URL网络地址
+	 * @return URL
+	 */
+	public synchronized URL isConnect(String urlStr) {
+		int state = -1;
+		int counts = 0;
+		URL url = null;
+		HttpURLConnection con;
+		if (urlStr == null || urlStr.length() <= 0) {
+			return null;
+		}
+		while (counts < 5) {
+			try {
+				url = new URL(urlStr);
+				con = (HttpURLConnection) url.openConnection();
+				state = con.getResponseCode();
+				System.out.println(counts + "= " + state);
+				if (state == 200) {
+					System.out.println("URL可用！");
+				}
+				break;
+			} catch (Exception ex) {
+				counts++;
+				System.out.println("URL不可用，连接第 " + counts + " 次");
+				urlStr = null;
+				continue;
+			}
+		}
+		return url;
 	}
 
 	//
@@ -1130,9 +1221,6 @@ public class Detail_TV extends Activity {
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
 
-		// Intent intent = new Intent(this, MovieActivity.class);
-		// intent.putExtra("prod_url", m_uri);
-		// intent.putExtra("prod_id", prod_id);
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		intent.putExtra("path", m_uri);
 		intent.putExtra("title", title);
@@ -1445,7 +1533,7 @@ public class Detail_TV extends Activity {
 						if (DOWNLOAD_SOURCE == null && urls.file != null
 								&& app.IfSupportFormat(urls.url)
 								&& urls.file.trim().equalsIgnoreCase("mp4"))
-//							DOWNLOAD_SOURCE = urls.url.trim();
+							// DOWNLOAD_SOURCE = urls.url.trim();
 							DOWNLOAD_SOURCE = urls.url;
 						if (DOWNLOAD_SOURCE != null)
 							break;
@@ -1459,7 +1547,10 @@ public class Detail_TV extends Activity {
 			return;
 
 		if (DOWNLOAD_SOURCE != null) {
+			// download_index = index + 1 + "_tv";
 			String urlstr = DOWNLOAD_SOURCE;
+			// String localfile = Constant.PATH_VIDEO + prod_id + "_"
+			// + (index + 1) + ".mp4";
 			String localfile = Constant.PATH_VIDEO + prod_id + "_"
 					+ (index + 1) + ".mp4";
 			String my_name = m_ReturnProgramView.tv.name;
@@ -1469,6 +1560,13 @@ public class Detail_TV extends Activity {
 					urlstr, localfile);
 			downloadTask.execute(prod_id, Integer.toString(index + 1), urlstr,
 					m_ReturnProgramView.tv.poster, my_name, download_state);
+			// DownloadTask downloadTask = new DownloadTask(v, this,
+			// Detail_TV.this, prod_id, download_index,
+			// urlstr, localfile);
+			// downloadTask.execute(prod_id, Integer.toString(index + 1),
+			// urlstr,
+			// m_ReturnProgramView.tv.poster, my_name, download_state);
+
 			Toast.makeText(Detail_TV.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
 					.show();
 		} else {

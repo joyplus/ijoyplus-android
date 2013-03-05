@@ -3,7 +3,7 @@ package com.joyplus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+//import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -16,7 +16,7 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
+//import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +47,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 	private App app;
 	private ReturnUserFavorities m_ReturnUserFavorities = null;
 
-	private int Fromepage;
+//	private int Fromepage;
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private Tab3Page2ListAdapter Tab3Page2Adapter;
@@ -158,7 +158,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 	}
 
 	public void GetVideoMovies() {
-		String m_j = null;
+//		String m_j = null;
 
 		if (m_ReturnUserFavorities.favorities == null){
 			if(isLastisNext ==1){
@@ -241,39 +241,39 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 
 	}
 
-	private void CheckSaveData() {
-		String SaveData = null;
-		ObjectMapper mapper = new ObjectMapper();
-		SaveData = app.GetServiceData("user_favorities");
-		if (SaveData == null) {
-			GetServiceData(1);
-		} else {
-			try {
-				m_ReturnUserFavorities = mapper.readValue(SaveData,
-						ReturnUserFavorities.class);
-				// 创建数据源对象
-				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData(1);
-					}
-				}, 10000);
-
-			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-	}
+//	private void CheckSaveData() {
+//		String SaveData = null;
+//		ObjectMapper mapper = new ObjectMapper();
+//		SaveData = app.GetServiceData("user_favorities");
+//		if (SaveData == null) {
+//			GetServiceData(1);
+//		} else {
+//			try {
+//				m_ReturnUserFavorities = mapper.readValue(SaveData,
+//						ReturnUserFavorities.class);
+//				// 创建数据源对象
+//				GetVideoMovies();
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						GetServiceData(1);
+//					}
+//				}, 10000);
+//
+//			} catch (JsonParseException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (JsonMappingException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
+//		}
+//	}
 
 	private void OnDeleteListItem(final int item) {
 		final Tab3Page2ListData m_Tab3Page2ListData = (Tab3Page2ListData) ItemsListView
@@ -436,7 +436,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		@Override
 		public View getView(int i, View view, ViewGroup viewgroup) {
 			
-			Integer integer = Integer.valueOf(i);
+//			Integer integer = Integer.valueOf(i);
 			ViewHolder holder = null;
 
 			if (view == null) {

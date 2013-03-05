@@ -224,6 +224,7 @@ public class ReturnProgramView {
 	public static class DOWN_URLS {
 		public String source;
 		public URLS[] urls;
+		public int index;
 
 		public static class URLS {
 			public String type;
