@@ -132,6 +132,7 @@ public class App extends Application {
 	public boolean IfSupportFormat(String Url) {
 		/*
 		 * URLUtil里面可以检测网址是否有效
+		 * 这个地址也不是非常可靠
 		 */
 		return URLUtil.isNetworkUrl(Url);
 	}
