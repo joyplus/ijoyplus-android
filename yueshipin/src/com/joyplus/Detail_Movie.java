@@ -346,6 +346,10 @@ public class Detail_Movie extends Activity {
 			if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
 				for (int i = 0; i < m_ReturnProgramView.movie.episodes[0].down_urls.length; i++) {
 					for (int k = 0; k < m_ReturnProgramView.movie.episodes[0].down_urls[i].urls.length; k++) {
+//						if(m_ReturnProgramView.movie.episodes[0].down_urls[i].source.equalsIgnoreCase("letv"))
+//						{
+//							
+//						}
 						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[0].down_urls[i].urls[k];
 						if (urls != null) {
 							/*

@@ -18,9 +18,6 @@ public class Logo extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		//
-//		ReadLocalAppKey();
-
 		requestWindowFeature(Window.FEATURE_NO_TITLE);// 不显示标题
 		setContentView(R.layout.logo);// 显示welcom.xml
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -34,29 +31,11 @@ public class Logo extends Activity {
 			@Override
 			public void run() {
 				startActivity(intent);
-				//添加新手引导程序处理过程
-				/*if(true)
-				{
-					Intent guider = new Intent(Logo.this,GuiderHelper.class);
-					startActivity(guider);
-				}*/
 				finish();
 			}
 		};
 		timer.schedule(task, 1500); // 显示Logo图片2S后，自动跳转到主界面
 	}
-
-//	public void ReadLocalAppKey() {
-//		// TODO Auto-generated method stub
-//		// online 获取APPKEY
-//		MobclickAgent.updateOnlineConfig(this);
-//		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
-//		if (OnLine_Appkey == null) {
-//			Constant.APPKEY = Constant.DEFAULT_APPKEY;
-//		} else {
-//			Constant.APPKEY = OnLine_Appkey;
-//		}
-//	}
 
 	@Override
 	public void onResume() {

@@ -1209,11 +1209,11 @@ public class Detail_Show extends Activity {
 			TextView textview = (TextView) convertView
 					.findViewById(R.id.text_name);
 			textview.setText((CharSequence) download_names.get(position));
-			if (position == cur_pos) {// 如果当前的行就是ListView中选中的一行，就更改显示样式
-				textview.setBackgroundDrawable(download_focuse);
-				textview.setTextColor(Color.WHITE);
-				textview.setText(" " + download_names.get(position));
-			}
+//			if (position == cur_pos) {// 如果当前的行就是ListView中选中的一行，就更改显示样式
+//				textview.setBackgroundDrawable(download_focuse);
+//				textview.setTextColor(Color.WHITE);
+//				textview.setText(" " + download_names.get(position));
+//			}
 			return convertView;
 		}
 	}

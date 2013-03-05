@@ -201,9 +201,7 @@ public class Main extends TabActivity {
 			JSONObject json;
 			try {
 				json = new JSONObject(UserInfo);
-
-				app.UserID = json.getString("id").trim();
-
+				app.UserID = json.getString("user_id").trim();
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
