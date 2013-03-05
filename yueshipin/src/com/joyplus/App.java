@@ -131,26 +131,9 @@ public class App extends Application {
 	
 	public boolean IfSupportFormat(String Url) {
 		/*
-		 * 
+		 * URLUtil里面可以检测网址是否有效
 		 */
 		return URLUtil.isNetworkUrl(Url);
-	}
-
-	public synchronized boolean CheckUrl(String string) {
-		// TODO Auto-generated method stub
-		HttpURLConnection httpConnection;
-		try {
-			URL url = new URL(string);
-			httpConnection = (HttpURLConnection) url.openConnection();
-			httpConnection.setConnectTimeout(5000);
-			httpConnection.setRequestMethod("GET");
-			int responseCode = httpConnection.getResponseCode();
-			httpConnection.disconnect();
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 
 	public boolean isNetworkAvailable() {

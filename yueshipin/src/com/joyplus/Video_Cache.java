@@ -142,6 +142,7 @@ public class Video_Cache extends Activity {
 												info.getIndex());
 							}
 						}
+						showGridView();
 					} else {
 						if (info.getCompeleteSize() < info.getFileSize()) {
 							app.MyToast(Video_Cache.this, getResources()

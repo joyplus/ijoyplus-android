@@ -2,8 +2,12 @@ package com.joyplus;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +42,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
+import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
+import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadTask;
@@ -317,7 +323,8 @@ public class Detail_Movie extends Activity {
 	public void OnClickImageView(View v) {
 
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	public void InitData() {
 		String m_j = null;
 		if (m_ReturnProgramView.movie != null) {
@@ -342,7 +349,7 @@ public class Detail_Movie extends Activity {
 					&& m_ReturnProgramView.movie.episodes[0].video_urls != null
 					&& m_ReturnProgramView.movie.episodes[0].video_urls[0].url != null)
 				PROD_URI = m_ReturnProgramView.movie.episodes[0].video_urls[0].url;
-
+			videoSourceSort(0);
 			if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
 				for (int i = 0; i < m_ReturnProgramView.movie.episodes[0].down_urls.length; i++) {
 					for (int k = 0; k < m_ReturnProgramView.movie.episodes[0].down_urls[i].urls.length; k++) {
@@ -448,7 +455,76 @@ public class Detail_Movie extends Activity {
 		}
 
 	}
+	
+	public void videoSourceSort(int source_index)
+	{
+		if(m_ReturnProgramView.movie.episodes[source_index].down_urls!=null)
+		{
+			for(int j = 0;j<m_ReturnProgramView.movie.episodes[source_index].down_urls.length;j++)
+			{
+				if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("letv"))
+				{
+					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 0;
+				}
+				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("fengxing"))
+				{
+					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 1;
+				}
+				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("qiyi"))
+				{
+					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 2;
+				}
+				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("youku"))
+				{
+					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 3;
+				}
+				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("sinahd"))
+				{
+					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 4;
+				}
+				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("sohu"))
+				{
+					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 5;
+				}
+				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("56"))
+				{
+					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 6;
+				}
+				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("qq"))
+				{
+					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 7;
+				}
+				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("pptv"))
+				{
+					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 8;
+				}
+				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("m1905"))
+				{
+					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 9;
+				}
+			}
+			if(m_ReturnProgramView.movie.episodes[source_index].down_urls.length>1)
+			{
+				Arrays.sort(m_ReturnProgramView.movie.episodes[source_index].down_urls, new EComparatorIndex());
+			}	
+		}
+	}
+	// 将片源排序
+	class EComparatorIndex implements Comparator {
 
+		@Override
+		public int compare(Object first, Object second) {
+			// TODO Auto-generated method stub
+			int first_name = ((DOWN_URLS)first).index;
+			int second_name = ((DOWN_URLS)second).index;
+			if (first_name - second_name < 0) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+	}
+	
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
@@ -679,16 +755,19 @@ public class Detail_Movie extends Activity {
 		params.put("prod_type", 1);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
 		params.put("playback_time", 0);// _time required int 上次播放时间，单位：秒
 		params.put("duration", 0);// required int 视频时长， 单位：秒
-
+		
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-
+			String str = null;
+			if(PROD_SOURCE.contains("test=m3u8"))
+			{
+				PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
+			}
 			params.put("play_type", "1");// required string
 			// 播放的类别 1: 视频地址播放
 			// 2:webview播放
 			params.put("video_url", PROD_SOURCE);// required
 			// string
 			// 视频url
-
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 			cb.header("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
@@ -703,7 +782,6 @@ public class Detail_Movie extends Activity {
 			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
 
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-
 			params.put("play_type", "2");// required string 播放的类别 1: 视频地址播放
 											// 2:webview播放
 			params.put("video_url", PROD_URI);// required string 视频url
@@ -727,7 +805,7 @@ public class Detail_Movie extends Activity {
 		}
 
 	}
-
+	
 	public void ShowTopics() {
 		String m_j = null;
 		int i = 0;

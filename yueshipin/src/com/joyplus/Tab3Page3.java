@@ -239,7 +239,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	// InitListData
 	public void GetServiceData(int index) {
 		String url = Constant.BASE_URL + "user/tops" + "?page_num="
-				+ Integer.toString(index) + "&page_size=10";
+				+ Integer.toString(index) + "&page_size=20";
 		// String url = Constant.BASE_URL + "user/tops";
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
@@ -249,9 +249,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
 		cb.header("app_key", Constant.APPKEY);
 		cb.header("user_id", app.UserID);
-
 		aq.ajax(cb);
-
 	}
 
 	private void CheckSaveData() {

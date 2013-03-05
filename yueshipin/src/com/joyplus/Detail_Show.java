@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +49,10 @@ import com.androidquery.callback.AjaxStatus;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyplus.Detail_TV.EComparatorIndex;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
+import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.weibo.net.AccessToken;
@@ -68,6 +72,7 @@ public class Detail_Show extends Activity {
 	private String PROD_SOURCE = null;
 	public String DOWNLOAD_SOURCE = null;
 	private String PROD_URI = null;
+	private String download_index = null;
 	private int page_num = 0;
 	private int m_FavorityNum = 0;
 	private int m_SupportNum = 0;
@@ -699,19 +704,11 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-
+		videoSourceSort(index);
 		if (m_ReturnProgramView.show.episodes != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls[0].url != null)
 			PROD_URI = m_ReturnProgramView.show.episodes[index].video_urls[0].url;
-
-		// if (m_ReturnProgramView.show.episodes[index].down_urls != null
-		// && m_ReturnProgramView.show.episodes[index].down_urls[0].urls.length
-		// > 0
-		// && m_ReturnProgramView.show.episodes[index].down_urls[0].urls[0].url
-		// != null)
-		// PROD_SOURCE =
-		// m_ReturnProgramView.show.episodes[index].down_urls[0].urls[0].url;
 		PROD_SOURCE = null;
 		if (m_ReturnProgramView.show.episodes[index].down_urls != null) {
 			for (int i = 0; i < m_ReturnProgramView.show.episodes[index].down_urls.length; i++) {
@@ -761,7 +758,76 @@ public class Detail_Show extends Activity {
 		}
 
 	}
+	
+	public void videoSourceSort(int source_index)
+	{
+		if(m_ReturnProgramView.show.episodes[source_index].down_urls!=null)
+		{
+			for(int j = 0;j<m_ReturnProgramView.show.episodes[source_index].down_urls.length;j++)
+			{
+				if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase("letv"))
+				{
+					m_ReturnProgramView.show.episodes[source_index].down_urls[j].index = 0;
+				}
+				else if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase("fengxing"))
+				{
+					m_ReturnProgramView.show.episodes[source_index].down_urls[j].index = 1;
+				}
+				else if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase("qiyi"))
+				{
+					m_ReturnProgramView.show.episodes[source_index].down_urls[j].index = 2;
+				}
+				else if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase("youku"))
+				{
+					m_ReturnProgramView.show.episodes[source_index].down_urls[j].index = 3;
+				}
+				else if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase("sinahd"))
+				{
+					m_ReturnProgramView.show.episodes[source_index].down_urls[j].index = 4;
+				}
+				else if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase("sohu"))
+				{
+					m_ReturnProgramView.show.episodes[source_index].down_urls[j].index = 5;
+				}
+				else if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase("56"))
+				{
+					m_ReturnProgramView.show.episodes[source_index].down_urls[j].index = 6;
+				}
+				else if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase("qq"))
+				{
+					m_ReturnProgramView.show.episodes[source_index].down_urls[j].index = 7;
+				}
+				else if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase("pptv"))
+				{
+					m_ReturnProgramView.show.episodes[source_index].down_urls[j].index = 8;
+				}
+				else if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase("m1905"))
+				{
+					m_ReturnProgramView.show.episodes[source_index].down_urls[j].index = 9;
+				}
+			}
+			if(m_ReturnProgramView.tv.episodes[source_index].down_urls.length>1)
+			{
+				Arrays.sort(m_ReturnProgramView.show.episodes[source_index].down_urls, new EComparatorIndex());
+			}	
+		}
+	}
+	// 将片源排序
+	class EComparatorIndex implements Comparator {
 
+		@Override
+		public int compare(Object first, Object second) {
+			// TODO Auto-generated method stub
+			int first_name = ((DOWN_URLS) first).index;
+			int second_name = ((DOWN_URLS) second).index;
+			if (first_name - second_name < 0) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+	}
+		
 	public void CallVideoPlayActivity(String m_uri, String title) {
 
 		// Intent intent = new Intent(this, MovieActivity.class);
@@ -1142,15 +1208,26 @@ public class Detail_Show extends Activity {
 
 				if (DOWNLOAD_SOURCE != null) {
 					String urlstr = DOWNLOAD_SOURCE;
+					download_index = (position + 1)+"_show";
+//					String localfile = Constant.PATH_VIDEO + prod_id + "_"
+//							+ (position + 1) + ".mp4";
 					String localfile = Constant.PATH_VIDEO + prod_id + "_"
-							+ (position + 1) + ".mp4";
-					String my_name = m_ReturnProgramView.show.name;
+							+ download_index + ".mp4";
+					//String my_name = m_ReturnProgramView.show.name;
+					String my_name = m_ReturnProgramView.show.episodes[position].name;
 					String download_state = "wait";
+//					DownloadTask downloadTask = new DownloadTask(arg1,
+//							Detail_Show.this, Detail_Show.this, prod_id,
+//							Integer.toString(position + 1), urlstr, localfile);
+//					downloadTask.execute(prod_id,
+//							Integer.toString(position + 1), urlstr,
+//							m_ReturnProgramView.show.poster, my_name,
+//							download_state);
 					DownloadTask downloadTask = new DownloadTask(arg1,
 							Detail_Show.this, Detail_Show.this, prod_id,
-							Integer.toString(position + 1), urlstr, localfile);
+							download_index, urlstr, localfile);
 					downloadTask.execute(prod_id,
-							Integer.toString(position + 1), urlstr,
+							download_index, urlstr,
 							m_ReturnProgramView.show.poster, my_name,
 							download_state);
 					Toast.makeText(Detail_Show.this, "视频已加入下载队列",
@@ -1197,11 +1274,11 @@ public class Detail_Show extends Activity {
 			TextView textview = (TextView) convertView
 					.findViewById(R.id.text_name);
 			textview.setText((CharSequence) download_names.get(position));
-			if (position == cur_pos) {// 如果当前的行就是ListView中选中的一行，就更改显示样式
-				textview.setBackgroundDrawable(download_focuse);
-				textview.setTextColor(Color.WHITE);
-				textview.setText(" " + download_names.get(position));
-			}
+//			if (position == cur_pos) {// 如果当前的行就是ListView中选中的一行，就更改显示样式
+//				textview.setBackgroundDrawable(download_focuse);
+//				textview.setTextColor(Color.WHITE);
+//				textview.setText(" " + download_names.get(position));
+//			}
 			return convertView;
 		}
 	}
