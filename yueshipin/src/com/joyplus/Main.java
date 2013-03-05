@@ -1,6 +1,7 @@
 package com.joyplus;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -8,6 +9,7 @@ import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.TabActivity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +18,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.RadioGroup;
@@ -24,11 +27,13 @@ import android.widget.TabHost;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
 
 @SuppressWarnings("deprecation")
 public class Main extends TabActivity {
+	private String TAG = "Main";
 
 	private App app;
 	private AQuery aq;
@@ -46,11 +51,60 @@ public class Main extends TabActivity {
 		setContentView(R.layout.main);
 		app = (App) getApplicationContext();
 		aq = new AQuery(this);
+		
+		PushService.subscribe(this, "", Main.class);
+		PushService.setDefaultPushCallback(this, Main.class);
 //		ReadLocalAppKey();
 		CheckLogin();
 		setupIntent();
 	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		try {
+			/*{"alert":"真爱趁现在","prod_id":"977732","prod_type":"2","badge":"Increment"}  */
+			JSONObject json = new JSONObject(intent.getExtras().getString(
+					"com.parse.Data"));
+			String Prod_ID = json.getString("prod_id").trim();
+			String Prod_Type = json.getString("prod_type").trim();
+			int Type = Integer.parseInt(Prod_Type);
+			// 1：电影，2：电视剧，3：综艺，4：视频
+			switch (Type) {
+			case 1:
+				intent.setClass(this, Detail_Movie.class);
+				intent.putExtra("prod_id", Prod_ID);
+				try {
+					startActivity(intent);
+				} catch (ActivityNotFoundException ex) {
+					Log.e(TAG, "Call Detail_Movie failed", ex);
+				}
+				break;
+			case 2:
+				intent.setClass(this, Detail_TV.class);
+				intent.putExtra("prod_id", Prod_ID);
+				try {
+					startActivity(intent);
+				} catch (ActivityNotFoundException ex) {
+					Log.e(TAG, "Call Detail_TV failed", ex);
+				}
+				break;
+			case 3:
+				intent.setClass(this, Detail_Show.class);
+				intent.putExtra("prod_id", Prod_ID);
+				try {
+					startActivity(intent);
+				} catch (ActivityNotFoundException ex) {
+					Log.e(TAG, "Call Detail_Show failed", ex);
+				}
+				break;
+			}
 
+		} catch (JSONException e) {
+			Log.d(TAG, "JSONException: " + e.getMessage());
+		}
+		super.onNewIntent(intent);
+
+	}
 	private TabHost.TabSpec buildTabSpec(String tag, String resLabel,
 			int resIcon, final Intent content) {
 		return mTabHost.newTabSpec(tag)

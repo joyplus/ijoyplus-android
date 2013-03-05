@@ -103,7 +103,9 @@ public class Detail_Show extends Activity {
 		Intent intent = getIntent();
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
-		aq.id(R.id.program_name).text(prod_name);
+		
+		if(prod_name != null)
+			aq.id(R.id.program_name).text(prod_name);
 
 		aq.id(R.id.scrollView1).gone();
 		mScrollView = (ScrollView) findViewById(R.id.scrollView1);

@@ -2,7 +2,9 @@ package com.joyplus;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;

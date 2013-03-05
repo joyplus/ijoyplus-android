@@ -31,6 +31,15 @@ public class Constant {
 	public static String TECENTAPPID = "100317415";
 	public static String SINA_REDIRECTURL = "https://api.weibo.com/oauth2/default.html";
 
+	// Test Env
+//	public static String Parse_AppId = "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB";
+//	public static String Parse_ClientKey = "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl";
+	
+	//Production Env
+	public static String Parse_AppId = "UBgv7IjGR8i6AN0nS4diS48oQTk6YErFi3LrjK4P";
+	public static String Parse_ClientKey = "Y2lKxqco7mN3qBmZ05S8jxSP8nhN92hSN4OHDZR8";
+	
+	
 //	public static final String[] video_extensions = { ".m3u",".m3u8" ,"3gphd", ".3g2", ".3gp",
 //			".3gp2", ".3gpp", ".amv", ".asf", ".avi", ".divx", "drc", ".dv",
 //			".f4v", ".flv", ".gvi", ".gxf", ".iso", ".m1v", ".m2v", ".m2t",

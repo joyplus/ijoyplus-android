@@ -30,6 +30,7 @@ import com.joyplus.download.DownloadTask;
 import com.joyplus.download.Downloader;
 import com.joyplus.weibo.net.Weibo;
 import com.joyplus.weibo.net.WeiboDialogListener;
+import com.parse.Parse;
 
 @SuppressLint("DefaultLocale")
 public class App extends Application {
@@ -60,7 +61,10 @@ public class App extends Application {
 		if (!destDir.exists()) {
 			destDir.mkdirs();
 		}
-
+		
+		Parse.initialize(this, Constant.Parse_AppId,
+				Constant.Parse_ClientKey);
+		
 		instance = this;
 	}
 
