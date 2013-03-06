@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab1ListAdapter;
 import com.joyplus.Adapters.Tab1ListData;
 import com.joyplus.Service.Return.ReturnTops;
+import com.joyplus.Dlna.DlnaSelectDevice;
 import com.parse.Parse;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
@@ -56,6 +57,10 @@ public class Tab1 extends Activity implements
 		UmengUpdateAgent.setUpdateOnlyWifi(false);
 		UmengUpdateAgent.setOnDownloadListener(null);
 		UmengUpdateAgent.update(this);
+		
+		Intent i  = new Intent();
+		i.setClass(this, DlnaSelectDevice.class);
+		startService(i);
 //		Parse.initialize(this, "Your Application Id", "Your Client Key");
 		Parse.initialize(this, "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB", "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl");
 		
@@ -109,6 +114,9 @@ public class Tab1 extends Activity implements
 	protected void onDestroy() {
 		if (aq != null)
 			aq.dismiss();
+		Intent i  = new Intent();
+		i.setClass(this, DlnaSelectDevice.class);
+		stopService(i);
 		super.onDestroy();
 	}
 

@@ -1,74 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="74dip"
-    android:layout_alignParentBottom="true"
-    android:layout_marginBottom="0.0dip"
-    android:layout_marginLeft="0.0dip"
-    android:layout_marginRight="0.0dip"
-    android:background="@drawable/mediacontroller_bg"
-    android:orientation="horizontal" >
-
-    <ImageButton
-        android:id="@+id/mediacontroller_play_pause"
-        android:layout_width="54.6dip"
-        android:layout_height="32dip"
-        android:layout_alignParentRight="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="7.0dip"
-        android:background="#00000000"
-        android:contentDescription="@string/mediacontroller_play_pause"
-        android:gravity="center"
-        android:src="@drawable/mediacontroller_pause_button" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginBottom="2dip"
-        android:layout_marginLeft="7.0dip"
-        android:layout_marginRight="7.0dip"
-        android:layout_marginTop="2dip"
-        android:layout_toLeftOf="@+id/mediacontroller_play_pause" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       android:layout_alignParentTop="true"
+       android:background="@drawable/player_top_bg"
+        >
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+        <TextView
+            android:id="@+id/mediacontroller_file_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="热血高校2"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white" />
 
-            <TextView
-                android:id="@+id/mediacontroller_time_current"
-                style="@style/MediaController_Text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true" />
+        <ImageButton
+            android:id="@+id/imageButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:background="@drawable/player_back" />
 
-            <TextView
-                android:id="@+id/mediacontroller_time_total"
-                style="@style/MediaController_Text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true" />
-        </RelativeLayout>
+    </RelativeLayout>
 
-        <SeekBar
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/player_play_bg">
+        
+      <TextView
+          android:id="@+id/mediacontroller_time_current"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentTop="true"
+          android:layout_marginLeft="12dp"
+          android:layout_marginTop="14dp"
+          android:textColor="@color/white" 
+          android:text="00:00" />
+
+       <SeekBar
             android:id="@+id/mediacontroller_seekbar"
             style="@style/MediaController_SeekBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+             android:layout_toLeftOf="@+id/mediacontroller_time_total"
+           android:layout_toRightOf="@+id/mediacontroller_time_current"
+               android:layout_alignParentTop="true"
+           android:layout_marginLeft="10dp"
+           android:layout_marginRight="10dp"
+           android:layout_marginTop="12dp"
             android:focusable="true"
             android:max="1000" />
-
+ 
+       
         <TextView
-            android:id="@+id/mediacontroller_file_name"
-            style="@style/MediaController_Text"
+            android:id="@+id/mediacontroller_time_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:ellipsize="marquee"
-            android:singleLine="true" />
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/mediacontroller_time_current"
+            android:layout_marginRight="12dp"
+            android:textColor="@color/white" 
+            android:text="01:00" />
+
+         <RelativeLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_below="@+id/mediacontroller_time_current"
+             android:layout_marginTop="12dp" >
+
+             <ImageButton
+                 android:id="@+id/mediacontroller_dlna"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                  android:layout_centerVertical="true"
+                 android:layout_marginLeft="12dp"
+                 android:background="@drawable/player_route" />
+
+             <ImageButton
+                 android:id="@+id/mediacontroller_play_pause"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_alignParentTop="true"
+                 android:layout_centerHorizontal="true"
+                 android:background="@drawable/player_play" />
+             
+         </RelativeLayout>
+
     </RelativeLayout>
 
 </RelativeLayout>

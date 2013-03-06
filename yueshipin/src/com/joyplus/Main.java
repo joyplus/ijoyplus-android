@@ -54,7 +54,7 @@ public class Main extends TabActivity {
 		
 		PushService.subscribe(this, "", Main.class);
 		PushService.setDefaultPushCallback(this, Main.class);
-//		ReadLocalAppKey();
+		ReadLocalAppKey();
 		CheckLogin();
 		setupIntent();
 	}
@@ -215,14 +215,14 @@ public class Main extends TabActivity {
 	 * 添加之后关于在线的操作不成功
 	 */
 	
-//	public void ReadLocalAppKey() {
-//		// online 获取APPKEY
-//		MobclickAgent.updateOnlineConfig(this);
-//		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
-//		if (OnLine_Appkey != null) {
-//			Constant.APPKEY = OnLine_Appkey;
-//		}
-//	}
+	public void ReadLocalAppKey() {
+		// online 获取APPKEY
+		MobclickAgent.updateOnlineConfig(this);
+		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
+		if (OnLine_Appkey != null && OnLine_Appkey.length() >0) {
+			Constant.APPKEY = OnLine_Appkey;
+		}
+	}
 	public boolean CheckLogin() {
 		String UserInfo = null;
 		UserInfo = app.GetServiceData("UserInfo");

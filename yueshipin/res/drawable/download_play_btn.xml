@@ -2,5 +2,4 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:state_pressed="true" android:drawable="@drawable/downloaded" />
 	<item android:state_focused="true" android:drawable="@drawable/downloaded_2"/>
-	<item android:drawable="@drawable/undownload_tv" />
 </selector>

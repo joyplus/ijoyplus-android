@@ -5,14 +5,17 @@
 package com.joyplus.Video;
 
 import com.joyplus.R;
+import com.joyplus.Dlna.DlnaSelectDevice;
 
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.media.AudioManager;
@@ -20,6 +23,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.Display;
@@ -34,6 +38,7 @@ import android.widget.ProgressBar;
 
 public class VideoPlayerActivity extends Activity implements OnCompletionListener {
 
+	private String TAG = "VideoPlayerActivity";
 	private String mPath;
 	private String mTitle;
 	private VideoView mVideoView;
@@ -41,7 +46,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private ImageView mOperationBg;
 	private ImageView mOperationPercent;
 	private AudioManager mAudioManager;
-	private ProgressBar mProgressBar;
+	private ImageView mImageViewBG;
 	
 	/** 最大声音 */
 	private int mMaxVolume;
@@ -54,6 +59,21 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private GestureDetector mGestureDetector;
 	private MediaController mMediaController;
 
+	private DlnaSelectDevice mMyService;
+
+	private ServiceConnection mServiceConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			// TODO Auto-generated method stub
+			mMyService = ((DlnaSelectDevice.MyBinder) service).getService();
+			mVideoView.setServiceConnection(mMyService);
+		}
+
+		public void onServiceDisconnected(ComponentName name) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+	
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -74,12 +94,12 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
 		mOperationBg = (ImageView) findViewById(R.id.operation_bg);
 		mOperationPercent = (ImageView) findViewById(R.id.operation_percent);
-		mProgressBar = (ProgressBar) findViewById(R.id.progressBar1);
+		mImageViewBG = (ImageView) findViewById(R.id.imageView_BG);
 
 		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
-		mVideoView.setProgressBar(mProgressBar);
+		
+		mVideoView.setImageViewBG(mImageViewBG);
 		
 		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
 			mVideoView.setVideoURI(Uri.parse(mPath));
@@ -90,6 +110,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		mMediaController = new MediaController(this);
 		//设置显示名称
+		mVideoView.setTitle(mTitle);
 		mMediaController.setFileName(mTitle);
 		mVideoView.setMediaController(mMediaController);
 		
@@ -98,6 +119,10 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		mGestureDetector = new GestureDetector(this, new MyGestureListener());
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		
+		Intent i = new Intent();
+		i.setClass(this, DlnaSelectDevice.class);
+		bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 	}
 
 	@Override
@@ -120,6 +145,8 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		if (mVideoView != null){
 			mVideoView.stopPlayback();
 		}
+		unbindService(mServiceConnection);
+		
 	}
 
 	@Override
@@ -258,6 +285,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 	@Override
 	public void onCompletion(MediaPlayer player) {
-		finish();
+//		finish();
 	}
+	
 }
