@@ -103,7 +103,9 @@ public class Detail_Show extends Activity {
 		Intent intent = getIntent();
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
-		aq.id(R.id.program_name).text(prod_name);
+		
+		if(prod_name != null)
+			aq.id(R.id.program_name).text(prod_name);
 
 		aq.id(R.id.scrollView1).gone();
 		mScrollView = (ScrollView) findViewById(R.id.scrollView1);
@@ -704,12 +706,13 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		videoSourceSort(index);
+		//videoSourceSort(index);
 		if (m_ReturnProgramView.show.episodes != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls[0].url != null)
 			PROD_URI = m_ReturnProgramView.show.episodes[index].video_urls[0].url;
 		PROD_SOURCE = null;
+//		videoSourceSort(index);
 		if (m_ReturnProgramView.show.episodes[index].down_urls != null) {
 			for (int i = 0; i < m_ReturnProgramView.show.episodes[index].down_urls.length; i++) {
 				for (int k = 0; k < m_ReturnProgramView.show.episodes[index].down_urls[i].urls.length; k++) {
