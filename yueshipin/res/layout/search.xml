@@ -34,8 +34,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignRight="@id/Tab1TopRightImage"
                 android:layout_marginLeft="14dp"
-                android:layout_marginRight="80dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginRight="60dp"
+               	android:layout_marginTop="5dp"
                 android:hint=" 电影 / 电视剧 / 综艺"
                 android:singleLine="true" >
 

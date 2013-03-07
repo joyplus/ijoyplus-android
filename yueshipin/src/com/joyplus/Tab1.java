@@ -2,7 +2,9 @@ package com.joyplus;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -56,7 +58,6 @@ public class Tab1 extends Activity implements
 		UmengUpdateAgent.update(this);
 //		Parse.initialize(this, "Your Application Id", "Your Client Key");
 		Parse.initialize(this, "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB", "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl");
-		
 		
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);

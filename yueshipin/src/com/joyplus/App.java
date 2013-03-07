@@ -30,6 +30,7 @@ import com.joyplus.download.DownloadTask;
 import com.joyplus.download.Downloader;
 import com.joyplus.weibo.net.Weibo;
 import com.joyplus.weibo.net.WeiboDialogListener;
+import com.parse.Parse;
 
 @SuppressLint("DefaultLocale")
 public class App extends Application {
@@ -60,7 +61,10 @@ public class App extends Application {
 		if (!destDir.exists()) {
 			destDir.mkdirs();
 		}
-
+		
+		Parse.initialize(this, Constant.Parse_AppId,
+				Constant.Parse_ClientKey);
+		
 		instance = this;
 	}
 
@@ -132,6 +136,7 @@ public class App extends Application {
 	public boolean IfSupportFormat(String Url) {
 		/*
 		 * URLUtil里面可以检测网址是否有效
+		 * 这个地址也不是非常可靠
 		 */
 		return URLUtil.isNetworkUrl(Url);
 	}

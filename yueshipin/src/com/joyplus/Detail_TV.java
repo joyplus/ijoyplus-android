@@ -126,7 +126,8 @@ public class Detail_TV extends Activity {
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
 
-		aq.id(R.id.program_name).text(prod_name);
+		if(prod_name != null)
+			aq.id(R.id.program_name).text(prod_name);
 
 		// modify by yyc
 		focuse = this.getResources().getDrawable(R.drawable.play_focuse);
@@ -1656,4 +1657,11 @@ public class Detail_TV extends Activity {
 			}
 		}
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 }

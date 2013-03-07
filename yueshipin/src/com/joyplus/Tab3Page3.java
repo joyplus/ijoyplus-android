@@ -150,9 +150,12 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 		if (m_ReturnTops.tops == null)
 			return;
-
-		// if (m_ReturnTops.tops.length < 4)
-		// aq.id(R.id.button2).gone();
+		/*
+		 * 出现多次同样的悦单
+		 */
+//		if (dataStruct != null && dataStruct.size() > 1)
+//			dataStruct.clear();
+		
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 			Tab3Page3ListData m_Tab3Page3ListData = new Tab3Page3ListData();
 			m_Tab3Page3ListData.Pic_ID = m_ReturnTops.tops[i].id;
@@ -292,12 +295,12 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 	}
 
-	public void OnClickMore(View v) {
-
-		Intent intent = new Intent(this, Tab3Page3_more.class);
-		getParent().startActivityForResult(intent, 2);
-
-	}
+//	public void OnClickMore(View v) {
+//
+//		Intent intent = new Intent(this, Tab3Page3_more.class);
+//		getParent().startActivityForResult(intent, 2);
+//
+//	}
 
 	private void TopDel(String topic_id) {
 		String url = Constant.BASE_URL + "top/del";
@@ -443,6 +446,10 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 	@Override
 	public void onTabActivityResult(int requestCode, int resultCode, Intent data) {
+//		if (dataStruct != null && dataStruct.size() > 1)
+//			dataStruct.clear();
+//		isLastisNext = 1;
+//		GetServiceData(isLastisNext);
+//		app.MyToast(aq.getContext(), "刷新悦单");
 	}
-
 }

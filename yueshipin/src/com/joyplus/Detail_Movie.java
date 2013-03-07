@@ -78,7 +78,12 @@ public class Detail_Movie extends Activity {
 	private String expires_in = null;
 	String name;
 	private Drawable downloaddisable = null;
-
+	//播放记录变量
+	public static int REQUESTPLAYTIME = 200;
+	public static int RETURN_CURRENT_TIME = 150;
+	private int current_time = 0;
+	private int total_time = 0;
+	
 	/**
 	 * 利用消息处理机制适时更新APP里的数据
 	 */
@@ -94,7 +99,8 @@ public class Detail_Movie extends Activity {
 
 		aq = new AQuery(this);
 		aq.id(R.id.scrollView1).gone();
-		aq.id(R.id.program_name).text(prod_name);
+		if (prod_name != null)
+			aq.id(R.id.program_name).text(prod_name);
 
 		mScrollView = (ScrollView) findViewById(R.id.scrollView1);
 		mScrollView.setOnTouchListener(new OnTouchListener() {
@@ -323,7 +329,7 @@ public class Detail_Movie extends Activity {
 	public void OnClickImageView(View v) {
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void InitData() {
 		String m_j = null;
@@ -455,68 +461,58 @@ public class Detail_Movie extends Activity {
 		}
 
 	}
-	
-	public void videoSourceSort(int source_index)
-	{
-		if(m_ReturnProgramView.movie.episodes[source_index].down_urls!=null)
-		{
-			for(int j = 0;j<m_ReturnProgramView.movie.episodes[source_index].down_urls.length;j++)
-			{
-				if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("letv"))
-				{
+
+	public void videoSourceSort(int source_index) {
+		if (m_ReturnProgramView.movie.episodes[source_index].down_urls != null) {
+			for (int j = 0; j < m_ReturnProgramView.movie.episodes[source_index].down_urls.length; j++) {
+				if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("letv")) {
 					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 0;
-				}
-				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("fengxing"))
-				{
+				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("fengxing")) {
 					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 1;
-				}
-				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("qiyi"))
-				{
+				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("qiyi")) {
 					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 2;
-				}
-				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("youku"))
-				{
+				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("youku")) {
 					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 3;
-				}
-				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("sinahd"))
-				{
+				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("sinahd")) {
 					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 4;
-				}
-				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("sohu"))
-				{
+				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("sohu")) {
 					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 5;
-				}
-				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("56"))
-				{
+				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("56")) {
 					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 6;
-				}
-				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("qq"))
-				{
+				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("qq")) {
 					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 7;
-				}
-				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("pptv"))
-				{
+				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("pptv")) {
 					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 8;
-				}
-				else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source.equalsIgnoreCase("m1905"))
-				{
+				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("m1905")) {
 					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 9;
 				}
 			}
-			if(m_ReturnProgramView.movie.episodes[source_index].down_urls.length>1)
-			{
-				Arrays.sort(m_ReturnProgramView.movie.episodes[source_index].down_urls, new EComparatorIndex());
-			}	
+			if (m_ReturnProgramView.movie.episodes[source_index].down_urls.length > 1) {
+				Arrays.sort(
+						m_ReturnProgramView.movie.episodes[source_index].down_urls,
+						new EComparatorIndex());
+			}
 		}
 	}
+
 	// 将片源排序
 	class EComparatorIndex implements Comparator {
 
 		@Override
 		public int compare(Object first, Object second) {
 			// TODO Auto-generated method stub
-			int first_name = ((DOWN_URLS)first).index;
-			int second_name = ((DOWN_URLS)second).index;
+			int first_name = ((DOWN_URLS) first).index;
+			int second_name = ((DOWN_URLS) second).index;
 			if (first_name - second_name < 0) {
 				return -1;
 			} else {
@@ -524,7 +520,7 @@ public class Detail_Movie extends Activity {
 			}
 		}
 	}
-	
+
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
@@ -734,12 +730,79 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void OnClickPlay(View v) throws JSONException {
-//		String m_str = MobclickAgent.getConfigParams(this, "playBtnSuppressed");
 		if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
 				.equalsIgnoreCase("1")) {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
+//		String url = Constant.BASE_URL + "program/play";
+//
+//		Map<String, Object> params = new HashMap<String, Object>();
+//		params.put("app_key", Constant.APPKEY);// required string
+//												// 申请应用时分配的AppKey。
+//		params.put("prod_id", m_ReturnProgramView.movie.id);// required string
+//															// 视频id
+//		params.put("prod_name", m_ReturnProgramView.movie.name);// required
+//																// string 视频名字
+//		params.put("prod_subname", m_ReturnProgramView.movie.episodes.length);// required
+//																				// string
+//																				// 视频的集数
+//		params.put("prod_type", 1);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
+//		params.put("playback_time", 0);// _time required int 上次播放时间，单位：秒d
+//		params.put("duration", 0);// required int 视频时长， 单位：秒
+
+		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+			SaveToServer(1,PROD_SOURCE,current_time,total_time);
+			if (PROD_SOURCE.contains("test=m3u8")) {
+				PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
+			}
+//			params.put("play_type", "1");// required string
+//			// 播放的类别 1: 视频地址播放
+//			// 2:webview播放
+//			params.put("video_url", PROD_SOURCE);// required
+//			// string
+//			// 视频url
+//			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+//			cb.header("User-Agent",
+//					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+//			cb.header("app_key", Constant.APPKEY);
+//			cb.header("user_id", app.UserID);
+//
+//			cb.params(params).url(url).type(JSONObject.class)
+//					.weakHandler(this, "CallProgramPlayResult");
+//			aq.ajax(cb);
+			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
+		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+//			params.put("play_type", "2");// required string 播放的类别 1: 视频地址播放
+//											// 2:webview播放
+//			params.put("video_url", PROD_URI);// required string 视频url
+//
+//			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+//			cb.header("User-Agent",
+//					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+//			cb.header("app_key", Constant.APPKEY);
+//			cb.header("user_id", app.UserID);
+//
+//			cb.params(params).url(url).type(JSONObject.class)
+//					.weakHandler(this, "CallProgramPlayResult");
+//			// cb.params(params).url(url);
+//			aq.ajax(cb);
+			SaveToServer(2,PROD_URI,current_time,total_time);
+			Intent intent = new Intent();
+			intent.setAction("android.intent.action.VIEW");
+			Uri content_url = Uri.parse(PROD_URI);
+			intent.setData(content_url);
+			// startActivity(intent);
+			startActivityForResult(intent, REQUESTPLAYTIME);
+		}
+
+	}
+	
+	/*
+	 * 将播放数据保存在服务器
+	 */
+	public void SaveToServer(int play_type, String SourceUrl,int current_time,int total_time)
+	{
 		String url = Constant.BASE_URL + "program/play";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -753,19 +816,19 @@ public class Detail_Movie extends Activity {
 																				// string
 																				// 视频的集数
 		params.put("prod_type", 1);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
-		params.put("playback_time", 0);// _time required int 上次播放时间，单位：秒
-		params.put("duration", 0);// required int 视频时长， 单位：秒
-		
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			String str = null;
-			if(PROD_SOURCE.contains("test=m3u8"))
-			{
-				PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
-			}
-			params.put("play_type", "1");// required string
-			// 播放的类别 1: 视频地址播放
-			// 2:webview播放
-			params.put("video_url", PROD_SOURCE);// required
+		params.put("playback_time", current_time);// _time required int 上次播放时间，单位：秒
+		params.put("duration", total_time);// required int 视频时长， 单位：秒
+		// 播放的类别 1: 视频地址播放
+		// 2:webview播放
+		if(play_type == 1)
+		{
+			params.put("play_type", "1");
+		}
+		else
+		{
+			params.put("play_type", "2");// required string
+		}
+		params.put("video_url", SourceUrl);
 			// string
 			// 视频url
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
@@ -778,32 +841,6 @@ public class Detail_Movie extends Activity {
 					.weakHandler(this, "CallProgramPlayResult");
 			// cb.params(params).url(url);
 			aq.ajax(cb);
-
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
-
-		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-			params.put("play_type", "2");// required string 播放的类别 1: 视频地址播放
-											// 2:webview播放
-			params.put("video_url", PROD_URI);// required string 视频url
-
-			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
-			cb.header("user_id", app.UserID);
-
-			cb.params(params).url(url).type(JSONObject.class)
-					.weakHandler(this, "CallProgramPlayResult");
-			// cb.params(params).url(url);
-			aq.ajax(cb);
-
-			Intent intent = new Intent();
-			intent.setAction("android.intent.action.VIEW");
-			Uri content_url = Uri.parse(PROD_URI);
-			intent.setData(content_url);
-			startActivity(intent);
-		}
-
 	}
 	
 	public void ShowTopics() {
@@ -1127,12 +1164,30 @@ public class Detail_Movie extends Activity {
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		intent.putExtra("path", m_uri);
 		intent.putExtra("title", title);
-
+		
 		try {
-			startActivity(intent);
+			// startActivity(intent);
+			startActivityForResult(intent, REQUESTPLAYTIME);
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "mp4 fail", ex);
 		}
 
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		if (requestCode == REQUESTPLAYTIME && resultCode == RETURN_CURRENT_TIME) {
+			Bundle bundle = data.getExtras();
+			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				
+				SaveToServer(1, PROD_SOURCE, bundle.getInt("current_time"), bundle.getInt("total_time"));
+			
+			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+				
+				SaveToServer(2, PROD_SOURCE, bundle.getInt("current_time"), bundle.getInt("total_time"));
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

@@ -22,9 +22,11 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +44,8 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private ImageView mOperationPercent;
 	private AudioManager mAudioManager;
 	private ProgressBar mProgressBar;
+	long current_time = 0;
+	public static int RETURN_CURRENT_TIME = 150;
 	
 	/** 最大声音 */
 	private int mMaxVolume;
@@ -60,7 +64,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
-   
+
 		Intent intent = getIntent();
 		mPath = intent.getStringExtra("path");
 		mTitle = intent.getStringExtra("title");
@@ -104,14 +108,20 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	protected void onPause() {
 		super.onPause();
 		if (mVideoView != null)
+		{
 			mVideoView.pause();
+		}	
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		if (mVideoView != null)
+		{
+			//current_time = mVideoView.getCurrentPosition();
 			mVideoView.resume();
+		}
+			
 	}
 
 	@Override
@@ -152,10 +162,6 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		/** 双击 */
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-//			if (mLayout == VideoView.VIDEO_LAYOUT_ZOOM)
-//				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
-//			else
-//				mLayout++;
 			mLayout++;
 			if (mVideoView != null)
 				mVideoView.setVideoLayout(mLayout, 0);
@@ -254,6 +260,28 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		if (mVideoView != null)
 			mVideoView.setVideoLayout(mLayout, 0);
 		super.onConfigurationChanged(newConfig);
+	}
+	
+	
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		if(keyCode == 4)
+		{
+			if(mVideoView!=null)
+			{
+				Intent intent = new Intent();
+				Bundle bundle = new Bundle();
+				bundle.putInt("current_time", (int)(mVideoView.getCurrentPosition()));
+				bundle.putInt("total_time", (int)(mVideoView.getDuration()));
+				intent.putExtras(bundle);
+				setResult(RETURN_CURRENT_TIME,intent);
+				mVideoView.stopPlayback();
+			}
+		}
+		finish();
+		return super.onKeyDown(keyCode, event);
 	}
 
 	@Override

@@ -432,6 +432,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
     private static class AccessoriesViewHolder {
         public TextView video_caption;
         public TextView textView03;
+        public TextView textView04;
     }
 
 	public class Tab3Page1ListAdapter extends BaseAdapter {
@@ -469,6 +470,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				
 				 holder.video_caption = (TextView) view.findViewById(R.id.txt_video_caption);
 				 holder.textView03 = (TextView) view.findViewById(R.id.TextView03);
+				 holder.textView04 = (TextView) view.findViewById(R.id.TextView04);
 
 				view.setTag(holder);
 			}
@@ -508,15 +510,20 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			default:
 				break;
 			}
-		
+			if(m_Tab3Page1ListData.Pro_time>0&&m_Tab3Page1ListData.Pro_time < m_Tab3Page1ListData.Pro_duration)
+			{
+				holder.textView04.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
+			}
+			else
+			{
+				holder.textView04.setVisibility(View.GONE);
+			}
 			if (m_Tab3Page1ListData.Pro_time >0
 					&& m_Tab3Page1ListData.Pro_time == m_Tab3Page1ListData.Pro_duration)
 				((Button) view.findViewById(R.id.button1)).setBackgroundResource(R.drawable.tab3_page1_replay_icon_see);
 			
 			return view;
 		}
-
-
 	}
 	@Override
 	public void onTabActivityResult(int requestCode, int resultCode, Intent data) {
