@@ -60,7 +60,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
-
+   
 		Intent intent = getIntent();
 		mPath = intent.getStringExtra("path");
 		mTitle = intent.getStringExtra("title");
