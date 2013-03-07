@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.joyplus"
-    android:versionCode="8"
-    android:versionName="0.9.8alpha" >
+    android:versionCode="9"
+    android:versionName="0.9.9alpha" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -38,6 +38,7 @@
             android:name=".Main"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
+             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
@@ -217,6 +218,14 @@
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        
+          <activity
+            android:name=".Dlna.DlnaVideoPlay"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        
+         <service android:name=".Dlna.DlnaSelectDevice" android:exported="true"></service> 
 
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"
@@ -231,6 +240,7 @@
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
+         <service android:name="com.parse.PushService" />
 
         <meta-data
             android:name="UMENG_APPKEY"

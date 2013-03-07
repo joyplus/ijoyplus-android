@@ -94,7 +94,8 @@ public class Detail_Movie extends Activity {
 
 		aq = new AQuery(this);
 		aq.id(R.id.scrollView1).gone();
-		aq.id(R.id.program_name).text(prod_name);
+		if(prod_name != null)
+			aq.id(R.id.program_name).text(prod_name);
 
 		mScrollView = (ScrollView) findViewById(R.id.scrollView1);
 		mScrollView.setOnTouchListener(new OnTouchListener() {
