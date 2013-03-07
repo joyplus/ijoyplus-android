@@ -218,6 +218,14 @@
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        
+          <activity
+            android:name=".Dlna.DlnaVideoPlay"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        
+         <service android:name=".Dlna.DlnaSelectDevice" android:exported="true"></service> 
 
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"

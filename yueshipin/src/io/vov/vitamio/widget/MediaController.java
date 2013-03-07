@@ -78,6 +78,7 @@ public class MediaController extends FrameLayout {
 	private static final int SHOW_PROGRESS = 2;
 	private boolean mFromXml = false;
 	private ImageButton mPauseButton;
+	private ImageButton mDlnaButton;
 
 	private AudioManager mAM;
 
@@ -144,10 +145,13 @@ public class MediaController extends FrameLayout {
 
 	private void initControllerView(View v) {
 		mPauseButton = (ImageButton) v.findViewById(R.id.mediacontroller_play_pause);
+		mDlnaButton = (ImageButton) v.findViewById(R.id.mediacontroller_dlna);
 		if (mPauseButton != null) {
 			mPauseButton.requestFocus();
 			mPauseButton.setOnClickListener(mPauseListener);
 		}
+		if (mDlnaButton != null) 
+			mDlnaButton.setOnClickListener(mDlnaListener);
 
 		mProgress = (ProgressBar) v.findViewById(R.id.mediacontroller_seekbar);
 		if (mProgress != null) {
@@ -401,15 +405,27 @@ public class MediaController extends FrameLayout {
 			show(sDefaultTimeout);
 		}
 	};
-
+	
+	private View.OnClickListener mDlnaListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (mPlayer.isPlaying()) {
+				mPlayer.pause();
+				updatePausePlay();
+			}
+			mPlayer.gotoDlnaVideoPlay();
+			// doPauseResume();
+			// show(sDefaultTimeout);
+		}
+	};
 	private void updatePausePlay() {
 		if (mRoot == null || mPauseButton == null)
 			return;
 
 		if (mPlayer.isPlaying())
-			mPauseButton.setImageResource(R.drawable.mediacontroller_pause_button);
+			mPauseButton.setBackgroundResource(R.drawable.player_pause);
 		else
-			mPauseButton.setImageResource(R.drawable.mediacontroller_play_button);
+			mPauseButton.setBackgroundResource(R.drawable.player_play);
 	}
 
 	private void doPauseResume() {
@@ -495,6 +511,8 @@ public class MediaController extends FrameLayout {
 		boolean canSeekBackward();
 
 		boolean canSeekForward();
+		
+		void gotoDlnaVideoPlay();
 	}
 
 }

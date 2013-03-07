@@ -39,15 +39,41 @@ public class Constant {
 	public static String Parse_AppId = "UBgv7IjGR8i6AN0nS4diS48oQTk6YErFi3LrjK4P";
 	public static String Parse_ClientKey = "Y2lKxqco7mN3qBmZ05S8jxSP8nhN92hSN4OHDZR8";
 	
+	public final static int MSG_DMR_CHANGED = 0;
+	public final static int MSG_PUSH_LOCAL_FILE = 1;
+	public final static int MSG_PUSH_INTERNET_MEDIA = 2;
+	public final static int MSG_MONITOR_DMR = 3;
+	public final static int MSG_STATE_UPDATE = 4;
+	public final static int MSG_MEDIA_INFO_UPDATE = 5;
+	public final static int MSG_POSITION_UPDATE = 6;
+	public final static int MSG_VOLUME_UPDATE = 7;
+	public final static int MSG_MUTE_UPDATE = 8;
+	public final static int MSG_ALLOWED_ACTIONS_UPDATE = 9;
+	public final static int MSG_GET_POSITION_TIMER = 10;
+	public final static int MSG_ACTION_RESULT = 11;
+
+	public final static int MSG_DMRCHANGED = 12;
 	
-//	public static final String[] video_extensions = { ".m3u",".m3u8" ,"3gphd", ".3g2", ".3gp",
-//			".3gp2", ".3gpp", ".amv", ".asf", ".avi", ".divx", "drc", ".dv",
-//			".f4v", ".flv", ".gvi", ".gxf", ".iso", ".m1v", ".m2v", ".m2t",
-//			".m2ts", ".m4v", ".mkv", ".mov", ".mp2", ".mp2v", ".mp4", ".mp4v",
-//			".mpe", ".mpeg", ".mpeg1", ".mpeg2", ".mpeg4", ".mpg", ".mpv2",
-//			".mts", ".mtv", ".mxf", ".mxg", ".nsv", ".nuv", ".ogm", ".ogv",
-//			".ogx", ".ps", ".rec", ".rm", ".rmvb", ".tod", ".ts", ".tts",
-//			".vob", ".vro", ".webm", ".wm", ".wmv", ".wtv", ".xesc" };
+	public final static int MSG_UPDATEDATA = 30;
+	
+	public final static String MSG_KEY_ID_TITLE = "MSG_KEY_ID_TITLE";
+	public final static String MSG_KEY_ID_STATE = "MSG_KEY_ID_STATE";
+	public final static String MSG_KEY_ID_ALLOWED_ACTION = "MSG_KEY_ID_ALLOWED_ACTION";
+	public final static String MSG_KEY_ID_VOLUME = "MSG_KEY_ID_VOLUME";
+	public final static String MSG_KEY_ID_MUTE = "MSG_KEY_ID_MUTE";
+	public final static String MSG_KEY_ID_POSITION = "MSG_KEY_ID_POSITION";
+	public final static String MSG_KEY_ID_DURATION = "MSG_KEY_ID_DURATION";
+	public final static String MSG_KEY_ID_MIME_TYPE = "MSG_KEY_ID_MIME_TYPE";
+	public final static String MSG_KEY_ID_ACTION_NAME = "MSG_KEY_ID_ACTION_NAME";
+	public final static String MSG_KEY_ID_ACTION_RESULT = "MSG_KEY_ID_ACTION_RESULT";
+	public static final String[] video_extensions = { ".m3u",".m3u8" ,"3gphd", ".3g2", ".3gp",
+			".3gp2", ".3gpp", ".amv", ".asf", ".avi", ".divx", "drc", ".dv",
+			".f4v", ".flv", ".gvi", ".gxf", ".iso", ".m1v", ".m2v", ".m2t",
+			".m2ts", ".m4v", ".mkv", ".mov", ".mp2", ".mp2v", ".mp4", ".mp4v",
+			".mpe", ".mpeg", ".mpeg1", ".mpeg2", ".mpeg4", ".mpg", ".mpv2",
+			".mts", ".mtv", ".mxf", ".mxg", ".nsv", ".nuv", ".ogm", ".ogv",
+			".ogx", ".ps", ".rec", ".rm", ".rmvb", ".tod", ".ts", ".tts",
+			".vob", ".vro", ".webm", ".wm", ".wmv", ".wtv", ".xesc" };
 	public static final String[] video_dont_support_extensions = { ".m3u",
 			".m3u8" };
 }

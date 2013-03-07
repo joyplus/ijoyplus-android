@@ -16,13 +16,18 @@ import io.vov.vitamio.MediaPlayer.OnSubtitleUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnVideoSizeChangedListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.dlcs.dlna.Stack.MediaRenderer;
 import com.joyplus.R;
+import com.joyplus.Dlna.DlnaSelectDevice;
+import com.joyplus.Dlna.DlnaVideoPlay;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,6 +41,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 
@@ -50,6 +56,7 @@ import android.widget.ProgressBar;
  * {@link #setSubShown(boolean)}
  */
 public class VideoView extends SurfaceView implements MediaController.MediaPlayerControl {
+	private String TAG = "VideoView";
 	private Uri mUri;
 	private String mTitle;
 	private long mDuration;
@@ -97,7 +104,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	private boolean mCanSeekForward = true;
 	private Context mContext;
 	
-	private ProgressBar mProgressBar;
+	private ImageView mImageViewBG;
+	private DlnaSelectDevice mMyService;
 
 	public VideoView(Context context) {
 		super(context);
@@ -182,9 +190,13 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	public void setVideoURI(Uri uri) {
 		mUri = uri;
 		mSeekWhenPrepared = 0;
+				
 		openVideo();
 		requestLayout();
 		invalidate();
+	}
+	public void setTitle(String name) {
+		mTitle = name;
 	}
 
 	public void stopPlayback() {
@@ -245,9 +257,14 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		mMediaController = controller;
 		attachMediaController();
 	}
-	public void setProgressBar(ProgressBar mProgressBar) {
-		this.mProgressBar = mProgressBar;
-		mProgressBar.setVisibility(View.VISIBLE);
+
+	public void setImageViewBG(ImageView mImageViewBG) {
+		this.mImageViewBG = mImageViewBG;
+		mImageViewBG.setVisibility(View.VISIBLE);
+	}
+	
+	public void setServiceConnection(DlnaSelectDevice mMyService) {
+		this.mMyService = mMyService;
 	}
 
 	private void attachMediaController() {
@@ -302,8 +319,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				if (mSurfaceWidth == mVideoWidth && mSurfaceHeight == mVideoHeight) {
 					if (mTargetState == STATE_PLAYING) {
 						start();
-						if (mProgressBar != null)
-							mProgressBar.setVisibility(View.GONE);
+						if (mImageViewBG != null)
+							mImageViewBG.setVisibility(View.GONE);
 						if (mMediaController != null)
 							mMediaController.show();
 						
@@ -735,5 +752,47 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	@Override
   public boolean canSeekForward() {
 		return mCanSeekForward;
+	}
+	@Override
+	public void gotoDlnaVideoPlay() {
+		if (mMyService != null) {
+			ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
+			if (mDmrCache.size() > 0) {
+				CharSequence[] items = new String[mDmrCache.size()];
+				for (int i = 0; i < mDmrCache.size(); i++)
+					items[i] = mDmrCache.get(i).friendlyName;
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+				builder.setTitle("请选择你的设备：");
+				builder.setItems(items, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						ArrayList<MediaRenderer> mDmrCache = mMyService
+								.getDmrCache();
+						MediaRenderer mMediaRenderer = mDmrCache.get(item);
+						mMyService.SetCurrentDevice(item + 1);
+						if (mMediaRenderer != null && mDmrCache != null
+								&& mDmrCache.size() == 1) {
+							gotoDlnaVideoPlay2();
+						}
+					}
+				});
+				AlertDialog alert = builder.create();
+				alert.show();
+			} else {
+				Log.e(TAG, "正在搜索设备 ...");
+			}
+		}
+	}
+	
+	private void gotoDlnaVideoPlay2() {
+		Intent intent = new Intent(mContext, DlnaVideoPlay.class);
+		intent.putExtra("prod_url", mUri.toString());
+		intent.putExtra("title", mTitle);
+
+		try {
+			mContext.startActivity(intent);
+		} catch (ActivityNotFoundException ex) {
+			Log.e(TAG, "Call DlnaVideoPlay failed", ex);
+		}
 	}
 }
