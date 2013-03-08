@@ -149,14 +149,13 @@ public class Tab3 extends TabActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
-		if(requestCode == 100 && resultCode == 0)
-		{
-			CheckLogin();
-		}
-		if (requestCode == 100 && resultCode == 101){
-			CheckLogin();
-		} else {
+		if (requestCode == 100){
+			if(resultCode == 101||resultCode == 0)
+			{
+				CheckLogin();
+			}
+		} 
+		else {
 			// 获取当前活动的Activity实例
 			Activity subActivity = getLocalActivityManager()
 					.getCurrentActivity();

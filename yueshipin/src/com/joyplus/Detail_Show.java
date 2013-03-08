@@ -93,6 +93,13 @@ public class Detail_Show extends Activity {
 	List download_names = new ArrayList();
 	private int cur_pos = 0;
 
+	// 播放记录变量
+//	public static int REQUESTPLAYTIME = 200;
+//	public static int RETURN_CURRENT_TIME = 150;
+//	private int current_time = 0;
+//	private int total_time = 0;
+	private int current_index = -1; // yy
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -609,10 +616,7 @@ public class Detail_Show extends Activity {
 		}
 
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			SaveToServer(1, PROD_SOURCE, 1);
-
 			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
-			// GetVideoSource(0,PROD_SOURCE);
 
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
@@ -700,7 +704,7 @@ public class Detail_Show extends Activity {
 
 	public void OnClickShowPlay(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
-
+		current_index = index;
 		if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
 				.equalsIgnoreCase("1")) {
 			app.MyToast(this, "暂无播放链接!");
@@ -745,10 +749,7 @@ public class Detail_Show extends Activity {
 		}
 
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-
-			SaveToServer(1, PROD_SOURCE, index + 1);
 			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
-			// GetVideoSource(index, PROD_SOURCE);
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
 			SaveToServer(2, PROD_URI, index + 1);
@@ -839,6 +840,15 @@ public class Detail_Show extends Activity {
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		intent.putExtra("path", m_uri);
 		intent.putExtra("title", title);
+		Bundle bundle = new Bundle();
+		bundle.putString("prod_id", prod_id);
+		bundle.putString("prod_name", title);
+		bundle.putString("prod_subname", m_ReturnProgramView.show.episodes[current_index].name);
+		bundle.putString("play_type", "1");
+		bundle.putString("video_url", m_uri);
+		bundle.putString("prod_type", "3");
+		bundle.putLong("current_time", 0);
+		intent.putExtras(bundle);
 
 		try {
 			startActivity(intent);

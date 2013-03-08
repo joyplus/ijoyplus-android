@@ -238,9 +238,13 @@
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
-        <service android:name="com.parse.PushService" />
-
-        <meta-data
+         <service android:name="com.parse.PushService" />
+        <service
+            android:name="com.umeng.common.net.DownloadingService"
+            android:exported="true"
+            android:process=":DownloadingService" >
+        </service>
+		<meta-data
             android:name="UMENG_APPKEY"
             android:value="50937e6c5270151fc8000003" >
         </meta-data>

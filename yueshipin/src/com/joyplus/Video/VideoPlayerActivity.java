@@ -4,6 +4,16 @@
 
 package com.joyplus.Video;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONObject;
+
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
+import com.joyplus.App;
+import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Dlna.DlnaSelectDevice;
 
@@ -39,7 +49,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 public class VideoPlayerActivity extends Activity implements OnCompletionListener {
-
+	//private playHistoryData playData = null;
+	
+	private AQuery aq;
+	private App app;
 	private String mPath;
 	private String mTitle;
 	private VideoView mVideoView;
@@ -48,7 +61,9 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private ImageView mOperationPercent;
 	private AudioManager mAudioManager;
 	private ImageView mImageViewBG;
-	long current_time = 0;
+	
+	//playHistory
+	long play_current_time = 0;
 	public static int RETURN_CURRENT_TIME = 150;
 	
 	/** 最大声音 */
@@ -61,9 +76,18 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private int mLayout = VideoView.VIDEO_LAYOUT_STRETCH;//VIDEO_LAYOUT_ZOOM;
 	private GestureDetector mGestureDetector;
 	private MediaController mMediaController;
-
 	private DlnaSelectDevice mMyService;
-
+	
+	/*
+	 * playHistoryData
+	 */
+	private String playProdId = null;//视频id
+	private String playProdName = null;//视频名字
+	private String playProdSubName = null;//视频的集数
+	private String playPlayType = null;//播放的类别  1: 视频地址播放 2:webview播放
+	private String playVideoUrl = null;//视频url
+	private int playProdType = 0;//视频类别 1：电影，2：电视剧，3：综艺，4：视频
+	
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
@@ -82,17 +106,12 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
-
-		Intent intent = getIntent();
-		mPath = intent.getStringExtra("path");
-		mTitle = intent.getStringExtra("title");
-		if (TextUtils.isEmpty(mPath))
-			mPath = Environment.getExternalStorageDirectory() + "/mnt/sdcard/t.mp4";
-		else if (intent.getData() != null)
-			mPath = intent.getData().toString();
-
+		InitPlayData();
 		setContentView(R.layout.videoview);
-		mVideoView = (VideoView) findViewById(R.id.surface_view);
+		app = (App) getApplication();
+		aq = new AQuery(this);
+		
+		mVideoView = (VideoView) findViewById(R.id.surface_view); 
 		mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
 		mOperationBg = (ImageView) findViewById(R.id.operation_bg);
 		mOperationPercent = (ImageView) findViewById(R.id.operation_percent);
@@ -109,7 +128,8 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 			mVideoView.setVideoPath(mPath);
 		//
 		mVideoView.setOnCompletionListener(this);
-
+		if(play_current_time>0)
+			mVideoView.seekTo(play_current_time);
 		mMediaController = new MediaController(this);
 		//设置显示名称
 		mVideoView.setTitle(mTitle);
@@ -125,12 +145,51 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		i.setClass(this, DlnaSelectDevice.class);
 		bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 	}
-
+	
+	public void InitPlayData()
+	{
+		Intent intent = getIntent();
+		Bundle bundle = intent.getExtras();
+		mPath = intent.getStringExtra("path");
+		mTitle = intent.getStringExtra("title");
+		if (TextUtils.isEmpty(mPath))
+			mPath = Environment.getExternalStorageDirectory() + "/mnt/sdcard/t.mp4";	
+		else if (intent.getData() != null)
+			mPath = intent.getData().toString();
+		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
+		{
+			playProdId = bundle.getString("prod_id");
+			playProdName = bundle.getString("prod_name");
+			playProdSubName = bundle.getString("prod_subname");
+			playPlayType = bundle.getString("play_type");
+			playVideoUrl = bundle.getString("video_url");
+			playProdType = Integer.parseInt(bundle.getString("prod_type"));
+			play_current_time = bundle.getLong("current_time");
+		}
+		else
+		{
+			//保存在本地
+		}
+	}
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
 		if (mVideoView != null)
 		{
+			/*
+			 * 获取当前播放时间和总时间,将播放时间和总时间放在服务器上
+			 */
+			long current_time = mVideoView.getCurrentPosition();
+			long total_time = mVideoView.getDuration();
+			if((total_time>0)&&(current_time>0)&&(current_time<total_time))
+			{
+				SaveToServer(mVideoView.getCurrentPosition(),mVideoView.getDuration());
+			}
+			else
+			{
+				SaveToServer(0,0);
+			}
 			mVideoView.pause();
 		}	
 	}
@@ -140,7 +199,9 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		super.onResume();
 		if (mVideoView != null)
 		{
-			//current_time = mVideoView.getCurrentPosition();
+			/*
+			 * 取得播放时间,设置播放时间,进行播放
+			 */
 			mVideoView.resume();
 		}
 			
@@ -284,31 +345,65 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 			mVideoView.setVideoLayout(mLayout, 0);
 		super.onConfigurationChanged(newConfig);
 	}
-	
-	
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
-		if(keyCode == 4)
-		{
-			if(mVideoView!=null)
-			{
-				Intent intent = new Intent();
-				Bundle bundle = new Bundle();
-				bundle.putInt("current_time", (int)(mVideoView.getCurrentPosition()));
-				bundle.putInt("total_time", (int)(mVideoView.getDuration()));
-				intent.putExtras(bundle);
-				setResult(RETURN_CURRENT_TIME,intent);
-				mVideoView.stopPlayback();
-			}
-		}
-		finish();
-		return super.onKeyDown(keyCode, event);
-	}
 
 	@Override
 	public void onCompletion(MediaPlayer player) {
 		finish();
+	}
+	
+	public long getHistoryPlayTime()
+	{
+		return 0;
+	}
+	
+	public void SaveToServer(long playback_time,long duration)
+	{
+		String url = Constant.BASE_URL + "program/play";
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("app_key", Constant.APPKEY);// required string
+												// 申请应用时分配的AppKey。
+		params.put("prod_id", playProdId);// required string
+															// 视频id
+		params.put("prod_name", playProdName);// required
+																// string 视频名字
+		params.put("prod_subname", playProdSubName);// required
+																	// string
+																	// 视频的集数
+		params.put("prod_type", playProdType);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
+		params.put("playback_time", playback_time);// _time required int 上次播放时间，单位：秒
+		params.put("duration", duration);// required int 视频时长， 单位：秒
+
+		if (playPlayType.equalsIgnoreCase("1"))
+			params.put("play_type", "1");// required string
+		else
+			params.put("play_type", "2");
+		// 播放的类别 1: 视频地址播放
+		// 2:webview播放
+		params.put("video_url", playVideoUrl);// required
+		// string
+		// 视频url
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.header("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+		cb.header("app_key", Constant.APPKEY);
+		cb.header("user_id", app.UserID);
+		cb.params(params).url(url).type(JSONObject.class)
+				.weakHandler(this, "CallProgramPlayResult");
+		aq.ajax(cb);
+		
+		/*
+		 * 怎么把数据保存在本地
+		 */
+	}
+	
+	public void CallProgramPlayResult(String url, JSONObject json,
+			AjaxStatus status) {
+	/*
+	 * 保存历史播放记录的回调函数
+	 * prod_id
+	 * index
+	 * 播放时间
+	 */
 	}
 }

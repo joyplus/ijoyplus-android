@@ -752,25 +752,10 @@ public class Detail_Movie extends Activity {
 //		params.put("duration", 0);// required int 视频时长， 单位：秒
 
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			SaveToServer(1,PROD_SOURCE,current_time,total_time);
+			//SaveToServer(1,PROD_SOURCE,current_time,total_time);
 			if (PROD_SOURCE.contains("test=m3u8")) {
 				PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
 			}
-//			params.put("play_type", "1");// required string
-//			// 播放的类别 1: 视频地址播放
-//			// 2:webview播放
-//			params.put("video_url", PROD_SOURCE);// required
-//			// string
-//			// 视频url
-//			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-//			cb.header("User-Agent",
-//					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-//			cb.header("app_key", Constant.APPKEY);
-//			cb.header("user_id", app.UserID);
-//
-//			cb.params(params).url(url).type(JSONObject.class)
-//					.weakHandler(this, "CallProgramPlayResult");
-//			aq.ajax(cb);
 			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 //			params.put("play_type", "2");// required string 播放的类别 1: 视频地址播放
@@ -792,8 +777,8 @@ public class Detail_Movie extends Activity {
 			intent.setAction("android.intent.action.VIEW");
 			Uri content_url = Uri.parse(PROD_URI);
 			intent.setData(content_url);
-			// startActivity(intent);
-			startActivityForResult(intent, REQUESTPLAYTIME);
+			startActivity(intent);
+//			startActivityForResult(intent, REQUESTPLAYTIME);
 		}
 
 	}
@@ -1162,32 +1147,21 @@ public class Detail_Movie extends Activity {
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
+		Bundle bundle = new Bundle();
 		intent.putExtra("path", m_uri);
 		intent.putExtra("title", title);
-		
+		bundle.putString("prod_id", m_ReturnProgramView.movie.id);
+		bundle.putString("prod_name", title);
+		bundle.putString("prod_subname", Integer.toString(m_ReturnProgramView.movie.episodes.length));
+		bundle.putString("play_type", "1");
+		bundle.putString("video_url", m_uri);
+		bundle.putString("prod_type", "1");
+		bundle.putLong("current_time", 0);
+		intent.putExtras(bundle);
 		try {
-			// startActivity(intent);
-			startActivityForResult(intent, REQUESTPLAYTIME);
+			 startActivity(intent);
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "mp4 fail", ex);
 		}
-
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		if (requestCode == REQUESTPLAYTIME && resultCode == RETURN_CURRENT_TIME) {
-			Bundle bundle = data.getExtras();
-			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-				
-				SaveToServer(1, PROD_SOURCE, bundle.getInt("current_time"), bundle.getInt("total_time"));
-			
-			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-				
-				SaveToServer(2, PROD_SOURCE, bundle.getInt("current_time"), bundle.getInt("total_time"));
-			}
-		}
-		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

@@ -127,8 +127,13 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (dataStruct != null && dataStruct.size() > 1)
-			dataStruct.clear();
+//		if (dataStruct != null && dataStruct.size() > 1)
+//			dataStruct.clear();
+// 用dataStruct.clear不成功造成悦单重复
+		for(int i = 0;i<dataStruct.size();i++)
+		{
+			dataStruct.remove(i);
+		}
 		isLastisNext = 1;
 		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
