@@ -412,16 +412,12 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	public void CallVideoPlayActivity(String prod_id, String m_uri ,String title ) {
 
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
-		intent.putExtra("path", m_uri);
-		intent.putExtra("title", title);
 		Bundle bundle = new Bundle();
+		bundle.putString("path", m_uri);
+		bundle.putString("title", title);
 		bundle.putString("prod_id", prod_id);
-		bundle.putString("prod_name", title);
 		bundle.putString("prod_subname", tempPlayHistoryData.Pro_name1);
-		bundle.putString("play_type", "1");
-		bundle.putString("video_url", m_uri);
-		bundle.putString("prod_type",
-				Integer.toString(tempPlayHistoryData.Pro_type));
+		bundle.putString("prod_type", Integer.toString(tempPlayHistoryData.Pro_type));
 		bundle.putLong("current_time", current_play_time);
 		intent.putExtras(bundle);
 		try {

@@ -150,26 +150,27 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	{
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
-		mPath = intent.getStringExtra("path");
-		mTitle = intent.getStringExtra("title");
-		if (TextUtils.isEmpty(mPath))
-			mPath = Environment.getExternalStorageDirectory() + "/mnt/sdcard/t.mp4";	
-		else if (intent.getData() != null)
-			mPath = intent.getData().toString();
-		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
-		{
-			playProdId = bundle.getString("prod_id");
-			playProdName = bundle.getString("prod_name");
-			playProdSubName = bundle.getString("prod_subname");
-			playPlayType = bundle.getString("play_type");
-			playVideoUrl = bundle.getString("video_url");
-			playProdType = Integer.parseInt(bundle.getString("prod_type"));
-			play_current_time = bundle.getLong("current_time");
-		}
-		else
-		{
-			//保存在本地
-		}
+		mPath = bundle.getString("path");
+		mTitle = bundle.getString("title");
+		playProdName = mTitle;
+		playVideoUrl = mPath;
+		playProdId = bundle.getString("prod_id");
+		playProdSubName = bundle.getString("prod_subname");
+		playProdType = Integer.parseInt(bundle.getString("prod_type"));
+		play_current_time = bundle.getLong("current_time");
+//		if (TextUtils.isEmpty(mPath))
+//			mPath = Environment.getExternalStorageDirectory() + "/mnt/sdcard/t.mp4";	
+//		else if (intent.getData() != null)
+//			mPath = intent.getData().toString();
+//		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
+//		{
+//			playProdName = mTitle;
+//			playVideoUrl = mPath;
+//			playProdId = bundle.getString("prod_id");
+//			playProdSubName = bundle.getString("prod_subname");
+//			playProdType = Integer.parseInt(bundle.getString("prod_type"));
+//			play_current_time = bundle.getLong("current_time");
+//		}
 	}
 	
 	@Override
@@ -373,11 +374,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		params.put("prod_type", playProdType);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
 		params.put("playback_time", playback_time);// _time required int 上次播放时间，单位：秒
 		params.put("duration", duration);// required int 视频时长， 单位：秒
-
-		if (playPlayType.equalsIgnoreCase("1"))
-			params.put("play_type", "1");// required string
-		else
-			params.put("play_type", "2");
+		params.put("play_type", "1");// required string
 		// 播放的类别 1: 视频地址播放
 		// 2:webview播放
 		params.put("video_url", playVideoUrl);// required

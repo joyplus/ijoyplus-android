@@ -624,7 +624,7 @@ public class Detail_TV extends Activity {
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
 					app.MyToast(this, "收藏成功!");
 				} else
-					app.MyToast(this, "收藏失败!");
+					app.MyToast(this, "已收藏!");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -670,7 +670,7 @@ public class Detail_TV extends Activity {
 							"顶(" + Integer.toString(m_SupportNum) + ")");
 					app.MyToast(this, "顶成功!");
 				} else
-					app.MyToast(this, "顶失败!");
+					app.MyToast(this, "已顶过!");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1211,14 +1211,11 @@ public class Detail_TV extends Activity {
 	public void CallVideoPlayActivity(String m_uri, String title) {
 
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
-		intent.putExtra("path", m_uri);
-		intent.putExtra("title", title);
 		Bundle bundle = new Bundle();
+		bundle.putString("path", m_uri);
+		bundle.putString("title", title);
 		bundle.putString("prod_id", prod_id);
-		bundle.putString("prod_name", title);
 		bundle.putString("prod_subname", Integer.toString(current_index));
-		bundle.putString("play_type", "1");
-		bundle.putString("video_url", m_uri);
 		bundle.putString("prod_type", "2");
 		bundle.putLong("current_time", 0);
 		intent.putExtras(bundle);
