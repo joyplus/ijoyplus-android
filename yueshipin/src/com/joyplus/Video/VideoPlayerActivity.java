@@ -201,6 +201,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		
 	}
 
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (mGestureDetector.onTouchEvent(event))
