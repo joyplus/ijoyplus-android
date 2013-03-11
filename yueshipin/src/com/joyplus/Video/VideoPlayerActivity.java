@@ -190,7 +190,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	@Override
 	protected void onDestroy() {
 		if (aq != null)
-			aq.dismiss();
+			aq.dismiss();  
 		
 		if (mVideoView != null){
 			mVideoView.stopPlayback();
