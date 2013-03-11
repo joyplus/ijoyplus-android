@@ -109,6 +109,7 @@ public class Detail_TV extends Activity {
 	Drawable press = null;
 	Drawable download_none = null;
 	Drawable download_been = null;
+	private Drawable downloaddisable = null;
 	private PopupWindow downloadpopup = null;
 	ViewGroup popupview;
 
@@ -169,6 +170,9 @@ public class Detail_TV extends Activity {
 		aq.id(R.id.scrollView1).gone();
 
 		InitTVButtom();
+		// 添加下载按钮的暂无下载的效果图
+				downloaddisable = this.getResources().getDrawable(
+						R.drawable.tab2_video_8);
 		if (prod_id != null)
 			GetServiceData();
 	}
@@ -552,6 +556,11 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.imageView_comment).gone();
 					aq.id(R.id.Layout_comment).gone();
 				}
+			}
+			else
+			{
+				aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
+				aq.id(R.id.button20).clickable(false);
 			}
 		}
 	}

@@ -27,20 +27,26 @@
                 android:layout_marginRight="20dp"
                 android:background="@drawable/search_search_top_right"
                 android:onClick="OnClickSearch"/>
-
             <EditText
                 android:id="@+id/editText1"
-                android:layout_width="fill_parent"
+                android:layout_width="240dp"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@id/Tab1TopRightImage"
                 android:layout_marginLeft="14dp"
-                android:layout_marginRight="60dp"
-               	android:layout_marginTop="5dp"
-                android:hint=" 电影 / 电视剧 / 综艺"
+                android:layout_marginTop="10dp"
+                android:hint=" 影片 / 电视剧 / 综艺"
                 android:singleLine="true" >
-
                 <requestFocus/>
             </EditText>
+              <ImageButton
+                android:id="@+id/Tab1TopRightImage2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/tab3_p3_c2_top_right"
+                android:onClick="OnClickFinished"
+                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -60,11 +66,6 @@
         android:layout_height="fill_parent"
         android:layout_below="@id/LayoutTitle"
         android:orientation="vertical">
-
-
-
-
-
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="wrap_content"

@@ -637,12 +637,14 @@ public class Detail_Show extends Activity {
 		String m_j = null;
 		int j = 0;
 		int i = 0;
-
+		
+		page_num++;
 		if (page_num * 4 >= m_ReturnProgramView.show.episodes.length) {
+			page_num--;
 			return;
 		}
 
-		page_num++;
+//		page_num++;
 		if (m_ReturnProgramView.show.episodes != null) {
 			for (i = 4 * page_num; i < m_ReturnProgramView.show.episodes.length
 					&& i < 4 * (page_num + 1); i++, j++) {
@@ -674,7 +676,6 @@ public class Detail_Show extends Activity {
 		int i = 0;
 		if (page_num == 0) {
 			return;
-
 		}
 		page_num--;
 		if (m_ReturnProgramView.show.episodes != null && page_num >= 0) {

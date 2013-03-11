@@ -55,6 +55,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private App app;
 	private String mPath;
 	private String mTitle;
+	private boolean checkBind = false;
 	private VideoView mVideoView;
 	private View mVolumeBrightnessLayout;
 	private ImageView mOperationBg;
@@ -144,6 +145,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		Intent i = new Intent();
 		i.setClass(this, DlnaSelectDevice.class);
 		bindService(i, mServiceConnection, BIND_AUTO_CREATE);
+		checkBind = true;
 	}
 	
 	public void InitPlayData()
@@ -214,7 +216,10 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		if (mVideoView != null){
 			mVideoView.stopPlayback();
 		}
-		unbindService(mServiceConnection);
+		if(checkBind)  
+			unbindService(mServiceConnection);
+		super.onDestroy();
+		
 	}
 
 	@Override
