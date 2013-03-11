@@ -7,7 +7,7 @@ public class Constant {
 	// 正式环境
 	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
 
-//	 public static final String BASE_URL =
+//	 public static final String BASE_URL = 
 //	 "http://112.64.18.12/joyplus-service/index.php/";
 
 	public static String PATH = Environment.getExternalStorageDirectory()
