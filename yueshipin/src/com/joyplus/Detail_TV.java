@@ -109,7 +109,6 @@ public class Detail_TV extends Activity {
 	Drawable press = null;
 	Drawable download_none = null;
 	Drawable download_been = null;
-	private Drawable downloaddisable = null;
 	private PopupWindow downloadpopup = null;
 	ViewGroup popupview;
 
@@ -170,9 +169,6 @@ public class Detail_TV extends Activity {
 		aq.id(R.id.scrollView1).gone();
 
 		InitTVButtom();
-		// 添加下载按钮的暂无下载的效果图
-				downloaddisable = this.getResources().getDrawable(
-						R.drawable.tab2_video_8);
 		if (prod_id != null)
 			GetServiceData();
 	}
@@ -557,11 +553,6 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.Layout_comment).gone();
 				}
 			}
-			else
-			{
-				aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
-				aq.id(R.id.button20).clickable(false);
-			}
 		}
 	}
 
@@ -633,7 +624,7 @@ public class Detail_TV extends Activity {
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
 					app.MyToast(this, "收藏成功!");
 				} else
-					app.MyToast(this, "收藏失败!");
+					app.MyToast(this, "已收藏!");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -679,7 +670,7 @@ public class Detail_TV extends Activity {
 							"顶(" + Integer.toString(m_SupportNum) + ")");
 					app.MyToast(this, "顶成功!");
 				} else
-					app.MyToast(this, "顶失败!");
+					app.MyToast(this, "已顶过!");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -746,13 +737,9 @@ public class Detail_TV extends Activity {
 				.commit();
 
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			SaveToServer(1, PROD_SOURCE, 1);
 			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
-			// GetVideoSource(0,PROD_SOURCE);
-
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 			SaveToServer(2, PROD_URI, 1);
-
 			Intent intent = new Intent();
 			intent.setAction("android.intent.action.VIEW");
 			Uri content_url = Uri.parse(PROD_URI);
@@ -926,23 +913,16 @@ public class Detail_TV extends Activity {
 			}
 		}
 
-		// URL str = isConnect(PROD_SOURCE);
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-
-			SaveToServer(1, PROD_SOURCE, index + 1);
 			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
-			// GetVideoSource(index,PROD_SOURCE);
-
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 			SaveToServer(2, PROD_URI, index + 1);
-
 			Intent intent = new Intent();
 			intent.setAction("android.intent.action.VIEW");
 			Uri content_url = Uri.parse(PROD_URI);
 			intent.setData(content_url);
 			startActivity(intent);
 		}
-
 	}
 
 	public void videoSourceSort(int source_index) {
@@ -1043,7 +1023,6 @@ public class Detail_TV extends Activity {
 	public void CallVideoPlayActivity() {
 
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-
 			GetVideoSource(0, PROD_SOURCE);
 
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
@@ -1232,18 +1211,24 @@ public class Detail_TV extends Activity {
 	public void CallVideoPlayActivity(String m_uri, String title) {
 
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
-		intent.putExtra("pro_id", prod_id);
-		intent.putExtra("path", m_uri);
-		intent.putExtra("title", title);
-
+		Bundle bundle = new Bundle();
+		bundle.putString("path", m_uri);
+		bundle.putString("title", title);
+		bundle.putString("prod_id", prod_id);
+		bundle.putString("prod_subname", Integer.toString(current_index));
+		bundle.putString("prod_type", "2");
+		bundle.putLong("current_time", 0);
+		intent.putExtras(bundle);
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "VideoPlayerActivity fail", ex);
 		}
-
 	}
-
+	
+	/*
+	 * 保存网页播放地址,不需要保存时间
+	 */
 	private void SaveToServer(int play_type, String SourceUrl, int episodesNum) {
 
 		String url = Constant.BASE_URL + "program/play";
@@ -1287,16 +1272,9 @@ public class Detail_TV extends Activity {
 
 	public void CallProgramPlayResult(String url, JSONObject json,
 			AjaxStatus status) {
-		// if (json != null) {
-		// app.MyToast(this, json.toString());
-		// // // try {
-		// // // if
-		// (json.getString("res_code").trim().equalsIgnoreCase("00000"))
-		// // // {
-		// // //
-		// // // }
-		// // // }
-		// }
+		/*
+		 * 保存播放记录的回调函数
+		 */
 	}
 
 	private void GetVideoSource(final int episodeNum, String url) {
@@ -1509,7 +1487,7 @@ public class Detail_TV extends Activity {
 	void switchPageOfDownloadIndex(int index) {
 		String m_j = null;
 		int i = 0;
-		int j = 0;
+//		int j = 0;
 		for (i = 0; i < 15; i++) {
 			m_j = Integer.toString(i + 4);
 			Button m_button = (Button) popupview.findViewById(getResources()
@@ -1633,7 +1611,7 @@ public class Detail_TV extends Activity {
 
 		for (i = 0; i < m_ReturnProgramView.tv.episodes.length && i < 15; i++) {
 			m_j = Integer.toString(i + 4);// m_ReturnProgramView.tv.episodes[i].name;
-			String str = m_ReturnProgramView.tv.episodes[i].name;
+//			String str = m_ReturnProgramView.tv.episodes[i].name;
 			Button m_button = (Button) menuView.findViewById(getResources()
 					.getIdentifier("download_button" + m_j, "id",
 							getPackageName()));

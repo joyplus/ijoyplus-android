@@ -52,27 +52,31 @@
 
         </LinearLayout>
     </LinearLayout>
-    
-    <RelativeLayout 
-        android:layout_width="match_parent"
-        android:layout_height="10dp">
-        <!-- 为了让顶部空出10dp的空隙 -->
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/setting_xinlang"
-        android:gravity="center_vertical|right">
+	<ScrollView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    >
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:gravity="center_horizontal"
+	        android:orientation="vertical">
+	  
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_xinlang"
+                android:gravity="center_vertical|right"
+                android:paddingTop="4dp" >
 
-        <CheckBox
-            android:id="@+id/checkBox1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@drawable/setting_weibo_button"
-            android:paddingRight="30dp"
-            android:onClick="OnClickSinaWeibo"/>
-    </RelativeLayout>
-    
+                <CheckBox
+                    android:id="@+id/checkBox1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/setting_weibo_button"
+                    android:onClick="OnClickSinaWeibo"
+                    android:paddingRight="30dp" />
+            </RelativeLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -141,5 +145,33 @@
             android:background="@drawable/setting_button_aboutus"
             android:onClick="OnClickAboutUs"/>
     </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:paddingLeft="10dp"
+                android:text="应用推荐" >
+            </TextView>
+
+            <RelativeLayout
+                android:id="@+id/ad"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                 >
+
+                <com.joyplus.appRecommendListView
+                    android:id="@+id/list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    android:cacheColorHint="#00000000"
+                    android:divider="#dedfde"
+                    android:dividerHeight="1px"
+                    android:listSelector="#00000000" >
+                </com.joyplus.appRecommendListView>
+            </RelativeLayout>
+             </LinearLayout>
+	</ScrollView>
 
 </LinearLayout>

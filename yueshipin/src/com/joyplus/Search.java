@@ -114,7 +114,6 @@ public class Search extends Activity implements
 
 	public void OnClickFinished(View v) {
 		finish();
-
 	}
 
 	@Override
@@ -230,14 +229,9 @@ public class Search extends Activity implements
 
 			aq.id(R.id.editText1).getTextView().setCursorVisible(true);
 			if (topic_id != null) {
-				/*
-				 * tab3_p3_c2_top_right是完成按钮的配置文件
-				 */
-//				aq.id(R.id.Tab1TopRightImage).background(R.drawable.tab3_p3_c2_top_right);
-				
-				aq.id(R.id.Tab1TopRightImage).gone();
+				aq.id(R.id.Tab1TopRightImage).background(R.drawable.tab3_p3_c2_top_right);
 				aq.id(R.id.editText1).gone();
-				aq.id(R.id.Tab1TopRightImage2).visible();
+//				aq.id(R.id.Tab1TopRightImage2).visible();
 				aq.id(R.id.imageView1).visible();
 			}
 		} catch (JsonParseException e) {

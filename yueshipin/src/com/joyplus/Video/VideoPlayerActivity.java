@@ -54,9 +54,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-public class VideoPlayerActivity extends Activity implements OnCompletionListener {
-	//private playHistoryData playData = null;
-	
+public class VideoPlayerActivity extends Activity implements
+		OnCompletionListener {
+	// private playHistoryData playData = null;
+
 	private AQuery aq;
 	private App app;
 	private ReturnProgramView m_ReturnProgramView = null;
@@ -74,7 +75,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	long current_time = 0;
 	long play_current_time = 0;
 	public static int RETURN_CURRENT_TIME = 150;
-	
+
 	/** 最大声音 */
 	private int mMaxVolume;
 	/** 当前声音 */
@@ -82,22 +83,22 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	/** 当前亮度 */
 	private float mBrightness = -1f;
 	/** 当前缩放模式 */
-	private int mLayout = VideoView.VIDEO_LAYOUT_STRETCH;//VIDEO_LAYOUT_ZOOM;
+	private int mLayout = VideoView.VIDEO_LAYOUT_STRETCH;// VIDEO_LAYOUT_ZOOM;
 	private GestureDetector mGestureDetector;
 	private MediaController mMediaController;
 
 	private DlnaSelectDevice mMyService;
-	
+
 	/*
 	 * playHistoryData
 	 */
-	private String playProdId = null;//视频id
-	private String playProdName = null;//视频名字
-	private String playProdSubName = null;//视频的集数
-	private String playPlayType = null;//播放的类别  1: 视频地址播放 2:webview播放
-	private String playVideoUrl = null;//视频url
-	private int playProdType = 0;//视频类别 1：电影，2：电视剧，3：综艺，4：视频
-	
+	private String playProdId = null;// 视频id
+	private String playProdName = null;// 视频名字
+	private String playProdSubName = null;// 视频的集数
+	private String playPlayType = null;// 播放的类别 1: 视频地址播放 2:webview播放
+	private String playVideoUrl = null;// 视频url
+	private int playProdType = 0;// 视频类别 1：电影，2：电视剧，3：综艺，4：视频
+
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
@@ -110,6 +111,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		}
 	};
+
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -120,43 +122,44 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		setContentView(R.layout.videoview);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-		
-		mVideoView = (VideoView) findViewById(R.id.surface_view); 
+
+		mVideoView = (VideoView) findViewById(R.id.surface_view);
 		mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
 		mOperationBg = (ImageView) findViewById(R.id.operation_bg);
 		mOperationPercent = (ImageView) findViewById(R.id.operation_percent);
-		
+
 		mImage_preload_bg = (ImageView) findViewById(R.id.layout_preload_bg);
 		mRelativeLayoutBG = findViewById(R.id.relativeLayout_preload);
 
 		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		mMaxVolume = mAudioManager
+				.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
 		mImage_preload_bg.setBackgroundResource(R.drawable.player_bg);
 		mRelativeLayoutBG.setVisibility(View.VISIBLE);
 		mVideoView.setLayoutBG(mRelativeLayoutBG);
-		
-		if(mTitle != null && mTitle.length()>0){
+
+		if (mTitle != null && mTitle.length() > 0) {
 			aq.id(R.id.mediacontroller_file_name).text(mTitle);
-			aq.id(R.id.textView1).text("正在载入 "+ mTitle + "，请稍后 ...");
+			aq.id(R.id.textView1).text("正在载入 " + mTitle + "，请稍后 ...");
 		}
 		if (prod_id != null)
 			GetServiceData();
-		
+
 		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
 			mVideoView.setVideoURI(Uri.parse(mPath));
 		else
 			mVideoView.setVideoPath(mPath);
 		//
 		mVideoView.setOnCompletionListener(this);
-		if(play_current_time>0)
+		if (play_current_time > 0)
 			mVideoView.seekTo(play_current_time);
 		mMediaController = new MediaController(this);
-		//设置显示名称
+		// 设置显示名称
 		mVideoView.setTitle(mTitle);
 		mMediaController.setFileName(mTitle);
 		mVideoView.setMediaController(mMediaController);
-		
+
 		mVideoView.requestFocus();
 
 		mGestureDetector = new GestureDetector(this, new MyGestureListener());
@@ -167,9 +170,8 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 		checkBind = true;
 	}
-	
-	public void InitPlayData()
-	{
+
+	public void InitPlayData() {
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 		mPath = bundle.getString("path");
@@ -180,54 +182,38 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		playProdSubName = bundle.getString("prod_subname");
 		playProdType = Integer.parseInt(bundle.getString("prod_type"));
 		play_current_time = bundle.getLong("current_time");
-//		if (TextUtils.isEmpty(mPath))
-//			mPath = Environment.getExternalStorageDirectory() + "/mnt/sdcard/t.mp4";	
-//		else if (intent.getData() != null)
-//			mPath = intent.getData().toString();
-//		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
-//		{
-//			playProdName = mTitle;
-//			playVideoUrl = mPath;
-//			playProdId = bundle.getString("prod_id");
-//			playProdSubName = bundle.getString("prod_subname");
-//			playProdType = Integer.parseInt(bundle.getString("prod_type"));
-//			play_current_time = bundle.getLong("current_time");
-//		}
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (mVideoView != null)
-		{
+		if (mVideoView != null) {
 			/*
 			 * 获取当前播放时间和总时间,将播放时间和总时间放在服务器上
 			 */
 			long current_time = mVideoView.getCurrentPosition();
 			long total_time = mVideoView.getDuration();
-			if((total_time>0)&&(current_time>0)&&(current_time<total_time))
-			{
-				SaveToServer(mVideoView.getCurrentPosition(),mVideoView.getDuration());
-			}
-			else
-			{
-				SaveToServer(0,0);
+			if ((total_time > 0) && (current_time > 0)
+					&& (current_time < total_time)) {
+				SaveToServer(mVideoView.getCurrentPosition(),
+						mVideoView.getDuration());
+			} else {
+				SaveToServer(0, 0);
 			}
 			mVideoView.pause();
-		}	
+		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (mVideoView != null)
-		{
+		if (mVideoView != null) {
 			/*
 			 * 取得播放时间,设置播放时间,进行播放
 			 */
 			mVideoView.resume();
 		}
-			
+
 	}
 
 	@Override
@@ -236,16 +222,16 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		super.onDestroy();
 
 		if (aq != null)
-			aq.dismiss();  
-		
-		//github.com/joyplus/ijoyplus-android.git
-		if (mVideoView != null){
+			aq.dismiss();
+
+		// github.com/joyplus/ijoyplus-android.git
+		if (mVideoView != null) {
 			mVideoView.stopPlayback();
 		}
-		if(checkBind)  
+		if (checkBind)
 			unbindService(mServiceConnection);
 		super.onDestroy();
-		
+
 	}
 
 	@Override
@@ -262,15 +248,17 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		return super.onTouchEvent(event);
 	}
+
 	public void OnClickReturn(View v) {
-	
+
 		finish();
 
 	}
+
 	public void OnClickSelect(View v) {
 
 	}
-	
+
 	/** 手势结束 */
 	private void endGesture() {
 		mVolume = -1;
@@ -287,7 +275,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
 			mLayout++;
-			if(mLayout >VideoView.VIDEO_LAYOUT_ZOOM)
+			if (mLayout > VideoView.VIDEO_LAYOUT_ZOOM)
 				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
 			if (mVideoView != null)
 				mVideoView.setVideoLayout(mLayout, 0);
@@ -296,7 +284,8 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		/** 滑动 */
 		@Override
-		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+		public boolean onScroll(MotionEvent e1, MotionEvent e2,
+				float distanceX, float distanceY) {
 			float mOldX = e1.getX(), mOldY = e1.getY();
 			int y = (int) e2.getRawY();
 			Display disp = getWindowManager().getDefaultDisplay();
@@ -347,7 +336,8 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		// 变更进度条
 		ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
-		lp.width = findViewById(R.id.operation_full).getLayoutParams().width * index / mMaxVolume;
+		lp.width = findViewById(R.id.operation_full).getLayoutParams().width
+				* index / mMaxVolume;
 		mOperationPercent.setLayoutParams(lp);
 	}
 
@@ -392,11 +382,13 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	public void onCompletion(MediaPlayer player) {
 		finish();
 	}
+
 	public void GetServiceData() {
 		String url = Constant.BASE_URL + "program/view?prod_id=" + prod_id;
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.url(url).type(JSONObject.class).weakHandler(this, "GetServiceDataResult");
+		cb.url(url).type(JSONObject.class)
+				.weakHandler(this, "GetServiceDataResult");
 
 		cb.header("User-Agent",
 				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
@@ -406,8 +398,10 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		aq.ajax(cb);
 
 	}
+
 	// 初始化list数据函数
-	public void GetServiceDataResult(String url, JSONObject json, AjaxStatus status) {
+	public void GetServiceDataResult(String url, JSONObject json,
+			AjaxStatus status) {
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -417,7 +411,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		try {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
-			if(mMediaController != null)
+			if (mMediaController != null)
 				mMediaController.setProd_Data(m_ReturnProgramView);
 			// 创建数据源对象
 		} catch (JsonParseException e) {
@@ -432,27 +426,28 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		}
 
 	}
-	public long getHistoryPlayTime()
-	{
+
+	public long getHistoryPlayTime() {
 		return 0;
 	}
-	
-	public void SaveToServer(long playback_time,long duration)
-	{
+
+	public void SaveToServer(long playback_time, long duration) {
 		String url = Constant.BASE_URL + "program/play";
 
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("app_key", Constant.APPKEY);// required string
 												// 申请应用时分配的AppKey。
 		params.put("prod_id", playProdId);// required string
-															// 视频id
+											// 视频id
 		params.put("prod_name", playProdName);// required
-																// string 视频名字
+												// string 视频名字
 		params.put("prod_subname", playProdSubName);// required
-																	// string
-																	// 视频的集数
-		params.put("prod_type", playProdType);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
-		params.put("playback_time", playback_time);// _time required int 上次播放时间，单位：秒
+													// string
+													// 视频的集数
+		params.put("prod_type", playProdType);// required int 视频类别
+												// 1：电影，2：电视剧，3：综艺，4：视频
+		params.put("playback_time", playback_time);// _time required int
+													// 上次播放时间，单位：秒
 		params.put("duration", duration);// required int 视频时长， 单位：秒
 		params.put("play_type", "1");// required string
 		// 播放的类别 1: 视频地址播放
@@ -468,19 +463,16 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallProgramPlayResult");
 		aq.ajax(cb);
-		
+
 		/*
 		 * 怎么把数据保存在本地
 		 */
 	}
-	
+
 	public void CallProgramPlayResult(String url, JSONObject json,
 			AjaxStatus status) {
-	/*
-	 * 保存历史播放记录的回调函数
-	 * prod_id
-	 * index
-	 * 播放时间
-	 */
+		/*
+		 * 保存历史播放记录的回调函数 prod_id index 播放时间
+		 */
 	}
 }
