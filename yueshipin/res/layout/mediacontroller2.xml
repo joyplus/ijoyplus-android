@@ -31,31 +31,25 @@
             android:id="@+id/radio0"
             android:layout_width="64dp"
             android:layout_height="match_parent"
-            android:background="@drawable/player_biaoqing"
+            android:background="@drawable/player_b_puqing"
             android:button="@null"
             android:checked="true"
-            android:gravity="bottom|center_horizontal"
-            android:text="标 清"
-            android:textColor="@color/white" />
+            android:gravity="bottom|center_horizontal" />
 
         <RadioButton
             android:id="@+id/radio1"
             android:layout_width="64dp"
             android:layout_height="match_parent"
-            android:background="@drawable/player_biaoqing"
+            android:background="@drawable/player_b_gaoqing"
             android:button="@null" 
-             android:gravity="bottom|center_horizontal"
-             android:text="高 清"
-            android:textColor="@color/white" />
+             android:gravity="bottom|center_horizontal"/>
 
         <RadioButton
             android:id="@+id/radio2"
             android:layout_width="64dp"
             android:layout_height="match_parent"
-            android:background="@drawable/player_biaoqing"
+            android:background="@drawable/player_b_chaoqing"
             android:button="@null" 
-             android:gravity="bottom|center_horizontal"
-             android:text="超 清"
-            android:textColor="@color/white" />
+             android:gravity="bottom|center_horizontal"/>
     </RadioGroup>
 </RelativeLayout>
