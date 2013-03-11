@@ -4,18 +4,21 @@
 
 package com.joyplus.Video;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 
 import org.json.JSONObject;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.App;
 import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Dlna.DlnaSelectDevice;
+import com.joyplus.Service.Return.ReturnProgramView;
 
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
@@ -47,24 +50,26 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 public class VideoPlayerActivity extends Activity implements OnCompletionListener {
 	//private playHistoryData playData = null;
 	
 	private AQuery aq;
 	private App app;
+	private ReturnProgramView m_ReturnProgramView = null;
 	private String mPath;
 	private String mTitle;
+	private String prod_id;
 	private boolean checkBind = false;
 	private VideoView mVideoView;
 	private View mVolumeBrightnessLayout;
 	private ImageView mOperationBg;
 	private ImageView mOperationPercent;
 	private AudioManager mAudioManager;
-	private ImageView mImageViewBG;
-	
-	//playHistory
-	long play_current_time = 0;
+	private View mRelativeLayoutBG;
+	private ImageView mImage_preload_bg;
+	long current_time = 0;
 	public static int RETURN_CURRENT_TIME = 150;
 	
 	/** 最大声音 */
@@ -77,6 +82,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private int mLayout = VideoView.VIDEO_LAYOUT_STRETCH;//VIDEO_LAYOUT_ZOOM;
 	private GestureDetector mGestureDetector;
 	private MediaController mMediaController;
+
 	private DlnaSelectDevice mMyService;
 	
 	/*
@@ -116,12 +122,23 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
 		mOperationBg = (ImageView) findViewById(R.id.operation_bg);
 		mOperationPercent = (ImageView) findViewById(R.id.operation_percent);
-		mImageViewBG = (ImageView) findViewById(R.id.imageView_BG);
+		
+		mImage_preload_bg = (ImageView) findViewById(R.id.layout_preload_bg);
+		mRelativeLayoutBG = findViewById(R.id.relativeLayout_preload);
 
 		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-		mVideoView.setImageViewBG(mImageViewBG);
+		mImage_preload_bg.setBackgroundResource(R.drawable.player_bg);
+		mRelativeLayoutBG.setVisibility(View.VISIBLE);
+		mVideoView.setLayoutBG(mRelativeLayoutBG);
+		
+		if(mTitle != null && mTitle.length()>0){
+			aq.id(R.id.mediacontroller_file_name).text(mTitle);
+			aq.id(R.id.textView1).text("正在载入 "+ mTitle + "，请稍后 ...");
+		}
+		if (prod_id != null)
+			GetServiceData();
 		
 		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
 			mVideoView.setVideoURI(Uri.parse(mPath));
@@ -222,6 +239,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		
 	}
 
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (mGestureDetector.onTouchEvent(event))
@@ -236,7 +254,15 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		return super.onTouchEvent(event);
 	}
+	public void OnClickReturn(View v) {
+	
+		finish();
 
+	}
+	public void OnClickSelect(View v) {
+
+	}
+	
 	/** 手势结束 */
 	private void endGesture() {
 		mVolume = -1;
@@ -253,6 +279,8 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
 			mLayout++;
+			if(mLayout >VideoView.VIDEO_LAYOUT_ZOOM)
+				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
 			if (mVideoView != null)
 				mVideoView.setVideoLayout(mLayout, 0);
 			return true;
@@ -356,7 +384,46 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	public void onCompletion(MediaPlayer player) {
 		finish();
 	}
-	
+	public void GetServiceData() {
+		String url = Constant.BASE_URL + "program/view?prod_id=" + prod_id;
+
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.url(url).type(JSONObject.class).weakHandler(this, "GetServiceDataResult");
+
+		cb.header("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+		cb.header("app_key", Constant.APPKEY);
+		cb.header("user_id", app.UserID);
+
+		aq.ajax(cb);
+
+	}
+	// 初始化list数据函数
+	public void GetServiceDataResult(String url, JSONObject json, AjaxStatus status) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+			app.MyToast(aq.getContext(),
+					getResources().getString(R.string.networknotwork));
+			return;
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			m_ReturnProgramView = mapper.readValue(json.toString(),
+					ReturnProgramView.class);
+			if(mMediaController != null)
+				mMediaController.setProd_Data(m_ReturnProgramView);
+			// 创建数据源对象
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 	public long getHistoryPlayTime()
 	{
 		return 0;
