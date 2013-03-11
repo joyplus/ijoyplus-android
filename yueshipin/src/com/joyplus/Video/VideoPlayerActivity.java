@@ -195,7 +195,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		if (mVideoView != null){
 			mVideoView.stopPlayback();
 		}
-		if(checkBind)
+		if(checkBind)  
 			unbindService(mServiceConnection);
 		super.onDestroy();
 		
