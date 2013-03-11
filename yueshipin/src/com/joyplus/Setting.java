@@ -9,6 +9,10 @@ import org.json.JSONObject;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.NotificationType;
 import com.umeng.fb.UMFeedbackService;
+import com.umeng.xp.common.ExchangeConstants;
+import com.umeng.xp.controller.ExchangeDataService;
+import com.umeng.xp.controller.XpListenersCenter.NTipsChangedListener;
+import com.umeng.xp.view.ExchangeViewManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,6 +26,10 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -38,6 +46,9 @@ public class Setting extends Activity {
 	private String uid = null;
 	private String token = null;
 	private String expires_in = null;
+	
+	//应用推荐
+	public static ExchangeDataService preloadDataService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +58,29 @@ public class Setting extends Activity {
 		aq = new AQuery(this);
 		UMFeedbackService.enableNewReplyNotification(this,
 				NotificationType.AlertDialog);
+		//appRecommend();
+		ViewGroup fatherLayout = (ViewGroup)findViewById(R.id.ad);
+		appRecommendListView listView = (appRecommendListView) this.findViewById(R.id.list);
+		//赋值preloadDataService,添加newTips 回调
+	    preloadDataService = new ExchangeDataService();
+	    preloadDataService.preloadData(Setting.this, new NTipsChangedListener() {
+	        @Override
+	        public void onChanged(int flag) {
+	           // TextView view = (TextView) root.findViewById(R.id.umeng_example_xp_container_tips);
+	            if(flag == -1){
+	                //没有new广告
+	            }else if(flag > 1){
+	                //第一页new广告数量
+	            }else if(flag == 0){
+	                //第一页全部为new 广告
+	            }
+	        };
+	    }, ExchangeConstants.type_container);
+	    ExchangeDataService exchangeDataService = preloadDataService != null ?preloadDataService : new ExchangeDataService("");
+	    ExchangeViewManager exchangeViewManager = new ExchangeViewManager(this,new ExchangeDataService());
+		exchangeViewManager.addView(fatherLayout, listView);
 	}
-
+	
 	@Override
 	protected void onDestroy() {
 		if (aq != null)

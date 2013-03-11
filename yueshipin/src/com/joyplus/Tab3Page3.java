@@ -127,8 +127,13 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (dataStruct != null && dataStruct.size() > 1)
-			dataStruct.clear();
+//		if (dataStruct != null && dataStruct.size() > 1)
+//			dataStruct.clear();
+// 用dataStruct.clear不成功造成悦单重复
+		for(int i = 0;i<dataStruct.size();i++)
+		{
+			dataStruct.remove(i);
+		}
 		isLastisNext = 1;
 		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
@@ -155,6 +160,10 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		 */
 //		if (dataStruct != null && dataStruct.size() > 1)
 //			dataStruct.clear();
+		for(int i = 0;i<dataStruct.size();i++)
+		{
+			dataStruct.remove(i);
+		}
 		
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 			Tab3Page3ListData m_Tab3Page3ListData = new Tab3Page3ListData();
@@ -195,13 +204,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	}
 
 	public void OnClickImageView(View v) {
-		/*
-		 * Intent intent = new Intent(this, BuChongGeRenZhiLiao.class);
-		 * intent.putExtra("prod_id", m_prod_id); intent.putExtra("prod_type",
-		 * m_prod_type); try { startActivity(intent); } catch
-		 * (ActivityNotFoundException ex) { Log.e(TAG,
-		 * "OnClickImageView failed", ex); }
-		 */
 	}
 
 	// 初始化list数据函数
@@ -243,8 +245,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	public void GetServiceData(int index) {
 		String url = Constant.BASE_URL + "user/tops" + "?page_num="
 				+ Integer.toString(index) + "&page_size=20";
-		// String url = Constant.BASE_URL + "user/tops";
-
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
@@ -294,13 +294,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		getParent().startActivityForResult(intent, 1);
 
 	}
-
-//	public void OnClickMore(View v) {
-//
-//		Intent intent = new Intent(this, Tab3Page3_more.class);
-//		getParent().startActivityForResult(intent, 2);
-//
-//	}
 
 	private void TopDel(String topic_id) {
 		String url = Constant.BASE_URL + "top/del";
@@ -356,11 +349,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 						Tab3Page3Adapter.notifyDataSetChanged();
 
 						ItemsListView.invalidate();
-						// if(m_ReturnTops.tops.length > 3){
-						// GetServiceData();
-						// }
-
-						// 删除数据
 						TopDel(m_Tab3Page3ListData.Pic_ID);
 
 					}
@@ -436,20 +424,12 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 			aqlist.id(holder.mName1).text(m_Tab3Page3ListData.Pic_list1);
 			aqlist.id(holder.mImageView).image(m_Tab3Page3ListData.Pic_url,
 					true, true);
-			// aqlist.id(holder.mImageView).image(m_Tab3Page3ListData.Pic_url,
-			// true, true, 0, 0, null, 0, 1.0f);
-
-			// aqlist.dismiss();
 			return view;
 		}
 	}
 
 	@Override
 	public void onTabActivityResult(int requestCode, int resultCode, Intent data) {
-//		if (dataStruct != null && dataStruct.size() > 1)
-//			dataStruct.clear();
-//		isLastisNext = 1;
-//		GetServiceData(isLastisNext);
-//		app.MyToast(aq.getContext(), "刷新悦单");
+
 	}
 }

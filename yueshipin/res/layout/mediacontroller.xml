@@ -41,7 +41,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-         android:id="@+id/relativeLayoutBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -58,24 +57,20 @@
             android:text="00:00"
             android:textColor="@color/white" />
 
-  <SeekBar
-      android:id="@+id/mediacontroller_seekbar"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="10dp"
-      android:layout_marginRight="10dp"
-      android:layout_marginTop="12dp"
-      android:layout_toLeftOf="@+id/mediacontroller_time_total"
-      android:layout_toRightOf="@+id/mediacontroller_time_current"
-      android:focusable="true"
-      android:indeterminateOnly="false"
-      android:max="1000"
-      android:progressDrawable="@drawable/player_seekbar_img"
-      android:secondaryProgress="0"
-      android:thumb="@drawable/player_seekbar_thumb"
-      android:paddingLeft="7dp"
-		android:thumbOffset="6dp"
-     />
+        <SeekBar
+            android:id="@+id/mediacontroller_seekbar"
+            style="@style/MediaController_SeekBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="2dp"
+            android:layout_toLeftOf="@+id/mediacontroller_time_total"
+            android:layout_toRightOf="@+id/mediacontroller_time_current"
+            android:focusable="true"
+            android:max="1000" />
 
         <TextView
             android:id="@+id/mediacontroller_time_total"
@@ -151,23 +146,19 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/relativeLayoutBottom"
+        android:layout_below="@+id/relativeLayout1"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="35dp"
+        android:layout_marginTop="47dp"
         android:text="正在载入笑傲江湖第五集，请稍后 ..."
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/white" 
-        android:visibility="gone"/>
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/relativeLayoutBottom"
+        android:layout_below="@+id/textView1"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:text="上次播放到 00:43:23"
-        android:textColor="@color/grey" 
-         android:visibility="gone"/>
+        android:text="上次播放到 00:43:23" />
+
 
 </RelativeLayout>

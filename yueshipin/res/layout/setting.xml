@@ -3,21 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F2F2F2"
-    android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
 
     <LinearLayout
         android:id="@+id/LayoutTitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/title_background">
+        android:background="@drawable/title_background" >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center" >
         </LinearLayout>
 
         <LinearLayout
@@ -25,121 +25,149 @@
             android:layout_height="fill_parent"
             android:layout_weight="3"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal" >
 
             <ImageView
                 android:id="@+id/imageView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/setting_top_logo"/>
+                android:src="@drawable/setting_top_logo" />
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:onClick="OnClickTab1TopRight" >
-
+            android:onClick="OnClickTab1TopRight"
+            android:orientation="horizontal" >
 
             <ImageView
                 android:id="@+id/imageButtom2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/setting_button_close_top" />
-
         </LinearLayout>
     </LinearLayout>
-    
-    <RelativeLayout 
-        android:layout_width="match_parent"
-        android:layout_height="10dp">
-        <!-- 为了让顶部空出10dp的空隙 -->
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/setting_xinlang"
-        android:gravity="center_vertical|right">
+	<ScrollView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    >
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:gravity="center_horizontal"
+	        android:orientation="vertical">
+	  
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_xinlang"
+                android:gravity="center_vertical|right"
+                android:paddingTop="4dp" >
 
-        <CheckBox
-            android:id="@+id/checkBox1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@drawable/setting_weibo_button"
-            android:paddingRight="30dp"
-            android:onClick="OnClickSinaWeibo"/>
-    </RelativeLayout>
-    
+                <CheckBox
+                    android:id="@+id/checkBox1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/setting_weibo_button"
+                    android:onClick="OnClickSinaWeibo"
+                    android:paddingRight="30dp" />
+            </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="9dp"
-        android:orientation="vertical" >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="9dp"
+                android:orientation="vertical" >
 
-        <ImageButton
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            
-            android:background="@drawable/setting_button_cache"
-            android:onClick="OnClickClearMemery"/>
-    </LinearLayout>
+                <ImageButton
+                    android:id="@+id/button2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/setting_button_cache"
+                    android:onClick="OnClickClearMemery" />
+            </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="9dp"
-        android:background="@drawable/setting_textview_border"
-        android:orientation="vertical"
-        android:paddingBottom="9dp" >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="9dp"
+                android:background="@drawable/setting_textview_border"
+                android:orientation="vertical"
+                android:paddingBottom="9dp" >
 
-        <ImageButton
-            android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="11dp"
-            android:layout_marginRight="11dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/setting_button_yj"
-            android:onClick="OnClickSug" />
+                <ImageButton
+                    android:id="@+id/button3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="11dp"
+                    android:layout_marginRight="11dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/setting_button_yj"
+                    android:onClick="OnClickSug" />
 
-        <ImageButton
-            android:id="@+id/button4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="11dp"
-            android:layout_marginTop="8dp"
-             android:layout_marginRight="11dp"
-            android:background="@drawable/setting_button_mianzhe"
-            android:onClick="OnClickMianZhe"/>
+                <ImageButton
+                    android:id="@+id/button4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="11dp"
+                    android:layout_marginRight="11dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/setting_button_mianzhe"
+                    android:onClick="OnClickMianZhe" />
 
-           <ImageButton
-            android:id="@+id/button6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="11dp"
-            android:layout_marginTop="8dp"
-             android:layout_marginRight="11dp"
-            android:background="@drawable/setting_button_guanzhu"
-            android:onClick="OnClickGuanzhu"/>
-           
-        <ImageButton
-            android:id="@+id/button5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="11dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="11dp"
-            android:background="@drawable/setting_button_aboutus"
-            android:onClick="OnClickAboutUs"/>
-    </LinearLayout>
+                <ImageButton
+                    android:id="@+id/button6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="11dp"
+                    android:layout_marginRight="11dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/setting_button_guanzhu"
+                    android:onClick="OnClickGuanzhu" />
+
+                <ImageButton
+                    android:id="@+id/button5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="11dp"
+                    android:layout_marginRight="11dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/setting_button_aboutus"
+                    android:onClick="OnClickAboutUs" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:paddingLeft="10dp"
+                android:text="应用推荐" >
+            </TextView>
+
+            <RelativeLayout
+                android:id="@+id/ad"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                 >
+
+                <com.joyplus.appRecommendListView
+                    android:id="@+id/list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    android:cacheColorHint="#00000000"
+                    android:divider="#dedfde"
+                    android:dividerHeight="1px"
+                    android:listSelector="#00000000" >
+                </com.joyplus.appRecommendListView>
+            </RelativeLayout>
+             </LinearLayout>
+	</ScrollView>
 
 </LinearLayout>
