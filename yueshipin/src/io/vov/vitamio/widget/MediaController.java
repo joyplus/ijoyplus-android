@@ -4,12 +4,7 @@
 
 package io.vov.vitamio.widget;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.joyplus.R;
-import com.joyplus.Adapters.Tab3Page1ListData;
-import com.joyplus.Service.Return.ReturnProgramView;
 
 import io.vov.utils.Log;
 import io.vov.utils.StringUtils;
@@ -18,20 +13,14 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.VoicemailContract;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -70,19 +59,11 @@ import android.widget.TextView;
  */
 public class MediaController extends FrameLayout {
 	private MediaPlayerControl mPlayer;
-	private ReturnProgramView m_ReturnProgramView = null;
 	private Context mContext;
 	private PopupWindow mWindow;
-	private PopupWindow mWindowBottomRight;
-	private PopupWindow mWindowTopRight;
-	private ListView lv_group;
-	private GroupAdapter groupAdapter;
-	 private ArrayList dataStruct;
 	private int mAnimStyle;
 	private View mAnchor;
 	private View mRoot;
-	private View mViewBottomRight;
-	private View mViewTopRight;
 	private ProgressBar mProgress;
 	private TextView mEndTime, mCurrentTime;
 	private TextView mFileName;
@@ -98,14 +79,6 @@ public class MediaController extends FrameLayout {
 	private boolean mFromXml = false;
 	private ImageButton mPauseButton;
 	private ImageButton mDlnaButton;
-	private ImageButton mReturnButton;
-	private ImageButton mReduceButton;
-	private ImageButton mPreButton;
-	private ImageButton mNextButton;
-	private ImageButton mQualityButton;
-	private ImageButton mSelectButton;
-	private TextView mTextView1;
-	private TextView mTextView2;
 
 	private AudioManager mAM;
 
@@ -122,28 +95,6 @@ public class MediaController extends FrameLayout {
 			initFloatingWindow();
 	}
 
-	private void initPopWindows(){
-		LayoutInflater mLayoutInflater = (LayoutInflater) mContext  
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);  
-		mViewTopRight = mLayoutInflater.inflate(  
-                R.layout.mediacontroller_top, null);  
-        mWindowTopRight = new PopupWindow(mViewTopRight, 194,  
-                LayoutParams.WRAP_CONTENT);  
-        lv_group = (ListView) mViewTopRight.findViewById(R.id.listView1);  
-        // 加载数据  
-        dataStruct = new ArrayList<String>();  
-
-       groupAdapter = new GroupAdapter(mContext, dataStruct);  
-        lv_group.setAdapter(groupAdapter);
-
-        
-		mViewBottomRight = mLayoutInflater.inflate(
-				R.layout.mediacontroller2, null);
-		mWindowBottomRight = new PopupWindow(mViewBottomRight,
-				404, 210);
-
-
-	}
 	private boolean initController(Context context) {
 		mContext = context;
 		mAM = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
@@ -162,8 +113,6 @@ public class MediaController extends FrameLayout {
 		mWindow.setBackgroundDrawable(null);
 		mWindow.setOutsideTouchable(true);
 		mAnimStyle = android.R.style.Animation;
-	
-		initPopWindows();
 	}
 
 	/**
@@ -180,7 +129,6 @@ public class MediaController extends FrameLayout {
 			mWindow.setContentView(mRoot);
 			mWindow.setWidth(android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 			mWindow.setHeight(android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-			
 		}
 		initControllerView(mRoot);
 	}
@@ -198,35 +146,12 @@ public class MediaController extends FrameLayout {
 	private void initControllerView(View v) {
 		mPauseButton = (ImageButton) v.findViewById(R.id.mediacontroller_play_pause);
 		mDlnaButton = (ImageButton) v.findViewById(R.id.mediacontroller_dlna);
-		mReturnButton = (ImageButton) v.findViewById(R.id.imageButton1);
-		mReduceButton = (ImageButton) v.findViewById(R.id.imageButton2);
-		mPreButton = (ImageButton) v.findViewById(R.id.imageButton3);
-		mNextButton = (ImageButton) v.findViewById(R.id.imageButton4);
-		mQualityButton = (ImageButton) v.findViewById(R.id.imageButton5);
-		mSelectButton = (ImageButton) v.findViewById(R.id.imageButton6);
-		
-		mTextView1 = (TextView) v.findViewById(R.id.textView1);
-		mTextView2 = (TextView) v.findViewById(R.id.textView2);
-		
 		if (mPauseButton != null) {
 			mPauseButton.requestFocus();
 			mPauseButton.setOnClickListener(mPauseListener);
 		}
 		if (mDlnaButton != null) 
 			mDlnaButton.setOnClickListener(mDlnaListener);
-		
-		if (mReturnButton != null) 
-			mReturnButton.setOnClickListener(mReturnListener);
-		if (mReduceButton != null) 
-			mReduceButton.setOnClickListener(mReduceListener);
-		if (mPreButton != null) 
-			mPreButton.setOnClickListener(mPreListener);
-		if (mNextButton != null) 
-			mNextButton.setOnClickListener(mNextListener);
-		if (mQualityButton != null) 
-			mQualityButton.setOnClickListener(mQualityListener);
-		if (mSelectButton != null) 
-			mSelectButton.setOnClickListener(mSelectListener);
 
 		mProgress = (ProgressBar) v.findViewById(R.id.mediacontroller_seekbar);
 		if (mProgress != null) {
@@ -244,13 +169,7 @@ public class MediaController extends FrameLayout {
 		if (mFileName != null)
 			mFileName.setText(mTitle);
 	}
-	public void SetMediaPlayerControlBGGone() {
-		if(mAnchor != null){
-			mAnchor.setBackgroundResource(0);
-			mTextView1.setVisibility(View.GONE);
-			mTextView2.setVisibility(View.GONE);
-		}
-	}
+
 	public void setMediaPlayer(MediaPlayerControl player) {
 		mPlayer = player;
 		updatePausePlay();
@@ -279,34 +198,7 @@ public class MediaController extends FrameLayout {
 		if (mFileName != null)
 			mFileName.setText(mTitle);
 	}
-	
-	public void setProd_Data( ReturnProgramView m_ReturnProgramView) {
-		this.m_ReturnProgramView = m_ReturnProgramView;
-		if (this.m_ReturnProgramView != null){
-			if(m_ReturnProgramView.movie != null){
-			}else if(m_ReturnProgramView.tv != null){
-				if(dataStruct != null){
-					for (int i = 0; i < m_ReturnProgramView.tv.episodes.length; i++) {
-						dataStruct.add("第"+ Integer.toString(i) +"集");
-						String str = m_ReturnProgramView.tv.episodes[i].name;
-					}
 
-			        groupAdapter.notifyDataSetChanged();
-				}
-			}else if(m_ReturnProgramView.show != null){
-				if(dataStruct != null){
-					for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
-						dataStruct.add(m_ReturnProgramView.show.episodes[i].name);
-					}
-					
-			        groupAdapter.notifyDataSetChanged();
-				}
-			}
-			
-		}
-	}
-
-	
 	/**
 	 * Set the View to hold some information when interact with the
 	 * MediaController
@@ -367,7 +259,6 @@ public class MediaController extends FrameLayout {
 
 				mWindow.setAnimationStyle(mAnimStyle);
 				mWindow.showAtLocation(mAnchor, Gravity.NO_GRAVITY, anchorRect.left, anchorRect.bottom);
-//				mWindow.showAtLocation(mAnchor, Gravity.NO_GRAVITY, 0, 0);
 			}
 			mShowing = true;
 			if (mShownListener != null)
@@ -397,11 +288,6 @@ public class MediaController extends FrameLayout {
 					setVisibility(View.GONE);
 				else
 					mWindow.dismiss();
-				if(mWindowBottomRight != null)
-					mWindowBottomRight.dismiss();
-				
-				if(mWindowTopRight != null)
-					mWindowTopRight.dismiss();
 			} catch (IllegalArgumentException ex) {
 				Log.d("MediaController already removed");
 			}
@@ -410,7 +296,6 @@ public class MediaController extends FrameLayout {
 				mHiddenListener.onHidden();
 		}
 	}
-	
 
 	public interface OnShownListener {
 		public void onShown();
@@ -533,74 +418,11 @@ public class MediaController extends FrameLayout {
 			// show(sDefaultTimeout);
 		}
 	};
-
-	private View.OnClickListener mReturnListener = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			mPlayer.stopPlayback();
-		}
-	};
-	private View.OnClickListener mReduceListener = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			int mLayout = mPlayer.GetCurrentVideoLayout();
-			mLayout++;
-			if(mLayout >VideoView.VIDEO_LAYOUT_ZOOM)
-				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
-			mPlayer.setVideoLayout(mLayout,0);
-		}
-	};
-	private View.OnClickListener mPreListener = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if(mPlayer.canSeekBackward()){
-				long current  = mPlayer.getCurrentPosition();
-				if(current >= 30000 )//30s
-					mPlayer.seekTo(current - 30000);
-			}
-		}
-	};
-	private View.OnClickListener mNextListener = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-
-		}
-	};
-	private View.OnClickListener mQualityListener = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			mHandler.removeMessages(FADE_OUT);
-			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), sDefaultTimeout);
-			
-			if (mWindowBottomRight != null) {
-				if(mWindowBottomRight.isShowing())
-					mWindowBottomRight.dismiss();
-				else 
-					mWindowBottomRight.showAtLocation(mAnchor, Gravity.RIGHT
-							| Gravity.BOTTOM, 28, 82);
-			}
-		}
-	};
-	private View.OnClickListener mSelectListener = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			mHandler.removeMessages(FADE_OUT);
-			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), sDefaultTimeout);
-			
-			if(mWindowTopRight != null){
-				if(mWindowTopRight.isShowing())
-					mWindowTopRight.dismiss();
-				else 
-					 mWindowTopRight.showAtLocation(mAnchor, Gravity.RIGHT|Gravity.TOP, 25, 70);
-			}
-		}
-	};
-
 	private void updatePausePlay() {
 		if (mRoot == null || mPauseButton == null)
 			return;
 
-		if (mPlayer != null && mPlayer.isPlaying())
+		if (mPlayer.isPlaying())
 			mPauseButton.setBackgroundResource(R.drawable.player_pause);
 		else
 			mPauseButton.setBackgroundResource(R.drawable.player_play);
@@ -668,64 +490,7 @@ public class MediaController extends FrameLayout {
 		disableUnsupportedButtons();
 		super.setEnabled(enabled);
 	}
-	
-    static class ViewHolder {  
-        TextView groupItem;  
-    }  
-    public class GroupAdapter extends BaseAdapter {  
-    	  
-        private Context context;  
-      
-        private List<String> list;  
-      
-        public GroupAdapter(Context context, List<String> list) {  
-      
-            this.context = context;  
-            this.list = list;  
-      
-        }  
-      
-        @Override  
-        public int getCount() {  
-            return list.size();  
-        }  
-      
-        @Override  
-        public Object getItem(int position) {  
-      
-            return list.get(position);  
-        }  
-      
-        @Override  
-        public long getItemId(int position) {  
-            return position;  
-        }  
-      
-        @Override  
-        public View getView(int position, View convertView, ViewGroup viewGroup) {  
-      
-              
-            ViewHolder holder;  
-            if (convertView==null) {  
-                convertView=LayoutInflater.from(context).inflate(R.layout.player_detail_list, null);  
-                holder=new ViewHolder();  
-                  
-                convertView.setTag(holder);  
-                  
-                holder.groupItem=(TextView) convertView.findViewById(R.id.txt_video_caption);  
-                  
-            }  
-            else{  
-                holder=(ViewHolder) convertView.getTag();  
-            }  
-            holder.groupItem.setText(list.get(position));  
-              
-            return convertView;  
-        }  
-      
 
-      
-    }  
 	public interface MediaPlayerControl {
 		void start();
 
@@ -748,15 +513,6 @@ public class MediaController extends FrameLayout {
 		boolean canSeekForward();
 		
 		void gotoDlnaVideoPlay();
-		
-		void stopPlayback();
-		
-		 void setVideoLayout(int layout, float aspectRatio);
-		 
-		 int GetCurrentVideoLayout();
-		 
-		 void NextVideo();
-		 
 	}
 
 }

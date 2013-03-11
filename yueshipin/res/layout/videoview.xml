@@ -51,73 +51,12 @@
         </FrameLayout>
     </FrameLayout>
 
-<FrameLayout
-     android:id="@+id/relativeLayout_preload"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" 
-     android:visibility="invisible" 
-   >
-	   <ImageView
-            android:id="@+id/layout_preload_bg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/player_bg" />
-    <FrameLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-          android:layout_gravity="top"
-        android:background="@drawable/player_top_bg" >
-
-        <TextView
-            android:id="@+id/mediacontroller_file_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-             android:layout_gravity="center_vertical|center_horizontal"
-            android:text="热血高校2"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white" />
-
-        <ImageButton
-            android:id="@+id/imageButton1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-           android:layout_gravity="center_vertical|left"
-            android:layout_marginLeft="12dp"
-            android:onClick="OnClickReturn"
-            android:background="@drawable/player_back" />
-
-        <ImageButton
-            android:id="@+id/imageButton6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
-            android:layout_marginRight="10dp"
-             android:onClick="OnClickSelect"
-            android:background="@drawable/player_select" />
-    </FrameLayout>
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="150dp"
-        android:text="正在载入笑傲江湖第五集，请稍后 ..."
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/white" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="120dp"
-        android:text="上次播放到 00:43:23"
-        android:textColor="@color/grey" />
-
-</FrameLayout>
+    <ImageView
+        android:id="@+id/imageView_BG"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/player_preload" />
 
 </RelativeLayout>

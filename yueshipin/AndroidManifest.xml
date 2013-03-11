@@ -51,7 +51,7 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
             android:uiOptions="splitActionBarWhenNarrow" >
-            <intent-filter>
+              <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -206,6 +206,7 @@
             android:name=".Video.VideoPlayerActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+          
         </activity>
         <activity
             android:name=".Video.InitActivity"
@@ -237,9 +238,13 @@
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
-        <service android:name="com.parse.PushService" />
-
-        <meta-data
+         <service android:name="com.parse.PushService" />
+        <service
+            android:name="com.umeng.common.net.DownloadingService"
+            android:exported="true"
+            android:process=":DownloadingService" >
+        </service>
+		<meta-data
             android:name="UMENG_APPKEY"
             android:value="50937e6c5270151fc8000003" >
         </meta-data>
