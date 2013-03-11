@@ -87,7 +87,16 @@ public class Detail_Movie extends Activity {
 	/**
 	 * 利用消息处理机制适时更新APP里的数据
 	 */
-
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
