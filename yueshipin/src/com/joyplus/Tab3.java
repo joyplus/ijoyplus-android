@@ -115,6 +115,7 @@ public class Tab3 extends TabActivity {
 	public void OnClickTab1TopRight(View v) {
 		Intent i = new Intent(this, Setting.class);
 		startActivityForResult(i, 100);
+
 	}
 	public boolean CheckLogin() {
 		String UserInfo = null;
@@ -148,14 +149,14 @@ public class Tab3 extends TabActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == 100&&resultCode==0)
+		
+		if(requestCode == 100 && resultCode == 0)
 		{
 			CheckLogin();
 		}
-		if (requestCode == 100&&resultCode == 101){
-				CheckLogin();
-		} 
-		else {
+		if (requestCode == 100 && resultCode == 101){
+			CheckLogin();
+		} else {
 			// 获取当前活动的Activity实例
 			Activity subActivity = getLocalActivityManager()
 					.getCurrentActivity();

@@ -40,9 +40,12 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 
 /**
@@ -104,7 +107,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	private boolean mCanSeekForward = true;
 	private Context mContext;
 	
-	private ImageView mImageViewBG;
+	private View mLayoutBG;
 	private DlnaSelectDevice mMyService;
 
 	public VideoView(Context context) {
@@ -258,9 +261,9 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		attachMediaController();
 	}
 
-	public void setImageViewBG(ImageView mImageViewBG) {
-		this.mImageViewBG = mImageViewBG;
-		mImageViewBG.setVisibility(View.VISIBLE);
+	public void setLayoutBG(View mRelativeLayoutBG) {
+		this.mLayoutBG = mRelativeLayoutBG;
+		
 	}
 	
 	public void setServiceConnection(DlnaSelectDevice mMyService) {
@@ -268,6 +271,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	}
 
 	private void attachMediaController() {
+		
 		if (mMediaPlayer != null && mMediaController != null) {
 			mMediaController.setMediaPlayer(this);
 			View anchorView = this.getParent() instanceof View ? (View) this.getParent() : this;
@@ -281,6 +285,16 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 //				mMediaController.setFileName(name);
 //			}
 		}
+//		if (mLayoutBG != null){
+//			mLayoutBG.setVisibility(View.VISIBLE);
+//			View anchorView = this.getParent() instanceof View ? (View) this.getParent() : this;
+//
+//			ViewGroup.LayoutParams lp = anchorView.getLayoutParams();
+////			
+////			lp.width = (int) (findViewById(R.id.operation_full).getLayoutParams().width * lpa.screenBrightness);
+//			mLayoutBG.setLayoutParams(lp);
+//		}
+			
 	}
 
 	OnVideoSizeChangedListener mSizeChangedListener = new OnVideoSizeChangedListener() {
@@ -319,8 +333,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				if (mSurfaceWidth == mVideoWidth && mSurfaceHeight == mVideoHeight) {
 					if (mTargetState == STATE_PLAYING) {
 						start();
-						if (mImageViewBG != null)
-							mImageViewBG.setVisibility(View.GONE);
+						if (mLayoutBG != null)
+							mLayoutBG.setVisibility(View.GONE);
 						if (mMediaController != null)
 							mMediaController.show();
 						
@@ -794,5 +808,15 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "Call DlnaVideoPlay failed", ex);
 		}
+	}
+	@Override
+	public int GetCurrentVideoLayout() {
+		return mVideoLayout;
+	}
+
+	@Override
+	public void NextVideo() {
+		// TODO Auto-generated method stub
+		
 	}
 }

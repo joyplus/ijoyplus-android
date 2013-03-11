@@ -68,7 +68,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private AudioManager mAudioManager;
 	private View mRelativeLayoutBG;
 	private ImageView mImage_preload_bg;
-	long current_time = 0;
+	long current_time = 0;  
 	public static int RETURN_CURRENT_TIME = 150;
 	
 	/** 最大声音 */
@@ -191,7 +191,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	protected void onDestroy() {
 		if (aq != null)
 			aq.dismiss();  
-		  
+		
 		if (mVideoView != null){
 			mVideoView.stopPlayback();
 		}
@@ -201,7 +201,6 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		
 	}
 
-	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (mGestureDetector.onTouchEvent(event))
