@@ -4,18 +4,21 @@
 
 package com.joyplus.Video;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 
 import org.json.JSONObject;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.App;
 import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Dlna.DlnaSelectDevice;
+import com.joyplus.Service.Return.ReturnProgramView;
 
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
@@ -47,23 +50,24 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 public class VideoPlayerActivity extends Activity implements OnCompletionListener {
-	//private playHistoryData playData = null;
-	
+
 	private AQuery aq;
 	private App app;
+	private ReturnProgramView m_ReturnProgramView = null;
 	private String mPath;
 	private String mTitle;
+	private String prod_id;
 	private VideoView mVideoView;
 	private View mVolumeBrightnessLayout;
 	private ImageView mOperationBg;
 	private ImageView mOperationPercent;
 	private AudioManager mAudioManager;
-	private ImageView mImageViewBG;
-	
-	//playHistory
-	long play_current_time = 0;
+	private View mRelativeLayoutBG;
+	private ImageView mImage_preload_bg;
+	long current_time = 0;
 	public static int RETURN_CURRENT_TIME = 150;
 	
 	/** 最大声音 */
@@ -76,18 +80,9 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private int mLayout = VideoView.VIDEO_LAYOUT_STRETCH;//VIDEO_LAYOUT_ZOOM;
 	private GestureDetector mGestureDetector;
 	private MediaController mMediaController;
+
 	private DlnaSelectDevice mMyService;
-	
-	/*
-	 * playHistoryData
-	 */
-	private String playProdId = null;//视频id
-	private String playProdName = null;//视频名字
-	private String playProdSubName = null;//视频的集数
-	private String playPlayType = null;//播放的类别  1: 视频地址播放 2:webview播放
-	private String playVideoUrl = null;//视频url
-	private int playProdType = 0;//视频类别 1：电影，2：电视剧，3：综艺，4：视频
-	
+
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
@@ -106,21 +101,42 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
-		InitPlayData();
-		setContentView(R.layout.videoview);
+
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		
-		mVideoView = (VideoView) findViewById(R.id.surface_view); 
+		Intent intent = getIntent();
+		mPath = intent.getStringExtra("path");
+		mTitle = intent.getStringExtra("title");
+		prod_id = intent.getStringExtra("pro_id");
+		if(mTitle != null && mTitle.length()>0)
+			aq.id(R.id.textView1).text("正在载入 "+ mTitle + "，请稍后 ...");
+		if (prod_id != null)
+			GetServiceData();
+//		mPath = "http://122.228.96.172/20/40/95/letv-uts/1340994301-AVC-249889-AAC-31999-5431055-192873082-4b45f1fd5362d980a1dae9c44b2b1c6b-1340994301.mp4?crypt=3eb0ad42aa7f2e559&b=2000&gn=860&nc=1&bf=22&p2p=1&video_type=mp4&check=0&tm=1354698000&key=78cc2270a7e5dfe3187c1608c99e65c0&lgn=letv&proxy=1945014819&cipi=1034815956&tag=mobile&np=1&vtype=mp4&ptype=s1&level=350&t=1354601822&cid=&vid=&sign=mb&dname=mobile";
+//		mPath = "http://122.228.96.172/20/40/95/letv-uts/1340994301-AVC-249889-AAC-31999-5431055-192873082-4b45f1fd5362d980a1dae9c44b2b1c6b-1340994301.mp4?crypt=3eb0ad42aa7f2e559&b=2000&gn=860&nc=1&bf=22&p2p=1&video_type=mp4&check=0&tm=1354698000&key=78cc2270a7e5dfe3187c1608c99e65c0&lgn=letv&proxy=1945014819&cipi=1034815956&tag=mobile&np=1&vtype=mp4&ptype=s1&level=350&t=1354601822&cid=&vid=&sign=mb&dname=mobile";
+//		mPath = "http://114.80.187.218/25/36/53/kingsoft/movie/47978987920B0079FF686B6370B4E039-xiyoupian.mp4?crypt=3a3fb98daa7f2e300&b=800&gn=812&nc=1&bf=30&p2p=1&video_type=mp4&check=0&tm=1363662000&key=19234b660387c681a8f47a30cd2f21cb&opck=1&lgn=letv&proxy=2002892265&cipi=2085452187&tsnp=1&tag=ios&tag=kingsoft&sign=coopdown&realext=.mp4&test=m3u8";
+//		mTitle = "x3";
+		if (TextUtils.isEmpty(mPath))
+			mPath = Environment.getExternalStorageDirectory() + "/mnt/sdcard/t.mp4";
+		else if (intent.getData() != null)
+			mPath = intent.getData().toString();
+
+		setContentView(R.layout.videoview);
+		mVideoView = (VideoView) findViewById(R.id.surface_view);
 		mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
 		mOperationBg = (ImageView) findViewById(R.id.operation_bg);
 		mOperationPercent = (ImageView) findViewById(R.id.operation_percent);
-		mImageViewBG = (ImageView) findViewById(R.id.imageView_BG);
+		
+		mImage_preload_bg = (ImageView) findViewById(R.id.layout_preload_bg);
+		mRelativeLayoutBG = findViewById(R.id.relativeLayout_preload);
 
 		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-		mVideoView.setImageViewBG(mImageViewBG);
+		mImage_preload_bg.setBackgroundResource(R.drawable.player_bg);
+		mRelativeLayoutBG.setVisibility(View.VISIBLE);
+		mVideoView.setLayoutBG(mRelativeLayoutBG);
 		
 		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
 			mVideoView.setVideoURI(Uri.parse(mPath));
@@ -128,8 +144,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 			mVideoView.setVideoPath(mPath);
 		//
 		mVideoView.setOnCompletionListener(this);
-		if(play_current_time>0)
-			mVideoView.seekTo(play_current_time);
+
 		mMediaController = new MediaController(this);
 		//设置显示名称
 		mVideoView.setTitle(mTitle);
@@ -145,52 +160,12 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		i.setClass(this, DlnaSelectDevice.class);
 		bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 	}
-	
-	public void InitPlayData()
-	{
-		Intent intent = getIntent();
-		Bundle bundle = intent.getExtras();
-		mPath = bundle.getString("path");
-		mTitle = bundle.getString("title");
-		playProdName = mTitle;
-		playVideoUrl = mPath;
-		playProdId = bundle.getString("prod_id");
-		playProdSubName = bundle.getString("prod_subname");
-		playProdType = Integer.parseInt(bundle.getString("prod_type"));
-		play_current_time = bundle.getLong("current_time");
-//		if (TextUtils.isEmpty(mPath))
-//			mPath = Environment.getExternalStorageDirectory() + "/mnt/sdcard/t.mp4";	
-//		else if (intent.getData() != null)
-//			mPath = intent.getData().toString();
-//		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
-//		{
-//			playProdName = mTitle;
-//			playVideoUrl = mPath;
-//			playProdId = bundle.getString("prod_id");
-//			playProdSubName = bundle.getString("prod_subname");
-//			playProdType = Integer.parseInt(bundle.getString("prod_type"));
-//			play_current_time = bundle.getLong("current_time");
-//		}
-	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
 		if (mVideoView != null)
 		{
-			/*
-			 * 获取当前播放时间和总时间,将播放时间和总时间放在服务器上
-			 */
-			long current_time = mVideoView.getCurrentPosition();
-			long total_time = mVideoView.getDuration();
-			if((total_time>0)&&(current_time>0)&&(current_time<total_time))
-			{
-				SaveToServer(mVideoView.getCurrentPosition(),mVideoView.getDuration());
-			}
-			else
-			{
-				SaveToServer(0,0);
-			}
 			mVideoView.pause();
 		}	
 	}
@@ -200,9 +175,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		super.onResume();
 		if (mVideoView != null)
 		{
-			/*
-			 * 取得播放时间,设置播放时间,进行播放
-			 */
+			//current_time = mVideoView.getCurrentPosition();
 			mVideoView.resume();
 		}
 			
@@ -210,11 +183,15 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
+		if (aq != null)
+			aq.dismiss();
+		
 		if (mVideoView != null){
 			mVideoView.stopPlayback();
 		}
 		unbindService(mServiceConnection);
+		super.onDestroy();
+		
 	}
 
 	@Override
@@ -231,7 +208,15 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 		return super.onTouchEvent(event);
 	}
+	public void OnClickReturn(View v) {
+	
+		finish();
 
+	}
+	public void OnClickSelect(View v) {
+
+	}
+	
 	/** 手势结束 */
 	private void endGesture() {
 		mVolume = -1;
@@ -248,6 +233,8 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
 			mLayout++;
+			if(mLayout >VideoView.VIDEO_LAYOUT_ZOOM)
+				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
 			if (mVideoView != null)
 				mVideoView.setVideoLayout(mLayout, 0);
 			return true;
@@ -346,61 +333,72 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 			mVideoView.setVideoLayout(mLayout, 0);
 		super.onConfigurationChanged(newConfig);
 	}
+	
+//	
+//	
+//	@Override
+//	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		// TODO Auto-generated method stub
+//		if(keyCode == 4)
+//		{
+//			if(mVideoView!=null)
+//			{
+//				Intent intent = new Intent();
+//				Bundle bundle = new Bundle();
+//				bundle.putInt("current_time", (int)(mVideoView.getCurrentPosition()));
+//				bundle.putInt("total_time", (int)(mVideoView.getDuration()));
+//				intent.putExtras(bundle);
+//				setResult(RETURN_CURRENT_TIME,intent);
+//				mVideoView.stopPlayback();
+//			}
+//		}
+//		finish();
+//		return super.onKeyDown(keyCode, event);
+//	}
 
 	@Override
 	public void onCompletion(MediaPlayer player) {
-		finish();
+//		finish();
 	}
-	
-	public long getHistoryPlayTime()
-	{
-		return 0;
-	}
-	
-	public void SaveToServer(long playback_time,long duration)
-	{
-		String url = Constant.BASE_URL + "program/play";
+	public void GetServiceData() {
+		String url = Constant.BASE_URL + "program/view?prod_id=" + prod_id;
 
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("app_key", Constant.APPKEY);// required string
-												// 申请应用时分配的AppKey。
-		params.put("prod_id", playProdId);// required string
-															// 视频id
-		params.put("prod_name", playProdName);// required
-																// string 视频名字
-		params.put("prod_subname", playProdSubName);// required
-																	// string
-																	// 视频的集数
-		params.put("prod_type", playProdType);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
-		params.put("playback_time", playback_time);// _time required int 上次播放时间，单位：秒
-		params.put("duration", duration);// required int 视频时长， 单位：秒
-		params.put("play_type", "1");// required string
-		// 播放的类别 1: 视频地址播放
-		// 2:webview播放
-		params.put("video_url", playVideoUrl);// required
-		// string
-		// 视频url
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.url(url).type(JSONObject.class).weakHandler(this, "GetServiceDataResult");
+
 		cb.header("User-Agent",
 				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
 		cb.header("app_key", Constant.APPKEY);
 		cb.header("user_id", app.UserID);
-		cb.params(params).url(url).type(JSONObject.class)
-				.weakHandler(this, "CallProgramPlayResult");
-		aq.ajax(cb);
-		
-		/*
-		 * 怎么把数据保存在本地
-		 */
+
+		aq.id(R.id.ProgressText).visible();
+		aq.progress(R.id.progress).ajax(cb);
+
 	}
-	
-	public void CallProgramPlayResult(String url, JSONObject json,
-			AjaxStatus status) {
-	/*
-	 * 保存历史播放记录的回调函数
-	 * prod_id
-	 * index
-	 * 播放时间
-	 */
+	// 初始化list数据函数
+	public void GetServiceDataResult(String url, JSONObject json, AjaxStatus status) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+			app.MyToast(aq.getContext(),
+					getResources().getString(R.string.networknotwork));
+			return;
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			m_ReturnProgramView = mapper.readValue(json.toString(),
+					ReturnProgramView.class);
+			if(mMediaController != null)
+				mMediaController.setProd_Data(m_ReturnProgramView);
+			// 创建数据源对象
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

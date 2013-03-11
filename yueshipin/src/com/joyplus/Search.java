@@ -114,6 +114,7 @@ public class Search extends Activity implements
 
 	public void OnClickFinished(View v) {
 		finish();
+
 	}
 
 	@Override

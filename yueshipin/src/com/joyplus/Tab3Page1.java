@@ -55,9 +55,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	private ReturnUserPlayHistories m_ReturnUserPlayHistories = null;
 	private int isLastisNext = 1;
 
-	// 播放记录变量
-	private long current_play_time = 0;
-	Tab3Page1ListData tempPlayHistoryData = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +113,8 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 
 	public void OnClickTab1TopLeft(View v) {
 		Intent i = new Intent(this, Search.class);
-		startActivity(i);
+//		startActivity(i);
+		startActivityForResult(i, 1);
 
 	}
 
@@ -134,20 +132,12 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	public void OnClickContinue(int position) {
 		Tab3Page1ListData m_Tab3Page1ListData = (Tab3Page1ListData) ItemsListView
 				.getItemAtPosition(position);
-		tempPlayHistoryData = m_Tab3Page1ListData;
-		if ((m_Tab3Page1ListData.Pro_time) > 0
-				&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
-			current_play_time = m_Tab3Page1ListData.Pro_time;
-		}
 		if (m_Tab3Page1ListData != null) {
 			if (m_Tab3Page1ListData.Pro_urlType.equalsIgnoreCase("1")) {
 				CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
-						m_Tab3Page1ListData.Pro_url,
-						m_Tab3Page1ListData.Pro_name);
-			} else if (m_Tab3Page1ListData.Pro_urlType.equalsIgnoreCase("2")) {
-				/*
-				 * 网页播放地址不需要记录时间
-				 */
+						m_Tab3Page1ListData.Pro_url,m_Tab3Page1ListData.Pro_name);
+			} else if (m_Tab3Page1ListData.Pro_urlType
+					.equalsIgnoreCase("2")) {
 				Intent intent = new Intent();
 				intent.setAction("android.intent.action.VIEW");
 				Uri content_url = Uri.parse(m_Tab3Page1ListData.Pro_url);
@@ -256,8 +246,9 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 
 		}
 
-	public void GetVideoMovies() {
-//		String m_j = null;
+		public void GetVideoMovies() {
+			String m_j = null;
+			
 
 			if (m_ReturnUserPlayHistories.histories == null){
 				if(isLastisNext ==1){
@@ -360,66 +351,63 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		} else {
 
 			// ajax error, show error code
-			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
-				app.MyToast(this,
-						getResources().getString(R.string.networknotwork));
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR) 
+			app.MyToast(this, getResources().getString(R.string.networknotwork));
 		}
 	}
 	public void OnClickPlayIndex(int index) {
-		Tab3Page1ListData m_Tab3Page1ListData = (Tab3Page1ListData) ItemsListView
-				.getItemAtPosition(index);
-		if (m_Tab3Page1ListData != null) {
-			Intent intent = new Intent();
-			// 1：电影，2：电视剧，3：综艺，4：视频
-			switch (m_Tab3Page1ListData.Pro_type) {
-			case 1:
-				intent.setClass(this, Detail_Movie.class);
-				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
-				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
-				try {
-					startActivity(intent);
-				} catch (ActivityNotFoundException ex) {
-					Log.e(TAG, "Call Detail_Movie failed", ex);
-				}
-				break;
-			case 2:
-				intent.setClass(this, Detail_TV.class);
-				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
-				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
-				try {
-					startActivity(intent);
-				} catch (ActivityNotFoundException ex) {
-					Log.e(TAG, "Call Detail_TV failed", ex);
-				}
-				break;
-			case 3:
-				intent.setClass(this, Detail_Show.class);
-				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
-				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
-				try {
-					startActivity(intent);
-				} catch (ActivityNotFoundException ex) {
-					Log.e(TAG, "Call Detail_Show failed", ex);
-				}
-				break;
-			}
-
-		} else {
-			app.MyToast(this, "m_Tab3Page1ListData is empty.");
-		}
+	
+		Intent i = new Intent(this, Setting.class);
+		startActivityForResult(i, 100);
+//		Tab3Page1ListData m_Tab3Page1ListData = (Tab3Page1ListData) ItemsListView
+//				.getItemAtPosition(index);
+//		if (m_Tab3Page1ListData != null) {
+//			Intent intent = new Intent();
+//			// 1：电影，2：电视剧，3：综艺，4：视频
+//			switch (m_Tab3Page1ListData.Pro_type) {
+//			case 1:
+//				intent.setClass(this, Detail_Movie.class);
+//				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
+//				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
+//				try {
+//					startActivity(intent);
+//				} catch (ActivityNotFoundException ex) {
+//					Log.e(TAG, "Call Detail_Movie failed", ex);
+//				}
+//				break;
+//			case 2:
+//				intent.setClass(this, Detail_TV.class);
+//				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
+//				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
+//				try {
+//					startActivity(intent);
+//				} catch (ActivityNotFoundException ex) {
+//					Log.e(TAG, "Call Detail_TV failed", ex);
+//				}
+//				break;
+//			case 3:
+//				intent.setClass(this, Detail_Show.class);
+//				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
+//				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
+//				try {
+//					startActivity(intent);
+//				} catch (ActivityNotFoundException ex) {
+//					Log.e(TAG, "Call Detail_Show failed", ex);
+//				}
+//				break;
+//			}
+//
+//		} else {
+//			app.MyToast(this, "m_Tab3Page1ListData is empty.");
+//		}
 	}
 
 	public void CallVideoPlayActivity(String prod_id, String m_uri ,String title ) {
 
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
-		Bundle bundle = new Bundle();
-		bundle.putString("path", m_uri);
-		bundle.putString("title", title);
-		bundle.putString("prod_id", prod_id);
-		bundle.putString("prod_subname", tempPlayHistoryData.Pro_name1);
-		bundle.putString("prod_type", Integer.toString(tempPlayHistoryData.Pro_type));
-		bundle.putLong("current_time", current_play_time);
-		intent.putExtras(bundle);
+		intent.putExtra("pro_id", prod_id);
+		intent.putExtra("path", m_uri);
+		intent.putExtra("title", title);
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException ex) {
@@ -472,6 +460,8 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		// 获取显示当前的view
 		@Override
 		public View getView(int i, View view, ViewGroup viewgroup) {
+			
+			Integer integer = Integer.valueOf(i);
 			AccessoriesViewHolder holder = null;
 
 			if (view == null) {
@@ -482,13 +472,14 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				
 				((Button) view.findViewById(R.id.button1))
 						.setOnClickListener(mContinueClickListener);
+				
+				 holder.video_caption = (TextView) view.findViewById(R.id.txt_video_caption);
+				 holder.textView03 = (TextView) view.findViewById(R.id.TextView03);
+				 holder.textView04 = (TextView) view.findViewById(R.id.TextView04);
 
-				holder.video_caption = (TextView) view
-						.findViewById(R.id.txt_video_caption);
-				holder.textView03 = (TextView) view
-						.findViewById(R.id.TextView03);
 				view.setTag(holder);
-			} else {
+			}
+			else {
 				holder = (AccessoriesViewHolder) view.getTag();
 			}
 			
@@ -499,68 +490,48 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			// 1：电影，2：电视剧，3：综艺节目，4：视频
 			switch (m_Tab3Page1ListData.Pro_type) {
 			case 1:
-				if ((m_Tab3Page1ListData.Pro_time > 0)
-						&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time))
-				{
-					holder.textView03
-					.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
-				}
-					
+				if(m_Tab3Page1ListData.Pro_time >0)
+					holder.textView03.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
 				else
-				{
-//					holder.textView03.setVisibility(View.GONE);
-					holder.textView03.setText(" ");
-				}
+					holder.textView03.setVisibility(View.GONE);
 				break;
 			case 2:
-				if (m_Tab3Page1ListData.Pro_name1 != null
-						&& m_Tab3Page1ListData.Pro_name1.length() > 0) {
-					if ((m_Tab3Page1ListData.Pro_time > 0)
-							&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
-						holder.textView03.setText("第 "
-								+ m_Tab3Page1ListData.Pro_name1 + " 集" + ":"
-								+ stringForTime(m_Tab3Page1ListData.Pro_time));
-					} else {
-						holder.textView03.setText("第 "
-								+ m_Tab3Page1ListData.Pro_name1 + " 集");
-					}
-				} else {
-//					holder.textView03.setVisibility(View.GONE);
-					holder.textView03.setText(" ");
+				if (m_Tab3Page1ListData.Pro_name1 != null && m_Tab3Page1ListData.Pro_name1.length() >0)
+					holder.textView03.setText("第 "+
+							m_Tab3Page1ListData.Pro_name1 + " 集");
+				else {
+					holder.textView03.setVisibility(View.GONE);
 				}
 				break;
 			case 3:
-				if (m_Tab3Page1ListData.Pro_name1 != null
-						&& m_Tab3Page1ListData.Pro_name1.length() > 0) {
-					// Pro_name1要是二级标题
-					if ((m_Tab3Page1ListData.Pro_time > 0)
-							&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
-						holder.textView03.setText(m_Tab3Page1ListData.Pro_name1
-								+ ":"
-								+ stringForTime(m_Tab3Page1ListData.Pro_time));
-					} else {
-//						holder.textView03.setVisibility(View.GONE);
-						holder.textView03.setText(" ");
-					}
+				if (m_Tab3Page1ListData.Pro_name1 != null && m_Tab3Page1ListData.Pro_name1.length() >0)
+					holder.textView03.setText(
+							m_Tab3Page1ListData.Pro_name1);
+				else {
+					holder.textView03.setVisibility(View.GONE);
 				}
 				break;
 
 			default:
 				break;
 			}
-			if (m_Tab3Page1ListData.Pro_time > 0
-					&& m_Tab3Page1ListData.Pro_time < m_Tab3Page1ListData.Pro_duration)
-				((Button) view.findViewById(R.id.button1))
-						.setBackgroundResource(R.drawable.tab3_page1_replay_icon_see);
+			if(m_Tab3Page1ListData.Pro_time>0&&m_Tab3Page1ListData.Pro_time < m_Tab3Page1ListData.Pro_duration)
+			{
+				holder.textView04.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
+			}
+			else
+			{
+				holder.textView04.setVisibility(View.GONE);
+			}
+			if (m_Tab3Page1ListData.Pro_time >0
+					&& m_Tab3Page1ListData.Pro_time == m_Tab3Page1ListData.Pro_duration)
+				((Button) view.findViewById(R.id.button1)).setBackgroundResource(R.drawable.tab3_page1_replay_icon_see);
+			
 			return view;
 		}
 	}
-
 	@Override
 	public void onTabActivityResult(int requestCode, int resultCode, Intent data) {
-	}
-
-	public void CallProgramPlayResult(String url, JSONObject json,
-			AjaxStatus status) {
+		int i = resultCode;
 	}
 }

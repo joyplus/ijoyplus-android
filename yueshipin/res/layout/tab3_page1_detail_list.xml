@@ -32,7 +32,19 @@
         android:layout_alignLeft="@+id/txt_video_caption"
         android:layout_below="@+id/txt_video_caption"
         android:layout_marginTop="11dp"
-        android:layout_toLeftOf="@+id/button1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="9f9f9f"
+        android:textColor="#9f9f9f"
+        android:textSize="13dip"/>
+
+    <TextView
+        android:id="@+id/TextView04"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_video_caption"
+        android:layout_marginLeft="110dp"
+        android:layout_marginTop="11dp"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="9f9f9f"
