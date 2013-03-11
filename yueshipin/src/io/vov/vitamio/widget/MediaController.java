@@ -72,8 +72,8 @@ public class MediaController extends FrameLayout {
 	private ReturnProgramView m_ReturnProgramView = null;
 	private Context mContext;
 	private PopupWindow mWindow;
-	private PopupWindow mWindowBottomRight;
-	private PopupWindow mWindowTopRight;
+//	private PopupWindow mWindowBottomRight;
+//	private PopupWindow mWindowTopRight;
 	private ListView lv_group;
 	private GroupAdapter groupAdapter;
 	private ArrayList dataStruct;
@@ -125,29 +125,29 @@ public class MediaController extends FrameLayout {
 			initFloatingWindow();
 	}
 
-	private void initPopWindows() {
-		LayoutInflater mLayoutInflater = (LayoutInflater) mContext
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mViewTopRight = mLayoutInflater.inflate(R.layout.mediacontroller_top,
-				null);
-		mWindowTopRight = new PopupWindow(mViewTopRight, 194,
-				LayoutParams.WRAP_CONTENT);
-		lv_group = (ListView) mViewTopRight.findViewById(R.id.listView1);
-		// 加载数据
-		dataStruct = new ArrayList<String>();
-
-		groupAdapter = new GroupAdapter(mContext, dataStruct);
-		lv_group.setAdapter(groupAdapter);
-
-		mViewTopRight.setVisibility(View.GONE);
-
-		mViewBottomRight = mLayoutInflater.inflate(R.layout.mediacontroller2,
-				null);
-		mWindowBottomRight = new PopupWindow(mViewBottomRight, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-
-		mViewBottomRight.setVisibility(View.GONE);
-
-	}
+//	private void initPopWindows() {
+//		LayoutInflater mLayoutInflater = (LayoutInflater) mContext
+//				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//		mViewTopRight = mLayoutInflater.inflate(R.layout.mediacontroller_top,
+//				null);
+//		mWindowTopRight = new PopupWindow(mViewTopRight, 194,
+//				LayoutParams.WRAP_CONTENT);
+//		lv_group = (ListView) mViewTopRight.findViewById(R.id.listView1);
+//		// 加载数据
+//		dataStruct = new ArrayList<String>();
+//
+//		groupAdapter = new GroupAdapter(mContext, dataStruct);
+//		lv_group.setAdapter(groupAdapter);
+//
+//		mViewTopRight.setVisibility(View.GONE);
+//
+//		mViewBottomRight = mLayoutInflater.inflate(R.layout.mediacontroller2,
+//				null);
+//		mWindowBottomRight = new PopupWindow(mViewBottomRight, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//
+//		mViewBottomRight.setVisibility(View.GONE);
+//
+//	}
 
 	private boolean initController(Context context) {
 		mContext = context;
@@ -187,7 +187,7 @@ public class MediaController extends FrameLayout {
 			mWindow.setWidth(android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 			mWindow.setHeight(android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			
-			initPopWindows();
+//			initPopWindows();
 
 		}
 		initControllerView(mRoot);
@@ -218,6 +218,16 @@ public class MediaController extends FrameLayout {
 
 		mTextView1 = (TextView) v.findViewById(R.id.textView1);
 		mTextView2 = (TextView) v.findViewById(R.id.textView2);
+		
+		mViewTopRight = v.findViewById(R.id.relativeLayoutBottomRight);
+		mViewBottomRight = v.findViewById(R.id.relativeLayoutTopRight);
+		
+		lv_group = (ListView) v.findViewById(R.id.listView1);
+		// 加载数据
+		dataStruct = new ArrayList<String>();
+
+		groupAdapter = new GroupAdapter(mContext, dataStruct);
+		lv_group.setAdapter(groupAdapter);
 
 		if (mPauseButton != null) {
 			mPauseButton.requestFocus();
@@ -612,47 +622,53 @@ public class MediaController extends FrameLayout {
 	};
 
 	private void updateBottomRight(){
-
-		if (mRoot.getVisibility() == View.VISIBLE) {
-			mHandler.removeMessages(FADE_OUT);
-			
-
-			if (!mBottomRightShowing) {
-				mBottomRightShowing = true;
-				mWindowBottomRight.showAtLocation(mAnchor, Gravity.RIGHT
-						| Gravity.BOTTOM, 28, 82);
-//				mWindowBottomRight.showAtLocation(mRoot.findViewById(R.id.imageButton5), Gravity.RIGHT
-//						| Gravity.BOTTOM, 0, 0);
-
-			}
-			if (mViewBottomRight.getVisibility() == View.VISIBLE)
-				mViewBottomRight.setVisibility(View.GONE);
-			else
-				mViewBottomRight.setVisibility(View.VISIBLE);
-			
-			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
-					sDefaultTimeout);
-		}
+		if (mViewBottomRight.getVisibility() == View.VISIBLE) 
+			mViewBottomRight.setVisibility(View.GONE);
+		else 
+			mViewBottomRight.setVisibility(View.VISIBLE);
+//		if (mRoot.getVisibility() == View.VISIBLE) {
+//			mHandler.removeMessages(FADE_OUT);
+//			
+//
+//			if (!mBottomRightShowing) {
+//				mBottomRightShowing = true;
+//				mWindowBottomRight.showAtLocation(mAnchor, Gravity.RIGHT
+//						| Gravity.BOTTOM, 28, 82);
+////				mWindowBottomRight.showAtLocation(mRoot.findViewById(R.id.imageButton5), Gravity.RIGHT
+////						| Gravity.BOTTOM, 0, 0);
+//
+//			}
+//			if (mViewBottomRight.getVisibility() == View.VISIBLE)
+//				mViewBottomRight.setVisibility(View.GONE);
+//			else
+//				mViewBottomRight.setVisibility(View.VISIBLE);
+//			
+//			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+//					sDefaultTimeout);
+//		}
 	}
 	private void updateTopRight(){
-
-		if (mRoot.getVisibility() == View.VISIBLE) {
-			mHandler.removeMessages(FADE_OUT);
-			
-			if (!mTopRightShowing) {
-				mTopRightShowing = true;
-				 mWindowTopRight.showAtLocation(mAnchor, Gravity.RIGHT|Gravity.TOP, 25, 70);
-//				mWindowTopRight.showAtLocation(mRoot.findViewById(R.id.imageButton6), Gravity.RIGHT
-//						| Gravity.TOP, 0, 0);
-			}
-			if (mViewTopRight.getVisibility() == View.VISIBLE)
-				mViewTopRight.setVisibility(View.GONE);
-			else
-				mViewTopRight.setVisibility(View.VISIBLE);
-			
-			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
-					sDefaultTimeout);
-		}
+		if (mViewTopRight.getVisibility() == View.VISIBLE) 
+			mViewTopRight.setVisibility(View.GONE);
+		else 
+			mViewTopRight.setVisibility(View.VISIBLE);
+//		if (mRoot.getVisibility() == View.VISIBLE) {
+//			mHandler.removeMessages(FADE_OUT);
+//			
+//			if (!mTopRightShowing) {
+//				mTopRightShowing = true;
+//				 mWindowTopRight.showAtLocation(mAnchor, Gravity.RIGHT|Gravity.TOP, 25, 70);
+////				mWindowTopRight.showAtLocation(mRoot.findViewById(R.id.imageButton6), Gravity.RIGHT
+////						| Gravity.TOP, 0, 0);
+//			}
+//			if (mViewTopRight.getVisibility() == View.VISIBLE)
+//				mViewTopRight.setVisibility(View.GONE);
+//			else
+//				mViewTopRight.setVisibility(View.VISIBLE);
+//			
+//			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+//					sDefaultTimeout);
+//		}
 	}
 	private void updatePausePlay() {
 		if (mRoot == null || mPauseButton == null)

@@ -5,6 +5,8 @@
 package com.joyplus.Video;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -70,6 +72,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private View mRelativeLayoutBG;
 	private ImageView mImage_preload_bg;
 	long current_time = 0;
+	long play_current_time = 0;
 	public static int RETURN_CURRENT_TIME = 150;
 	
 	/** 最大声音 */
@@ -229,7 +232,13 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 
 	@Override
 	protected void onDestroy() {
+
 		super.onDestroy();
+
+		if (aq != null)
+			aq.dismiss();  
+		
+		//github.com/joyplus/ijoyplus-android.git
 		if (mVideoView != null){
 			mVideoView.stopPlayback();
 		}
@@ -239,7 +248,6 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		
 	}
 
-	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (mGestureDetector.onTouchEvent(event))
