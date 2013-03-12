@@ -159,9 +159,21 @@ public class Video_Cache_Detail extends Activity {
 							+ "_" + info.getIndex() + ".mp4";
 					Intent intent = new Intent(Video_Cache_Detail.this,
 							VideoPlayerActivity.class);
-					intent.putExtra("path", localfile);
-					intent.putExtra("title", info.getProdId());
-
+					Bundle bundle = new Bundle();
+					bundle.putString("path", localfile);
+					bundle.putString("title", info.getName());
+					bundle.putString("prod_id", info.getProdId());
+					bundle.putString("prod_subname", info.getIndex());
+					if(info.getIndex().contains("_tv"))
+					{
+						bundle.putString("prod_type", "3");
+					}
+					else
+					{
+						bundle.putString("prod_type", "2");
+					}
+					bundle.putLong("current_time", 0);
+					intent.putExtras(bundle);
 					try {
 						startActivity(intent);
 					} catch (ActivityNotFoundException ex) {

@@ -148,9 +148,7 @@ public class Video_Cache extends Activity {
 							app.MyToast(Video_Cache.this, getResources()
 									.getString(R.string.networknotwork));
 						}
-
 					}
-
 					if (info.getCompeleteSize() == info.getFileSize()) {
 						// 打开播放界面
 						String localfile = Constant.PATH_VIDEO
@@ -158,9 +156,14 @@ public class Video_Cache extends Activity {
 								+ ".mp4";
 						Intent intent = new Intent(Video_Cache.this,
 								VideoPlayerActivity.class);
-						intent.putExtra("path", localfile);
-						intent.putExtra("title", info.getProdId());
-
+						Bundle bundle = new Bundle();
+						bundle.putString("path", localfile);
+						bundle.putString("title", info.getName());
+						bundle.putString("prod_id", info.getProdId());
+						bundle.putString("prod_subname", info.getIndex());
+						bundle.putString("prod_type", "1");
+						bundle.putLong("current_time", 0);
+						intent.putExtras(bundle);
 						try {
 							startActivity(intent);
 						} catch (ActivityNotFoundException ex) {

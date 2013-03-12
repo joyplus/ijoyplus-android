@@ -746,7 +746,6 @@ public class Detail_TV extends Activity {
 			intent.setData(content_url);
 			startActivity(intent);
 		}
-
 	}
 
 	// OnClickNext15
@@ -796,7 +795,6 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.textView9).gone();
 				}
 			}
-
 		}
 	}
 
@@ -854,7 +852,6 @@ public class Detail_TV extends Activity {
 					m_button.setVisibility(View.GONE);
 				}
 			}
-
 		}
 	}
 
@@ -991,33 +988,33 @@ public class Detail_TV extends Activity {
 	 *            指定URL网络地址
 	 * @return URL
 	 */
-	public synchronized URL isConnect(String urlStr) {
-		int state = -1;
-		int counts = 0;
-		URL url = null;
-		HttpURLConnection con;
-		if (urlStr == null || urlStr.length() <= 0) {
-			return null;
-		}
-		while (counts < 5) {
-			try {
-				url = new URL(urlStr);
-				con = (HttpURLConnection) url.openConnection();
-				state = con.getResponseCode();
-				System.out.println(counts + "= " + state);
-				if (state == 200) {
-					System.out.println("URL可用！");
-				}
-				break;
-			} catch (Exception ex) {
-				counts++;
-				System.out.println("URL不可用，连接第 " + counts + " 次");
-				urlStr = null;
-				continue;
-			}
-		}
-		return url;
-	}
+//	public synchronized URL isConnect(String urlStr) {
+//		int state = -1;
+//		int counts = 0;
+//		URL url = null;
+//		HttpURLConnection con;
+//		if (urlStr == null || urlStr.length() <= 0) {
+//			return null;
+//		}
+//		while (counts < 5) {
+//			try {
+//				url = new URL(urlStr);
+//				con = (HttpURLConnection) url.openConnection();
+//				state = con.getResponseCode();
+//				System.out.println(counts + "= " + state);
+//				if (state == 200) {
+//					System.out.println("URL可用！");
+//				}
+//				break;
+//			} catch (Exception ex) {
+//				counts++;
+//				System.out.println("URL不可用，连接第 " + counts + " 次");
+//				urlStr = null;
+//				continue;
+//			}
+//		}
+//		return url;
+//	}
 
 	//
 	public void CallVideoPlayActivity() {
@@ -1477,9 +1474,6 @@ public class Detail_TV extends Activity {
 				}
 				InitDownloadData(popupview);
 				break;
-			// case R.id.download_btn_close:
-			// downloadpopup.dismiss();
-			// break;
 			}
 		}
 	};
@@ -1487,7 +1481,6 @@ public class Detail_TV extends Activity {
 	void switchPageOfDownloadIndex(int index) {
 		String m_j = null;
 		int i = 0;
-//		int j = 0;
 		for (i = 0; i < 15; i++) {
 			m_j = Integer.toString(i + 4);
 			Button m_button = (Button) popupview.findViewById(getResources()
@@ -1536,10 +1529,7 @@ public class Detail_TV extends Activity {
 			return;
 
 		if (DOWNLOAD_SOURCE != null) {
-			// download_index = index + 1 + "_tv";
 			String urlstr = DOWNLOAD_SOURCE;
-			// String localfile = Constant.PATH_VIDEO + prod_id + "_"
-			// + (index + 1) + ".mp4";
 			String localfile = Constant.PATH_VIDEO + prod_id + "_"
 					+ (index + 1) + ".mp4";
 			String my_name = m_ReturnProgramView.tv.name;
@@ -1549,13 +1539,6 @@ public class Detail_TV extends Activity {
 					urlstr, localfile);
 			downloadTask.execute(prod_id, Integer.toString(index + 1), urlstr,
 					m_ReturnProgramView.tv.poster, my_name, download_state);
-			// DownloadTask downloadTask = new DownloadTask(v, this,
-			// Detail_TV.this, prod_id, download_index,
-			// urlstr, localfile);
-			// downloadTask.execute(prod_id, Integer.toString(index + 1),
-			// urlstr,
-			// m_ReturnProgramView.tv.poster, my_name, download_state);
-
 			Toast.makeText(Detail_TV.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
 					.show();
 		} else {
@@ -1619,14 +1602,6 @@ public class Detail_TV extends Activity {
 			// m_button.setTag(i + "");
 			m_button.setTag(i + 1 + current_download_pagenum * 60 + "");
 			m_button.setText(m_j);
-			// lost one tv
-			if (m_ReturnProgramView.tv.episodes[i].down_urls == null)
-
-			{
-				m_button.setEnabled(false);
-			} else {
-				m_button.setEnabled(true);
-			}
 			/*
 			 * for(i = 0 ;i<data.size();i++) {
 			 * if(data.get(i).getIndex().equalsIgnoreCase(m_j)) { //设置已缓存背景

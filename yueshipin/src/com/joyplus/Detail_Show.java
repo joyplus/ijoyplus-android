@@ -1215,20 +1215,10 @@ public class Detail_Show extends Activity {
 				if (DOWNLOAD_SOURCE != null) {
 					String urlstr = DOWNLOAD_SOURCE;
 					download_index = (position + 1)+"_show";
-//					String localfile = Constant.PATH_VIDEO + prod_id + "_"
-//							+ (position + 1) + ".mp4";
 					String localfile = Constant.PATH_VIDEO + prod_id + "_"
 							+ download_index + ".mp4";
-					//String my_name = m_ReturnProgramView.show.name;
 					String my_name = m_ReturnProgramView.show.episodes[position].name;
 					String download_state = "wait";
-//					DownloadTask downloadTask = new DownloadTask(arg1,
-//							Detail_Show.this, Detail_Show.this, prod_id,
-//							Integer.toString(position + 1), urlstr, localfile);
-//					downloadTask.execute(prod_id,
-//							Integer.toString(position + 1), urlstr,
-//							m_ReturnProgramView.show.poster, my_name,
-//							download_state);
 					DownloadTask downloadTask = new DownloadTask(arg1,
 							Detail_Show.this, Detail_Show.this, prod_id,
 							download_index, urlstr, localfile);
