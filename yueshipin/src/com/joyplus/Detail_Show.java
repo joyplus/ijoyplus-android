@@ -89,15 +89,8 @@ public class Detail_Show extends Activity {
 	private Drawable download_focuse = null;
 	private Drawable download_normal = null;
 	private Drawable download_press = null;
-	// String[] download_names = new String[]{};
 	List download_names = new ArrayList();
 	private int cur_pos = 0;
-
-	// 播放记录变量
-//	public static int REQUESTPLAYTIME = 200;
-//	public static int RETURN_CURRENT_TIME = 150;
-//	private int current_time = 0;
-//	private int total_time = 0;
 	private int current_index = -1; // yy
 
 	@Override
@@ -637,12 +630,13 @@ public class Detail_Show extends Activity {
 		String m_j = null;
 		int j = 0;
 		int i = 0;
-
+		page_num++;
 		if (page_num * 4 >= m_ReturnProgramView.show.episodes.length) {
+			page_num--;
 			return;
 		}
 
-		page_num++;
+//		page_num++;
 		if (m_ReturnProgramView.show.episodes != null) {
 			for (i = 4 * page_num; i < m_ReturnProgramView.show.episodes.length
 					&& i < 4 * (page_num + 1); i++, j++) {
