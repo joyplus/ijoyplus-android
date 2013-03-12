@@ -15,14 +15,8 @@
 	     android:text="00"
 	     android:ellipsize="end"
 	     android:singleLine="true"
-	     android:maxLength="16"
+	     android:maxLength="20"
 	     android:gravity="left|center_vertical"
 	     android:focusable="false"
 	     />
-	 <!-- TextView 
-	     android:id="@+id/text_state"
-	     android:layout_width="wrap_content"
-	     android:layout_height="wrap_content"
-	     android:gravity="right"
-	     /> -->
 </LinearLayout>

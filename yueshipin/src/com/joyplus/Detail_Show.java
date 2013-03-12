@@ -54,6 +54,8 @@ import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.download.Dao;
+import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.weibo.net.AccessToken;
 import com.joyplus.weibo.net.DialogError;
@@ -86,11 +88,12 @@ public class Detail_Show extends Activity {
 	private String token = null;
 	private String expires_in = null;
 
+	public List<DownloadInfo> data;
 	private Drawable download_focuse = null;
 	private Drawable download_normal = null;
 	private Drawable download_press = null;
 	List download_names = new ArrayList();
-	private int cur_pos = 0;
+	private int cur_pos = -1;
 	private int current_index = -1; // yy
 
 	@Override
@@ -124,6 +127,10 @@ public class Detail_Show extends Activity {
 				return false;
 			}
 		});
+		
+		download_normal = this.getResources().getDrawable(R.drawable.undownload);
+		download_press = this.getResources().getDrawable(R.drawable.download);
+		download_focuse = this.getResources().getDrawable(R.drawable.download2);
 
 		if (prod_id != null)
 			GetServiceData();
@@ -1056,16 +1063,7 @@ public class Detail_Show extends Activity {
 
 	public void CallProgramPlayResult(String url, JSONObject json,
 			AjaxStatus status) {
-		// if (json != null) {
-		// app.MyToast(this, json.toString());
-		// // // try {
-		// // // if
-		// (json.getString("res_code").trim().equalsIgnoreCase("00000"))
-		// // // {
-		// // //
-		// // // }
-		// // // }
-		// }
+	
 	}
 
 	private void GetVideoSource(final int episodeNum, String url) {
@@ -1146,7 +1144,6 @@ public class Detail_Show extends Activity {
 					}
 
 				});
-
 	}
 
 	public void OnClickCacheDown(View v) {
@@ -1155,9 +1152,7 @@ public class Detail_Show extends Activity {
 
 	private void GotoDownloadPage() {
 		// TODO Auto-generated method stub
-
 		setContentView(R.layout.download_show);
-
 		download_focuse = this.getResources().getDrawable(
 				R.drawable.download_show2);
 		download_normal = this.getResources().getDrawable(
@@ -1178,6 +1173,8 @@ public class Detail_Show extends Activity {
 		for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
 			download_names.add(m_ReturnProgramView.show.episodes[i].name);
 		}
+		//获取当前综艺有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
+		data = Dao.getInstance(Detail_Show.this).getInfosOfProd_id(prod_id);
 		ListView list = (ListView) findViewById(R.id.listViewDownload);
 		list.requestFocusFromTouch();
 		MyAdapter adapter = new MyAdapter(Detail_Show.this);
@@ -1222,6 +1219,9 @@ public class Detail_Show extends Activity {
 							download_state);
 					Toast.makeText(Detail_Show.this, "视频已加入下载队列",
 							Toast.LENGTH_SHORT).show();
+					cur_pos = position;
+					//获取当前综艺有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
+					data = Dao.getInstance(Detail_Show.this).getInfosOfProd_id(prod_id);
 				} else {
 					Toast.makeText(Detail_Show.this, "该视频不支持下载",
 							Toast.LENGTH_SHORT).show();
@@ -1264,11 +1264,21 @@ public class Detail_Show extends Activity {
 			TextView textview = (TextView) convertView
 					.findViewById(R.id.text_name);
 			textview.setText("  "+(CharSequence) download_names.get(position));//加两个空格是为了让字体显示时不至于太靠左边
-//			if (position == cur_pos) {// 如果当前的行就是ListView中选中的一行，就更改显示样式
-//				textview.setBackgroundDrawable(download_focuse);
-//				textview.setTextColor(Color.WHITE);
-//				textview.setText(" " + download_names.get(position));
-//			}
+			for(int i = 0;i<data.size();i++)
+			{
+				if(data.get(i).getName().equalsIgnoreCase((String) download_names.get(position)))
+				{
+					textview.setTextColor(Color.WHITE);
+					textview.setBackgroundDrawable(download_focuse);//设置为已缓存
+					textview.setText("  "+(CharSequence) download_names.get(position));//加两个空格是为了让字体显示时不至于太靠左边
+				}
+			}
+			if(cur_pos == position)
+			{
+				textview.setTextColor(Color.WHITE);
+				textview.setBackgroundDrawable(download_focuse);//设置为已缓存
+				textview.setText("  "+(CharSequence) download_names.get(position));//加两个空格是为了让字体显示时不至于太靠左边
+			}
 			return convertView;
 		}
 	}
