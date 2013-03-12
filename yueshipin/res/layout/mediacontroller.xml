@@ -173,15 +173,15 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayoutBottomRight"
-        android:layout_width="202dp"
-        android:layout_height="105dp"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="41dp"
         android:layout_marginRight="14dp"
         android:background="@drawable/player_clarity_bg"
         android:orientation="horizontal"
-         android:visibility="gone" >
+        >
 
     <TextView
         android:id="@+id/textView1"
@@ -196,7 +196,7 @@
 
 <RadioGroup
     android:id="@+id/radioGroup1"
-    android:layout_width="match_parent"
+    android:layout_width="192dp"
     android:layout_height="57dp"
     android:layout_below="@+id/textView1"
     android:layout_marginLeft="4dp"
@@ -230,15 +230,18 @@
              android:gravity="bottom|center_horizontal"/>
     </RadioGroup>
 </RelativeLayout>
+
 <RelativeLayout
-     android:id="@+id/relativeLayoutTopRight"
+    android:id="@+id/relativeLayoutTopRight"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-     android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-    android:paddingRight="4dp"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentTop="true"
+    android:layout_marginRight="12dp"
+    android:layout_marginTop="35dp"
     android:background="@drawable/player_jishu_shang"
-    android:orientation="horizontal" 
+    android:orientation="horizontal"
+    android:paddingRight="4dp" 
     android:visibility="gone">
 
     <ListView

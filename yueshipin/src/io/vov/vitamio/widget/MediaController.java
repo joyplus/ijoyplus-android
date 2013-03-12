@@ -219,8 +219,8 @@ public class MediaController extends FrameLayout {
 		mTextView1 = (TextView) v.findViewById(R.id.textView1);
 		mTextView2 = (TextView) v.findViewById(R.id.textView2);
 		
-		mViewTopRight = v.findViewById(R.id.relativeLayoutBottomRight);
-		mViewBottomRight = v.findViewById(R.id.relativeLayoutTopRight);
+		mViewTopRight = v.findViewById(R.id.relativeLayoutTopRight);
+		mViewBottomRight = v.findViewById(R.id.relativeLayoutBottomRight);
 		
 		lv_group = (ListView) v.findViewById(R.id.listView1);
 		// 加载数据
@@ -309,6 +309,7 @@ public class MediaController extends FrameLayout {
 		this.m_ReturnProgramView = m_ReturnProgramView;
 		if (this.m_ReturnProgramView != null) {
 			if (m_ReturnProgramView.movie != null) {
+				mSelectButton.setVisibility(View.GONE);
 			} else if (m_ReturnProgramView.tv != null) {
 				if (dataStruct != null) {
 					for (int i = 0; i < m_ReturnProgramView.tv.episodes.length; i++) {
@@ -609,6 +610,7 @@ public class MediaController extends FrameLayout {
 	private View.OnClickListener mQualityListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			mHandler.removeMessages(FADE_OUT);
 			mHandler.sendEmptyMessageDelayed(SHOW_BOTTOMRIGHT, 500);
 		
 		}
@@ -616,6 +618,7 @@ public class MediaController extends FrameLayout {
 	private View.OnClickListener mSelectListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			mHandler.removeMessages(FADE_OUT);
 			mHandler.sendEmptyMessageDelayed(SHOW_TOPRIGHT, 500);
 			
 		}
@@ -626,6 +629,8 @@ public class MediaController extends FrameLayout {
 			mViewBottomRight.setVisibility(View.GONE);
 		else 
 			mViewBottomRight.setVisibility(View.VISIBLE);
+		mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+				sDefaultTimeout);
 //		if (mRoot.getVisibility() == View.VISIBLE) {
 //			mHandler.removeMessages(FADE_OUT);
 //			
@@ -652,6 +657,8 @@ public class MediaController extends FrameLayout {
 			mViewTopRight.setVisibility(View.GONE);
 		else 
 			mViewTopRight.setVisibility(View.VISIBLE);
+		mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+				sDefaultTimeout);
 //		if (mRoot.getVisibility() == View.VISIBLE) {
 //			mHandler.removeMessages(FADE_OUT);
 //			
