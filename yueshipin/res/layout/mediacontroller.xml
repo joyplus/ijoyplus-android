@@ -211,7 +211,9 @@
             android:background="@drawable/player_b_puqing"
             android:button="@null"
             android:checked="true"
-            android:gravity="bottom|center_horizontal" />
+            android:gravity="bottom|center_horizontal" 
+             android:text="标 清"
+            android:textColor="@color/white"/>
 
         <RadioButton
             android:id="@+id/radio1"
@@ -219,7 +221,9 @@
             android:layout_height="match_parent"
             android:background="@drawable/player_b_gaoqing"
             android:button="@null" 
-             android:gravity="bottom|center_horizontal"/>
+             android:gravity="bottom|center_horizontal"
+              android:text="高 清"
+            android:textColor="@color/white"/>
 
         <RadioButton
             android:id="@+id/radio2"
@@ -227,7 +231,9 @@
             android:layout_height="match_parent"
             android:background="@drawable/player_b_chaoqing"
             android:button="@null" 
-             android:gravity="bottom|center_horizontal"/>
+             android:gravity="bottom|center_horizontal"
+              android:text="超 清"
+            android:textColor="@color/white"/>
     </RadioGroup>
 </RelativeLayout>
 
