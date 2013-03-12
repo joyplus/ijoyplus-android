@@ -140,7 +140,22 @@ public class App extends Application {
 		 */
 		return URLUtil.isNetworkUrl(Url);
 	}
-
+	
+	/** 
+	 * 确保当前网络为wifi 
+	 * @param joyplus 
+	 */  
+	static boolean isWifi(Context mContext) {  
+	    ConnectivityManager connectivityManager = (ConnectivityManager) mContext  
+	            .getSystemService(Context.CONNECTIVITY_SERVICE);  
+	    NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();  
+	    if (activeNetInfo != null  
+	            && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {  
+	        return true;  
+	    }  
+	    return false;  
+	}
+	
 	public boolean isNetworkAvailable() {
 		Context context = getApplicationContext();
 		ConnectivityManager connect = (ConnectivityManager) context

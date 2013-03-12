@@ -199,11 +199,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 
 	public void OnClickImageView(View v) {
 		/*
-		 * Intent intent = new Intent(this, BuChongGeRenZhiLiao.class);
-		 * intent.putExtra("prod_id", m_prod_id); intent.putExtra("prod_type",
-		 * m_prod_type); try { startActivity(intent); } catch
-		 * (ActivityNotFoundException ex) { Log.e(TAG,
-		 * "OnClickImageView failed", ex); }
+		 * 
 		 */
 	}
 
@@ -211,8 +207,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	public void GetServiceData(int index) {
 			String url = Constant.BASE_URL + "user/playHistories" + "?page_num="
 					+ Integer.toString(index) + "&page_size=10";
-//		String url = Constant.BASE_URL + "user/playHistories" + "?page_num=1&page_size=20";
-			
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 			cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
@@ -220,9 +214,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
 			cb.header("app_key", Constant.APPKEY);
 			cb.header("user_id", app.UserID);
-
 			aq.ajax(cb);
-
 		}
 		// 初始化list数据函数
 		public void InitListData(String url, JSONObject json, AjaxStatus status) {
@@ -487,6 +479,8 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 						.findViewById(R.id.txt_video_caption);
 				holder.textView03 = (TextView) view
 						.findViewById(R.id.TextView03);
+				holder.textView04 = (TextView) view
+						.findViewById(R.id.TextView04);
 				view.setTag(holder);
 			}
 			else {
@@ -503,14 +497,14 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				if ((m_Tab3Page1ListData.Pro_time > 0)
 						&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time))
 				{
-					holder.textView03
-					.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
+					holder.textView03.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
+					holder.textView04.setText("");
 				}
 					
 				else
 				{
-//					holder.textView03.setVisibility(View.GONE);
-					holder.textView03.setText(" ");
+					holder.textView03.setText("");
+					holder.textView04.setText("");
 				}
 				break;
 			case 2:
@@ -519,15 +513,16 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					if ((m_Tab3Page1ListData.Pro_time > 0)
 							&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
 						holder.textView03.setText("第 "
-								+ m_Tab3Page1ListData.Pro_name1 + " 集" + " "
-								+ stringForTime(m_Tab3Page1ListData.Pro_time));
+								+ m_Tab3Page1ListData.Pro_name1 + " 集");
+						holder.textView04.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
 					} else {
 						holder.textView03.setText("第 "
 								+ m_Tab3Page1ListData.Pro_name1 + " 集");
+						holder.textView04.setText("");
 					}
 				} else {
-//					holder.textView03.setVisibility(View.GONE);
-					holder.textView03.setText(" ");
+					holder.textView03.setText("");
+					holder.textView04.setText("");
 				}
 				break;
 			case 3:
@@ -536,16 +531,15 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					// Pro_name1要是二级标题
 					if ((m_Tab3Page1ListData.Pro_time > 0)
 							&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
-						holder.textView03.setText(m_Tab3Page1ListData.Pro_name1
-								+ ":"
-								+ stringForTime(m_Tab3Page1ListData.Pro_time));
+						holder.textView03.setText(m_Tab3Page1ListData.Pro_name1);
+						holder.textView04.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
 					} else {
-//						holder.textView03.setVisibility(View.GONE);
-						holder.textView03.setText(" ");
+						holder.textView03.setText("");
+						holder.textView04.setText("");
 					}
 				}
 				break;
-
+ 
 			default:
 				break;
 			}

@@ -65,7 +65,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Goto_Tab3Page3_Create2(position);
-
 			}
 		});
 		ItemsListView.setOnScrollListener(new OnScrollListener() {
@@ -102,19 +101,16 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		dataStruct = new ArrayList();
 		Tab3Page3Adapter = new Tab3Page3ListAdapter();
 		ItemsListView.setAdapter(Tab3Page3Adapter);
-
 	}
 
 	public void OnClickTab1TopLeft(View v) {
 		Intent i = new Intent(this, Search.class);
 		startActivity(i);
-
 	}
 
 	public void OnClickTab1TopRight(View v) {
 		Intent i = new Intent(this, Setting.class);
 		startActivity(i);
-
 	}
 
 	@Override
@@ -304,13 +300,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 	}
 
-//	public void OnClickMore(View v) {
-//
-//		Intent intent = new Intent(this, Tab3Page3_more.class);
-//		getParent().startActivityForResult(intent, 2);
-//
-//	}
-
 	private void TopDel(String topic_id) {
 		String url = Constant.BASE_URL + "top/del";
 
@@ -325,7 +314,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "TopDelResult");
-
 		aq.ajax(cb);
 	}
 

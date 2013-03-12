@@ -503,6 +503,13 @@ public class Detail_Movie extends Activity {
 						new EComparatorIndex());
 			}
 		}
+//		for(int i = 0;i<Constant.video_index.length;i++)
+//		{
+//			for(int j = 0;j<Constant.quality_index.length;i++)
+//			{
+//				
+//			}
+//		}
 	}
 
 	// 将片源排序
@@ -730,12 +737,13 @@ public class Detail_Movie extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-
+		
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 			if (PROD_SOURCE.contains("test=m3u8")) {
 				PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
 			}
 			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
+			
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
 			SaveToServer(2, PROD_URI);

@@ -642,8 +642,6 @@ public class Detail_Show extends Activity {
 			page_num--;
 			return;
 		}
-
-//		page_num++;
 		if (m_ReturnProgramView.show.episodes != null) {
 			for (i = 4 * page_num; i < m_ReturnProgramView.show.episodes.length
 					&& i < 4 * (page_num + 1); i++, j++) {

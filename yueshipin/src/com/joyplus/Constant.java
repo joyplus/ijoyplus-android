@@ -80,5 +80,4 @@ public class Constant {
 		"fengxing","qiyi","youku","sinahd","sohu","56","qq","pptv","m1905"};
 	public static final String[] quality_index = { "mp4",
 		"flv","hd2","3gp"};
-
 }
