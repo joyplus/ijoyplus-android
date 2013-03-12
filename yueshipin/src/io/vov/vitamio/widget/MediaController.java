@@ -7,12 +7,14 @@ package io.vov.vitamio.widget;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Adapters.Tab3Page1ListData;
 import com.joyplus.Service.Return.ReturnProgramView;
 
 import io.vov.utils.Log;
 import io.vov.utils.StringUtils;
+import android.R.integer;
 import android.content.Context;
 import android.graphics.Rect;
 import android.media.AudioManager;
@@ -26,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -34,7 +37,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
@@ -93,7 +99,7 @@ public class MediaController extends FrameLayout {
 	private boolean mBottomRightShowing = false;
 	private boolean mDragging;
 	private boolean mInstantSeeking = true;
-	private static final int sDefaultTimeout = 3000;
+	private static final int sDefaultTimeout = 10000;//3000;
 	private static final int FADE_OUT = 1;
 	private static final int SHOW_PROGRESS = 2;
 	private static final int SHOW_TOPRIGHT = 3;
@@ -111,6 +117,12 @@ public class MediaController extends FrameLayout {
 	private TextView mTextView2;
 
 	private AudioManager mAM;
+	
+	private int CurrentCategory = 0;
+	private int CurrentIndex = 0;
+	private int CurrentSource = 0;
+	private int CurrentQuality = 0;
+	
 
 	public MediaController(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -163,7 +175,8 @@ public class MediaController extends FrameLayout {
 
 	private void initFloatingWindow() {
 		mWindow = new PopupWindow(mContext);
-		mWindow.setFocusable(false);
+//		mWindow.setFocusable(false);
+		mWindow.setFocusable(true);
 		mWindow.setBackgroundDrawable(null);
 		mWindow.setOutsideTouchable(true);
 		mAnimStyle = android.R.style.Animation;
@@ -185,7 +198,7 @@ public class MediaController extends FrameLayout {
 			mRoot = makeControllerView();
 			mWindow.setContentView(mRoot);
 			mWindow.setWidth(android.view.ViewGroup.LayoutParams.MATCH_PARENT);
-			mWindow.setHeight(android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+			mWindow.setHeight(android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 			
 //			initPopWindows();
 
@@ -226,9 +239,54 @@ public class MediaController extends FrameLayout {
 		// 加载数据
 		dataStruct = new ArrayList<String>();
 
+//		dataStruct.add("第一集");
+//		dataStruct.add("第二集");
+//		dataStruct.add("第三集");
+//		dataStruct.add("第四集");
 		groupAdapter = new GroupAdapter(mContext, dataStruct);
+//		lv_group.setItemsCanFocus(false);  
 		lv_group.setAdapter(groupAdapter);
 
+		if (lv_group != null){
+			lv_group.setOnItemClickListener(new OnItemClickListener() {
+		 			@Override
+		 			public void onItemClick(AdapterView<?> parent, View view,
+		 					int position, long id) {
+		 					OnClickSelect(position);
+		 			}
+		 		});
+		}
+		
+		RadioGroup radioGroup = (RadioGroup) v.findViewById(R.id.radioGroup1);
+		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				// TODO Auto-generated method stub
+				switch (checkedId) {
+
+				case R.id.radio0:
+					if(CurrentQuality != 0){
+						SelectQuality(0);
+					}
+					break;
+				case R.id.radio1:
+					if(CurrentQuality != 1){
+						SelectQuality(1);
+					}
+					break;
+				case R.id.radio2:
+					if(CurrentQuality != 2){
+						SelectQuality(2);
+					}
+					break;
+				default:
+					break;
+
+				}
+			}
+		});
+		
 		if (mPauseButton != null) {
 			mPauseButton.requestFocus();
 			mPauseButton.setOnClickListener(mPauseListener);
@@ -266,7 +324,147 @@ public class MediaController extends FrameLayout {
 		if (mFileName != null)
 			mFileName.setText(mTitle);
 	}
+	public void OnClickSelect(int index) {
+		mPlayer.pause();
+		
+		CurrentIndex = index;
+		String PROD_SOURCE = null;
 
+		switch (CurrentCategory) {
+		case 0:
+			if (m_ReturnProgramView.movie.episodes[index].down_urls != null) {
+				for (int i = 0; i < m_ReturnProgramView.movie.episodes[index].down_urls.length; i++) {
+					CurrentSource = i;
+					
+					for (int j = 0; j< Constant.video_index.length; j++) {
+						if (PROD_SOURCE == null &&m_ReturnProgramView.movie.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							PROD_SOURCE =  GetSource(index,i);
+							break;
+						}
+					}			
+				}
+			}
+			break;
+		case 1:
+			if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
+				for (int i = 0; i < m_ReturnProgramView.tv.episodes[index].down_urls.length; i++) {
+					CurrentSource = i;
+					
+					for (int j = 0; j < Constant.video_index.length; j++) {
+						if (PROD_SOURCE == null &&m_ReturnProgramView.tv.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							PROD_SOURCE =  GetSource(index,i);
+							break;
+						}
+					}			
+				}
+			}
+			break;
+		case 2:
+			if (m_ReturnProgramView.show.episodes[index].down_urls != null) {
+				for (int i = 0; i < m_ReturnProgramView.show.episodes[index].down_urls.length; i++) {
+					CurrentSource = i;
+					
+					for (int j = 0; j < Constant.video_index.length; j++) {
+						if (PROD_SOURCE == null &&m_ReturnProgramView.show.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							PROD_SOURCE =  GetSource(index,i);
+							break;
+						}
+					}			
+				}
+			}
+			break;
+		}
+
+		if (PROD_SOURCE != null )
+			mPlayer.setVideoPath(PROD_SOURCE);
+	}
+ private String GetSource(int proi_index, int sourceIndex){
+	 String PROD_SOURCE = null;
+	 switch (CurrentCategory) {
+	case 0:
+		for (int k = 0; k < m_ReturnProgramView.movie.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
+			CurrentQuality = k;
+			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.movie.episodes[proi_index].down_urls[sourceIndex].urls[k];
+			if (CurrentURLS != null && CurrentURLS.url != null) {
+					for (int i = 0; i < Constant.quality_index.length; i++) {
+						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
+							PROD_SOURCE = CurrentURLS.url.trim();
+							break;
+						}
+					}
+			}
+			if (PROD_SOURCE != null )
+				break;
+		}
+		break;
+	case 1:
+		for (int k = 0; k < m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
+			CurrentQuality = k;
+			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls[k];
+			if (CurrentURLS != null && CurrentURLS.url != null) {
+					for (int i = 0; i < Constant.quality_index.length; i++) {
+						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
+							PROD_SOURCE = CurrentURLS.url.trim();
+							break;
+						}
+					}
+			}
+			if (PROD_SOURCE != null )
+				break;
+		}
+		break;
+	case 2:
+		for (int k = 0; k < m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
+			CurrentQuality = k;
+			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls[k];
+			if (CurrentURLS != null && CurrentURLS.url != null) {
+					for (int i = 0; i < Constant.quality_index.length; i++) {
+						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
+							PROD_SOURCE = CurrentURLS.url.trim();
+							break;
+						}
+					}
+			}
+			if (PROD_SOURCE != null )
+				break;
+		}
+	break;
+
+	}
+	
+	return PROD_SOURCE;
+	 
+ }
+
+	public void SelectQuality(int index) {
+		mPlayer.pause();
+
+		CurrentQuality = index;
+		String PROD_SOURCE = null;
+
+		ReturnProgramView.DOWN_URLS.URLS CurrentURLS = null;
+		switch (CurrentCategory) {
+		case 0:
+			CurrentURLS = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[index];
+			break;
+		case 1:
+			CurrentURLS = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[index];
+			break;
+		case 2:
+			CurrentURLS = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[index];
+			break;
+
+		}
+		
+		if (CurrentURLS != null && CurrentURLS.url != null) {
+				if (CurrentURLS.type.trim().equalsIgnoreCase(
+								Constant.quality_index[index])) {
+					PROD_SOURCE = CurrentURLS.url.trim();
+				}
+		}
+		if (PROD_SOURCE != null)
+			mPlayer.setVideoPath(PROD_SOURCE);
+	}
 	public void SetMediaPlayerControlBGGone() {
 		if (mAnchor != null) {
 			mAnchor.setBackgroundResource(0);
@@ -309,17 +507,19 @@ public class MediaController extends FrameLayout {
 		this.m_ReturnProgramView = m_ReturnProgramView;
 		if (this.m_ReturnProgramView != null) {
 			if (m_ReturnProgramView.movie != null) {
+				CurrentCategory = 0;
 				mSelectButton.setVisibility(View.GONE);
 			} else if (m_ReturnProgramView.tv != null) {
+				CurrentCategory = 1;
 				if (dataStruct != null) {
 					for (int i = 0; i < m_ReturnProgramView.tv.episodes.length; i++) {
 						dataStruct.add("第" + Integer.toString(i) + "集");
 						String str = m_ReturnProgramView.tv.episodes[i].name;
 					}
-
 					groupAdapter.notifyDataSetChanged();
 				}
 			} else if (m_ReturnProgramView.show != null) {
+				CurrentCategory = 2;
 				if (dataStruct != null) {
 					for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
 						dataStruct
@@ -838,6 +1038,8 @@ public class MediaController extends FrameLayout {
 		int GetCurrentVideoLayout();
 
 		void NextVideo();
+		
+		 void setVideoPath(String path);
 
 	}
 

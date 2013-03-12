@@ -76,4 +76,10 @@ public class Constant {
 			".vob", ".vro", ".webm", ".wm", ".wmv", ".wtv", ".xesc" };
 	public static final String[] video_dont_support_extensions = { ".m3u",
 			".m3u8" };
+	public static final String[] video_index = { "letv",
+	"fengxing","qiyi","youku","sinahd","sohu","56","qq","pptv","m1905"};
+
+	public static final String[] quality_index = { "mp4",
+		"flv","hd2","3gp"};
+
 }

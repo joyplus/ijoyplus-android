@@ -113,7 +113,8 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	
 //		mPath = "http://122.228.96.172/20/40/95/letv-uts/1340994301-AVC-249889-AAC-31999-5431055-192873082-4b45f1fd5362d980a1dae9c44b2b1c6b-1340994301.mp4?crypt=3eb0ad42aa7f2e559&b=2000&gn=860&nc=1&bf=22&p2p=1&video_type=mp4&check=0&tm=1354698000&key=78cc2270a7e5dfe3187c1608c99e65c0&lgn=letv&proxy=1945014819&cipi=1034815956&tag=mobile&np=1&vtype=mp4&ptype=s1&level=350&t=1354601822&cid=&vid=&sign=mb&dname=mobile";
 //		mPath = "http://122.228.96.172/20/40/95/letv-uts/1340994301-AVC-249889-AAC-31999-5431055-192873082-4b45f1fd5362d980a1dae9c44b2b1c6b-1340994301.mp4?crypt=3eb0ad42aa7f2e559&b=2000&gn=860&nc=1&bf=22&p2p=1&video_type=mp4&check=0&tm=1354698000&key=78cc2270a7e5dfe3187c1608c99e65c0&lgn=letv&proxy=1945014819&cipi=1034815956&tag=mobile&np=1&vtype=mp4&ptype=s1&level=350&t=1354601822&cid=&vid=&sign=mb&dname=mobile";
-//		mPath = "http://114.80.187.218/25/36/53/kingsoft/movie/47978987920B0079FF686B6370B4E039-xiyoupian.mp4?crypt=3a3fb98daa7f2e300&b=800&gn=812&nc=1&bf=30&p2p=1&video_type=mp4&check=0&tm=1363662000&key=19234b660387c681a8f47a30cd2f21cb&opck=1&lgn=letv&proxy=2002892265&cipi=2085452187&tsnp=1&tag=ios&tag=kingsoft&sign=coopdown&realext=.mp4&test=m3u8";
+//		mPath = "http://117.27.153.51:80/83B516E8091FC8ADAF9C1BB64758CC84ABE0A231/playlist.m3u8";
+//		mPath = "http://api.joyplus.tv/joyplus-service/video/t.mp4";
 //		mTitle = "x3";
 		if (TextUtils.isEmpty(mPath))
 			mPath = Environment.getExternalStorageDirectory() + "/mnt/sdcard/t.mp4";
@@ -138,7 +139,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		
 		if(mTitle != null && mTitle.length()>0){
 			aq.id(R.id.mediacontroller_file_name).text(mTitle);
-			aq.id(R.id.textView1).text("正在载入 "+ mTitle + "，请稍后 ...");
+			aq.id(R.id.textView1).text("正在载入 "+ mTitle);
 		}
 		if (prod_id != null)
 			GetServiceData();
