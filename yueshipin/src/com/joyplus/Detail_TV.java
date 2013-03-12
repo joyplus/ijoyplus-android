@@ -107,7 +107,8 @@ public class Detail_TV extends Activity {
 	Drawable focuse = null;
 	Drawable normal = null;
 	Drawable press = null;
-	Drawable download_none = null;
+//	Drawable download_none = null;
+	Drawable download_normal = null;
 	Drawable download_been = null;
 	private PopupWindow downloadpopup = null;
 	ViewGroup popupview;
@@ -133,6 +134,8 @@ public class Detail_TV extends Activity {
 		focuse = this.getResources().getDrawable(R.drawable.play_focuse);
 		normal = this.getResources().getDrawable(R.drawable.play_normal);
 		press = this.getResources().getDrawable(R.drawable.play_press);
+		download_been = this.getResources().getDrawable(R.drawable.downloaded_2);
+		download_normal = this.getResources().getDrawable(R.drawable.undownload_tv);
 		mScrollView = (ScrollView) findViewById(R.id.scrollView1);
 		mScrollView.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -1468,6 +1471,14 @@ public class Detail_TV extends Activity {
 					+ current_download_pagenum * 60);
 			m_button.setTag(m_j + "");
 			m_button.setText(m_j);
+			m_button.setBackgroundDrawable(download_normal);//显示之前将背景设置为正常背景色
+			m_button.setEnabled(true);
+			for (int m = 0; m < data.size(); m++) {
+				if (data.get(m).getIndex().equalsIgnoreCase(m_j)) { // 设置已缓存背景
+					 m_button.setBackgroundDrawable(download_been);
+					 m_button.setEnabled(false);
+				}
+			} 
 			m_button.setVisibility(View.VISIBLE);
 		}
 	}
@@ -1511,6 +1522,10 @@ public class Detail_TV extends Activity {
 					m_ReturnProgramView.tv.poster, my_name, download_state);
 			Toast.makeText(Detail_TV.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
 					.show();
+			//将按钮的背景色改成已缓存
+			v.setBackgroundDrawable(download_been);
+			v.setEnabled(false);
+			
 		} else {
 			Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
 					.show();
@@ -1524,6 +1539,7 @@ public class Detail_TV extends Activity {
 		int j = 0;
 		int k = 0;
 		int total = m_ReturnProgramView.tv.episodes.length;
+		//获取当前电视剧有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
 		data = Dao.getInstance(Detail_TV.this).getInfosOfProd_id(prod_id);
 		for (int m = 0; m < 4; m++) {
 			m_j = Integer.toString(m + 1);// m_ReturnProgramView.tv.episodes[i].name;
@@ -1563,20 +1579,21 @@ public class Detail_TV extends Activity {
 		}
 
 		for (i = 0; i < m_ReturnProgramView.tv.episodes.length && i < 15; i++) {
-			m_j = Integer.toString(i + 4);// m_ReturnProgramView.tv.episodes[i].name;
-//			String str = m_ReturnProgramView.tv.episodes[i].name;
+			m_j = Integer.toString(i + 4);
 			Button m_button = (Button) menuView.findViewById(getResources()
 					.getIdentifier("download_button" + m_j, "id",
 							getPackageName()));
 			m_j = Integer.toString(i + 1 + current_download_pagenum * 60);// 特别加上的
-			// m_button.setTag(i + "");
 			m_button.setTag(i + 1 + current_download_pagenum * 60 + "");
 			m_button.setText(m_j);
-			/*
-			 * for(i = 0 ;i<data.size();i++) {
-			 * if(data.get(i).getIndex().equalsIgnoreCase(m_j)) { //设置已缓存背景
-			 * //m_button.setBackgroundDrawable(d); m_button.setText("已缓存"); } }
-			 */
+			m_button.setEnabled(true);
+			m_button.setBackgroundDrawable(download_normal);//显示之前将背景设置为正常背景色
+			for (int m = 0; m < data.size(); m++) {
+				if (data.get(m).getIndex().equalsIgnoreCase(m_j)) { // 设置已缓存背景
+					 m_button.setBackgroundDrawable(download_been);
+					 m_button.setEnabled(false);
+				}
+			} 
 			m_button.setVisibility(View.VISIBLE);
 		}
 		if (i < 15) {

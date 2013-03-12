@@ -8,7 +8,7 @@ public class Constant {
 	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
 
 //	 public static final String BASE_URL =
-//	 "http://112.64.18.12/joyplus-service/index.php/";
+//	 "http://api.joyplus.tv/joyplus-test";
 
 	public static String PATH = Environment.getExternalStorageDirectory()
 			+ "/joy/image_cache/";
