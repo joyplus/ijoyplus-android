@@ -78,12 +78,12 @@ public class Detail_Movie extends Activity {
 	private String expires_in = null;
 	String name;
 	private Drawable downloaddisable = null;
-	//播放记录变量
+	// 播放记录变量
 	public static int REQUESTPLAYTIME = 200;
 	public static int RETURN_CURRENT_TIME = 150;
 	private int current_time = 0;
 	private int total_time = 0;
-	
+
 	/**
 	 * 利用消息处理机制适时更新APP里的数据
 	 */
@@ -736,21 +736,19 @@ public class Detail_Movie extends Activity {
 			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
-			SaveToServer(2,PROD_URI);
+			SaveToServer(2, PROD_URI);
 			Intent intent = new Intent();
 			intent.setAction("android.intent.action.VIEW");
 			Uri content_url = Uri.parse(PROD_URI);
 			intent.setData(content_url);
 			startActivity(intent);
 		}
-
 	}
-	
+
 	/*
 	 * 将播放数据保存在服务器
 	 */
-	public void SaveToServer(int play_type, String SourceUrl)
-	{
+	public void SaveToServer(int play_type, String SourceUrl) {
 		String url = Constant.BASE_URL + "program/play";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -768,29 +766,25 @@ public class Detail_Movie extends Activity {
 		params.put("duration", 0);// required int 视频时长， 单位：秒
 		// 播放的类别 1: 视频地址播放
 		// 2:webview播放
-		if(play_type == 1)
-		{
+		if (play_type == 1) {
 			params.put("play_type", "1");
-		}
-		else
-		{
+		} else {
 			params.put("play_type", "2");// required string
 		}
 		params.put("video_url", SourceUrl);
-			// string
-			// 视频url
-			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
-			cb.header("user_id", app.UserID);
-
-			cb.params(params).url(url).type(JSONObject.class)
-					.weakHandler(this, "CallProgramPlayResult");
-			// cb.params(params).url(url);
-			aq.ajax(cb);
+		// string
+		// 视频url
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.header("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+		cb.header("app_key", Constant.APPKEY);
+		cb.header("user_id", app.UserID);
+		cb.params(params).url(url).type(JSONObject.class)
+				.weakHandler(this, "CallProgramPlayResult");
+		// cb.params(params).url(url);
+		aq.ajax(cb);
 	}
-	
+
 	public void ShowTopics() {
 		String m_j = null;
 		int i = 0;
@@ -1105,11 +1099,10 @@ public class Detail_Movie extends Activity {
 					}
 
 				});
-
 	}
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
-//		Intent intent = new Intent(this, VideoPlayerActivity.class);
+		// Intent intent = new Intent(this, VideoPlayerActivity.class);
 		Intent intent = new Intent();
 		Bundle bundle = new Bundle();
 		bundle.putString("path", m_uri);
@@ -1121,7 +1114,7 @@ public class Detail_Movie extends Activity {
 		intent.putExtras(bundle);
 		intent.setClass(Detail_Movie.this, VideoPlayerActivity.class);
 		try {
-			 startActivity(intent);
+			startActivity(intent);
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "mp4 fail", ex);
 		}

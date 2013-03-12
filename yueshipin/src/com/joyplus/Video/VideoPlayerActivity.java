@@ -21,6 +21,7 @@ import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Service.Return.ReturnProgramView;
+import com.joyplus.download.Dao;
 
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
@@ -56,7 +57,6 @@ import android.widget.RelativeLayout;
 
 public class VideoPlayerActivity extends Activity implements
 		OnCompletionListener {
-	// private playHistoryData playData = null;
 
 	private AQuery aq;
 	private App app;
@@ -92,6 +92,7 @@ public class VideoPlayerActivity extends Activity implements
 	/*
 	 * playHistoryData
 	 */
+	private PlayHistory playhistory = null;
 	private String playProdId = null;// 视频id
 	private String playProdName = null;// 视频名字
 	private String playProdSubName = null;// 视频的集数
@@ -122,7 +123,6 @@ public class VideoPlayerActivity extends Activity implements
 		setContentView(R.layout.videoview);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
 		mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
 		mOperationBg = (ImageView) findViewById(R.id.operation_bg);
@@ -182,6 +182,11 @@ public class VideoPlayerActivity extends Activity implements
 		playProdSubName = bundle.getString("prod_subname");
 		playProdType = Integer.parseInt(bundle.getString("prod_type"));
 		play_current_time = bundle.getLong("current_time");
+		// playhistory = new PlayHistory(playProdId, playProdSubName,
+		// play_current_time+"");
+		// playhistory =
+		// Dao.getInstance(VideoPlayerActivity.this).queryPlayHistory(playhistory);
+		// Log.i("VideoPlayerActivity",playhistory.getPlay_time());
 	}
 
 	@Override
@@ -195,10 +200,15 @@ public class VideoPlayerActivity extends Activity implements
 			long total_time = mVideoView.getDuration();
 			if ((total_time > 0) && (current_time > 0)
 					&& (current_time < total_time)) {
-				SaveToServer(mVideoView.getCurrentPosition(),
-						mVideoView.getDuration());
+				SaveToServer(current_time, total_time);
+				// 保存播放记录在本地
+				// playhistory.setPlay_time(current_time+"");
+				// Dao.getInstance(VideoPlayerActivity.this).addPlayHistory(playhistory);
 			} else {
 				SaveToServer(0, 0);
+				// 保存播放记录在本地
+				// playhistory.setPlay_time(0+"");
+				// Dao.getInstance(VideoPlayerActivity.this).addPlayHistory(playhistory);
 			}
 			mVideoView.pause();
 		}

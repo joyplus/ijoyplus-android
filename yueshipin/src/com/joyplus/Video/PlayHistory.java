@@ -10,7 +10,9 @@ public class PlayHistory {
 	String play_time = null;
 	public PlayHistory(String prod_id,String my_index,String play_time)
 	{
-//		this.prod
+		this.prod_id = prod_id;
+		this.my_index = my_index;
+		this.play_time = play_time;
 	}
 	public String getProd_id() {
 		return prod_id;
