@@ -2,16 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/download_show_item"
     android:layout_width="fill_parent"
-    android:layout_height="36dp"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
-   	android:paddingLeft="5dp"
-    android:paddingRight="5dp"
     android:gravity="center"
    	>
 	 <TextView
 	     android:id="@+id/text_name"
 	     android:layout_width="fill_parent"
-	     android:layout_height="36dp"
+	     android:layout_height="wrap_content"
 	     android:background="@drawable/download_show_item_btn"
 	     android:text="00"
 	     android:ellipsize="end"
@@ -20,4 +18,10 @@
 	     android:gravity="left|center_vertical"
 	     android:focusable="false"
 	     />
+	 <!-- TextView 
+	     android:id="@+id/text_state"
+	     android:layout_width="wrap_content"
+	     android:layout_height="wrap_content"
+	     android:gravity="right"
+	     /> -->
 </LinearLayout>
