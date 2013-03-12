@@ -11,6 +11,7 @@
 	     android:layout_width="fill_parent"
 	     android:layout_height="wrap_content"
 	     android:background="@drawable/download_show_item_btn"
+	     android:textColor="@color/black"
 	     android:text="00"
 	     android:ellipsize="end"
 	     android:singleLine="true"
