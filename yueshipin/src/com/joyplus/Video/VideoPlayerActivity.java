@@ -123,9 +123,8 @@ public class VideoPlayerActivity extends Activity implements
 		setContentView(R.layout.videoview);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-		//每次播放时及时把播放的flag清除为0
-		if(app.use2G3G)
-		{
+		// 每次播放时及时把播放的flag清除为0
+		if (app.use2G3G) {
 			app.use2G3G = false;
 		}
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
@@ -187,11 +186,24 @@ public class VideoPlayerActivity extends Activity implements
 		playProdSubName = bundle.getString("prod_subname");
 		playProdType = Integer.parseInt(bundle.getString("prod_type"));
 		play_current_time = bundle.getLong("current_time");
-		// playhistory = new PlayHistory(playProdId, playProdSubName,
-		// play_current_time+"");
-		// playhistory =
-		// Dao.getInstance(VideoPlayerActivity.this).queryPlayHistory(playhistory);
-		// Log.i("VideoPlayerActivity",playhistory.getPlay_time());
+		playhistory = new PlayHistory(playProdId, playProdSubName,//这个历史播放记录变量总是要初始化
+				play_current_time + "");
+		if(play_current_time == 0)
+		{
+			if(Dao.getInstance(VideoPlayerActivity.this)
+					.queryPlayHistory(playhistory) == null)
+			{
+				Dao.getInstance(VideoPlayerActivity.this)
+						.addPlayHistory(playhistory);
+			}
+			else
+			{
+				playhistory = Dao.getInstance(VideoPlayerActivity.this)
+						.queryPlayHistory(playhistory);
+				play_current_time = Long.parseLong(playhistory.getPlay_time());
+			}
+			
+		}
 	}
 
 	@Override
@@ -203,18 +215,13 @@ public class VideoPlayerActivity extends Activity implements
 			 */
 			long current_time = mVideoView.getCurrentPosition();
 			long total_time = mVideoView.getDuration();
-			if ((total_time > 0) && (current_time > 0)
-					&& (current_time < total_time)) {
-				SaveToServer(current_time, total_time);
+			SaveToServer(current_time, total_time);
+			if(current_time >0)
+			{
 				// 保存播放记录在本地
-				// playhistory.setPlay_time(current_time+"");
-				// Dao.getInstance(VideoPlayerActivity.this).addPlayHistory(playhistory);
-			} else {
-				SaveToServer(0, 0);
-				// 保存播放记录在本地
-				// playhistory.setPlay_time(0+"");
-				// Dao.getInstance(VideoPlayerActivity.this).addPlayHistory(playhistory);
-			}
+				playhistory.setPlay_time(current_time+"");
+				Dao.getInstance(VideoPlayerActivity.this).updatePlayHistory(playhistory);
+			}	 
 			mVideoView.pause();
 		}
 	}

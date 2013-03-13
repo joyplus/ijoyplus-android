@@ -102,6 +102,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		dataStruct = new ArrayList();
 		Tab3Page3Adapter = new Tab3Page3ListAdapter();
 		ItemsListView.setAdapter(Tab3Page3Adapter);
+		CheckSaveData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -235,7 +236,10 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		cb.header("user_id", app.UserID);
 		aq.ajax(cb);
 	}
-
+	
+	/*
+	 * 从本地缓存取数据,然后从服务器抓数据下来
+	 */
 	private void CheckSaveData() {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();

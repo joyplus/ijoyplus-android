@@ -19,6 +19,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,8 +41,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab3Page1ListData;
+import com.joyplus.Service.Return.ReturnTops;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
+import com.joyplus.Video.PlayHistory;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.download.Dao;
 import com.umeng.analytics.MobclickAgent;
 
 public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
@@ -108,10 +112,11 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		aq = new AQuery(this);
 
 		dataStruct = new ArrayList();
-
 		Tab3Page1Adapter = new Tab3Page1ListAdapter();
 		ItemsListView.setAdapter(Tab3Page1Adapter);
 		aq.id(R.id.Layout1).gone();
+		//从本地缓存读取播放历史
+		CheckSaveData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -186,6 +191,12 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
+		/*
+		 * 先从本地取json,取到后显示,然后再从服务器上取,取到后更新
+		 */
+		dataStruct = new ArrayList();
+		Tab3Page1Adapter = new Tab3Page1ListAdapter();
+		ItemsListView.setAdapter(Tab3Page1Adapter);
 		if (dataStruct != null && dataStruct.size() > 1)
 			dataStruct.clear();
 		isLastisNext = 1;
@@ -223,7 +234,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		cb.header("user_id", app.UserID);
 		aq.ajax(cb);
 	}
-
+	
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
@@ -238,8 +249,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				m_ReturnUserPlayHistories = null;
 			m_ReturnUserPlayHistories = mapper.readValue(json.toString(),
 					ReturnUserPlayHistories.class);
-			// app.SaveServiceData("user_Histories", json.toString());
-
+			 app.SaveServiceData("user_Histories", json.toString());
 			// 创建数据源对象
 			GetVideoMovies();
 
@@ -311,16 +321,19 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 
 						dataStruct.remove(item);
 						Tab3Page1Adapter.notifyDataSetChanged();
-
 						ItemsListView.invalidate();
-
 						if (dataStruct.size() == 0) {
 							aq.id(R.id.imageNoitemBG).visible();
 							aq.id(R.id.Layout1).gone();
 						}
 						// 删除数据
 						DeleteHistory(m_Tab3Page1ListData.Pro_ID);
-
+						if(Dao.getInstance(Tab3Page1.this).queryPlayHistory(new PlayHistory(m_Tab3Page1ListData.Pro_ID,
+								m_Tab3Page1ListData.Pro_name1, 0+""))!=null)
+						{
+							Dao.getInstance(Tab3Page1.this).delPlayHistory(new PlayHistory(m_Tab3Page1ListData.Pro_ID,
+									m_Tab3Page1ListData.Pro_name1, 0+""));
+						}
 					}
 				}).setNegativeButton("取消", null).create();
 		builder.show();
@@ -340,7 +353,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "UnfavorityResult");
-
 		aq.ajax(cb);
 	}
 
@@ -440,6 +452,42 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					.toString();
 		} else {
 			return String.format("%02d:%02d", minutes, seconds).toString();
+		}
+	}
+	
+	/*
+	 * 从本地缓存取数据,然后从服务器抓数据下来
+	 */
+	private void CheckSaveData() {
+		String SaveData = null;
+		ObjectMapper mapper = new ObjectMapper();
+		SaveData = app.GetServiceData("user_Histories");
+		if (SaveData == null) {
+			GetServiceData(1);
+		} else {
+			try {
+				m_ReturnUserPlayHistories = mapper.readValue(SaveData, ReturnUserPlayHistories.class);
+				// 创建数据源对象
+				GetVideoMovies();
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						GetServiceData(1);
+					}
+				}, 10000);
+
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 	}
 

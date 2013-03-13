@@ -368,7 +368,18 @@ public class Dao {
 	 */
 	public synchronized void addPlayHistory(PlayHistory playhistory)
 	{
-		
+		SQLiteDatabase database = getConnection();
+		try {
+			String sql = "insert into play_history(prod_id,my_index,play_time) values (?,?,?)";
+			Object[] bindArgs = { playhistory.getProd_id(),playhistory.getMy_index(), playhistory.getPlay_time()};
+			database.execSQL(sql, bindArgs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+		}
 	}
 	/*
 	 * 删除本地播放记录
@@ -410,14 +421,14 @@ public class Dao {
 	 */
 	public synchronized PlayHistory queryPlayHistory(PlayHistory playhistory)
 	{
-//		DownloadInfo info = null;
+		PlayHistory tempPlayHistory = null;
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
 			String sql = "select prod_id,my_index,play_time from play_history where prod_id=? and my_index=?";
 			cursor = database.rawQuery(sql, new String[] { playhistory.getProd_id(),playhistory.getMy_index() });
 			while (cursor.moveToNext()) {
-				playhistory = new PlayHistory(cursor.getString(0), cursor.getString(1),
+				tempPlayHistory = new PlayHistory(cursor.getString(0), cursor.getString(1),
 						cursor.getString(2));
 			}
 		} catch (Exception e) {
@@ -430,6 +441,6 @@ public class Dao {
 				cursor.close();
 			}
 		}
-		return playhistory;
+		return tempPlayHistory;
 	}
 }
