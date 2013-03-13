@@ -10,8 +10,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -48,7 +50,7 @@ public class App extends Application {
 	public static Map<String, Downloader> downloaders = new HashMap<String, Downloader>();
 	// 固定存放下载的音乐的路径：SD卡目录下
 	public boolean ThreadStartFlag = false;
-
+	public boolean use2G3G = false;
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -141,20 +143,37 @@ public class App extends Application {
 		return URLUtil.isNetworkUrl(Url);
 	}
 	
-	/** 
-	 * 确保当前网络为wifi 
-	 * @param joyplus 
-	 */  
-	static boolean isWifi(Context mContext) {  
-	    ConnectivityManager connectivityManager = (ConnectivityManager) mContext  
+	/*
+	 * checkUserSelect
+	 * 检测当前用户用的网络,如果为wifi返回true
+	 * 如果不是wifi,用户选择了确定使用2G3G返回true
+	 */
+	public void checkUserSelect(Context context) {
+		ConnectivityManager connectivityManager = (ConnectivityManager) context  
 	            .getSystemService(Context.CONNECTIVITY_SERVICE);  
 	    NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();  
 	    if (activeNetInfo != null  
 	            && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {  
-	        return true;  
-	    }  
-	    return false;  
+	    	use2G3G = true;
+	    }
+	    else
+	    {
+	    	AlertDialog.Builder builder = new AlertDialog.Builder(
+					context);
+			builder.setTitle("温馨提醒")
+					.setMessage("您目前在3G/2G网络环境下，确定继续播放或下载?")
+					.setPositiveButton("确定",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									use2G3G = true;
+								}
+							}).setNegativeButton("取消", null).create();
+			builder.show();
+	    }
 	}
+	
 	
 	public boolean isNetworkAvailable() {
 		Context context = getApplicationContext();

@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -107,7 +108,7 @@ public class Detail_TV extends Activity {
 	Drawable focuse = null;
 	Drawable normal = null;
 	Drawable press = null;
-//	Drawable download_none = null;
+	// Drawable download_none = null;
 	Drawable download_normal = null;
 	Drawable download_been = null;
 	private PopupWindow downloadpopup = null;
@@ -127,15 +128,17 @@ public class Detail_TV extends Activity {
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
 
-		if(prod_name != null)
+		if (prod_name != null)
 			aq.id(R.id.program_name).text(prod_name);
 
 		// modify by yyc
 		focuse = this.getResources().getDrawable(R.drawable.play_focuse);
 		normal = this.getResources().getDrawable(R.drawable.play_normal);
 		press = this.getResources().getDrawable(R.drawable.play_press);
-		download_been = this.getResources().getDrawable(R.drawable.downloaded_2);
-		download_normal = this.getResources().getDrawable(R.drawable.undownload_tv);
+		download_been = this.getResources()
+				.getDrawable(R.drawable.downloaded_2);
+		download_normal = this.getResources().getDrawable(
+				R.drawable.undownload_tv);
 		mScrollView = (ScrollView) findViewById(R.id.scrollView1);
 		mScrollView.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -555,9 +558,7 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.imageView_comment).gone();
 					aq.id(R.id.Layout_comment).gone();
 				}
-			}
-			else
-			{
+			} else {
 				aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
 				aq.id(R.id.button20).clickable(false);
 			}
@@ -738,24 +739,28 @@ public class Detail_TV extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		// write current_index to myTvSetting file
-		SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
-				Context.MODE_PRIVATE);
-		myPreference.edit().putString(prod_id, Integer.toString(current_index))
-				.commit();
+		app.checkUserSelect(Detail_TV.this);
+		if(app.use2G3G)
+		{
+			// write current_index to myTvSetting file
+			SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
+					Context.MODE_PRIVATE);
+			myPreference.edit().putString(prod_id, Integer.toString(current_index))
+					.commit();
 
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
-		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-			SaveToServer(2, PROD_URI, 1);
-			Intent intent = new Intent();
-			intent.setAction("android.intent.action.VIEW");
-			Uri content_url = Uri.parse(PROD_URI);
-			intent.setData(content_url);
-			startActivity(intent);
+			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+				SaveToServer(2, PROD_URI, 1);
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.VIEW");
+				Uri content_url = Uri.parse(PROD_URI);
+				intent.setData(content_url);
+				startActivity(intent);
+			}
 		}
 	}
-
+	
 	// OnClickNext15
 	public void OnClickNext15(View v) {
 		String m_j = null;
@@ -866,67 +871,70 @@ public class Detail_TV extends Activity {
 	public void OnClickTVPlay(View v) {
 
 		int index = Integer.parseInt(v.getTag().toString());
+		app.checkUserSelect(Detail_TV.this);
+		if(app.use2G3G)
+		{
+			current_index = index;
+			SetPlayBtnFlag(current_index);
 
-		current_index = index;
-		SetPlayBtnFlag(current_index);
+			// write current_index to myTvSetting file
+			SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
+					Context.MODE_PRIVATE);
+			myPreference.edit().putString(prod_id, Integer.toString(current_index))
+					.commit();
 
-		// write current_index to myTvSetting file
-		SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
-				Context.MODE_PRIVATE);
-		myPreference.edit().putString(prod_id, Integer.toString(current_index))
-				.commit();
-
-		if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
-				.equalsIgnoreCase("1")) {
-			app.MyToast(this, "暂无播放链接!");
-			return;
-		}
-		videoSourceSort(index);
-		if (m_ReturnProgramView.tv.episodes != null
-				&& m_ReturnProgramView.tv.episodes[index].video_urls != null
-				&& m_ReturnProgramView.tv.episodes[index].video_urls.length > 0)
-			PROD_URI = m_ReturnProgramView.tv.episodes[index].video_urls[0].url;
-		PROD_SOURCE = null;
-		if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
-			for (int i = 0; i < m_ReturnProgramView.tv.episodes[index].down_urls.length; i++) {
-				for (int k = 0; k < m_ReturnProgramView.tv.episodes[index].down_urls[i].urls.length; k++) {
-					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[index].down_urls[i].urls[k];
-					if (urls != null) {
-						if (urls.url != null && app.IfSupportFormat(urls.url)) {
-							if (PROD_SOURCE == null
-									&& !app.IfIncludeM3U(urls.url))
-								PROD_SOURCE = urls.url.trim();
-							if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("mp4"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("flv"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("hd2"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("3gp"))
-								PROD_SOURCE = urls.url.trim();
+			if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
+					.equalsIgnoreCase("1")) {
+				app.MyToast(this, "暂无播放链接!");
+				return;
+			}
+			videoSourceSort(index);
+			if (m_ReturnProgramView.tv.episodes != null
+					&& m_ReturnProgramView.tv.episodes[index].video_urls != null
+					&& m_ReturnProgramView.tv.episodes[index].video_urls.length > 0)
+				PROD_URI = m_ReturnProgramView.tv.episodes[index].video_urls[0].url;
+			PROD_SOURCE = null;
+			if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
+				for (int i = 0; i < m_ReturnProgramView.tv.episodes[index].down_urls.length; i++) {
+					for (int k = 0; k < m_ReturnProgramView.tv.episodes[index].down_urls[i].urls.length; k++) {
+						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[index].down_urls[i].urls[k];
+						if (urls != null) {
+							if (urls.url != null && app.IfSupportFormat(urls.url)) {
+								if (PROD_SOURCE == null
+										&& !app.IfIncludeM3U(urls.url))
+									PROD_SOURCE = urls.url.trim();
+								if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase("mp4"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase("flv"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase("hd2"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase("3gp"))
+									PROD_SOURCE = urls.url.trim();
+							}
+							if (PROD_SOURCE != null)
+								break;
 						}
 						if (PROD_SOURCE != null)
 							break;
 					}
-					if (PROD_SOURCE != null)
-						break;
 				}
 			}
-		}
 
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
-		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-			SaveToServer(2, PROD_URI, index + 1);
-			Intent intent = new Intent();
-			intent.setAction("android.intent.action.VIEW");
-			Uri content_url = Uri.parse(PROD_URI);
-			intent.setData(content_url);
-			startActivity(intent);
+			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+				SaveToServer(2, PROD_URI, index + 1);
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.VIEW");
+				Uri content_url = Uri.parse(PROD_URI);
+				intent.setData(content_url);
+				startActivity(intent);
+			}
 		}
 	}
 
@@ -1185,7 +1193,7 @@ public class Detail_TV extends Activity {
 		bundle.putString("path", m_uri);
 		bundle.putString("title", title);
 		bundle.putString("prod_id", prod_id);
-		bundle.putString("prod_subname", Integer.toString(current_index));
+		bundle.putString("prod_subname", Integer.toString(current_index + 1));
 		bundle.putString("prod_type", "2");
 		bundle.putLong("current_time", 0);
 		intent.putExtras(bundle);
@@ -1195,7 +1203,7 @@ public class Detail_TV extends Activity {
 			Log.e(TAG, "VideoPlayerActivity fail", ex);
 		}
 	}
-	
+
 	/*
 	 * 保存网页播放地址,不需要保存时间
 	 */
@@ -1452,6 +1460,8 @@ public class Detail_TV extends Activity {
 	};
 
 	void switchPageOfDownloadIndex(int index) {
+		// 获取当前电视剧有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
+		data = Dao.getInstance(Detail_TV.this).getInfosOfProd_id(prod_id);
 		String m_j = null;
 		int i = 0;
 		for (i = 0; i < 15; i++) {
@@ -1471,14 +1481,18 @@ public class Detail_TV extends Activity {
 					+ current_download_pagenum * 60);
 			m_button.setTag(m_j + "");
 			m_button.setText(m_j);
-			m_button.setBackgroundDrawable(download_normal);//显示之前将背景设置为正常背景色
+			m_button.setBackgroundDrawable(download_normal);// 显示之前将背景设置为正常背景色
+			m_button.setTextColor(Color.BLACK);//设置颜色和文字的位置
+			m_button.setGravity(Gravity.CENTER);
 			m_button.setEnabled(true);
 			for (int m = 0; m < data.size(); m++) {
 				if (data.get(m).getIndex().equalsIgnoreCase(m_j)) { // 设置已缓存背景
-					 m_button.setBackgroundDrawable(download_been);
-					 m_button.setEnabled(false);
+					m_button.setBackgroundDrawable(download_been);
+					m_button.setEnabled(false);
+					m_button.setTextColor(Color.WHITE);//设置颜色和文字的位置
+					m_button.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
 				}
-			} 
+			}
 			m_button.setVisibility(View.VISIBLE);
 		}
 	}
@@ -1508,27 +1522,32 @@ public class Detail_TV extends Activity {
 		}
 		if (DOWNLOAD_SOURCE == null)
 			return;
+		app.checkUserSelect(Detail_TV.this);
+		if(app.use2G3G)
+		{
+			if (DOWNLOAD_SOURCE != null) {
+				String urlstr = DOWNLOAD_SOURCE;
+				String localfile = Constant.PATH_VIDEO + prod_id + "_"
+						+ (index + 1) + ".mp4";
+				String my_name = m_ReturnProgramView.tv.name;
+				String download_state = "wait";
+				DownloadTask downloadTask = new DownloadTask(v, this,
+						Detail_TV.this, prod_id, Integer.toString(index + 1),
+						urlstr, localfile);
+				downloadTask.execute(prod_id, Integer.toString(index + 1), urlstr,
+						m_ReturnProgramView.tv.poster, my_name, download_state);
+				Toast.makeText(Detail_TV.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
+						.show();
+				// 将按钮的背景色改成已缓存
+				v.setBackgroundDrawable(download_been);
+				v.setEnabled(false);
+				((Button) v).setTextColor(Color.WHITE);//设置颜色和文字的位置
+				((Button) v).setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
 
-		if (DOWNLOAD_SOURCE != null) {
-			String urlstr = DOWNLOAD_SOURCE;
-			String localfile = Constant.PATH_VIDEO + prod_id + "_"
-					+ (index + 1) + ".mp4";
-			String my_name = m_ReturnProgramView.tv.name;
-			String download_state = "wait";
-			DownloadTask downloadTask = new DownloadTask(v, this,
-					Detail_TV.this, prod_id, Integer.toString(index + 1),
-					urlstr, localfile);
-			downloadTask.execute(prod_id, Integer.toString(index + 1), urlstr,
-					m_ReturnProgramView.tv.poster, my_name, download_state);
-			Toast.makeText(Detail_TV.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
-					.show();
-			//将按钮的背景色改成已缓存
-			v.setBackgroundDrawable(download_been);
-			v.setEnabled(false);
-			
-		} else {
-			Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
-					.show();
+			} else {
+				Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
+						.show();
+			}
 		}
 	}
 
@@ -1539,7 +1558,7 @@ public class Detail_TV extends Activity {
 		int j = 0;
 		int k = 0;
 		int total = m_ReturnProgramView.tv.episodes.length;
-		//获取当前电视剧有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
+		// 获取当前电视剧有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
 		data = Dao.getInstance(Detail_TV.this).getInfosOfProd_id(prod_id);
 		for (int m = 0; m < 4; m++) {
 			m_j = Integer.toString(m + 1);// m_ReturnProgramView.tv.episodes[i].name;
@@ -1586,14 +1605,18 @@ public class Detail_TV extends Activity {
 			m_j = Integer.toString(i + 1 + current_download_pagenum * 60);// 特别加上的
 			m_button.setTag(i + 1 + current_download_pagenum * 60 + "");
 			m_button.setText(m_j);
+			m_button.setBackgroundDrawable(download_normal);// 显示之前将背景设置为正常背景色
+			m_button.setTextColor(Color.BLACK);//设置颜色和文字的位置
+			m_button.setGravity(Gravity.CENTER);
 			m_button.setEnabled(true);
-			m_button.setBackgroundDrawable(download_normal);//显示之前将背景设置为正常背景色
 			for (int m = 0; m < data.size(); m++) {
 				if (data.get(m).getIndex().equalsIgnoreCase(m_j)) { // 设置已缓存背景
-					 m_button.setBackgroundDrawable(download_been);
-					 m_button.setEnabled(false);
+					m_button.setBackgroundDrawable(download_been);
+					m_button.setEnabled(false);
+					m_button.setTextColor(Color.WHITE);//设置颜色和文字的位置
+					m_button.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
 				}
-			} 
+			}
 			m_button.setVisibility(View.VISIBLE);
 		}
 		if (i < 15) {

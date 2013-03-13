@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -614,24 +615,26 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
+		app.checkUserSelect(Detail_Show.this);
+		if(app.use2G3G)
+		{
+			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				current_index = 0;
+				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
 
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			current_index = 0;
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
+			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
-		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+				SaveToServer(2, PROD_URI, 1);
 
-			SaveToServer(2, PROD_URI, 1);
-
-			Intent intent = new Intent();
-			intent.setAction("android.intent.action.VIEW");
-			Uri content_url = Uri.parse(PROD_URI);
-			intent.setData(content_url);
-			startActivity(intent);
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.VIEW");
+				Uri content_url = Uri.parse(PROD_URI);
+				intent.setData(content_url);
+				startActivity(intent);
+			}
 		}
-
 	}
-
+	
 	// OnClickNext4
 	public void OnClickNext4(View v) {
 		String m_j = null;
@@ -747,20 +750,22 @@ public class Detail_Show extends Activity {
 				}
 			}
 		}
+		app.checkUserSelect(Detail_Show.this);
+		if(app.use2G3G)
+		{
+			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
+			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
-		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+				SaveToServer(2, PROD_URI, index + 1);
 
-			SaveToServer(2, PROD_URI, index + 1);
-
-			Intent intent = new Intent();
-			intent.setAction("android.intent.action.VIEW");
-			Uri content_url = Uri.parse(PROD_URI);
-			intent.setData(content_url);
-			startActivity(intent);
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.VIEW");
+				Uri content_url = Uri.parse(PROD_URI);
+				intent.setData(content_url);
+				startActivity(intent);
+			}
 		}
-
 	}
 	
 	public void videoSourceSort(int source_index)
@@ -1168,6 +1173,7 @@ public class Detail_Show extends Activity {
 				GetServiceData();
 			}
 		});
+		aq.id(R.id.textView2).text(m_ReturnProgramView.show.name);
 		for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
 			download_names.add(m_ReturnProgramView.show.episodes[i].name);
 		}
@@ -1200,29 +1206,32 @@ public class Detail_Show extends Activity {
 						}
 					}
 				}
-
-				if (DOWNLOAD_SOURCE != null) {
-					String urlstr = DOWNLOAD_SOURCE;
-					download_index = (position + 1)+"_show";
-					String localfile = Constant.PATH_VIDEO + prod_id + "_"
-							+ download_index + ".mp4";
-					String my_name = m_ReturnProgramView.show.episodes[position].name;
-					String download_state = "wait";
-					DownloadTask downloadTask = new DownloadTask(arg1,
-							Detail_Show.this, Detail_Show.this, prod_id,
-							download_index, urlstr, localfile);
-					downloadTask.execute(prod_id,
-							download_index, urlstr,
-							m_ReturnProgramView.show.poster, my_name,
-							download_state);
-					Toast.makeText(Detail_Show.this, "视频已加入下载队列",
-							Toast.LENGTH_SHORT).show();
-					cur_pos = position;
-					//获取当前综艺有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
-					data = Dao.getInstance(Detail_Show.this).getInfosOfProd_id(prod_id);
-				} else {
-					Toast.makeText(Detail_Show.this, "该视频不支持下载",
-							Toast.LENGTH_SHORT).show();
+				app.checkUserSelect(Detail_Show.this);
+				if(app.use2G3G)
+				{
+					if (DOWNLOAD_SOURCE != null) {
+						String urlstr = DOWNLOAD_SOURCE;
+						download_index = (position + 1)+"_show";
+						String localfile = Constant.PATH_VIDEO + prod_id + "_"
+								+ download_index + ".mp4";
+						String my_name = m_ReturnProgramView.show.episodes[position].name;
+						String download_state = "wait";
+						DownloadTask downloadTask = new DownloadTask(arg1,
+								Detail_Show.this, Detail_Show.this, prod_id,
+								download_index, urlstr, localfile);
+						downloadTask.execute(prod_id,
+								download_index, urlstr,
+								m_ReturnProgramView.show.poster, my_name,
+								download_state);
+						Toast.makeText(Detail_Show.this, "视频已加入下载队列",
+								Toast.LENGTH_SHORT).show();
+						cur_pos = position;
+						//获取当前综艺有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
+						data = Dao.getInstance(Detail_Show.this).getInfosOfProd_id(prod_id);
+					} else {
+						Toast.makeText(Detail_Show.this, "该视频不支持下载",
+								Toast.LENGTH_SHORT).show();
+					}
 				}
 			}
 		}

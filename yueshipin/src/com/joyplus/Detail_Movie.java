@@ -1,5 +1,6 @@
 package com.joyplus;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -46,6 +48,8 @@ import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.download.Dao;
+import com.joyplus.download.DownLoadAdapter;
+import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.weibo.net.AccessToken;
 import com.joyplus.weibo.net.DialogError;
@@ -503,13 +507,13 @@ public class Detail_Movie extends Activity {
 						new EComparatorIndex());
 			}
 		}
-//		for(int i = 0;i<Constant.video_index.length;i++)
-//		{
-//			for(int j = 0;j<Constant.quality_index.length;i++)
-//			{
-//				
-//			}
-//		}
+		// for(int i = 0;i<Constant.video_index.length;i++)
+		// {
+		// for(int j = 0;j<Constant.quality_index.length;i++)
+		// {
+		//
+		// }
+		// }
 	}
 
 	// 将片源排序
@@ -622,28 +626,29 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void OnClickCacheDown(View v) {
-		/*
-		 * 
-		 */
-		if (DOWNLOAD_SOURCE != null) {
-			String urlstr = DOWNLOAD_SOURCE;
-			String urlposter = m_ReturnProgramView.movie.poster;
-			String localfile = Constant.PATH_VIDEO + prod_id + "_"
-					+ download_index + ".mp4";
-			String my_name = m_ReturnProgramView.movie.name;
-			String download_state = "wait";
-			DownloadTask downloadTask = new DownloadTask(v, this,
-					Detail_Movie.this, prod_id, download_index,
-					DOWNLOAD_SOURCE, localfile);
-			downloadTask.execute(prod_id, download_index, DOWNLOAD_SOURCE,
-					urlposter, my_name, download_state);
-			aq.id(R.id.button9).background(R.drawable.yi_huan_cun);//点击下载后直接把下载按钮的状态改变掉
-			aq.id(R.id.button9).clickable(false);
-			Toast.makeText(Detail_Movie.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
-					.show();
-		} else {
-			Toast.makeText(Detail_Movie.this, "该视频不支持下载", Toast.LENGTH_SHORT)
-					.show();
+		app.checkUserSelect(Detail_Movie.this);
+		if(app.use2G3G)
+		{
+			if (DOWNLOAD_SOURCE != null) {
+				String urlstr = DOWNLOAD_SOURCE;
+				String urlposter = m_ReturnProgramView.movie.poster;
+				String localfile = Constant.PATH_VIDEO + prod_id + "_"
+						+ download_index + ".mp4";
+				String my_name = m_ReturnProgramView.movie.name;
+				String download_state = "wait";
+				DownloadTask downloadTask = new DownloadTask(v, this,
+						Detail_Movie.this, prod_id, download_index,
+						DOWNLOAD_SOURCE, localfile);
+				downloadTask.execute(prod_id, download_index, DOWNLOAD_SOURCE,
+						urlposter, my_name, download_state);
+				aq.id(R.id.button9).background(R.drawable.yi_huan_cun);// 点击下载后直接把下载按钮的状态改变掉
+				aq.id(R.id.button9).clickable(false);
+				Toast.makeText(Detail_Movie.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
+						.show();
+			} else {
+				Toast.makeText(Detail_Movie.this, "该视频不支持下载", Toast.LENGTH_SHORT)
+						.show();
+			}
 		}
 	}
 
@@ -737,21 +742,24 @@ public class Detail_Movie extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			if (PROD_SOURCE.contains("test=m3u8")) {
-				PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
-			}
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
-			
-		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+		app.checkUserSelect(Detail_Movie.this);
+		if(app.use2G3G)
+		{
+			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				if (PROD_SOURCE.contains("test=m3u8")) {
+					PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
+				}
+				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
 
-			SaveToServer(2, PROD_URI);
-			Intent intent = new Intent();
-			intent.setAction("android.intent.action.VIEW");
-			Uri content_url = Uri.parse(PROD_URI);
-			intent.setData(content_url);
-			startActivity(intent);
+			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+
+				SaveToServer(2, PROD_URI);
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.VIEW");
+				Uri content_url = Uri.parse(PROD_URI);
+				intent.setData(content_url);
+				startActivity(intent);
+			}
 		}
 	}
 
