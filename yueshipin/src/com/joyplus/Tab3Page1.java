@@ -135,7 +135,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		if (m_Tab3Page1ListData != null) {
 			if (m_Tab3Page1ListData.Pro_urlType.equalsIgnoreCase("1")) {
 				CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
-						m_Tab3Page1ListData.Pro_url,m_Tab3Page1ListData.Pro_name);
+						m_Tab3Page1ListData.Pro_url,m_Tab3Page1ListData.Pro_name,m_Tab3Page1ListData.Pro_name1);
 			} else if (m_Tab3Page1ListData.Pro_urlType
 					.equalsIgnoreCase("2")) {
 				Intent intent = new Intent();
@@ -402,12 +402,13 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 //		}
 	}
 
-	public void CallVideoPlayActivity(String prod_id, String m_uri ,String title ) {
+	public void CallVideoPlayActivity(String prod_id, String m_uri ,String title ,String subName) {
 
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		intent.putExtra("pro_id", prod_id);
 		intent.putExtra("path", m_uri);
 		intent.putExtra("title", title);
+		intent.putExtra("subName",subName);
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException ex) {

@@ -5,12 +5,14 @@
 package com.joyplus.Video;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.json.JSONObject;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.dlcs.dlna.Stack.MediaRenderer;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +20,7 @@ import com.joyplus.App;
 import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Dlna.DlnaSelectDevice;
+import com.joyplus.Dlna.DlnaSelectDevice.ServiceClient;
 import com.joyplus.Service.Return.ReturnProgramView;
 
 import io.vov.vitamio.MediaPlayer;
@@ -52,7 +55,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-public class VideoPlayerActivity extends Activity implements OnCompletionListener {
+public class VideoPlayerActivity extends Activity implements OnCompletionListener, ServiceClient{
 
 	private AQuery aq;
 	private App app;
@@ -60,7 +63,9 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 	private String mPath;
 	private String mTitle;
 	private String prod_id;
+	private String subName;
 	private boolean checkBind = false;
+	private boolean isShowingDLNA = false;
 	private VideoView mVideoView;
 	private View mVolumeBrightnessLayout;
 	private ImageView mOperationBg;
@@ -110,6 +115,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		mPath = intent.getStringExtra("path");
 		mTitle = intent.getStringExtra("title");
 		prod_id = intent.getStringExtra("pro_id");
+		subName = intent.getStringExtra("subName");
 	
 //		mPath = "http://122.228.96.172/20/40/95/letv-uts/1340994301-AVC-249889-AAC-31999-5431055-192873082-4b45f1fd5362d980a1dae9c44b2b1c6b-1340994301.mp4?crypt=3eb0ad42aa7f2e559&b=2000&gn=860&nc=1&bf=22&p2p=1&video_type=mp4&check=0&tm=1354698000&key=78cc2270a7e5dfe3187c1608c99e65c0&lgn=letv&proxy=1945014819&cipi=1034815956&tag=mobile&np=1&vtype=mp4&ptype=s1&level=350&t=1354601822&cid=&vid=&sign=mb&dname=mobile";
 //		mPath = "http://122.228.96.172/20/40/95/letv-uts/1340994301-AVC-249889-AAC-31999-5431055-192873082-4b45f1fd5362d980a1dae9c44b2b1c6b-1340994301.mp4?crypt=3eb0ad42aa7f2e559&b=2000&gn=860&nc=1&bf=22&p2p=1&video_type=mp4&check=0&tm=1354698000&key=78cc2270a7e5dfe3187c1608c99e65c0&lgn=letv&proxy=1945014819&cipi=1034815956&tag=mobile&np=1&vtype=mp4&ptype=s1&level=350&t=1354601822&cid=&vid=&sign=mb&dname=mobile";
@@ -137,9 +143,22 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		mRelativeLayoutBG.setVisibility(View.VISIBLE);
 		mVideoView.setLayoutBG(mRelativeLayoutBG);
 		
+		mMediaController = new MediaController(this);
+		
 		if(mTitle != null && mTitle.length()>0){
-			aq.id(R.id.mediacontroller_file_name).text(mTitle);
-			aq.id(R.id.textView1).text("正在载入 "+ mTitle);
+			aq.id(R.id.textView1).text("正在载入 ...");
+			if(subName != null && subName.length()>0){
+				aq.id(R.id.mediacontroller_file_name).text(mTitle + subName);
+				mVideoView.setTitle(mTitle + subName);
+				mMediaController.setFileName(mTitle + subName);
+				mMediaController.setSubName(subName);
+			}
+			else {
+				aq.id(R.id.mediacontroller_file_name).text(mTitle);
+				mVideoView.setTitle(mTitle);
+				mMediaController.setFileName(mTitle);
+			}
+
 		}
 		if (prod_id != null)
 			GetServiceData();
@@ -150,11 +169,9 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 			mVideoView.setVideoPath(mPath);
 		//
 		mVideoView.setOnCompletionListener(this);
-
-		mMediaController = new MediaController(this);
+		
 		//设置显示名称
-		mVideoView.setTitle(mTitle);
-		mMediaController.setFileName(mTitle);
+	
 		mVideoView.setMediaController(mMediaController);
 		
 		mVideoView.requestFocus();
@@ -240,11 +257,11 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		/** 双击 */
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-			mLayout++;
-			if(mLayout >VideoView.VIDEO_LAYOUT_ZOOM)
-				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
-			if (mVideoView != null)
-				mVideoView.setVideoLayout(mLayout, 0);
+//			mLayout++;
+//			if(mLayout >VideoView.VIDEO_LAYOUT_ZOOM)
+//				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
+//			if (mVideoView != null)
+//				mVideoView.setVideoLayout(mLayout, 0);
 			return true;
 		}
 
@@ -407,5 +424,61 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void onMediaInfoUpdate(String title, String mimeType) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onVolumeUpdate(int volume) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDmrChanged(ArrayList<MediaRenderer> dmrCache) {
+		// TODO Auto-generated method stub
+		if (dmrCache == null || isShowingDLNA){
+			isShowingDLNA = false;
+			mMediaController.showDLNAButtom(false);
+			return;
+		}
+		else {
+			isShowingDLNA = true;
+			mMediaController.showDLNAButtom(true);
+		}
+	}
+
+	@Override
+	public void onAllowedActionsUpdate(String actions) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onActionResult(String actionName, int res) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPostionInfoUpdate(int position, int duration) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlaybackStateUpdate(String state) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMuteUpdate(boolean muteState) {
+		// TODO Auto-generated method stub
+		
 	}
 }

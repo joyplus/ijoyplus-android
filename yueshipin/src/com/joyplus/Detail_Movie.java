@@ -76,7 +76,6 @@ public class Detail_Movie extends Activity {
 	private String uid = null;
 	private String token = null;
 	private String expires_in = null;
-	String name;
 	private Drawable downloaddisable = null;
 	//播放记录变量
 	public static int REQUESTPLAYTIME = 200;
@@ -812,7 +811,7 @@ public class Detail_Movie extends Activity {
 															// 视频id
 		params.put("prod_name", m_ReturnProgramView.movie.name);// required
 																// string 视频名字
-		params.put("prod_subname", m_ReturnProgramView.movie.episodes.length);// required
+		params.put("prod_subname", "");// required
 																				// string
 																				// 视频的集数
 		params.put("prod_type", 1);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
@@ -1101,7 +1100,7 @@ public class Detail_Movie extends Activity {
 																	// string
 																	// 视频名字
 							params.put("prod_subname",
-									m_ReturnProgramView.movie.episodes.length);// required
+									"");// required
 																				// string
 																				// 视频的集数
 							params.put("prod_type", 1);// required int 视频类别

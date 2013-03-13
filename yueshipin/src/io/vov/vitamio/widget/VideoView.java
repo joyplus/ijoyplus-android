@@ -105,6 +105,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	private boolean mCanPause = true;
 	private boolean mCanSeekBack = true;
 	private boolean mCanSeekForward = true;
+	private boolean CONTINUEMODE = false;
 	private Context mContext;
 	
 	private View mLayoutBG;
@@ -224,7 +225,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		try {
 			mDuration = -1;
 			mCurrentBufferPercentage = 0;
-			mMediaPlayer = new MediaPlayer(mContext);
+			mMediaPlayer = new MediaPlayer(mContext,true);
+//			mMediaPlayer = new MediaPlayer(mContext);
 			mMediaPlayer.setOnPreparedListener(mPreparedListener);
 			mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
 			mMediaPlayer.setOnCompletionListener(mCompletionListener);
@@ -271,30 +273,37 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	}
 
 	private void attachMediaController() {
-		
+
 		if (mMediaPlayer != null && mMediaController != null) {
 			mMediaController.setMediaPlayer(this);
-			View anchorView = this.getParent() instanceof View ? (View) this.getParent() : this;
-			
-			mMediaController.setAnchorView(anchorView);
+			if (!CONTINUEMODE) {
+				View anchorView = this.getParent() instanceof View ? (View) this
+						.getParent() : this;
+
+				mMediaController.setAnchorView(anchorView);
+			}
 			mMediaController.setEnabled(isInPlaybackState());
-			
-//			if (mUri != null) {
-//				List<String> paths = mUri.getPathSegments();
-//				String name = paths == null || paths.isEmpty() ? "null" : paths.get(paths.size() - 1);
-//				mMediaController.setFileName(name);
-//			}
+
+			// if (mUri != null) {
+			// List<String> paths = mUri.getPathSegments();
+			// String name = paths == null || paths.isEmpty() ? "null" :
+			// paths.get(paths.size() - 1);
+			// mMediaController.setFileName(name);
+			// }
 		}
-//		if (mLayoutBG != null){
-//			mLayoutBG.setVisibility(View.VISIBLE);
-//			View anchorView = this.getParent() instanceof View ? (View) this.getParent() : this;
-//
-//			ViewGroup.LayoutParams lp = anchorView.getLayoutParams();
-////			
-////			lp.width = (int) (findViewById(R.id.operation_full).getLayoutParams().width * lpa.screenBrightness);
-//			mLayoutBG.setLayoutParams(lp);
-//		}
-			
+		// if (mLayoutBG != null){
+		// mLayoutBG.setVisibility(View.VISIBLE);
+		// View anchorView = this.getParent() instanceof View ? (View)
+		// this.getParent() : this;
+		//
+		// ViewGroup.LayoutParams lp = anchorView.getLayoutParams();
+		// //
+		// // lp.width = (int)
+		// (findViewById(R.id.operation_full).getLayoutParams().width *
+		// lpa.screenBrightness);
+		// mLayoutBG.setLayoutParams(lp);
+		// }
+
 	}
 
 	OnVideoSizeChangedListener mSizeChangedListener = new OnVideoSizeChangedListener() {
@@ -411,8 +420,9 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 					mMediaPlayer.pause();
 				else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END)
 					mMediaPlayer.start();
+				else if (what == MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED && mMediaController.isShowing())
+					mMediaController.setDownloadRate(extra);
 			}
-
 			return true;
 		}
 	};
@@ -815,8 +825,15 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	}
 
 	@Override
-	public void NextVideo() {
+	public void setContinueVideoPath(String path){
 		// TODO Auto-generated method stub
+		CONTINUEMODE = true;
+		setVideoURI(Uri.parse(path));
+	}
+	@Override
+	public void OnComplete() {
+		stopPlayback();
 		
 	}
+	
 }

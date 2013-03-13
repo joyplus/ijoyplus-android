@@ -737,12 +737,12 @@ public class Detail_TV extends Activity {
 				.commit();
 
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			SaveToServer(1, PROD_SOURCE, 1);
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+			SaveToServer(1, PROD_SOURCE, 0);
+			CallVideoPlayActivity(prod_id,PROD_SOURCE, m_ReturnProgramView.tv.name,m_ReturnProgramView.tv.episodes[0].name);
 			// GetVideoSource(0,PROD_SOURCE);
 
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-			SaveToServer(2, PROD_URI, 1);
+			SaveToServer(2, PROD_URI, 0);
 
 			Intent intent = new Intent();
 			intent.setAction("android.intent.action.VIEW");
@@ -920,12 +920,12 @@ public class Detail_TV extends Activity {
 		// URL str = isConnect(PROD_SOURCE);
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 
-			SaveToServer(1, PROD_SOURCE, index + 1);
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+			SaveToServer(1, PROD_SOURCE, index);
+			CallVideoPlayActivity(prod_id,PROD_SOURCE, m_ReturnProgramView.tv.name,m_ReturnProgramView.tv.episodes[index].name);
 			// GetVideoSource(index,PROD_SOURCE);
 
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-			SaveToServer(2, PROD_URI, index + 1);
+			SaveToServer(2, PROD_URI, index);
 
 			Intent intent = new Intent();
 			intent.setAction("android.intent.action.VIEW");
@@ -1220,12 +1220,13 @@ public class Detail_TV extends Activity {
 		}
 	}
 
-	public void CallVideoPlayActivity(String m_uri, String title) {
+	public void CallVideoPlayActivity(String prod_id, String m_uri ,String title ,String subName) {
 
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		intent.putExtra("pro_id", prod_id);
 		intent.putExtra("path", m_uri);
 		intent.putExtra("title", title);
+		intent.putExtra("subName","第"+ subName + "集");
 
 		try {
 			startActivity(intent);
@@ -1246,7 +1247,7 @@ public class Detail_TV extends Activity {
 															// 视频id
 		params.put("prod_name", m_ReturnProgramView.tv.name);// required
 																// string 视频名字
-		params.put("prod_subname", Integer.toString(episodesNum));// required
+		params.put("prod_subname", m_ReturnProgramView.tv.episodes[episodesNum].name);// required
 																	// string
 																	// 视频的集数
 		params.put("prod_type", 2);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
@@ -1311,7 +1312,7 @@ public class Detail_TV extends Activity {
 																					// string
 																					// 视频名字
 							params.put("prod_subname",
-									m_ReturnProgramView.tv.episodes.length);// required
+									Integer.toString(episodeNum));// required
 																			// string
 																			// 视频的集数
 							params.put("prod_type", 2);// required int 视频类别
@@ -1335,8 +1336,8 @@ public class Detail_TV extends Activity {
 							cb.params(params).url(urlsave);
 							aq.ajax(cb);
 
-							CallVideoPlayActivity(url,
-									m_ReturnProgramView.tv.name);
+							CallVideoPlayActivity(prod_id,url,
+									m_ReturnProgramView.tv.name,m_ReturnProgramView.tv.episodes[episodeNum].name);
 						} else {
 							if (m_ReturnProgramView.tv.episodes[episodeNum].down_urls != null) {
 								for (int k = 0; k < m_ReturnProgramView.tv.episodes[episodeNum].down_urls[0].urls.length; k++) {

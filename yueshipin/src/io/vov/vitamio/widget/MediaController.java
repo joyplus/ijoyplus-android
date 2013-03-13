@@ -93,13 +93,14 @@ public class MediaController extends FrameLayout {
 	private TextView mFileName;
 	private OutlineTextView mInfoView;
 	private String mTitle;
+	private String mSubName;
 	private long mDuration;
 	private boolean mShowing;
 	private boolean mTopRightShowing = false;
 	private boolean mBottomRightShowing = false;
 	private boolean mDragging;
 	private boolean mInstantSeeking = true;
-	private static final int sDefaultTimeout = 10000;//3000;
+	private static final int sDefaultTimeout = 6000;//3000;
 	private static final int FADE_OUT = 1;
 	private static final int SHOW_PROGRESS = 2;
 	private static final int SHOW_TOPRIGHT = 3;
@@ -115,6 +116,7 @@ public class MediaController extends FrameLayout {
 	private ImageButton mSelectButton;
 	private TextView mTextView1;
 	private TextView mTextView2;
+	private TextView mTextViewDownloadRate;
 
 	private AudioManager mAM;
 	
@@ -231,6 +233,7 @@ public class MediaController extends FrameLayout {
 
 		mTextView1 = (TextView) v.findViewById(R.id.textView1);
 		mTextView2 = (TextView) v.findViewById(R.id.textView2);
+		mTextViewDownloadRate = (TextView) v.findViewById(R.id.textViewDownloadRate);
 		
 		mViewTopRight = v.findViewById(R.id.relativeLayoutTopRight);
 		mViewBottomRight = v.findViewById(R.id.relativeLayoutBottomRight);
@@ -252,47 +255,25 @@ public class MediaController extends FrameLayout {
 		 			@Override
 		 			public void onItemClick(AdapterView<?> parent, View view,
 		 					int position, long id) {
+		 					
 		 					OnClickSelect(position);
 		 			}
 		 		});
 		}
 		
 		RadioGroup radioGroup = (RadioGroup) v.findViewById(R.id.radioGroup1);
-		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				// TODO Auto-generated method stub
-				switch (checkedId) {
-
-				case R.id.radio0:
-					if(CurrentQuality != 0){
-						SelectQuality(0);
-					}
-					break;
-				case R.id.radio1:
-					if(CurrentQuality != 1){
-						SelectQuality(1);
-					}
-					break;
-				case R.id.radio2:
-					if(CurrentQuality != 2){
-						SelectQuality(2);
-					}
-					break;
-				default:
-					break;
-
-				}
-			}
-		});
+		if (radioGroup != null) {
+			radioGroup.setOnCheckedChangeListener(mRadioGroupListener);
+		}
 		
 		if (mPauseButton != null) {
 			mPauseButton.requestFocus();
 			mPauseButton.setOnClickListener(mPauseListener);
 		}
-		if (mDlnaButton != null)
+		if (mDlnaButton != null){
+			mDlnaButton.setVisibility(View.INVISIBLE);
 			mDlnaButton.setOnClickListener(mDlnaListener);
+		}
 
 		if (mReturnButton != null)
 			mReturnButton.setOnClickListener(mReturnListener);
@@ -332,18 +313,6 @@ public class MediaController extends FrameLayout {
 
 		switch (CurrentCategory) {
 		case 0:
-			if (m_ReturnProgramView.movie.episodes[index].down_urls != null) {
-				for (int i = 0; i < m_ReturnProgramView.movie.episodes[index].down_urls.length; i++) {
-					CurrentSource = i;
-					
-					for (int j = 0; j< Constant.video_index.length; j++) {
-						if (PROD_SOURCE == null &&m_ReturnProgramView.movie.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
-							PROD_SOURCE =  GetSource(index,i);
-							break;
-						}
-					}			
-				}
-			}
 			break;
 		case 1:
 			if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
@@ -352,6 +321,7 @@ public class MediaController extends FrameLayout {
 					
 					for (int j = 0; j < Constant.video_index.length; j++) {
 						if (PROD_SOURCE == null &&m_ReturnProgramView.tv.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							mFileName.setText(mTitle+"第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集");
 							PROD_SOURCE =  GetSource(index,i);
 							break;
 						}
@@ -366,6 +336,7 @@ public class MediaController extends FrameLayout {
 					
 					for (int j = 0; j < Constant.video_index.length; j++) {
 						if (PROD_SOURCE == null &&m_ReturnProgramView.show.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							mFileName.setText(mTitle +"-"+m_ReturnProgramView.show.episodes[index].name);
 							PROD_SOURCE =  GetSource(index,i);
 							break;
 						}
@@ -376,26 +347,12 @@ public class MediaController extends FrameLayout {
 		}
 
 		if (PROD_SOURCE != null )
-			mPlayer.setVideoPath(PROD_SOURCE);
+			mPlayer.setContinueVideoPath(PROD_SOURCE);
 	}
  private String GetSource(int proi_index, int sourceIndex){
 	 String PROD_SOURCE = null;
 	 switch (CurrentCategory) {
 	case 0:
-		for (int k = 0; k < m_ReturnProgramView.movie.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
-			CurrentQuality = k;
-			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.movie.episodes[proi_index].down_urls[sourceIndex].urls[k];
-			if (CurrentURLS != null && CurrentURLS.url != null) {
-					for (int i = 0; i < Constant.quality_index.length; i++) {
-						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
-							PROD_SOURCE = CurrentURLS.url.trim();
-							break;
-						}
-					}
-			}
-			if (PROD_SOURCE != null )
-				break;
-		}
 		break;
 	case 1:
 		for (int k = 0; k < m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
@@ -463,7 +420,7 @@ public class MediaController extends FrameLayout {
 				}
 		}
 		if (PROD_SOURCE != null)
-			mPlayer.setVideoPath(PROD_SOURCE);
+			mPlayer.setContinueVideoPath(PROD_SOURCE);
 	}
 	public void SetMediaPlayerControlBGGone() {
 		if (mAnchor != null) {
@@ -473,6 +430,19 @@ public class MediaController extends FrameLayout {
 		}
 	}
 
+	public void showDLNAButtom(boolean isShow){
+		if(mDlnaButton != null){
+			if(isShow)
+				mDlnaButton.setVisibility(View.VISIBLE);
+			else {
+				mDlnaButton.setVisibility(View.INVISIBLE);
+			}
+		}
+	}
+	public void setDownloadRate(int rate){
+		if(mTextViewDownloadRate != null)
+			mTextViewDownloadRate.setText(Integer.toString(rate)+"kb/s");
+	}
 	public void setMediaPlayer(MediaPlayerControl player) {
 		mPlayer = player;
 		updatePausePlay();
@@ -498,30 +468,44 @@ public class MediaController extends FrameLayout {
 	 * @param name
 	 */
 	public void setFileName(String name) {
-		mTitle = name;
-		if (mFileName != null)
-			mFileName.setText(mTitle);
+		this.mTitle = name;
+//		if (mFileName != null)
+//			mFileName.setText(mTitle);
 	}
+	public void setSubName(String name) {
+		this.mSubName = name;
+	}
+	
 
 	public void setProd_Data(ReturnProgramView m_ReturnProgramView) {
 		this.m_ReturnProgramView = m_ReturnProgramView;
 		if (this.m_ReturnProgramView != null) {
 			if (m_ReturnProgramView.movie != null) {
 				CurrentCategory = 0;
-				mSelectButton.setVisibility(View.GONE);
+				CurrentIndex = 0;
+				if(mSelectButton != null)
+					mSelectButton.setVisibility(View.GONE);
 			} else if (m_ReturnProgramView.tv != null) {
 				CurrentCategory = 1;
+				this.mSubName = mSubName.replace("第","");
+				this.mSubName = mSubName.replace("集","").trim();
+//				mFileName.setText(mTitle+"第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集");
 				if (dataStruct != null) {
 					for (int i = 0; i < m_ReturnProgramView.tv.episodes.length; i++) {
-						dataStruct.add("第" + Integer.toString(i) + "集");
+						if(mSubName.equalsIgnoreCase(m_ReturnProgramView.tv.episodes[i].name))
+							CurrentIndex = i;
+						dataStruct.add("第" + Integer.toString(i+1) + "集");
 						String str = m_ReturnProgramView.tv.episodes[i].name;
 					}
 					groupAdapter.notifyDataSetChanged();
 				}
 			} else if (m_ReturnProgramView.show != null) {
 				CurrentCategory = 2;
+//				mFileName.setText(mTitle +"-"+m_ReturnProgramView.show.episodes[CurrentIndex].name);
 				if (dataStruct != null) {
 					for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
+						if(mSubName.equalsIgnoreCase(m_ReturnProgramView.show.episodes[i].name))
+							CurrentIndex = i;
 						dataStruct
 								.add(m_ReturnProgramView.show.episodes[i].name);
 					}
@@ -778,7 +762,7 @@ public class MediaController extends FrameLayout {
 	private View.OnClickListener mReturnListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			mPlayer.stopPlayback();
+			mPlayer.OnComplete();
 		}
 	};
 	private View.OnClickListener mReduceListener = new View.OnClickListener() {
@@ -804,7 +788,48 @@ public class MediaController extends FrameLayout {
 	private View.OnClickListener mNextListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			 switch (CurrentCategory) {
+				case 0:
+					break;
+				case 1:
+					
+					OnClickSelect(++CurrentIndex);
+					
+					break;
+				case 2:
+					
+					OnClickSelect(++CurrentIndex);
+					
+				break;
 
+				}
+		}
+	};
+	private RadioGroup.OnCheckedChangeListener mRadioGroupListener = new RadioGroup.OnCheckedChangeListener() {
+		@Override
+		public void onCheckedChanged(RadioGroup group, int checkedId) {
+			// TODO Auto-generated method stub
+			switch (checkedId) {
+
+			case R.id.radio0:
+				if(CurrentQuality != 0){
+					SelectQuality(0);
+				}
+				break;
+			case R.id.radio1:
+				if(CurrentQuality != 1){
+					SelectQuality(1);
+				}
+				break;
+			case R.id.radio2:
+				if(CurrentQuality != 2){
+					SelectQuality(2);
+				}
+				break;
+			default:
+				break;
+
+			}
 		}
 	};
 	private View.OnClickListener mQualityListener = new View.OnClickListener() {
@@ -1031,15 +1056,13 @@ public class MediaController extends FrameLayout {
 
 		void gotoDlnaVideoPlay();
 
-		void stopPlayback();
+		void OnComplete();
 
 		void setVideoLayout(int layout, float aspectRatio);
 
 		int GetCurrentVideoLayout();
-
-		void NextVideo();
 		
-		 void setVideoPath(String path);
+		 void setContinueVideoPath(String path);
 
 	}
 

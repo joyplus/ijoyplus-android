@@ -29,6 +29,7 @@
             android:layout_marginLeft="12dp"
             android:background="@drawable/player_back" />
 
+        
         <ImageButton
             android:id="@+id/imageButton6"
             android:layout_width="wrap_content"
@@ -37,6 +38,25 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:background="@drawable/player_select" />
+
+         <ImageView
+            android:id="@+id/imageView33"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="18dp"
+            android:layout_toRightOf="@+id/mediacontroller_file_name"
+			android:background="@drawable/video_download_rate"/>
+        <TextView
+            android:id="@+id/textViewDownloadRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/imageView33"
+            android:text="100k/s"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/grey" />
+
     </RelativeLayout>
 
     <RelativeLayout
