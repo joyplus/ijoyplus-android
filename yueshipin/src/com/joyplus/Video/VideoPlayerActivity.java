@@ -123,6 +123,11 @@ public class VideoPlayerActivity extends Activity implements
 		setContentView(R.layout.videoview);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		//每次播放时及时把播放的flag清除为0
+		if(app.use2G3G)
+		{
+			app.use2G3G = false;
+		}
 		mVideoView = (VideoView) findViewById(R.id.surface_view);
 		mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
 		mOperationBg = (ImageView) findViewById(R.id.operation_bg);
@@ -228,12 +233,9 @@ public class VideoPlayerActivity extends Activity implements
 
 	@Override
 	protected void onDestroy() {
-
-		super.onDestroy();
-
 		if (aq != null)
 			aq.dismiss();
-
+		super.onDestroy();
 		// github.com/joyplus/ijoyplus-android.git
 		if (mVideoView != null) {
 			mVideoView.stopPlayback();

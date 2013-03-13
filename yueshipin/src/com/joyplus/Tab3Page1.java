@@ -141,24 +141,29 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			current_play_time = m_Tab3Page1ListData.Pro_time;
 		}
 		if (m_Tab3Page1ListData != null) {
-			if (m_Tab3Page1ListData.Pro_urlType.equalsIgnoreCase("1")) {
-				CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
-						m_Tab3Page1ListData.Pro_url,
-						m_Tab3Page1ListData.Pro_name);
-			} else if (m_Tab3Page1ListData.Pro_urlType.equalsIgnoreCase("2")) {
-				/*
-				 * 网页播放地址不需要记录时间
-				 */
-				Intent intent = new Intent();
-				intent.setAction("android.intent.action.VIEW");
-				Uri content_url = Uri.parse(m_Tab3Page1ListData.Pro_url);
-				intent.setData(content_url);
-				startActivity(intent);
-			}
+			app.checkUserSelect(Tab3Page1.this);
+			if (app.use2G3G) {
+				if (m_Tab3Page1ListData.Pro_urlType.equalsIgnoreCase("1")) {
+					CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
+							m_Tab3Page1ListData.Pro_url,
+							m_Tab3Page1ListData.Pro_name);
+				} else if (m_Tab3Page1ListData.Pro_urlType
+						.equalsIgnoreCase("2")) {
+					/*
+					 * 网页播放地址不需要记录时间
+					 */
+					Intent intent = new Intent();
+					intent.setAction("android.intent.action.VIEW");
+					Uri content_url = Uri.parse(m_Tab3Page1ListData.Pro_url);
+					intent.setData(content_url);
+					startActivity(intent);
+				}
 
-		} else {
-			app.MyToast(this, "m_Tab3Page1ListData is empty.");
+			} else {
+				app.MyToast(this, "m_Tab3Page1ListData is empty.");
+			}
 		}
+
 	}
 
 	private OnClickListener mContinueClickListener = new OnClickListener() {

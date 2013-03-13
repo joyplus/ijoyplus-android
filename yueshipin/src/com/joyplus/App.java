@@ -161,7 +161,7 @@ public class App extends Application {
 	    	AlertDialog.Builder builder = new AlertDialog.Builder(
 					context);
 			builder.setTitle("温馨提醒")
-					.setMessage("您目前在3G/2G网络环境下，确定继续播放或下载?")
+					.setMessage("您目前在3G/2G网络环境下，确定继续?")
 					.setPositiveButton("确定",
 							new DialogInterface.OnClickListener() {
 								@Override

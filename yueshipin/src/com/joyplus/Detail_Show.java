@@ -24,6 +24,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -96,6 +97,7 @@ public class Detail_Show extends Activity {
 	List download_names = new ArrayList();
 	private int cur_pos = -1;
 	private int current_index = -1; // yy
+	boolean pageShow = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +142,6 @@ public class Detail_Show extends Activity {
 
 	public void OnClickTab1TopLeft(View v) {
 		finish();
-
 	}
 
 	public void OnClickTab1TopRight(View v) {
@@ -1148,9 +1149,10 @@ public class Detail_Show extends Activity {
 
 				});
 	}
-
+	
 	public void OnClickCacheDown(View v) {
 		GotoDownloadPage();
+		pageShow = false;
 	}
 
 	private void GotoDownloadPage() {
@@ -1174,8 +1176,11 @@ public class Detail_Show extends Activity {
 			}
 		});
 		aq.id(R.id.textView2).text(m_ReturnProgramView.show.name);
-		for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
-			download_names.add(m_ReturnProgramView.show.episodes[i].name);
+		if(download_names.size()==0)//如果当前的download_names不为空说明不是第一次进入
+		{
+			for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
+				download_names.add(m_ReturnProgramView.show.episodes[i].name);
+			}
 		}
 		//获取当前综艺有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
 		data = Dao.getInstance(Detail_Show.this).getInfosOfProd_id(prod_id);
@@ -1237,7 +1242,7 @@ public class Detail_Show extends Activity {
 		}
 		});
 	}
-
+	
 	private class MyAdapter extends BaseAdapter {
 		private LayoutInflater inflater;
 
@@ -1266,6 +1271,7 @@ public class Detail_Show extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			String downloadStr = null;
 			convertView = inflater.inflate(R.layout.download_show_item, null,
 					false);
 			TextView textview = (TextView) convertView
@@ -1286,7 +1292,47 @@ public class Detail_Show extends Activity {
 				textview.setBackgroundDrawable(download_focuse);//设置为已缓存
 				textview.setText("  "+(CharSequence) download_names.get(position));//加两个空格是为了让字体显示时不至于太靠左边
 			}
+			if (m_ReturnProgramView.show.episodes[position].down_urls != null) {
+				for (int k = 0; k < m_ReturnProgramView.show.episodes[position].down_urls[0].urls.length; k++) {
+					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[position].down_urls[0].urls[k];
+					if (urls != null) {
+						if (downloadStr == null && urls.file != null
+								&& app.IfSupportFormat(urls.url)
+								&& urls.file.trim().equalsIgnoreCase("mp4"))
+							downloadStr = urls.url.trim();
+					}
+				}
+			}
+			if(downloadStr == null)
+			{
+				textview.setTextColor(Color.rgb(204, 204, 204));//设置为不可用
+			}
+//			if(m_ReturnProgramView.show.episodes[position].down_urls == null)
+//			{
+//				textview.setTextColor(Color.rgb(204, 204, 204));//设置为不可用
+//			}
 			return convertView;
 		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		if(keyCode == KeyEvent.KEYCODE_BACK)
+		{
+			if(pageShow)
+			{
+				finish();
+				return super.onKeyDown(keyCode, event);
+			}
+			else
+			{
+				pageShow = true;
+				setContentView(R.layout.detail_show);
+				GetServiceData();
+				return true;
+			}
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }
