@@ -743,6 +743,7 @@ public class Detail_TV extends Activity {
 		if(app.use2G3G)
 		{
 			// write current_index to myTvSetting file
+			current_index = 0;
 			SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
 					Context.MODE_PRIVATE);
 			myPreference.edit().putString(prod_id, Integer.toString(current_index))
