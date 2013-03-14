@@ -63,8 +63,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	private long current_play_time = 0;
 	Tab3Page1ListData tempPlayHistoryData = null;
 
-	// private boolean flag = false;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -112,13 +110,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		});
 		app = (App) getApplication();
 		aq = new AQuery(this);
-
-		dataStruct = new ArrayList();
-		Tab3Page1Adapter = new Tab3Page1ListAdapter();
-		ItemsListView.setAdapter(Tab3Page1Adapter);
 		aq.id(R.id.Layout1).gone();
-		// 从本地缓存读取播放历史
-		CheckSaveData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -191,13 +183,11 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		/*
-		 * 先从本地取json,取到后显示,然后再从服务器上取,取到后更新
-		 */
 		dataStruct = new ArrayList();
 		Tab3Page1Adapter = new Tab3Page1ListAdapter();
 		ItemsListView.setAdapter(Tab3Page1Adapter);
 		isLastisNext = 1;
+		CheckSaveData();
 		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
 	}
@@ -243,12 +233,17 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			if (isLastisNext > 1)
-				m_ReturnUserPlayHistories = null;
-			m_ReturnUserPlayHistories = mapper.readValue(json.toString(),
-					ReturnUserPlayHistories.class);
-			if (isLastisNext == 1) {
+			if(isLastisNext == 1)
+			{
+				m_ReturnUserPlayHistories = mapper.readValue(json.toString(),
+						ReturnUserPlayHistories.class);
 				app.SaveServiceData("user_Histories", json.toString());
+			}
+			else if (isLastisNext > 1)
+			{
+				m_ReturnUserPlayHistories = null;
+				m_ReturnUserPlayHistories = mapper.readValue(json.toString(),
+						ReturnUserPlayHistories.class);
 			}
 			// 创建数据源对象
 			GetVideoMovies();
@@ -275,6 +270,14 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				aq.id(R.id.Layout1).gone();
 			}
 			return;
+		}
+		if(isLastisNext == 1)
+		{
+			for(int i = 0;i<dataStruct.size();i++)
+			{
+				dataStruct.remove(i);
+			}
+			dataStruct.clear();
 		}
 		for (int i = 0; i < m_ReturnUserPlayHistories.histories.length; i++) {
 			Tab3Page1ListData m_Tab3Page1ListData = new Tab3Page1ListData();
@@ -469,8 +472,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("user_Histories");
 		if (SaveData == null) {
-			// isLastisNext = 1;
-			// GetServiceData(isLastisNext);
 			GetServiceData(1);
 		} else {
 			try {
@@ -478,14 +479,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 						ReturnUserPlayHistories.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						// GetServiceData(isLastisNext);
-						GetServiceData(1);
-					}
-				}, 5000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block

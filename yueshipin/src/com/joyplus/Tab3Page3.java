@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab3Page3ListData;
 import com.joyplus.Service.Return.ReturnTops;
+import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.umeng.analytics.MobclickAgent;
 
 public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
@@ -99,10 +100,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 				return true;// 如果返回false那么onItemClick仍然会被调用
 			}
 		});
-		dataStruct = new ArrayList();
-		Tab3Page3Adapter = new Tab3Page3ListAdapter();
-		ItemsListView.setAdapter(Tab3Page3Adapter);
-		CheckSaveData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -128,7 +125,8 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		dataStruct = new ArrayList();
 		Tab3Page3Adapter = new Tab3Page3ListAdapter();
 		ItemsListView.setAdapter(Tab3Page3Adapter);
-		isLastisNext = 1;
+		isLastisNext=1;
+		CheckSaveData();
 		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
 	}
@@ -148,6 +146,14 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		String m_j = null;
 		if (m_ReturnTops.tops == null)
 			return;
+		if(isLastisNext == 1)
+		{
+			for(int i = 0;i<dataStruct.size();i++)
+			{
+				dataStruct.remove(i);
+			}
+			dataStruct.clear();
+		}
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 			Tab3Page3ListData m_Tab3Page3ListData = new Tab3Page3ListData();
 			m_Tab3Page3ListData.Pic_ID = m_ReturnTops.tops[i].id;
@@ -195,7 +201,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -204,9 +209,15 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
-			if (isLastisNext == 1) {
+			if(isLastisNext == 1)
+			{
+				m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
 				app.SaveServiceData("user_tops33", json.toString());
+			}
+			else if (isLastisNext > 1)
+			{
+				m_ReturnTops = null;
+				m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
 			}
 			// 创建数据源对象
 			GetVideoMovies();
@@ -255,14 +266,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData(1);
-					}
-				}, 10000);
-
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

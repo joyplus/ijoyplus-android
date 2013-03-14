@@ -48,7 +48,6 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 	private App app;
 	private ReturnUserFavorities m_ReturnUserFavorities = null;
 
-	// private int Fromepage;
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private Tab3Page2ListAdapter Tab3Page2Adapter;
@@ -104,11 +103,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 				return true;// 如果返回false那么onItemClick仍然会被调用
 			}
 		});
-		dataStruct = new ArrayList();
-		Tab3Page2Adapter = new Tab3Page2ListAdapter();
-		ItemsListView.setAdapter(Tab3Page2Adapter);
 		aq.id(R.id.Layout1).gone();
-		CheckSaveData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -139,11 +134,11 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-
 		dataStruct = new ArrayList();
 		Tab3Page2Adapter = new Tab3Page2ListAdapter();
 		ItemsListView.setAdapter(Tab3Page2Adapter);
 		isLastisNext = 1;
+		CheckSaveData();
 		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
 	}
@@ -169,6 +164,14 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 				aq.id(R.id.Layout2).gone();
 			}
 			return;
+		}
+		if(isLastisNext == 1)
+		{
+			for(int i = 0;i<dataStruct.size();i++)
+			{
+				dataStruct.remove(i);
+			}
+			dataStruct.clear();
 		}
 		for (int i = 0; i < m_ReturnUserFavorities.favorities.length; i++) {
 			Tab3Page2ListData m_Tab3Page2ListData = new Tab3Page2ListData();
@@ -224,15 +227,18 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			m_ReturnUserFavorities = mapper.readValue(json.toString(),
-					ReturnUserFavorities.class);
 			if (isLastisNext == 1) {
+				m_ReturnUserFavorities = mapper.readValue(json.toString(),
+						ReturnUserFavorities.class);
+				app.SaveServiceData("user_favorities", json.toString());
+			}
+			else if (isLastisNext > 1)
+			{
+				m_ReturnUserFavorities = null;
 				app.SaveServiceData("user_favorities", json.toString());
 			}
 			// 创建数据源对象
 			GetVideoMovies();
-			// aq.id(R.id.Layout1).visible();
-			// aq.id(R.id.Layout2).visible();
 
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -259,13 +265,6 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 						ReturnUserFavorities.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData(1);
-					}
-				}, 10000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
