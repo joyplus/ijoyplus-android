@@ -96,7 +96,7 @@ public class Detail_Show extends Activity {
 	private Drawable download_normal = null;
 	private Drawable download_press = null;
 	List download_names = new ArrayList();
-	private int cur_pos = -1;
+	private ArrayList download_indexs = new ArrayList();
 	private int current_index = -1; // yy
 	boolean pageShow = true;
 
@@ -1214,7 +1214,9 @@ public class Detail_Show extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				setContentView(R.layout.detail_show);
-				GetServiceData();
+//				GetServiceData();
+				if (prod_id != null)
+					CheckSaveData();
 			}
 		});
 		aq.id(R.id.textView2).text(m_ReturnProgramView.show.name);
@@ -1272,7 +1274,14 @@ public class Detail_Show extends Activity {
 								download_state);
 						Toast.makeText(Detail_Show.this, "视频已加入下载队列",
 								Toast.LENGTH_SHORT).show();
-						cur_pos = position;
+						if(download_indexs.contains(position))
+						{
+							
+						}
+						else
+						{
+							download_indexs.add(position);
+						}
 						//获取当前综艺有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
 						data = Dao.getInstance(Detail_Show.this).getInfosOfProd_id(prod_id);
 					} else {
@@ -1328,7 +1337,7 @@ public class Detail_Show extends Activity {
 					textview.setText("  "+(CharSequence) download_names.get(position));//加两个空格是为了让字体显示时不至于太靠左边
 				}
 			}
-			if(cur_pos == position)
+			if(download_indexs.contains(position))
 			{
 				textview.setTextColor(Color.WHITE);
 				textview.setBackgroundDrawable(download_focuse);//设置为已缓存
@@ -1371,7 +1380,9 @@ public class Detail_Show extends Activity {
 			{
 				pageShow = true;
 				setContentView(R.layout.detail_show);
-				GetServiceData();
+				//调用时有问题
+				if (prod_id != null)
+					CheckSaveData();
 				return true;
 			}
 		}

@@ -247,7 +247,6 @@ public class Tab1 extends Activity implements
 			if (m_ReturnTops.tops.length > 0)
 				app.SaveServiceData("tops" + Integer.toString(isLastisNext),
 						json.toString());
-
 			// 创建数据源对象
 			GetVideoMovies();
 			aq.id(R.id.ProgressText).gone();

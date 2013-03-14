@@ -105,10 +105,14 @@ public class Video_Cache extends Activity {
 										info.getIndex(), info.getUrl(),
 										info.getPoster(), info.getName(),
 										info.getState());
-								if (App.downloaders.get(localfile) != null) {
-									App.downloaders.get(localfile).reset();
-									App.downloaders.get(localfile).download();
-								}
+//								if (App.downloaders.get(localfile) != null) {
+//									App.downloaders.get(localfile).reset();
+//									App.downloaders.get(localfile).download();
+//								}
+//								info.setState("downloading");
+//								Dao.getInstance(Video_Cache.this).updataInfoState(
+//										info.getState(), info.getProdId(),
+//										info.getIndex());
 							} else {
 								info.setState("stop");
 								Dao.getInstance(Video_Cache.this)
@@ -134,6 +138,12 @@ public class Video_Cache extends Activity {
 										info.getIndex(), info.getUrl(),
 										info.getPoster(), info.getName(),
 										info.getState());
+								
+//								info.setState("downloading");
+//								Dao.getInstance(Video_Cache.this)
+//										.updataInfoState(info.getState(),
+//												info.getProdId(),
+//												info.getIndex());
 							} else {
 								info.setState("wait");
 								Dao.getInstance(Video_Cache.this)
@@ -149,6 +159,7 @@ public class Video_Cache extends Activity {
 									.getString(R.string.networknotwork));
 						}
 					}
+					
 					if (info.getCompeleteSize() == info.getFileSize()) {
 						// 打开播放界面
 						String localfile = Constant.PATH_VIDEO
