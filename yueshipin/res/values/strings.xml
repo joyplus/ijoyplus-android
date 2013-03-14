@@ -1,11 +1,7 @@
 <resources>
 
     <string name="app_name">悦视频</string>
-    <string name="title_section3">Section 3</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section1">Section 1</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
         <string name="tishi">提示</string>
     <string name="shifoutuichu">是否退出程序</string>
     <string name="queding">确定</string>
@@ -28,12 +24,6 @@
     <string name=" tv_string1">&#60;&#x0020;前15集</string>
     <string name=" tv_string2">后15集&#x0020;&#62;</string>
    
-<string name="movieviewlabel">Movies</string>
-<string name="movie_view_label">Video player</string>
-    <string name="local_video">Play Video from Vitamio</string>
-    <string name="stream_video">Play Streaming Video</string>
-    <string name="local_audio">Play Audio from Local File</string>
-    <string name="res_audio">Play Audio from Resources</string>
     
     <string name="template_user_agent" translatable="false">"%1$s/%2$s (Linux; Android)"</string>
     
@@ -52,12 +42,6 @@
     <string name="resume_playing_restart">重新开始</string>
     
      <string name="init_decoders">正在进行第一次解压解码包...</string>
-     <string name="VideoView_error_title">Cannot play video</string>
-    <string name="VideoView_error_text_invalid_progressive_playback">Sorry, this video is not valid for streaming to
-		this device.</string>
-    <string name="VideoView_error_text_unknown">Sorry, this video cannot be played.</string>
-    <string name="VideoView_error_button">OK</string>
-    <string name="mediacontroller_play_pause">Play/Pause</string>
-    
-
+    <string name="VideoView_error_text_invalid_progressive_playback">很抱歉，你播放的视频流格式暂时还不支持。</string>
+   
 </resources>

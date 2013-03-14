@@ -52,30 +52,12 @@
         </LinearLayout>
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/LayoutName"
-        android:layout_width="fill_parent"
-        android:layout_height="34dp"
-        android:layout_below="@+id/LayoutTitle"
->
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="Name"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#C0BEBF"
-            android:textSize="16sp" />
-    </RelativeLayout>
+   
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/relativeLayoutControl"
-        android:layout_below="@+id/LayoutName" >
+>
 
         <ImageView
             android:id="@+id/imageView1"
@@ -96,10 +78,30 @@
 
     </RelativeLayout>
 
+     <RelativeLayout
+        android:id="@+id/LayoutName"
+        android:layout_width="fill_parent"
+        android:layout_height="34dp"
+        android:layout_below="@+id/LayoutTitle"
+>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#C0BEBF"
+            android:textSize="16sp" />
+    </RelativeLayout>
+    
     <RelativeLayout
         android:id="@+id/relativeLayoutControl"
         android:layout_width="fill_parent"
-        android:layout_height="155dp"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/LayoutTitle"
         android:layout_alignParentBottom="true" >
 
         <ImageButton
@@ -120,7 +122,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="13dp"
+            android:layout_marginTop="50dp"
             android:background="@drawable/music_play_play"
             android:onClick="OnClickResume" />
 

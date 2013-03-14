@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -17,6 +18,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -61,10 +63,9 @@ public class App extends Application {
 		if (!destDir.exists()) {
 			destDir.mkdirs();
 		}
-		
-		Parse.initialize(this, Constant.Parse_AppId,
-				Constant.Parse_ClientKey);
-		
+
+		Parse.initialize(this, Constant.Parse_AppId, Constant.Parse_ClientKey);
+
 		instance = this;
 	}
 
@@ -132,13 +133,36 @@ public class App extends Application {
 		this.WeiboDialogListener = WeiboDialogListener;
 	}
 
-	
 	public boolean IfSupportFormat(String Url) {
-		/*
-		 * URLUtil里面可以检测网址是否有效
-		 * 这个地址也不是非常可靠
-		 */
-		return URLUtil.isNetworkUrl(Url);
+		boolean isValid = false;
+
+		AsyncTask<String, Void, Boolean> as = new AsyncTask<String, Void, Boolean>() {
+
+			private boolean isValid = false;
+
+			@Override
+			protected Boolean doInBackground(String... params) {
+				// TODO Auto-generated method stub
+
+				isValid = isUrlValid(params[0]);
+				return Boolean.valueOf(isValid);
+			}
+
+		}.execute(Url);
+
+		try {
+			isValid = as.get().booleanValue();
+
+			return isValid;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	public boolean isNetworkAvailable() {
@@ -233,6 +257,38 @@ public class App extends Application {
 		m_toast.setGravity(Gravity.CENTER, m_toast.getXOffset() / 2,
 				m_toast.getYOffset() / 2);
 		m_toast.show();
+	}
+
+	public synchronized boolean isUrlValid(String urlStr) {
+		HttpURLConnection connection = null;
+
+		if (urlStr == null || urlStr.length() <= 0) {
+			return false;
+		}
+
+		int counts = 0;
+		while (counts < 5) {
+			try {
+				URL url = new URL(urlStr);
+				connection = (HttpURLConnection) url.openConnection();
+				connection.setConnectTimeout(1000 * 1);
+				
+				int state = connection.getResponseCode();
+				if (state == 200) {
+					connection.disconnect();
+					return true;
+				}
+				break;
+			} catch (Exception e) {
+				e.printStackTrace();
+				counts++;
+				continue;
+			}
+		}
+		if (connection != null) {
+			connection.disconnect();
+		}
+		return false;
 	}
 
 }

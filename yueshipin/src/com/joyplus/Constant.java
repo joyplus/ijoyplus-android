@@ -4,11 +4,18 @@ import android.os.Environment;
 
 public class Constant {
 	public static boolean Debug = true;
-	// 正式环境
-	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
-
+	
 //	 public static final String BASE_URL = 
 //	 "http://112.64.18.12/joyplus-service/index.php/";
+	// 正式环境
+	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
+	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
+	public static String APPKEY = "ijoyplus_android_0001";
+
+//	public static final String BASE_URL = "http://api-test.joyplus.tv/index.php/";
+//	public static String DEFAULT_APPKEY = "ijoyplus_android_0001bj";
+//	public static String APPKEY = "ijoyplus_android_0001bj";
+
 
 	public static String PATH = Environment.getExternalStorageDirectory()
 			+ "/joy/image_cache/";
@@ -20,10 +27,6 @@ public class Constant {
 			+ "/joy/video/";
 	// 下载视频时支持多线程的数目
 	String threadcount = "3";
-
-	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
-
-	public static String APPKEY = "ijoyplus_android_0001";
 
 	// 我们的sina账号
 	public static String SINA_CONSUMER_KEY = "1490285522";

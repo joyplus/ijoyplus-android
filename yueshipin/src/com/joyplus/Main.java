@@ -27,6 +27,7 @@ import android.widget.TabHost;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.joyplus.Dlna.DlnaSelectDevice;
 import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
@@ -51,6 +52,10 @@ public class Main extends TabActivity {
 		setContentView(R.layout.main);
 		app = (App) getApplicationContext();
 		aq = new AQuery(this);
+		
+		Intent intent = new Intent(Main.this, DlnaSelectDevice.class);
+		startService(intent);
+		
 		PushService.subscribe(this, "", Main.class);
 		PushService.setDefaultPushCallback(this, Main.class);
 		ReadLocalAppKey();
@@ -157,6 +162,9 @@ public class Main extends TabActivity {
 	protected void onDestroy() {
 		if (aq != null)
 			aq.dismiss();
+		Intent i  = new Intent();
+		i.setClass(this, DlnaSelectDevice.class);
+		stopService(i);
 		super.onDestroy();
 	}
 

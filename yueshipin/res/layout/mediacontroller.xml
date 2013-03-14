@@ -16,7 +16,10 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="热血高校2"
+            android:text="热血高校热血高校热血高校"
+             android:ellipsize="end"
+              android:singleLine="true"
+              android:maxEms = "9"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
 
@@ -44,15 +47,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="18dp"
-            android:layout_toRightOf="@+id/mediacontroller_file_name"
+           
+            android:layout_toLeftOf="@+id/textViewDownloadRate"
 			android:background="@drawable/video_download_rate"/>
         <TextView
             android:id="@+id/textViewDownloadRate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/imageView33"
+            android:layout_toLeftOf="@+id/imageButton6"
+             android:layout_marginRight="4dp"
             android:text="100k/s"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/grey" />
@@ -197,7 +201,8 @@
         android:layout_marginBottom="41dp"
         android:layout_marginRight="14dp"
         android:background="@drawable/player_clarity_bg" 
-        android:visibility="gone" >
+        android:visibility="gone" 
+        >
 
         <TextView
             android:id="@+id/textView1"
@@ -252,18 +257,19 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayoutTopRight"
-        android:layout_width="98dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="12dp"
         android:layout_marginTop="35dp"
+        android:visibility="gone" 
         android:background="@drawable/player_jishu_shang"
-        android:visibility="gone" >
+        >
 
         <ListView
             android:id="@+id/listView1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"

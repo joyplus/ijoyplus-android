@@ -27,6 +27,7 @@ import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
+import android.R.color;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -34,6 +35,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,7 +57,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-public class VideoPlayerActivity extends Activity implements OnCompletionListener, ServiceClient{
+public class VideoPlayerActivity extends Activity implements OnCompletionListener{
 
 	private AQuery aq;
 	private App app;
@@ -108,6 +110,22 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
 
+		setContentView(R.layout.videoview);
+		mVideoView = (VideoView) findViewById(R.id.surface_view);
+		mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
+		mOperationBg = (ImageView) findViewById(R.id.operation_bg);
+		mOperationPercent = (ImageView) findViewById(R.id.operation_percent);
+		
+		mImage_preload_bg = (ImageView) findViewById(R.id.layout_preload_bg);
+		mRelativeLayoutBG = findViewById(R.id.relativeLayout_preload);
+
+		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+		mImage_preload_bg.setBackgroundResource(R.drawable.player_bg);
+		mRelativeLayoutBG.setVisibility(View.VISIBLE);
+		mVideoView.setLayoutBG(mRelativeLayoutBG);
+		
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		
@@ -126,22 +144,6 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 			mPath = Environment.getExternalStorageDirectory() + "/mnt/sdcard/t.mp4";
 		else if (intent.getData() != null)
 			mPath = intent.getData().toString();
-
-		setContentView(R.layout.videoview);
-		mVideoView = (VideoView) findViewById(R.id.surface_view);
-		mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
-		mOperationBg = (ImageView) findViewById(R.id.operation_bg);
-		mOperationPercent = (ImageView) findViewById(R.id.operation_percent);
-		
-		mImage_preload_bg = (ImageView) findViewById(R.id.layout_preload_bg);
-		mRelativeLayoutBG = findViewById(R.id.relativeLayout_preload);
-
-		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
-		mImage_preload_bg.setBackgroundResource(R.drawable.player_bg);
-		mRelativeLayoutBG.setVisibility(View.VISIBLE);
-		mVideoView.setLayoutBG(mRelativeLayoutBG);
 		
 		mMediaController = new MediaController(this);
 		
@@ -150,7 +152,7 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 			if(subName != null && subName.length()>0){
 				aq.id(R.id.mediacontroller_file_name).text(mTitle + subName);
 				mVideoView.setTitle(mTitle + subName);
-				mMediaController.setFileName(mTitle + subName);
+				mMediaController.setFileName(subName);
 				mMediaController.setSubName(subName);
 			}
 			else {
@@ -160,8 +162,6 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 			}
 
 		}
-		if (prod_id != null)
-			GetServiceData();
 		
 		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
 			mVideoView.setVideoURI(Uri.parse(mPath));
@@ -169,6 +169,8 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 			mVideoView.setVideoPath(mPath);
 		//
 		mVideoView.setOnCompletionListener(this);
+		
+//		mVideoView.setBackgroundColor(color.black);
 		
 		//设置显示名称
 	
@@ -183,6 +185,9 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		i.setClass(this, DlnaSelectDevice.class);
 		bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 		checkBind = true;
+		
+		if (prod_id != null)
+			GetServiceData();
 	}
 
 	@Override
@@ -425,60 +430,53 @@ public class VideoPlayerActivity extends Activity implements OnCompletionListene
 		}
 
 	}
-
-	@Override
-	public void onMediaInfoUpdate(String title, String mimeType) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onVolumeUpdate(int volume) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onDmrChanged(ArrayList<MediaRenderer> dmrCache) {
-		// TODO Auto-generated method stub
-		if (dmrCache == null || isShowingDLNA){
-			isShowingDLNA = false;
-			mMediaController.showDLNAButtom(false);
-			return;
-		}
-		else {
-			isShowingDLNA = true;
-			mMediaController.showDLNAButtom(true);
-		}
-	}
-
-	@Override
-	public void onAllowedActionsUpdate(String actions) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onActionResult(String actionName, int res) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPostionInfoUpdate(int position, int duration) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onPlaybackStateUpdate(String state) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onMuteUpdate(boolean muteState) {
-		// TODO Auto-generated method stub
-		
-	}
+//
+//	@Override
+//	public void onMediaInfoUpdate(String title, String mimeType) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void onVolumeUpdate(int volume) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void onDmrChanged(ArrayList<MediaRenderer> dmrCache) {
+//		// TODO Auto-generated method stub
+//		if(dmrCache != null && dmrCache.size() >0 )
+//			mMediaController.showDLNAButtom(true);
+//	}
+//
+//	@Override
+//	public void onAllowedActionsUpdate(String actions) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void onActionResult(String actionName, int res) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void onPostionInfoUpdate(int position, int duration) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void onPlaybackStateUpdate(String state) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void onMuteUpdate(boolean muteState) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 }

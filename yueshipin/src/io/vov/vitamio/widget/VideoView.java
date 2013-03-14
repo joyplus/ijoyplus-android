@@ -41,11 +41,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 /**
@@ -386,13 +388,14 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			}
 
 			if (getWindowToken() != null) {
-				int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback : R.string.VideoView_error_text_unknown;
+				int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback : R.string.networknotwork;
 
-				new AlertDialog.Builder(mContext).setTitle(R.string.VideoView_error_title).setMessage(message).setPositiveButton(R.string.VideoView_error_button, new DialogInterface.OnClickListener() {
+				new AlertDialog.Builder(mContext).setTitle(R.string.netstate).setMessage(message).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					@Override
           public void onClick(DialogInterface dialog, int whichButton) {
-						if (mOnCompletionListener != null)
-							mOnCompletionListener.onCompletion(mMediaPlayer);
+						OnComplete();
+//						if (mOnCompletionListener != null)
+//							mOnCompletionListener.onCompletion(mMediaPlayer);
 					}
 				}).setCancelable(false).show();
 			}
@@ -412,7 +415,6 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	private OnInfoListener mInfoListener = new OnInfoListener() {
 		@Override
 		public boolean onInfo(MediaPlayer mp, int what, int extra) {
-			Log.d("onInfo: (%d, %d)", what, extra);
 			if (mOnInfoListener != null) {
 				mOnInfoListener.onInfo(mp, what, extra);
 			} else if (mMediaPlayer != null) {
@@ -422,6 +424,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 					mMediaPlayer.start();
 				else if (what == MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED && mMediaController.isShowing())
 					mMediaController.setDownloadRate(extra);
+				else 
+					Log.d("onInfo: (%d, %d)", what, extra);
 			}
 			return true;
 		}
@@ -533,6 +537,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
+//		boolean is = isInPlaybackState();
 		if (isInPlaybackState() && mMediaController != null)
 			toggleMediaControlsVisiblity();
 		return false;
@@ -801,10 +806,28 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 					}
 				});
 				AlertDialog alert = builder.create();
+				Window window = alert.getWindow();
+				WindowManager.LayoutParams lp = window.getAttributes();
+				lp.alpha = 0.6f;
+				window.setAttributes(lp);
 				alert.show();
 			} else {
-				Log.e(TAG, "正在搜索设备 ...");
+				AlertDialog alertDialog = new AlertDialog.Builder(mContext).setMessage(
+						"正在搜索设备 ...").create();
+				Window window = alertDialog.getWindow();
+				WindowManager.LayoutParams lp = window.getAttributes();
+				lp.alpha = 0.6f;
+				window.setAttributes(lp);
+				alertDialog.show();
 			}
+		}else {
+			AlertDialog alertDialog = new AlertDialog.Builder(mContext).setMessage(
+					"正在搜索设备 ...").create();
+			Window window = alertDialog.getWindow();
+			WindowManager.LayoutParams lp = window.getAttributes();
+			lp.alpha = 0.6f;
+			window.setAttributes(lp);
+			alertDialog.show();
 		}
 	}
 	
@@ -825,14 +848,21 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	}
 
 	@Override
-	public void setContinueVideoPath(String path){
+	public void setContinueVideoPath(String Title, String path){
 		// TODO Auto-generated method stub
 		CONTINUEMODE = true;
+		if (mLayoutBG != null){
+			if(Title != null && Title.length() >0){
+				TextView mTextView1 = (TextView) mLayoutBG.findViewById(R.id.mediacontroller_file_name);
+				mTextView1.setText(Title);
+			}
+			mLayoutBG.setVisibility(View.VISIBLE);
+		}
 		setVideoURI(Uri.parse(path));
 	}
 	@Override
 	public void OnComplete() {
-		stopPlayback();
+		((Activity) mContext).finish();
 		
 	}
 	
