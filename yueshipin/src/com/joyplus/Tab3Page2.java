@@ -143,8 +143,6 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		dataStruct = new ArrayList();
 		Tab3Page2Adapter = new Tab3Page2ListAdapter();
 		ItemsListView.setAdapter(Tab3Page2Adapter);
-		if(dataStruct != null && dataStruct.size() >1)
-			dataStruct.clear();
 		isLastisNext = 1;
 		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
@@ -184,8 +182,14 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 
 			m_Tab3Page2ListData.Text_Area = m_ReturnUserFavorities.favorities[i].area;
 			m_Tab3Page2ListData.Text_Score = m_ReturnUserFavorities.favorities[i].score;
-
-			dataStruct.add(m_Tab3Page2ListData);
+			if(dataStruct.contains(m_Tab3Page2ListData))
+			{
+				
+			}
+			else
+			{
+				dataStruct.add(m_Tab3Page2ListData);
+			}
 		}
 		Tab3Page2Adapter.notifyDataSetChanged();
 		
@@ -225,8 +229,10 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		try {
 			m_ReturnUserFavorities = mapper.readValue(json.toString(),
 					ReturnUserFavorities.class);
-			app.SaveServiceData("user_favorities", json.toString());
-
+			if(isLastisNext == 1)
+			{
+				app.SaveServiceData("user_favorities", json.toString());
+			}
 			// 创建数据源对象
 			GetVideoMovies();
 			// aq.id(R.id.Layout1).visible();

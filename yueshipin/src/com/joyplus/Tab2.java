@@ -32,7 +32,6 @@ public class Tab2 extends ActivityGroup {
 		pageViews.add(view01);
 		pageViews.add(view02);
 		pageViews.add(view03);
-
 	}
 
 	@Override

@@ -146,7 +146,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			current_play_time = m_Tab3Page1ListData.Pro_time;
 		}
 		if (m_Tab3Page1ListData != null) {
-			app.checkUserSelect(Tab3Page1.this);
+			app.checkUserSelect(Tab3Page1.this.getParent());//创建对话框必须在看见的最低层的Activity
 			if (app.use2G3G) {
 				if (m_Tab3Page1ListData.Pro_urlType.equalsIgnoreCase("1")) {
 					CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
@@ -197,8 +197,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		dataStruct = new ArrayList();
 		Tab3Page1Adapter = new Tab3Page1ListAdapter();
 		ItemsListView.setAdapter(Tab3Page1Adapter);
-		if (dataStruct != null && dataStruct.size() > 1)
-			dataStruct.clear();
 		isLastisNext = 1;
 		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
@@ -249,7 +247,10 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				m_ReturnUserPlayHistories = null;
 			m_ReturnUserPlayHistories = mapper.readValue(json.toString(),
 					ReturnUserPlayHistories.class);
-			 app.SaveServiceData("user_Histories", json.toString());
+			if(isLastisNext == 1)
+			{
+				app.SaveServiceData("user_Histories", json.toString());
+			}
 			// 创建数据源对象
 			GetVideoMovies();
 
@@ -287,10 +288,16 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			m_Tab3Page1ListData.Pro_urlType = m_ReturnUserPlayHistories.histories[i].play_type;
 			m_Tab3Page1ListData.Pro_time = m_ReturnUserPlayHistories.histories[i].playback_time;
 			m_Tab3Page1ListData.Pro_duration = m_ReturnUserPlayHistories.histories[i].duration;
-
-			dataStruct.add(m_Tab3Page1ListData);
+			if(dataStruct.contains(m_Tab3Page1ListData))
+			{
+				
+			}
+			else
+			{
+				dataStruct.add(m_Tab3Page1ListData);
+			}
+			
 		}
-
 		Tab3Page1Adapter.notifyDataSetChanged();
 
 		int m_num = dataStruct.size();
@@ -418,7 +425,8 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			}
 
 		} else {
-			app.MyToast(this, "m_Tab3Page1ListData is empty.");
+//			app.MyToast(this, "m_Tab3Page1ListData is empty.");
+			//不加
 		}
 	}
 
@@ -463,6 +471,8 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("user_Histories");
 		if (SaveData == null) {
+			//isLastisNext = 1;
+//			GetServiceData(isLastisNext);
 			GetServiceData(1);
 		} else {
 			try {
@@ -473,9 +483,10 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					@Override
 					public void run() {
 						// execute the task
+//						GetServiceData(isLastisNext);
 						GetServiceData(1);
 					}
-				}, 10000);
+				}, 5000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block

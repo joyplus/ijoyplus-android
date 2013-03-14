@@ -27,6 +27,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -176,7 +177,8 @@ public class Detail_TV extends Activity {
 
 		InitTVButtom();
 		if (prod_id != null)
-			GetServiceData();
+			CheckSaveData();
+//			GetServiceData();
 	}
 
 	public void InitTVButtom() {
@@ -582,7 +584,10 @@ public class Detail_TV extends Activity {
 		try {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
-
+			if(m_ReturnProgramView != null&&prod_id!=null)
+			{
+				app.SaveServiceData(prod_id, json.toString());//根据id保存住
+			}
 			// 创建数据源对象
 			InitData();
 			aq.id(R.id.ProgressText).gone();
@@ -602,7 +607,43 @@ public class Detail_TV extends Activity {
 		}
 
 	}
+	
+	private void CheckSaveData() {
+		String SaveData = null;
+		ObjectMapper mapper = new ObjectMapper();
+		SaveData = app.GetServiceData(prod_id);
+		if (SaveData == null) {
+			GetServiceData();
+		} else {
+			try {
+				m_ReturnProgramView = mapper.readValue(SaveData, ReturnProgramView.class);
+				// 创建数据源对象
+				// 创建数据源对象
+				InitData();
+				aq.id(R.id.ProgressText).gone();
+				aq.id(R.id.scrollView1).visible();
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						GetServiceData();
+					}
+				}, 10000);
 
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+	
 	// InitListData
 	public void GetServiceData() {
 		String url = Constant.BASE_URL + "program/view?prod_id=" + prod_id;

@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,6 +45,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
+import com.joyplus.Service.Return.ReturnTops;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
 import com.joyplus.Video.VideoPlayerActivity;
@@ -127,7 +129,8 @@ public class Detail_Movie extends Activity {
 				R.drawable.tab2_video_8);
 
 		if (prod_id != null)
-			GetServiceData();
+			CheckSaveData();
+//			GetServiceData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -545,6 +548,10 @@ public class Detail_Movie extends Activity {
 		try {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
+			if(m_ReturnProgramView != null&&prod_id!=null)
+			{
+				app.SaveServiceData(prod_id, json.toString());//根据id保存住
+			}
 			// 创建数据源对象
 			InitData();
 			aq.id(R.id.ProgressText).gone();
@@ -561,7 +568,43 @@ public class Detail_Movie extends Activity {
 		}
 
 	}
+	
+	private void CheckSaveData() {
+		String SaveData = null;
+		ObjectMapper mapper = new ObjectMapper();
+		SaveData = app.GetServiceData(prod_id);
+		if (SaveData == null) {
+			GetServiceData();
+		} else {
+			try {
+				m_ReturnProgramView = mapper.readValue(SaveData, ReturnProgramView.class);
+				// 创建数据源对象
+				// 创建数据源对象
+				InitData();
+				aq.id(R.id.ProgressText).gone();
+				aq.id(R.id.scrollView1).visible();
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						GetServiceData();
+					}
+				}, 10000);
 
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+	
 	// InitListData
 	public void GetServiceData() {
 		String url = Constant.BASE_URL + "program/view?prod_id=" + prod_id;
@@ -592,14 +635,11 @@ public class Detail_Movie extends Activity {
 					app.MyToast(this, "收藏成功!");
 				} else
 					app.MyToast(this, "已收藏!");
-				// Toast.makeText(Detail_Movie.this,json.getString("res_code"),Toast.LENGTH_LONG).show();
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		} else {
-
 			// ajax error, show error code
 			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
 				app.MyToast(aq.getContext(),
