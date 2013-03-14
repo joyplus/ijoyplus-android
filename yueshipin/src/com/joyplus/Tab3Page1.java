@@ -309,7 +309,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			aq.id(R.id.imageNoitemBG).gone();
 			aq.id(R.id.Layout1).visible();
 		}
-
 	}
 
 	private void OnDeleteListItem(final int item) {
