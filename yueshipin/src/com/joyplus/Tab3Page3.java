@@ -49,7 +49,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	private ListView ItemsListView;
 	private Tab3Page3ListAdapter Tab3Page3Adapter;
 	private int isLastisNext = 1;
-	private boolean flag = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +99,10 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 				return true;// 如果返回false那么onItemClick仍然会被调用
 			}
 		});
-//		dataStruct = new ArrayList();
-//		Tab3Page3Adapter = new Tab3Page3ListAdapter();
-//		ItemsListView.setAdapter(Tab3Page3Adapter);
-//		CheckSaveData();
+		dataStruct = new ArrayList();
+		Tab3Page3Adapter = new Tab3Page3ListAdapter();
+		ItemsListView.setAdapter(Tab3Page3Adapter);
+		CheckSaveData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -126,20 +125,11 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(flag = false)
-		{
-			CheckSaveData();
-			flag = true;
-		}
-		else
-		{
-			dataStruct = new ArrayList();
-			Tab3Page3Adapter = new Tab3Page3ListAdapter();
-			ItemsListView.setAdapter(Tab3Page3Adapter);
-			isLastisNext = 1;
-			GetServiceData(isLastisNext);
-		}
-		
+		dataStruct = new ArrayList();
+		Tab3Page3Adapter = new Tab3Page3ListAdapter();
+		ItemsListView.setAdapter(Tab3Page3Adapter);
+		isLastisNext = 1;
+		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
 	}
 
@@ -180,12 +170,9 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 					}
 				}
 			}
-			if(dataStruct.contains(m_Tab3Page3ListData))
-			{
-				
-			}
-			else
-			{
+			if (dataStruct.contains(m_Tab3Page3ListData)) {
+
+			} else {
 				dataStruct.add(m_Tab3Page3ListData);
 			}
 		}
@@ -234,7 +221,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	// listview的点击事件接口函数
@@ -253,7 +239,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		cb.header("app_key", Constant.APPKEY);
 		cb.header("user_id", app.UserID);
 		aq.ajax(cb);
-		flag = false;
 	}
 
 	/*
@@ -276,7 +261,7 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 						// execute the task
 						GetServiceData(1);
 					}
-				}, 2000);
+				}, 10000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block

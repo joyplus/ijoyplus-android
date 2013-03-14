@@ -13,9 +13,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AbsListView.OnScrollListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -38,7 +40,7 @@ public class Tab2Page1 extends Activity implements
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private Tab2Page1ListAdapter Tab2Page1Adapter;
-	
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +48,7 @@ public class Tab2Page1 extends Activity implements
 		setContentView(R.layout.tab2page1);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-		// 获取listview对象
+		// »ñÈ¡listview¶ÔÏó
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
@@ -158,7 +160,7 @@ public class Tab2Page1 extends Activity implements
 			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
 			if (m_ReturnTops.tops.length > 0)
 				app.SaveServiceData("tv_tops", json.toString());
-			// 创建数据源对象
+			// ´´½¨Êý¾ÝÔ´¶ÔÏó
 			GetVideoMovies();
 			aq.id(R.id.ProgressText).gone();
 		} catch (JsonParseException e) {
@@ -259,16 +261,16 @@ public class Tab2Page1 extends Activity implements
 	public void GetServiceData() {
 		String url = Constant.BASE_URL + "tv_tops";
 
-		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
+	AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+	cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+	cb.header("User-Agent",
+			"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+	cb.header("app_key", Constant.APPKEY);
+	cb.header("user_id", app.UserID);
 
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+	aq.id(R.id.ProgressText).visible();
+	aq.progress(R.id.progress).ajax(cb);
 
-	}
+}
 }
