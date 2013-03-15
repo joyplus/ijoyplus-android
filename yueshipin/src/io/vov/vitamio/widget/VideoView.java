@@ -794,7 +794,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 				builder.setTitle("请选择你的设备：");
-				builder.setItems(items, new DialogInterface.OnClickListener() {
+				builder.setSingleChoiceItems(items, 0,new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int item) {
 						if (item > 0) {
 							ArrayList<MediaRenderer> mDmrCache = mMyService

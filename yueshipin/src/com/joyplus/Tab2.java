@@ -51,7 +51,7 @@ public class Tab2 extends ActivityGroup {
 	}
 
 	class myPagerView extends PagerAdapter {
-		// ��ʾ��Ŀ
+		// ??????
 		@Override
 		public int getCount() {
 			return pageViews.size();

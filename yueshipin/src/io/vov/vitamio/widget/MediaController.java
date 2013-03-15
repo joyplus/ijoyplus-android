@@ -77,7 +77,7 @@ import android.widget.TextView;
  * Functions like show() and hide() have no effect when MediaController is
  * created in an xml layout.
  */
-public class MediaController extends FrameLayout {
+public class MediaController extends FrameLayout  {
 	private MediaPlayerControl mPlayer;
 	private ReturnProgramView m_ReturnProgramView = null;
 	private Context mContext;
@@ -131,6 +131,8 @@ public class MediaController extends FrameLayout {
 	private int CurrentIndex = 0;
 	private int CurrentSource = 0;
 	private int CurrentQuality = 0;
+	
+	private boolean DLNAMODE = false;
 	
 
 	public MediaController(Context context, AttributeSet attrs) {
@@ -768,8 +770,8 @@ public class MediaController extends FrameLayout {
 				long pos = 1000L * position / duration;
 				mSeekBar.setProgress((int) pos);
 			}
-			int percent = mPlayer.getBufferPercentage();
-			mSeekBar.setSecondaryProgress(percent * 10);
+//			int percent = mPlayer.getBufferPercentage();
+//			mSeekBar.setSecondaryProgress(percent * 10);
 		}
 
 		mDuration = duration;
@@ -838,6 +840,7 @@ public class MediaController extends FrameLayout {
 				mPlayer.pause();
 				updatePausePlay();
 			}
+			DLNAMODE = true;
 			mPlayer.gotoDlnaVideoPlay();
 			// doPauseResume();
 			// show(sDefaultTimeout);
@@ -847,7 +850,10 @@ public class MediaController extends FrameLayout {
 	private View.OnClickListener mReturnListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			mPlayer.OnComplete();
+			if(DLNAMODE)
+				DLNAMODE = false;
+			else
+				mPlayer.OnComplete();
 		}
 	};
 	private View.OnClickListener mReduceListener = new View.OnClickListener() {

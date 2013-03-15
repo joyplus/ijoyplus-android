@@ -124,6 +124,17 @@
                 android:text="正在载入笑傲江湖第五集"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/textViewRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:gravity="right"
+                android:minEms="5"
+                android:text="100kb/s"
+                android:textColor="@color/grey" />
+
         </LinearLayout>
 
         <TextView
