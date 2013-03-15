@@ -1007,31 +1007,31 @@ public class MediaController extends FrameLayout {
 	private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
 		@Override
 		public void onStartTrackingTouch(SeekBar bar) {
-//			mDragging = true;
-//			show(3600000);
-//			mHandler.removeMessages(SHOW_PROGRESS);
-//			if (mInstantSeeking)
-//				mAM.setStreamMute(AudioManager.STREAM_MUSIC, true);
-//			if (mInfoView != null) {
-//				mInfoView.setText("");
-//				mInfoView.setVisibility(View.VISIBLE);
-//			}
+			mDragging = true;
+			show(3600000);
+			mHandler.removeMessages(SHOW_PROGRESS);
+			if (mInstantSeeking)
+				mAM.setStreamMute(AudioManager.STREAM_MUSIC, true);
+			if (mInfoView != null) {
+				mInfoView.setText("");
+				mInfoView.setVisibility(View.VISIBLE);
+			}
 		}
 
 		@Override
 		public void onProgressChanged(SeekBar bar, int progress,
 				boolean fromuser) {
-//			if (!fromuser)
-//				return;
-//
-//			long newposition = (mDuration * progress) / 1000;
-//			String time = StringUtils.generateTime(newposition);
-//			if (mInstantSeeking)
-//				mPlayer.seekTo(newposition);
-//			if (mInfoView != null)
-//				mInfoView.setText(time);
-//			if (mCurrentTime != null)
-//				mCurrentTime.setText(time);
+			if (!fromuser)
+				return;
+
+			long newposition = (mDuration * progress) / 1000;
+			String time = StringUtils.generateTime(newposition);
+			if (mInstantSeeking)
+				mPlayer.seekTo(newposition);
+			if (mInfoView != null)
+				mInfoView.setText(time);
+			if (mCurrentTime != null)
+				mCurrentTime.setText(time);
 		}
 
 		@Override

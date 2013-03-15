@@ -786,22 +786,25 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	public void gotoDlnaVideoPlay() {
 		if (mMyService != null) {
 			ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
-			if (mDmrCache.size() > 0) {
-				CharSequence[] items = new String[mDmrCache.size()];
+			if (mDmrCache.size() >= 0) {
+				CharSequence[] items = new String[mDmrCache.size() + 1];
+				items[0] = "我的设备";
 				for (int i = 0; i < mDmrCache.size(); i++)
-					items[i] = mDmrCache.get(i).friendlyName;
+					items[i + 1] = mDmrCache.get(i).friendlyName;
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 				builder.setTitle("请选择你的设备：");
 				builder.setItems(items, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int item) {
-						ArrayList<MediaRenderer> mDmrCache = mMyService
-								.getDmrCache();
-						MediaRenderer mMediaRenderer = mDmrCache.get(item);
-						mMyService.SetCurrentDevice(item + 1);
-						if (mMediaRenderer != null && mDmrCache != null
-								&& mDmrCache.size() == 1) {
-							gotoDlnaVideoPlay2();
+						if (item > 0) {
+							ArrayList<MediaRenderer> mDmrCache = mMyService
+									.getDmrCache();
+							MediaRenderer mMediaRenderer = mDmrCache
+									.get(item - 1);
+							mMyService.SetCurrentDevice(item);
+							if (mMediaRenderer != null) {
+								gotoDlnaVideoPlay2();
+							}
 						}
 					}
 				});
@@ -811,24 +814,18 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				lp.alpha = 0.6f;
 				window.setAttributes(lp);
 				alert.show();
-			} else {
-				AlertDialog alertDialog = new AlertDialog.Builder(mContext).setMessage(
-						"正在搜索设备 ...").create();
-				Window window = alertDialog.getWindow();
-				WindowManager.LayoutParams lp = window.getAttributes();
-				lp.alpha = 0.6f;
-				window.setAttributes(lp);
-				alertDialog.show();
 			}
-		}else {
-			AlertDialog alertDialog = new AlertDialog.Builder(mContext).setMessage(
-					"正在搜索设备 ...").create();
-			Window window = alertDialog.getWindow();
-			WindowManager.LayoutParams lp = window.getAttributes();
-			lp.alpha = 0.6f;
-			window.setAttributes(lp);
-			alertDialog.show();
 		}
+		// else {
+		// AlertDialog alertDialog = new
+		// AlertDialog.Builder(mContext).setMessage(
+		// "正在搜索设备 ...").create();
+		// Window window = alertDialog.getWindow();
+		// WindowManager.LayoutParams lp = window.getAttributes();
+		// lp.alpha = 0.6f;
+		// window.setAttributes(lp);
+		// alertDialog.show();
+		// }
 	}
 	
 	private void gotoDlnaVideoPlay2() {
