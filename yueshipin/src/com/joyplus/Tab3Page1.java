@@ -258,12 +258,9 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	public void GetVideoMovies() {
-		// String m_j = null;
-
 		if (m_ReturnUserPlayHistories.histories == null) {
 			if (isLastisNext == 1) {
 				aq.id(R.id.imageNoitemBG).visible();
