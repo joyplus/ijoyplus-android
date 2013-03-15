@@ -342,21 +342,21 @@ public class Video_Cache_Detail extends Activity {
 	public void autoDownloadFile() {
 		if (Dao.getInstance(Video_Cache_Detail.this).isHasInforsDownloading(
 				"downloading")) {
-			for (int i = 0; i < data.size(); i++) {
-				if (data.get(i).getState().equalsIgnoreCase("wait")) {
-					DownloadInfo infos = data.get(i);
-					String localfile = Constant.PATH_VIDEO + infos.getProdId()
-							+ "_" + infos.getIndex() + ".mp4";
-					// 点击后就开始下载这个item里面的内容
-					DownloadTask downloadtask = new DownloadTask(tempview,
-							activity, context, infos.getProdId(),
-							infos.getIndex(), infos.getUrl(), localfile);
-					downloadtask.execute(infos.getProdId(), infos.getIndex(),
-							infos.getUrl(), infos.getPoster(), infos.getName(),
-							infos.getState());
-					break;
-				}
+			
+			if(Dao.getInstance(Video_Cache_Detail.this).getOneStateInfo("wait")!=null)
+			{
+				DownloadInfo infos = Dao.getInstance(Video_Cache_Detail.this).getOneStateInfo("wait");
+				String localfile = Constant.PATH_VIDEO + infos.getProdId()
+						+ "_" + infos.getIndex() + ".mp4";
+				// 点击后就开始下载这个item里面的内容
+				DownloadTask downloadtask = new DownloadTask(tempview,
+						activity, context, infos.getProdId(),
+						infos.getIndex(), infos.getUrl(), localfile);
+				downloadtask.execute(infos.getProdId(), infos.getIndex(),
+						infos.getUrl(), infos.getPoster(), infos.getName(),
+						infos.getState());
 			}
+			
 		}
 	}
 
