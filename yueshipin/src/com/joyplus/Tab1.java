@@ -56,7 +56,6 @@ public class Tab1 extends Activity implements
 		UmengUpdateAgent.setUpdateOnlyWifi(false);
 		UmengUpdateAgent.setOnDownloadListener(null);
 		UmengUpdateAgent.update(this);
-//		Parse.initialize(this, "Your Application Id", "Your Client Key");
 		Parse.initialize(this, "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB", "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl");
 		
 		// 获取listview对象

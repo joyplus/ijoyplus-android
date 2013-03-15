@@ -40,8 +40,7 @@ public class Tab2Page1 extends Activity implements
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private Tab2Page1ListAdapter Tab2Page1Adapter;
-
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,7 +51,26 @@ public class Tab2Page1 extends Activity implements
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
-//		ItemsListView.setOnScrollListener(new )
+		ItemsListView.setOnScrollListener(new OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				switch (scrollState) {
+				// 当不滚动时
+				case OnScrollListener.SCROLL_STATE_IDLE:
+					// 判断滚动到底部
+					if (view.getFirstVisiblePosition() == 0) {
+						GetServiceData();
+					}
+					break;
+				}
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+
+			}
+		});
 		CheckSaveData();
 	}
 
@@ -139,13 +157,7 @@ public class Tab2Page1 extends Activity implements
 	}
 
 	public void OnClickImageView(View v) {
-		/*
-		 * Intent intent = new Intent(this, BuChongGeRenZhiLiao.class);
-		 * intent.putExtra("prod_id", m_prod_id); intent.putExtra("prod_type",
-		 * m_prod_type); try { startActivity(intent); } catch
-		 * (ActivityNotFoundException ex) { Log.e(TAG,
-		 * "OnClickImageView failed", ex); }
-		 */
+	
 	}
 
 	// 初始化list数据函数
@@ -161,7 +173,7 @@ public class Tab2Page1 extends Activity implements
 			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
 			if (m_ReturnTops.tops.length > 0)
 				app.SaveServiceData("tv_tops", json.toString());
-			// ´´½¨Êý¾ÝÔ´¶ÔÏó
+			//创建视频源
 			GetVideoMovies();
 			aq.id(R.id.ProgressText).gone();
 		} catch (JsonParseException e) {
@@ -260,7 +272,7 @@ public class Tab2Page1 extends Activity implements
 
 	// InitListData
 	public void GetServiceData() {
-		String url = Constant.BASE_URL + "tv_tops";
+	String url = Constant.BASE_URL + "tv_tops";
 
 	AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 	cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
