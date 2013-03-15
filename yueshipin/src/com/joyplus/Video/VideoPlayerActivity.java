@@ -234,6 +234,8 @@ public class VideoPlayerActivity extends Activity implements
 			 * 取得播放时间,设置播放时间,进行播放
 			 */
 			mVideoView.resume();
+			if (play_current_time > 0)//当用户点击home键以后要回来就得调用这个
+				mVideoView.seekTo(play_current_time);
 		}
 
 	}
