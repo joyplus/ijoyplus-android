@@ -173,6 +173,12 @@ public class Downloader {
 				while ((length = inputstream.read(buffer)) != -1) {
 					randomAccessFile.write(buffer, 0, length);
 					compeleteSize += length;
+					if(compeleteSize<fileSize/1000)
+					{
+						Intent intent = new Intent();
+						intent.setAction("UpdateProgressUI");
+						context.sendBroadcast(intent);
+					}
 					if(((long)compeleteSize*100/fileSize-percent) > 0.5)
 					{
 						percent = (long)compeleteSize*100/fileSize;

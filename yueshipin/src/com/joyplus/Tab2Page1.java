@@ -52,6 +52,7 @@ public class Tab2Page1 extends Activity implements
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
+//		ItemsListView.setOnScrollListener(new )
 		CheckSaveData();
 	}
 

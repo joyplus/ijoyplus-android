@@ -175,9 +175,12 @@ public class Tab1 extends Activity implements
 				Tab1Adapter.notifyDataSetChanged();
 			}
 			return;
-
+			
 		} else
+		{
 			NotifyDataAnalysisFinished();
+		}
+		
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 			Tab1ListData m_Tab1ListData = new Tab1ListData();
 			m_Tab1ListData.Pic_ID = m_ReturnTops.tops[i].id;
