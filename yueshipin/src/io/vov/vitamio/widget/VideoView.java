@@ -178,6 +178,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			boolean full = layout == VIDEO_LAYOUT_STRETCH;
 			lp.width = (full || windowRatio < videoRatio) ? windowWidth : (int) (videoRatio * windowHeight);
 			lp.height = (full || windowRatio > videoRatio) ? windowHeight : (int) (windowWidth / videoRatio);
+
 		}
 		setLayoutParams(lp);
 		getHolder().setFixedSize(mSurfaceWidth, mSurfaceHeight);
@@ -873,8 +874,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			}
 			mLayoutBG.setVisibility(View.VISIBLE);
 		}
-//		setVideoPath(path);
-		setVideoPath(app.getURLPath());
+		setVideoPath(path);
+//		setVideoPath(app.getURLPath());
 	}
 	
 	@Override
