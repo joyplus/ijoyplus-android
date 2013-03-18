@@ -190,7 +190,8 @@ public class VideoPlayerActivity extends Activity implements
 			}
 
 		}
-
+		mVideoView.setApp(app);
+	
 		mVideoView.setVideoPath(mPath);
 		//
 		mVideoView.setOnCompletionListener(this);
@@ -241,7 +242,8 @@ public class VideoPlayerActivity extends Activity implements
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 		
-		mPath = bundle.getString("path");
+//		mPath = bundle.getString("path");
+		mPath = app.getURLPath();
 		mTitle = bundle.getString("title");
 		playProdName = mTitle;
 		playVideoUrl = mPath;
@@ -267,6 +269,8 @@ public class VideoPlayerActivity extends Activity implements
 			}
 			
 		}
+		if( playProdType == 1)
+			aq.id(R.id.imageButton6).gone();
 	}
 
 	@Override

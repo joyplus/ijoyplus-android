@@ -63,6 +63,8 @@ public class App extends Application {
 	public boolean use2G3G = false;
 	private String mURLPath;
 
+
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -145,7 +147,9 @@ public class App extends Application {
 	public void setWeiboDialogListener(WeiboDialogListener WeiboDialogListener) {
 		this.WeiboDialogListener = WeiboDialogListener;
 	}
-
+	public String getURLPath() {
+		return mURLPath;
+	}
 	
 	public boolean IfSupportFormat(String Url) {
 		/*

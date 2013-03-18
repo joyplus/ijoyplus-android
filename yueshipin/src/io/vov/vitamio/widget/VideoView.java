@@ -76,6 +76,7 @@ import android.widget.TextView;
  */
 public class VideoView extends SurfaceView implements MediaController.MediaPlayerControl {
 	private String TAG = "VideoView";
+	private App app;
 	private Uri mUri;
 	private String mTitle;
 	private long mDuration;
@@ -202,10 +203,12 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	public boolean isValid() {
 		return (mSurfaceHolder != null && mSurfaceHolder.getSurface().isValid());
 	}
-
+	public void setApp(App app){
+		this.app = app;
+	}
 	public void setVideoPath(String path) {
-		Uri uri = Uri.parse(path);
-		setVideoURI(uri);
+			Uri uri = Uri.parse(path);
+			setVideoURI(uri);
 	}
 
 	public void setVideoURI(Uri uri) {
@@ -242,8 +245,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		try {
 			mDuration = -1;
 			mCurrentBufferPercentage = 0;
-			mMediaPlayer = new MediaPlayer(mContext,true);
-//			mMediaPlayer = new MediaPlayer(mContext);
+//			mMediaPlayer = new MediaPlayer(mContext,true);
+			mMediaPlayer = new MediaPlayer(mContext);
 			mMediaPlayer.setOnPreparedListener(mPreparedListener);
 			mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
 			mMediaPlayer.setOnCompletionListener(mCompletionListener);
