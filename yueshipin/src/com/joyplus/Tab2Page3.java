@@ -29,8 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab2Page3ListAdapter;
 import com.joyplus.Adapters.Tab2Page3ListData;
 import com.joyplus.Service.Return.ReturnTops;
-import com.joyplus.widget.PullToRefreshListView;
-import com.joyplus.widget.PullToRefreshListView.OnRefreshListener;
+import com.joyplus.widget.MyListView;
+import com.joyplus.widget.MyListView.OnRefreshListener;
 
 public class Tab2Page3 extends Activity implements
 		android.widget.AdapterView.OnItemClickListener {
@@ -41,7 +41,7 @@ public class Tab2Page3 extends Activity implements
 
 	private ArrayList dataStruct;
 	// private ListView ItemsListView;
-	private PullToRefreshListView ItemsListView;
+	private MyListView ItemsListView;
 	private Tab2Page3ListAdapter Tab2Page3Adapter;
 
 	@Override
@@ -51,17 +51,13 @@ public class Tab2Page3 extends Activity implements
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		// 获取listview对象
-		ItemsListView = (PullToRefreshListView) findViewById(R.id.listView1);
+		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
-		ItemsListView.setOnRefreshListener(new OnRefreshListener() {
-
-			@Override
+		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
-				// TODO Auto-generated method stub
 				new GetDataTask().execute();
-			}
-		});
+		}});
 		CheckSaveData();
 	}
 
@@ -80,10 +76,8 @@ public class Tab2Page3 extends Activity implements
 
 		@Override
 		protected void onPostExecute(String[] result) {
-			// ((PullToRefreshListView)
-			// ItemsListView).addFirst("Added after refresh...");
+			
 			ItemsListView.onRefreshComplete();
-//			GetServiceData();
 			super.onPostExecute(result);
 		}
 	}
