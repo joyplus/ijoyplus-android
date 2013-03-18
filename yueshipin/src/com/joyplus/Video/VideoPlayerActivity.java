@@ -243,8 +243,8 @@ public class VideoPlayerActivity extends Activity implements
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 		
-//		mPath = bundle.getString("path");
-		mPath = app.getURLPath();
+		mPath = bundle.getString("path");
+//		mPath = app.getURLPath();
 		mTitle = bundle.getString("title");
 		playProdName = mTitle;
 		playVideoUrl = mPath;
