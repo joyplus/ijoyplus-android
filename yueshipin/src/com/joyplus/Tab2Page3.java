@@ -40,7 +40,6 @@ public class Tab2Page3 extends Activity implements
 	private ReturnTops m_ReturnTops = null;
 
 	private ArrayList dataStruct;
-	// private ListView ItemsListView;
 	private MyListView ItemsListView;
 	private Tab2Page3ListAdapter Tab2Page3Adapter;
 
@@ -56,6 +55,7 @@ public class Tab2Page3 extends Activity implements
 		ItemsListView.setOnItemClickListener(this);
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
+				GetServiceData();
 				new GetDataTask().execute();
 		}});
 		CheckSaveData();
@@ -78,6 +78,7 @@ public class Tab2Page3 extends Activity implements
 		protected void onPostExecute(String[] result) {
 			
 			ItemsListView.onRefreshComplete();
+			Tab2Page3Adapter.notifyDataSetChanged();
 			super.onPostExecute(result);
 		}
 	}
@@ -244,13 +245,13 @@ public class Tab2Page3 extends Activity implements
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData();
-					}
-				}, 200000);
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						GetServiceData();
+//					}
+//				}, 10000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
@@ -280,6 +281,5 @@ public class Tab2Page3 extends Activity implements
 
 		aq.id(R.id.ProgressText).visible();
 		aq.progress(R.id.progress).ajax(cb);
-
 	}
 }

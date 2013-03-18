@@ -41,7 +41,6 @@ public class Tab2Page1 extends Activity implements
 
 	private int Fromepage;
 	private ArrayList dataStruct;
-//	private ListView ItemsListView;
 	private MyListView ItemsListView;
 	private Tab2Page1ListAdapter Tab2Page1Adapter;
 	
@@ -53,10 +52,10 @@ public class Tab2Page1 extends Activity implements
 		aq = new AQuery(this);
 		// »ñÈ¡listview¶ÔÏó
 		ItemsListView = (MyListView)findViewById(R.id.listView1);
-		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
+				GetServiceData();
 				new GetDataTask().execute();
 		}});
 		CheckSaveData();
@@ -78,6 +77,7 @@ public class Tab2Page1 extends Activity implements
 	        @Override
 	        protected void onPostExecute(String[] result) {
 	        	ItemsListView.onRefreshComplete();
+	        	Tab2Page1Adapter.notifyDataSetChanged();
 	            super.onPostExecute(result);
 	        }
 	    }
@@ -257,13 +257,13 @@ public class Tab2Page1 extends Activity implements
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData();
-					}
-				}, 100000);
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						GetServiceData();
+//					}
+//				}, 100000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block

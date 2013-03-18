@@ -58,6 +58,7 @@ public class Tab2Page2 extends Activity implements
 		ItemsListView.setOnItemClickListener(this);
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
+				GetServiceData();
 				new GetDataTask().execute();
 		}});
 		CheckSaveData();
@@ -79,6 +80,7 @@ public class Tab2Page2 extends Activity implements
 		@Override
 		protected void onPostExecute(String[] result) {
 			ItemsListView.onRefreshComplete();
+			Tab2Page2Adapter.notifyDataSetChanged();
 			super.onPostExecute(result);
 		}
 	}
@@ -267,13 +269,13 @@ public class Tab2Page2 extends Activity implements
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData();
-					}
-				}, 150000);
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						GetServiceData();
+//					}
+//				}, 10000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
