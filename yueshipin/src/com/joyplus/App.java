@@ -415,6 +415,7 @@ public class App extends Application {
 					simulateFirfoxRequest(userAgent,location , list);
 				} else {
 					//如果地址真的不存在，那就往里面加NULL字符串
+					mAndroidHttpClient.close();
 					list.add("NULL");
 				}
 				
