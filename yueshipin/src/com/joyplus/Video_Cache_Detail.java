@@ -163,14 +163,16 @@ public class Video_Cache_Detail extends Activity {
 					bundle.putString("path", localfile);
 					bundle.putString("title", info.getName());
 					bundle.putString("prod_id", info.getProdId());
-					bundle.putString("prod_subname", info.getIndex());
+					
 					if(info.getIndex().contains("_tv"))
 					{
 						bundle.putString("prod_type", "3");
+						bundle.putString("prod_subname", info.getIndex());//???
 					}
 					else
 					{
 						bundle.putString("prod_type", "2");
+						bundle.putString("prod_subname","第"+ info.getIndex() + "集"); // yu 
 					}
 					bundle.putLong("current_time", 0);
 					intent.putExtras(bundle);

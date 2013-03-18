@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="right"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" 
+    >
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
@@ -18,7 +17,10 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="热血高校2"
+            android:text="热血高校热血高校热血高校"
+             android:ellipsize="end"
+              android:singleLine="true"
+              android:maxEms = "9"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
 
@@ -31,6 +33,7 @@
             android:layout_marginLeft="12dp"
             android:background="@drawable/player_back" />
 
+        
         <ImageButton
             android:id="@+id/imageButton6"
             android:layout_width="wrap_content"
@@ -39,10 +42,30 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:background="@drawable/player_select" />
+
+         <ImageView
+            android:id="@+id/imageView33"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+           
+            android:layout_toLeftOf="@+id/textViewDownloadRate"
+			android:background="@drawable/video_download_rate"/>
+        <TextView
+            android:id="@+id/textViewDownloadRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/imageButton6"
+             android:layout_marginRight="4dp"
+            android:text="100k/s"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/grey" />
+
     </RelativeLayout>
 
     <RelativeLayout
-         android:id="@+id/relativeLayoutBottom"
+        android:id="@+id/relativeLayoutBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -59,24 +82,23 @@
             android:text="00:00"
             android:textColor="@color/white" />
 
-  <SeekBar
-      android:id="@+id/mediacontroller_seekbar"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="10dp"
-      android:layout_marginRight="10dp"
-      android:layout_marginTop="12dp"
-      android:layout_toLeftOf="@+id/mediacontroller_time_total"
-      android:layout_toRightOf="@+id/mediacontroller_time_current"
-      android:focusable="true"
-      android:indeterminateOnly="false"
-      android:max="1000"
-      android:progressDrawable="@drawable/player_seekbar_img"
-      android:secondaryProgress="0"
-      android:thumb="@drawable/player_seekbar_thumb"
-      android:paddingLeft="7dp"
-		android:thumbOffset="6dp"
-     />
+        <SeekBar
+            android:id="@+id/mediacontroller_seekbar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="12dp"
+            android:layout_toLeftOf="@+id/mediacontroller_time_total"
+            android:layout_toRightOf="@+id/mediacontroller_time_current"
+            android:focusable="true"
+            android:indeterminateOnly="false"
+            android:max="1000"
+            android:paddingLeft="7dp"
+            android:progressDrawable="@drawable/player_seekbar_img"
+            android:secondaryProgress="0"
+            android:thumb="@drawable/player_seekbar_thumb"
+            android:thumbOffset="6dp" />
 
         <TextView
             android:id="@+id/mediacontroller_time_total"
@@ -157,8 +179,8 @@
         android:layout_marginBottom="35dp"
         android:text="正在载入笑傲江湖第五集，请稍后 ..."
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/white" 
-        android:visibility="gone"/>
+        android:textColor="@color/white"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/textView2"
@@ -168,88 +190,93 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
         android:text="上次播放到 00:43:23"
-        android:textColor="@color/grey" 
-         android:visibility="gone"/>
+        android:textColor="@color/grey"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/relativeLayoutBottomRight"
-        android:layout_width="202dp"
-        android:layout_height="105dp"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="41dp"
         android:layout_marginRight="14dp"
-        android:background="@drawable/player_clarity_bg"
-        android:orientation="horizontal"
-         android:visibility="gone" >
+        android:background="@drawable/player_clarity_bg" 
+        android:visibility="gone" 
+        >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="9dp"
-        android:layout_marginTop="9dp"
-        android:text="请选择影片清晰度:"
-        android:textColor="@color/white" />
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="9dp"
+            android:layout_marginTop="9dp"
+            android:text="请选择影片清晰度:"
+            android:textColor="@color/white" />
 
-<RadioGroup
-    android:id="@+id/radioGroup1"
-    android:layout_width="match_parent"
-    android:layout_height="57dp"
-    android:layout_below="@+id/textView1"
-    android:layout_marginLeft="4dp"
-    android:layout_marginTop="5dp"
-    android:background="@drawable/player_clarity_btn_bg"
-    android:orientation="horizontal" >
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="192dp"
+            android:layout_height="57dp"
+            android:layout_below="@+id/textView1"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/player_clarity_btn_bg"
+            android:orientation="horizontal" >
 
-        <RadioButton
-            android:id="@+id/radio0"
-            android:layout_width="64dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/player_b_puqing"
+            <RadioButton
+                android:id="@+id/radio0"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/player_b_puqing"
             android:button="@null"
-            android:checked="true"
-            android:gravity="bottom|center_horizontal" />
+                android:checked="true"
+               />
 
-        <RadioButton
-            android:id="@+id/radio1"
-            android:layout_width="64dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/player_b_gaoqing"
-            android:button="@null" 
-             android:gravity="bottom|center_horizontal"/>
+            <RadioButton
+                android:id="@+id/radio1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/player_b_gaoqing"
+            android:button="@null"
+               />
 
-        <RadioButton
-            android:id="@+id/radio2"
-            android:layout_width="64dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/player_b_chaoqing"
-            android:button="@null" 
-             android:gravity="bottom|center_horizontal"/>
-    </RadioGroup>
-</RelativeLayout>
-<RelativeLayout
-     android:id="@+id/relativeLayoutTopRight"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-     android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-    android:paddingRight="4dp"
-    android:background="@drawable/player_jishu_shang"
-    android:orientation="horizontal" 
-    android:visibility="gone">
+            <RadioButton
+                android:id="@+id/radio2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                  android:layout_weight="1"
+                android:background="@drawable/player_b_chaoqing"
+            android:button="@null"
+                />
+        </RadioGroup>
+    </RelativeLayout>
 
-    <ListView
-        android:id="@+id/listView1"
-        android:layout_width="97dp"
+    <RelativeLayout
+        android:id="@+id/relativeLayoutTopRight"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:divider="@drawable/player_fen_ge_xian"
-        android:layout_marginTop="10dp" >
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="35dp"
+        android:visibility="gone" 
+        android:background="@drawable/player_jishu_shang"
+        >
 
-    </ListView>
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:divider="@drawable/player_fen_ge_xian"
+            android:minHeight="37dp" >
+        </ListView>
+    </RelativeLayout>
 
-</RelativeLayout>
 </RelativeLayout>

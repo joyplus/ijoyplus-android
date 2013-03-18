@@ -434,7 +434,9 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		bundle.putString("path", m_uri);
 		bundle.putString("title", title);
 		bundle.putString("prod_id", prod_id);
-		bundle.putString("prod_subname", tempPlayHistoryData.Pro_name1);
+		if(!tempPlayHistoryData.Pro_name1.equalsIgnoreCase("EMPTY")){
+			bundle.putString("prod_subname", tempPlayHistoryData.Pro_name1);
+		}
 		bundle.putString("prod_type",
 				Integer.toString(tempPlayHistoryData.Pro_type));
 		bundle.putLong("current_time", current_play_time);

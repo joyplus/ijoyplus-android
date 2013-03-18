@@ -35,6 +35,7 @@ import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.media.AudioManager;
+import android.net.TrafficStats;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -54,17 +55,20 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class VideoPlayerActivity extends Activity implements
 		OnCompletionListener {
-
+	private String TAG = "VideoPlayerActivity";
 	private AQuery aq;
 	private App app;
 	private ReturnProgramView m_ReturnProgramView = null;
 	private String mPath;
 	private String mTitle;
-	private String prod_id;
+//	private String prod_id;
+//	private String subName;
 	private boolean checkBind = false;
+	private boolean isShowingDLNA = false;
 	private VideoView mVideoView;
 	private View mVolumeBrightnessLayout;
 	private ImageView mOperationBg;
@@ -88,6 +92,10 @@ public class VideoPlayerActivity extends Activity implements
 	private MediaController mMediaController;
 
 	private DlnaSelectDevice mMyService;
+	private Handler mHandler = new Handler();
+	private long mStartRX = 0;
+	private long mStartTX = 0;
+
 
 	/*
 	 * playHistoryData
@@ -119,10 +127,12 @@ public class VideoPlayerActivity extends Activity implements
 
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
-		InitPlayData();
+		
 		setContentView(R.layout.videoview);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		
+		InitPlayData();
 		// 每次播放时及时把播放的flag清除为0
 		if (app.use2G3G) {
 			app.use2G3G = false;
@@ -143,25 +153,59 @@ public class VideoPlayerActivity extends Activity implements
 		mRelativeLayoutBG.setVisibility(View.VISIBLE);
 		mVideoView.setLayoutBG(mRelativeLayoutBG);
 
-		if (mTitle != null && mTitle.length() > 0) {
-			aq.id(R.id.mediacontroller_file_name).text(mTitle);
-			aq.id(R.id.textView1).text("正在载入 " + mTitle + "，请稍后 ...");
-		}
-		if (prod_id != null)
-			GetServiceData();
+		app = (App) getApplication();
+		aq = new AQuery(this);
 
-		if (mPath.startsWith("http:") || mPath.startsWith("https:"))
-			mVideoView.setVideoURI(Uri.parse(mPath));
-		else
-			mVideoView.setVideoPath(mPath);
+		mStartRX = TrafficStats.getTotalRxBytes();
+		mStartTX = TrafficStats.getTotalTxBytes();
+		if (mStartRX == TrafficStats.UNSUPPORTED
+				|| mStartTX == TrafficStats.UNSUPPORTED) {
+			aq.id(R.id.textViewRate).text("Your device does not support traffic stat monitoring.");
+		} else {
+			mHandler.postDelayed(mRunnable, 1000);
+		}
+
+		// mPath =
+		// "http://122.228.96.172/20/40/95/letv-uts/1340994301-AVC-249889-AAC-31999-5431055-192873082-4b45f1fd5362d980a1dae9c44b2b1c6b-1340994301.mp4?crypt=3eb0ad42aa7f2e559&b=2000&gn=860&nc=1&bf=22&p2p=1&video_type=mp4&check=0&tm=1354698000&key=78cc2270a7e5dfe3187c1608c99e65c0&lgn=letv&proxy=1945014819&cipi=1034815956&tag=mobile&np=1&vtype=mp4&ptype=s1&level=350&t=1354601822&cid=&vid=&sign=mb&dname=mobile";
+		// mPath =
+		// "http://122.228.96.172/20/40/95/letv-uts/1340994301-AVC-249889-AAC-31999-5431055-192873082-4b45f1fd5362d980a1dae9c44b2b1c6b-1340994301.mp4?crypt=3eb0ad42aa7f2e559&b=2000&gn=860&nc=1&bf=22&p2p=1&video_type=mp4&check=0&tm=1354698000&key=78cc2270a7e5dfe3187c1608c99e65c0&lgn=letv&proxy=1945014819&cipi=1034815956&tag=mobile&np=1&vtype=mp4&ptype=s1&level=350&t=1354601822&cid=&vid=&sign=mb&dname=mobile";
+		// mPath =
+		// "http://117.27.153.51:80/83B516E8091FC8ADAF9C1BB64758CC84ABE0A231/playlist.m3u8";
+		// mPath = "http://api.joyplus.tv/joyplus-service/video/t.mp4";
+		// mTitle = "x3";
+
+		mMediaController = new MediaController(this);
+
+		if (mTitle != null && mTitle.length() > 0) {
+			aq.id(R.id.textView1).text("正在载入 ...");
+			if (playProdSubName != null && playProdSubName.length() > 0) {
+				aq.id(R.id.mediacontroller_file_name).text(mTitle + playProdSubName);
+				mVideoView.setTitle(mTitle + playProdSubName);
+				mMediaController.setFileName(playProdSubName);
+				mMediaController.setSubName(playProdSubName);
+			} else {
+				aq.id(R.id.mediacontroller_file_name).text(mTitle);
+				mVideoView.setTitle(mTitle);
+				mMediaController.setFileName(mTitle);
+			}
+
+		}
+
+		mVideoView.setVideoPath(mPath);
 		//
 		mVideoView.setOnCompletionListener(this);
-		if (play_current_time > 0)
-			mVideoView.seekTo(play_current_time);
-		mMediaController = new MediaController(this);
+
+		// mVideoView.setBackgroundColor(color.black);
+
 		// 设置显示名称
-		mVideoView.setTitle(mTitle);
-		mMediaController.setFileName(mTitle);
+		if (play_current_time > 0){
+			aq.id(R.id.textView2).text("上次播放到 "+stringForTime(play_current_time));
+			mVideoView.seekTo(play_current_time);
+		}
+		else {
+			aq.id(R.id.textView2).invisible();
+		}
+
 		mVideoView.setMediaController(mMediaController);
 
 		mVideoView.requestFocus();
@@ -173,11 +217,30 @@ public class VideoPlayerActivity extends Activity implements
 		i.setClass(this, DlnaSelectDevice.class);
 		bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 		checkBind = true;
+		if (playProdId != null)
+			GetServiceData();
+
 	}
 
+	private String stringForTime(long time) {
+
+		long totalSeconds = time / 1000;
+		long seconds = totalSeconds % 60;
+		long minutes = (totalSeconds / 60) % 60;
+		long hours = totalSeconds / 3600;
+		if (hours > 0) {
+			return String.format("%d:%02d:%02d", hours, minutes, seconds)
+					.toString();
+		} else {
+			return String.format("%02d:%02d", minutes, seconds).toString();
+		}
+	}
+
+	
 	public void InitPlayData() {
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
+		
 		mPath = bundle.getString("path");
 		mTitle = bundle.getString("title");
 		playProdName = mTitle;
@@ -244,7 +307,6 @@ public class VideoPlayerActivity extends Activity implements
 	protected void onDestroy() {
 		if (aq != null)
 			aq.dismiss();
-		super.onDestroy();
 		// github.com/joyplus/ijoyplus-android.git
 		if (mVideoView != null) {
 			mVideoView.stopPlayback();
@@ -295,11 +357,11 @@ public class VideoPlayerActivity extends Activity implements
 		/** 双击 */
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-			mLayout++;
-			if (mLayout > VideoView.VIDEO_LAYOUT_ZOOM)
-				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
-			if (mVideoView != null)
-				mVideoView.setVideoLayout(mLayout, 0);
+			// mLayout++;
+			// if(mLayout >VideoView.VIDEO_LAYOUT_ZOOM)
+			// mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
+			// if (mVideoView != null)
+			// mVideoView.setVideoLayout(mLayout, 0);
 			return true;
 		}
 
@@ -405,7 +467,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void GetServiceData() {
-		String url = Constant.BASE_URL + "program/view?prod_id=" + prod_id;
+		String url = Constant.BASE_URL + "program/view?prod_id=" + playProdId;
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class)
@@ -448,9 +510,30 @@ public class VideoPlayerActivity extends Activity implements
 
 	}
 
-	public long getHistoryPlayTime() {
-		return 0;
-	}
+	private final Runnable mRunnable = new Runnable() {
+		long beginTimeMillis, timeTakenMillis, timeLeftMillis, rxByteslast,
+				m_bitrate;
+
+		public void run() {
+
+			TextView RX = (TextView) findViewById(R.id.textViewRate);
+
+			// long txBytes = TrafficStats.getTotalTxBytes()- mStartTX;
+			// TX.setText(Long.toString(txBytes));
+			long rxBytes = TrafficStats.getTotalRxBytes() - mStartRX;
+
+			timeTakenMillis = System.currentTimeMillis() - beginTimeMillis;
+			beginTimeMillis = System.currentTimeMillis();
+			// check how long there is until we reach the desired refresh rate
+			m_bitrate = (rxBytes - rxByteslast) * 8 * 1000 / timeTakenMillis;
+			rxByteslast = rxBytes;
+
+			RX.setText(Long.toString(m_bitrate/8000)+"kb/s");
+
+			// Fun_downloadrate();
+			mHandler.postDelayed(mRunnable, 1000);
+		}
+	};
 
 	public void SaveToServer(long playback_time, long duration) {
 		String url = Constant.BASE_URL + "program/play";

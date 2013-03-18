@@ -84,7 +84,7 @@ public class Tab2Page1 extends Activity implements
 	        protected void onPostExecute(String[] result) {
 //	        	((PullToRefreshListView) ItemsListView).addFirst("Added after refresh...");
 	        	ItemsListView.onRefreshComplete();
-	        	GetServiceData();
+//	        	GetServiceData();
 	            super.onPostExecute(result);
 	        }
 	    }

@@ -65,7 +65,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:scrollingCache="true" >
-    </ListView>
+    </ListView>
     -->
 
     <ImageView

@@ -1235,7 +1235,7 @@ public class Detail_TV extends Activity {
 		bundle.putString("path", m_uri);
 		bundle.putString("title", title);
 		bundle.putString("prod_id", prod_id);
-		bundle.putString("prod_subname", Integer.toString(current_index + 1));
+		bundle.putString("prod_subname","第"+ m_ReturnProgramView.tv.episodes[current_index].name  + "集");
 		bundle.putString("prod_type", "2");
 		bundle.putLong("current_time", 0);
 		intent.putExtras(bundle);

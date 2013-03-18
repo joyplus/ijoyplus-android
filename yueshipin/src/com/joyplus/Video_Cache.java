@@ -165,7 +165,7 @@ public class Video_Cache extends Activity {
 						bundle.putString("path", localfile);
 						bundle.putString("title", info.getName());
 						bundle.putString("prod_id", info.getProdId());
-						bundle.putString("prod_subname", info.getIndex());
+//						bundle.putString("prod_subname", info.getIndex());  yu delete
 						bundle.putString("prod_type", "1");
 						bundle.putLong("current_time", 0);
 						intent.putExtras(bundle);

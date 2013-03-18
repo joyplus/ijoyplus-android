@@ -3,12 +3,42 @@ package com.joyplus;
 import android.os.Environment;
 
 public class Constant {
-	public static boolean Debug = true;
-	// 正式环境
-	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
 
-//	 public static final String BASE_URL =
-//	 "http://api.joyplus.tv/joyplus-test";
+	
+//	 public static final String BASE_URL = 
+//	 "http://112.64.18.12/joyplus-service/index.php/";
+	// 正式环境
+//	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
+//	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
+//	public static String APPKEY = "ijoyplus_android_0001";
+
+	/*
+	 * test:
+	 * 新的测试环境：
+测试环境：
+
+1：service: apitest.joyplus.tv/joyplus-service/index.php
+
+app_key:
+
+Android:ijoyplusandroid0001bj
+
+IOS: ijoyplusios001bj
+
+
+2：cms cms-test.yue001.com/manager/index.php
+
+	 */
+	public static boolean TestEnv = true;
+	public static final String BASE_URL = "http://apitest.joyplus.tv/joyplus-service/index.php/";
+	public static String DEFAULT_APPKEY = "ijoyplusandroid0001bj";
+	public static String APPKEY = "ijoyplus_android_0001bj";
+
+	public static final String USER_AGENT_IOS = 
+			"Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7";
+	public static final String USER_AGENT_ANDROID = 
+			"Mozilla/5.0 (Linux; U; Android 2.2; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
+	public static final String USER_AGENT_FIRFOX = "	Mozilla/5.0 (Windows NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0";
 
 	public static String PATH = Environment.getExternalStorageDirectory()
 			+ "/joy/image_cache/";
@@ -20,10 +50,6 @@ public class Constant {
 			+ "/joy/video/";
 	// 下载视频时支持多线程的数目
 	String threadcount = "3";
-
-	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
-
-	public static String APPKEY = "ijoyplus_android_0001";
 
 	// 我们的sina账号
 	public static String SINA_CONSUMER_KEY = "1490285522";
@@ -77,7 +103,9 @@ public class Constant {
 	public static final String[] video_dont_support_extensions = { ".m3u",
 			".m3u8" };
 	public static final String[] video_index = { "letv",
-		"fengxing","qiyi","youku","sinahd","sohu","56","qq","pptv","m1905"};
+	"fengxing","qiyi","youku","sinahd","sohu","56","qq","pptv","m1905"};
+
 	public static final String[] quality_index = { "mp4",
 		"flv","hd2","3gp"};
+
 }
