@@ -118,14 +118,14 @@ public class Video_Cache extends Activity {
 							 */
 							if (Dao.getInstance(Video_Cache.this)
 									.isHasInforsDownloading("downloading")) {
-								for(int i = 0;i<data.size();i++)//强制界面进行书信为正在下载
-								{
-									if(data.get(i).getProdId() == info.getProdId())
-									{
-										data.get(i).setState("downloading");
-										adapter.refresh(data);
-									}
-								}
+//								for(int i = 0;i<data.size();i++)//强制界面进行书信为正在下载
+//								{
+//									if(data.get(i).getProdId() == info.getProdId())
+//									{
+//										data.get(i).setState("downloading");
+//										adapter.refresh(data);
+//									}
+//								}
 								String localfile = Constant.PATH_VIDEO
 										+ info.getProdId() + "_"
 										+ info.getIndex() + ".mp4";
