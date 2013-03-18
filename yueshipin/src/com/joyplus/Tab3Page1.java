@@ -428,7 +428,8 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	}
 
 	public void CallVideoPlayActivity(String prod_id, String m_uri, String title) {
-
+		app.IfSupportFormat(m_uri);
+		
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putString("path", m_uri);

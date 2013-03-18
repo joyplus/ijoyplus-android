@@ -867,6 +867,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	public void setContinueVideoPath(String Title, String path){
 		// TODO Auto-generated method stub
 		CONTINUEMODE = true;
+		String mPath = null;
 		if (mLayoutBG != null){
 			if(Title != null && Title.length() >0){
 				TextView mTextView1 = (TextView) mLayoutBG.findViewById(R.id.mediacontroller_file_name);
@@ -874,8 +875,12 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			}
 			mLayoutBG.setVisibility(View.VISIBLE);
 		}
-		setVideoPath(path);
-//		setVideoPath(app.getURLPath());
+//		setVideoPath(path);
+		if( app.getURLPath() != null ||  app.getURLPath().length() >0)
+			mPath = app.getURLPath();
+		else 
+			mPath = path;
+		setVideoPath(app.getURLPath());
 	}
 	
 	@Override

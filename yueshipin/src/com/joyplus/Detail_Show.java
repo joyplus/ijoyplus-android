@@ -881,6 +881,8 @@ public class Detail_Show extends Activity {
 	}
 		
 	public void CallVideoPlayActivity(String m_uri, String title) {
+		app.IfSupportFormat(m_uri);
+		
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putString("path", m_uri);
