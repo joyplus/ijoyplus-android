@@ -69,7 +69,7 @@
            >
         -->
 
-        <com.joyplus.widget.PullToRefreshListView
+        <com.joyplus.widget.MyListView
             android:id="@+id/listView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
