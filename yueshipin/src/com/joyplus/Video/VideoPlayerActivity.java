@@ -191,6 +191,7 @@ public class VideoPlayerActivity extends Activity implements
 
 		}
 		mVideoView.setApp(app);
+		mMediaController.setApp(app);
 	
 		mVideoView.setVideoPath(mPath);
 		//

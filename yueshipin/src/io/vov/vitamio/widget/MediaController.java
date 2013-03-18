@@ -93,6 +93,7 @@ import android.widget.TextView;
  */
 public class MediaController extends FrameLayout  {
 	private final String TAG = "App";
+	private App app;
 	private MediaPlayerControl mPlayer;
 	private ReturnProgramView m_ReturnProgramView = null;
 	private Context mContext;
@@ -149,7 +150,9 @@ public class MediaController extends FrameLayout  {
 	
 //	private boolean DLNAMODE = false;
 	
-
+	public void setApp(App app){
+		this.app = app;
+	}
 	public MediaController(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mRoot = this;
@@ -409,7 +412,7 @@ public class MediaController extends FrameLayout  {
 		for (int k = 0; k < m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
 			CurrentQuality = k;
 			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls[k];
-			if (CurrentURLS != null && CurrentURLS.url != null ) {
+			if (CurrentURLS != null && CurrentURLS.url != null && app.IfSupportFormat(CurrentURLS.url.trim())) {
 					for (int i = 0; i < Constant.quality_index.length; i++) {
 						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
 							PROD_SOURCE = CurrentURLS.url.trim();
@@ -425,7 +428,7 @@ public class MediaController extends FrameLayout  {
 		for (int k = 0; k < m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
 			CurrentQuality = k;
 			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls[k];
-			if (CurrentURLS != null && CurrentURLS.url != null) {
+			if (CurrentURLS != null && CurrentURLS.url != null && app.IfSupportFormat(CurrentURLS.url.trim())) {
 					for (int i = 0; i < Constant.quality_index.length; i++) {
 						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
 							PROD_SOURCE = CurrentURLS.url.trim();
