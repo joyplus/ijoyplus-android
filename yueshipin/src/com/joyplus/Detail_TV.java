@@ -478,8 +478,7 @@ public class Detail_TV extends Activity {
 					}
 					if (m_ReturnProgramView.tv.episodes[i].down_urls != null
 							&& m_ReturnProgramView.tv.episodes[i].down_urls[0].urls.length > 0
-							&& m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url != null
-							&& app.IfSupportFormat(m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url)) {
+							&& m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url != null) {
 
 						tv_source = m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url;
 					}
