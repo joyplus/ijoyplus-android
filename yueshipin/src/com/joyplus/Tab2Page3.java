@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -28,6 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab2Page3ListAdapter;
 import com.joyplus.Adapters.Tab2Page3ListData;
 import com.joyplus.Service.Return.ReturnTops;
+import com.joyplus.widget.PullToRefreshListView;
+import com.joyplus.widget.PullToRefreshListView.OnRefreshListener;
 
 public class Tab2Page3 extends Activity implements
 		android.widget.AdapterView.OnItemClickListener {
@@ -37,7 +40,8 @@ public class Tab2Page3 extends Activity implements
 	private ReturnTops m_ReturnTops = null;
 
 	private ArrayList dataStruct;
-	private ListView ItemsListView;
+	// private ListView ItemsListView;
+	private PullToRefreshListView ItemsListView;
 	private Tab2Page3ListAdapter Tab2Page3Adapter;
 
 	@Override
@@ -47,30 +51,41 @@ public class Tab2Page3 extends Activity implements
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		// 获取listview对象
-		ItemsListView = (ListView) findViewById(R.id.listView1);
+		ItemsListView = (PullToRefreshListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
-		ItemsListView.setOnScrollListener(new OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				switch (scrollState) {
-				// 当不滚动时
-				case OnScrollListener.SCROLL_STATE_IDLE:
-					// 判断滚动到底部
-					if (view.getFirstVisiblePosition() == 0) {
-						GetServiceData();
-					}
-					break;
-				}
-			}
+		ItemsListView.setOnRefreshListener(new OnRefreshListener() {
 
 			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-
+			public void onRefresh() {
+				// TODO Auto-generated method stub
+				new GetDataTask().execute();
 			}
 		});
 		CheckSaveData();
+	}
+
+	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
+
+		@Override
+		protected String[] doInBackground(Void... params) {
+			// Simulates a background job.
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				;
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String[] result) {
+			// ((PullToRefreshListView)
+			// ItemsListView).addFirst("Added after refresh...");
+			ItemsListView.onRefreshComplete();
+			GetServiceData();
+			super.onPostExecute(result);
+		}
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -147,7 +162,7 @@ public class Tab2Page3 extends Activity implements
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));

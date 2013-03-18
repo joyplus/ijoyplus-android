@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
+    android:layout_height="fill_parent" >
 
     <RelativeLayout
         android:id="@+id/LayoutTitle1"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_centerHorizontal="false"
-        android:background="#EB9925">
-        
+        android:background="#EB9925" >
+
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="14dp"
-            android:src="@drawable/tab2_tv_top2_icon"/>
+            android:src="@drawable/tab2_tv_top2_icon" />
 
         <TextView
             android:id="@+id/textView1"
@@ -29,7 +28,7 @@
             android:text="电视剧悦榜"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold"
-            android:typeface="normal"/>
+            android:typeface="normal" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -37,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/LayoutTitle1"
-        android:orientation="vertical">
+        android:orientation="vertical" >
 
         <ProgressBar
             android:id="@+id/progress"
@@ -46,7 +45,8 @@
             android:layout_centerInParent="true"
             android:scaleType="centerInside"
             android:visibility="gone" />
-  	 <TextView
+
+        <TextView
             android:id="@+id/ProgressText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,9 +55,10 @@
             android:layout_marginTop="20dp"
             android:text="加载中..."
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#444444" 
+            android:textColor="#444444"
             android:visibility="gone" />
-         <ListView
+        <!--
+           ListView
             android:id="@+id/listView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -66,7 +67,16 @@
             android:cacheColorHint="#F2F2F2"
             android:divider="@drawable/tab1_divider"
            >
-        </ListView>
+        -->
+
+        <com.joyplus.widget.PullToRefreshListView
+            android:id="@+id/listView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#F2F2F2"
+            android:cacheColorHint="#F2F2F2"
+            android:divider="@drawable/tab1_divider"
+            android:fadingEdge="none" />
     </RelativeLayout>
 
 </RelativeLayout>
