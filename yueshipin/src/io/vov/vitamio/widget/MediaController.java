@@ -128,6 +128,7 @@ public class MediaController extends FrameLayout  {
 	private static final int SHOW_PROGRESS = 2;
 	private static final int SHOW_TOPRIGHT = 3;
 	private static final int SHOW_BOTTOMRIGHT = 4;
+	private static final int SHOW_PRODDATA = 5;
 	private boolean mFromXml = false;
 	private ImageButton mPauseButton;
 	private ImageButton mDlnaButton;
