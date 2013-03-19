@@ -153,6 +153,12 @@ public class MediaController extends FrameLayout  {
 	public void setApp(App app){
 		this.app = app;
 	}
+	public void setQuality(int prod_quality ){
+		CurrentQuality = prod_quality;
+	}
+	public void setProdType(int playProdType){
+		CurrentCategory = playProdType;
+	}
 	public MediaController(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mRoot = this;
@@ -257,6 +263,10 @@ public class MediaController extends FrameLayout  {
 		mNextButton = (ImageButton) v.findViewById(R.id.imageButton4);
 		mQualityButton = (ImageButton) v.findViewById(R.id.imageButton5);
 		mSelectButton = (ImageButton) v.findViewById(R.id.imageButton6);
+		if(CurrentCategory == 0){
+			mSelectButton.setVisibility(View.INVISIBLE);
+			mNextButton.setVisibility(View.INVISIBLE);
+		}
 
 		mTextView1 = (TextView) v.findViewById(R.id.textView1);
 		mTextView2 = (TextView) v.findViewById(R.id.textView2);
@@ -309,8 +319,19 @@ public class MediaController extends FrameLayout  {
 			lv_radio0 = (RadioButton)v.findViewById(R.id.radio0);
 			lv_radio1 = (RadioButton)v.findViewById(R.id.radio1);
 			lv_radio2 = (RadioButton)v.findViewById(R.id.radio2);
-			CurrentQuality = 1;
-			lv_radio1.setChecked(true);
+			switch (CurrentQuality) {
+			case 0:
+				lv_radio1.setChecked(true);
+				break;
+			case 1:
+				lv_radio1.setChecked(true);
+				break;
+			case 2:
+				lv_radio1.setChecked(true);
+				break;
+			}
+//			CurrentQuality = 1;
+//			lv_radio1.setChecked(true);
 			radioGroup.setOnCheckedChangeListener(mRadioGroupListener);
 		}
 		
@@ -586,6 +607,8 @@ public class MediaController extends FrameLayout  {
 				CurrentIndex = 0;
 				if(mSelectButton != null)
 					mSelectButton.setVisibility(View.INVISIBLE);
+				if(mNextButton != null)
+					mNextButton.setVisibility(View.INVISIBLE);
 			} else if (m_ReturnProgramView.tv != null) {
 				CurrentCategory = 1;
 				if (mSubName != null) {
