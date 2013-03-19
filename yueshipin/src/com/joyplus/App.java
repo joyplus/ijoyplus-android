@@ -151,15 +151,38 @@ public class App extends Application {
 		return mURLPath;
 	}
 	
+	/**
+	 * 只是简单文本判断
+	 * @param Url
+	 * @return
+	 */
 	public boolean IfSupportFormat(String Url) {
-		/*
-		 * URLUtil里面可以检测网址是否有效
-		 * 这个地址也不是非常可靠
-		 */
-//		return URLUtil.isNetworkUrl(Url);
-		if(CheckUrl(Url)) {
+		 //URLUtil里面可以检测网址格式是否有效
+		
+		return URLUtil.isNetworkUrl(Url);
+
+	}
+	
+	/**
+	 *  id 对应播放源 letv 0、fengxing 1、qiyi 2、youku 3、sinahd 4、
+	 *                       sohu 5、56 6、qq 7、pptv 8、m1905 9.
+	 * @param url
+	 * @param id 
+	 * @return
+	 */
+	public boolean CheckUrlIsValidFromServer(String url , int id) {
+		
+		if(CheckUrl(url)) {
 			
-			mURLPath = newATask(Url);
+			//如果资源为风行的,那就对资源进行重定向
+			if(1 == id) {
+				
+//				mURLPath = newATask(url);
+			} else {//如果不是风行的资源，不需要重定向 直接进行下步判断
+				
+//				mURLPath = “”；
+			}
+			
 			
 			if(CheckUrl(mURLPath)) {
 				
@@ -168,8 +191,6 @@ public class App extends Application {
 		}
 		
 		return false;
-//		return true;
-
 	}
 	
 	/*
@@ -330,7 +351,7 @@ public class App extends Application {
 	 * @param url
 	 * @return 字符串
 	 */
-	private String newATask(String url) {
+	private String newATask(String url, int id) {
 		
 		AsyncTask<String,Void,String> aynAsyncTask = new AsyncTask<String, Void, String>(){
 
