@@ -128,6 +128,7 @@ public class MediaController extends FrameLayout  {
 	private static final int SHOW_PROGRESS = 2;
 	private static final int SHOW_TOPRIGHT = 3;
 	private static final int SHOW_BOTTOMRIGHT = 4;
+	private static final int SHOW_PRODDATA = 5;
 	private boolean mFromXml = false;
 	private ImageButton mPauseButton;
 	private ImageButton mDlnaButton;
@@ -601,6 +602,10 @@ public class MediaController extends FrameLayout  {
 
 	public void setProd_Data(ReturnProgramView m_ReturnProgramView) {
 		this.m_ReturnProgramView = m_ReturnProgramView;
+		mHandler.removeMessages(FADE_OUT);
+		mHandler.sendEmptyMessageDelayed(SHOW_PRODDATA, 100);
+	}
+	public void ShowProdData(){
 		if (this.m_ReturnProgramView != null) {
 			if (m_ReturnProgramView.movie != null) {
 				CurrentCategory = 0;
@@ -641,11 +646,10 @@ public class MediaController extends FrameLayout  {
 			}
 			ShowQuality();
 		}
+		mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+				sDefaultTimeout);
 	}
-	public void ShowProdData(){
-		
-	}
-	SHOW_PRODDATA
+
 	/**
 	 * Set the View to hold some information when interact with the
 	 * MediaController
@@ -799,7 +803,7 @@ public class MediaController extends FrameLayout  {
 				updateBottomRight();
 				break;
 			case SHOW_PRODDATA:
-				d
+				ShowProdData();
 				break;
 			}
 			
