@@ -1311,7 +1311,7 @@ public class Detail_Show extends Activity {
 			textview.setText("  "+(CharSequence) download_names.get(position));//加两个空格是为了让字体显示时不至于太靠左边
 			for(int i = 0;i<data.size();i++)
 			{
-				if(data.get(i).getName().equalsIgnoreCase((String) download_names.get(position)))
+				if(data.get(i).getMy_name().equalsIgnoreCase((String) download_names.get(position)))
 				{
 					textview.setTextColor(Color.WHITE);
 					textview.setBackgroundDrawable(download_focuse);//设置为已缓存

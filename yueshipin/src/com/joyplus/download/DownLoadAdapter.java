@@ -80,20 +80,19 @@ public class DownLoadAdapter extends BaseAdapter{
 			long completesize = info.getCompeleteSize();
 			long filesize = info.getFileSize();
 			long percent =completesize*MAX/filesize;
-			String posterurl = info.getPoster();
-			holder.resourceDownloadName.setText(info.getName());
-//			if(info.getIndex().equalsIgnoreCase("movie"))
-			if(info.getIndex().contains("movie"))
+			String posterurl = info.getUrlposter();
+			holder.resourceDownloadName.setText(info.getMy_name());
+			if(info.getMy_index().contains("movie"))
 			{
-				if(info.getState().equalsIgnoreCase("wait"))
+				if(info.getDownload_state().equalsIgnoreCase("wait"))
 				{
 					holder.resouceDownloadState.setText("等待下载");
 				}
-				else if(info.getState().equalsIgnoreCase("downloading"))
+				else if(info.getDownload_state().equalsIgnoreCase("downloading"))
 				{
 					holder.resouceDownloadState.setText("正在下载");
 				}
-				else if(info.getState().equalsIgnoreCase("stop"))
+				else if(info.getDownload_state().equalsIgnoreCase("pause"))
 				{
 					holder.resouceDownloadState.setText("暂停下载");
 				}

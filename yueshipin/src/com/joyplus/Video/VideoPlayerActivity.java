@@ -285,7 +285,7 @@ public class VideoPlayerActivity extends Activity implements
 			/*
 			 * 获取当前播放时间和总时间,将播放时间和总时间放在服务器上
 			 */
-			long current_time = mVideoView.getCurrentPosition();
+			current_time = mVideoView.getCurrentPosition();
 			long total_time = mVideoView.getDuration();
 			SaveToServer(current_time, total_time);
 			if(current_time >0)
@@ -293,6 +293,7 @@ public class VideoPlayerActivity extends Activity implements
 				// 保存播放记录在本地
 				playhistory.setPlay_time(current_time+"");
 				Dao.getInstance(VideoPlayerActivity.this).updatePlayHistory(playhistory);
+				play_current_time = current_time;
 			}	 
 			mVideoView.pause();
 		}

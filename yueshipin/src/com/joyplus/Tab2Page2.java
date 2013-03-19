@@ -58,8 +58,10 @@ public class Tab2Page2 extends Activity implements
 		ItemsListView.setOnItemClickListener(this);
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
-				GetServiceData();
+				
 				new GetDataTask().execute();
+				
+				GetServiceData();
 		}});
 		CheckSaveData();
 	}
@@ -80,7 +82,7 @@ public class Tab2Page2 extends Activity implements
 		@Override
 		protected void onPostExecute(String[] result) {
 			ItemsListView.onRefreshComplete();
-			Tab2Page2Adapter.notifyDataSetChanged();
+//			Tab2Page2Adapter.notifyDataSetChanged();
 			super.onPostExecute(result);
 		}
 	}

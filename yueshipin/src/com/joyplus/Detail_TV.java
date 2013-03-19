@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -104,6 +105,8 @@ public class Detail_TV extends Activity {
 	private ScrollView mScrollView;
 	private int isLastisNext = 2;
 	private int mLastY = 0;
+	//标示当前有多少个按钮被点击了
+	private ArrayList download_indexs = new ArrayList();
 
 	// added by yyc,in order to flag the playing tv's index btn
 	Drawable focuse = null;
@@ -1507,12 +1510,19 @@ public class Detail_TV extends Activity {
 			m_button.setGravity(Gravity.CENTER);
 			m_button.setEnabled(true);
 			for (int m = 0; m < data.size(); m++) {
-				if (data.get(m).getIndex().equalsIgnoreCase(m_j)) { // 设置已缓存背景
+				if (data.get(m).getMy_index().equalsIgnoreCase(m_j)) { // 设置已缓存背景
 					m_button.setBackgroundDrawable(download_been);
 					m_button.setEnabled(false);
 					m_button.setTextColor(Color.WHITE);//设置颜色和文字的位置
 					m_button.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
 				}
+			}
+			if(download_indexs.contains(m_j))
+			{
+				m_button.setBackgroundDrawable(download_been);
+				m_button.setEnabled(false);
+				m_button.setTextColor(Color.WHITE);//设置颜色和文字的位置
+				m_button.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
 			}
 			m_button.setVisibility(View.VISIBLE);
 		}
@@ -1531,7 +1541,6 @@ public class Detail_TV extends Activity {
 						if (DOWNLOAD_SOURCE == null && urls.file != null
 								&& app.IfSupportFormat(urls.url)
 								&& urls.file.trim().equalsIgnoreCase("mp4"))
-							// DOWNLOAD_SOURCE = urls.url.trim();
 							DOWNLOAD_SOURCE = urls.url;
 						if (DOWNLOAD_SOURCE != null)
 							break;
@@ -1564,6 +1573,10 @@ public class Detail_TV extends Activity {
 				v.setEnabled(false);
 				((Button) v).setTextColor(Color.WHITE);//设置颜色和文字的位置
 				((Button) v).setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
+				if(!download_indexs.contains(index))
+				{
+					download_indexs.add(index);
+				}
 
 			} else {
 				Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
@@ -1630,8 +1643,15 @@ public class Detail_TV extends Activity {
 			m_button.setTextColor(Color.BLACK);//设置颜色和文字的位置
 			m_button.setGravity(Gravity.CENTER);
 			m_button.setEnabled(true);
+			if(download_indexs.contains(m_j))
+			{
+				m_button.setBackgroundDrawable(download_been);
+				m_button.setEnabled(false);
+				m_button.setTextColor(Color.WHITE);//设置颜色和文字的位置
+				m_button.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL);
+			}
 			for (int m = 0; m < data.size(); m++) {
-				if (data.get(m).getIndex().equalsIgnoreCase(m_j)) { // 设置已缓存背景
+				if (data.get(m).getMy_index().equalsIgnoreCase(m_j)) { // 设置已缓存背景
 					m_button.setBackgroundDrawable(download_been);
 					m_button.setEnabled(false);
 					m_button.setTextColor(Color.WHITE);//设置颜色和文字的位置

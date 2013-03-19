@@ -27,8 +27,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.ScrollView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -39,6 +38,7 @@ import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
 import com.joyplus.weibo.net.WeiboDialogListener;
 import com.joyplus.weibo.net.WeiboException;
+import com.joyplus.widget.InnerListView;
 
 public class Setting extends Activity {
 	private App app;
@@ -60,7 +60,11 @@ public class Setting extends Activity {
 				NotificationType.AlertDialog);
 		//appRecommend();
 		ViewGroup fatherLayout = (ViewGroup)findViewById(R.id.ad);
-		appRecommendListView listView = (appRecommendListView) this.findViewById(R.id.list);
+		InnerListView listView = (InnerListView) this.findViewById(R.id.list);
+		listView.setMaxHeight(400);
+		ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView1);
+		listView.setParentScrollView(scrollView);
+		
 		//赋值preloadDataService,添加newTips 回调
 	    preloadDataService = new ExchangeDataService();
 	    preloadDataService.preloadData(Setting.this, new NTipsChangedListener() {

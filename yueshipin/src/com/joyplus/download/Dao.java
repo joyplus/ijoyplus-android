@@ -98,9 +98,9 @@ public class Dao {
 			for (DownloadInfo info : infos) {
 				String sql = "insert into download_info(compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state) values (?,?,?,?,?,?,?,?)";
 				Object[] bindArgs = { info.getCompeleteSize(),
-						info.getFileSize(), info.getProdId(), info.getIndex(),
-						info.getUrl(), info.getPoster(), info.getName(),
-						info.getState() };
+						info.getFileSize(), info.getProd_id(), info.getMy_index(),
+						info.getUrl(), info.getUrlposter(), info.getMy_name(),
+						info.getDownload_state()};
 				database.execSQL(sql, bindArgs);
 			}
 		} catch (Exception e) {
@@ -120,8 +120,8 @@ public class Dao {
 		try {
 			String sql = "insert into download_info(compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state) values (?,?,?,?,?,?,?,?)";
 			Object[] bindArgs = { info.getCompeleteSize(), info.getFileSize(),
-					info.getProdId(), info.getIndex(), info.getUrl(),
-					info.getPoster(), info.getName(), info.getState() };
+					info.getProd_id(), info.getMy_index(), info.getUrl(),
+					info.getUrlposter(), info.getMy_name(), info.getDownload_state() };
 			database.execSQL(sql, bindArgs);
 		} catch (Exception e) {
 			e.printStackTrace();

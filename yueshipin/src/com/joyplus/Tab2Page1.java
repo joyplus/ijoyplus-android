@@ -55,8 +55,10 @@ public class Tab2Page1 extends Activity implements
 		ItemsListView.setOnItemClickListener(this);
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
-				GetServiceData();
+				
 				new GetDataTask().execute();
+				
+				GetServiceData();
 		}});
 		CheckSaveData();
 	}
@@ -67,7 +69,7 @@ public class Tab2Page1 extends Activity implements
 	        protected String[] doInBackground(Void... params) {
 	            // Simulates a background job.
 	            try {
-	                Thread.sleep(2000);
+	                Thread.sleep(1000);
 	            } catch (InterruptedException e) {
 	                ;
 	            }
@@ -77,7 +79,7 @@ public class Tab2Page1 extends Activity implements
 	        @Override
 	        protected void onPostExecute(String[] result) {
 	        	ItemsListView.onRefreshComplete();
-	        	Tab2Page1Adapter.notifyDataSetChanged();
+//	        	Tab2Page1Adapter.notifyDataSetChanged();
 	            super.onPostExecute(result);
 	        }
 	    }
