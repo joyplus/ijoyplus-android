@@ -334,11 +334,7 @@ public class Setting extends Activity {
 			params.put("pre_user_id", app.UserID);
 			// save to local
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
-
-			cb.header("user_id", app.UserID);
+			cb.SetHeader(app.getHeaders());
 			cb.params(params).url(m_PostURL).type(JSONObject.class)
 					.weakHandler(this, "IsHasBindWeiboResult");
 			aq.ajax(cb);	
@@ -355,6 +351,10 @@ public class Setting extends Activity {
 						{
 							//app.DeleteServiceData("UserInfo");
 							app.UserID = json.getString("user_id");
+							Map<String, String> headers = app.getHeaders();
+							headers.remove("user_id");
+							headers.put("user_id", app.UserID);
+							app.setHeaders(headers);
 							
 							//将这个UserID保存在本地
 							//app.SaveServiceData("UserInfo", json.toString());
@@ -430,11 +430,7 @@ public class Setting extends Activity {
 
 			// save to local
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
-
-			cb.header("user_id", app.UserID);
+			cb.SetHeader(app.getHeaders());
 			cb.params(params).url(m_PostURL).type(JSONObject.class)
 					.weakHandler(this, "AccountBindAccountResult");
 			aq.ajax(cb);

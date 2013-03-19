@@ -89,7 +89,7 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dlna_video_play);
+		setContentView(R.layout.dlna_video_play2);
 
 		app = (App) getApplication();
 		aq = new AQuery(this);
@@ -104,7 +104,7 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 		
 
 		aq.id(R.id.textView1).text(prod_name);
-		aq.id(R.id.imageButton2).background(R.drawable.music_play_pause);
+		aq.id(R.id.imageButton2).background(R.drawable.player_pause);
 		sb = (SeekBar) findViewById(R.id.seekBar1);
 		sb.setOnSeekBarChangeListener(sbLis);
 
@@ -150,7 +150,7 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 					/* To reduce the buffering time, stop monitoring */
 					StopMonitoring();
 				}
-//				aq.id(R.id.imageButton2).background(R.drawable.music_play_pause);
+//				aq.id(R.id.imageButton2).background(R.drawable.player_pause);
 
 			} else {
 				isPlaying = false;
@@ -158,7 +158,7 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 				mMrcp.MediaPause(mMediaRenderer.uuid, null);
 //				mIsControllingDmr = false;
 //				StopMonitoring();
-				aq.id(R.id.imageButton2).background(R.drawable.music_play_play);
+				aq.id(R.id.imageButton2).background(R.drawable.player_play);
 				
 			}
 		}
@@ -350,9 +350,9 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 				}
 				String state = data.getString(Constant.MSG_KEY_ID_STATE);
 				if(state.equalsIgnoreCase("PAUSED_PLAYBACK") || state.equalsIgnoreCase("STOPPED"))
-					aq.id(R.id.imageButton2).background(R.drawable.music_play_play);
+					aq.id(R.id.imageButton2).background(R.drawable.player_play);
 				if(state.equalsIgnoreCase("PLAYING"))
-					aq.id(R.id.imageButton2).background(R.drawable.music_play_pause);
+					aq.id(R.id.imageButton2).background(R.drawable.player_pause);
 //				mTextViewPlayState.setText(state);				
 				break;
 			}
