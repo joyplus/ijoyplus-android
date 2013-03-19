@@ -65,8 +65,6 @@ public class VideoPlayerActivity extends Activity implements
 	private ReturnProgramView m_ReturnProgramView = null;
 	private String mPath;
 	private String mTitle;
-//	private String prod_id;
-//	private String subName;
 	private boolean checkBind = false;
 	private boolean isShowingDLNA = false;
 	private VideoView mVideoView;
@@ -244,7 +242,7 @@ public class VideoPlayerActivity extends Activity implements
 		Bundle bundle = intent.getExtras();
 		
 //		mPath = bundle.getString("path");
-		if( app.getURLPath() != null &&  app.getURLPath().length() >0)
+		if( app.getURLPath() != null && app.getURLPath().length() >0)
 			mPath = app.getURLPath();
 		else 
 			mPath = bundle.getString("path");

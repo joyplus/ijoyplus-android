@@ -1143,7 +1143,6 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
-		// Intent intent = new Intent(this, VideoPlayerActivity.class);
 		app.IfSupportFormat(m_uri);
 		Intent intent = new Intent();
 		Bundle bundle = new Bundle();
