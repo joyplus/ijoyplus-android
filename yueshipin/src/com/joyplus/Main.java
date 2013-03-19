@@ -70,6 +70,7 @@ public class Main extends TabActivity {
 	
 		headers.put("app_key", Constant.APPKEY);
 		headers.put("client","android");
+		app.setHeaders(headers);
 			
 		Intent intent = new Intent(Main.this, DlnaSelectDevice.class);
 		startService(intent);
@@ -82,7 +83,7 @@ public class Main extends TabActivity {
 		CheckLogin();
 		setupIntent();
 		
-		app.setHeaders(headers);
+		
 	}
 	
 	@Override
@@ -252,6 +253,7 @@ public class Main extends TabActivity {
 			Constant.APPKEY = OnLine_Appkey;
 			headers.remove("app_key");
 			headers.put("app_key", OnLine_Appkey);
+			app.setHeaders(headers);
 		}
 	}
 	public boolean CheckLogin() {
@@ -304,6 +306,7 @@ public class Main extends TabActivity {
 			try {
 				app.UserID = json.getString("user_id").trim();
 				headers.put("user_id", app.UserID);
+				app.setHeaders(headers);
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
