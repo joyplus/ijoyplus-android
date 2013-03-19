@@ -272,7 +272,7 @@ public class VideoPlayerActivity extends Activity implements
 			}
 			
 		}
-		if( playProdType == 1)
+//		if( playProdType == 1)
 			aq.id(R.id.imageButton6).gone();
 	}
 
