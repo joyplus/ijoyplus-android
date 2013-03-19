@@ -115,10 +115,6 @@ public class Video_Cache_Detail extends Activity {
 									info.getMy_index(), info.getUrl(),
 									info.getUrlposter(), info.getMy_name(),
 									info.getDownload_state());
-							if (App.downloaders.get(localfile) != null) {
-								App.downloaders.get(localfile).reset();
-								App.downloaders.get(localfile).download();
-							}
 						} else {
 							info.setDownload_state("pause");
 							Dao.getInstance(Video_Cache_Detail.this)
@@ -240,18 +236,13 @@ public class Video_Cache_Detail extends Activity {
 						}
 						Dao.getInstance(Video_Cache_Detail.this).delete(
 								info.getProd_id(), info.getMy_index());
-						data = Dao.getInstance(Video_Cache_Detail.this)
-								.getInfosOfProd_id(prod_id);
-						DownLoadAdapterDetail adapter = new DownLoadAdapterDetail(
-								Video_Cache_Detail.this, data);
-						gridView.setAdapter(adapter);
-						adapter.notifyDataSetChanged();
 						File file = new File(Constant.PATH_VIDEO
 								+ info.getProd_id() + "_" + info.getMy_index()
 								+ ".mp4");
 						if (file.exists()) {
 							file.delete();
 						}
+						showGridView();
 					}
 				}).setNegativeButton("取消", null).create();
 		builder.show();

@@ -243,18 +243,13 @@ public class Video_Cache extends Activity {
 									}
 									Dao.getInstance(Video_Cache.this).delete(
 											info.getProd_id(), info.getMy_index());
-									data = Dao.getInstance(Video_Cache.this)
-											.getDownloadInfosGroup();
-									DownLoadAdapter adapter = new DownLoadAdapter(
-											Video_Cache.this, data);
-									gridView.setAdapter(adapter);
-									adapter.notifyDataSetChanged();
 									File file = new File(Constant.PATH_VIDEO
 											+ info.getProd_id() + "_"
 											+ info.getMy_index() + ".mp4");
 									if (file.exists()) {
 										file.delete();
 									}
+									showGridView();
 								}
 							}).setNegativeButton("取消", null).create();
 			builder.show();

@@ -1155,7 +1155,6 @@ public class Detail_Movie extends Activity {
 					sourceId = 1;
 				}
 			}
-			
 		}
 		
 		if(BuildConfig.DEBUG) Log.i(TAG, "CallVideoPlayActivity--->>sourceId : " + sourceId);
