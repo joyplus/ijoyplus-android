@@ -506,7 +506,7 @@ public class VideoPlayerActivity extends Activity implements
 					ReturnProgramView.class);
 			mPath = GetRedirectURL();
 			if(mPath != null && mPath.length() >0)
-				mVideoView.setVideoPath(mPath);
+				mVideoView.setVideoPath(app.getURLPath());
 			
 			if (mMediaController != null)
 				mMediaController.setProd_Data(m_ReturnProgramView);
