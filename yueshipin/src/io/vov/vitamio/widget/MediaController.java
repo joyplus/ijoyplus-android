@@ -158,7 +158,7 @@ public class MediaController extends FrameLayout  {
 		CurrentQuality = prod_quality;
 	}
 	public void setProdType(int playProdType){
-		CurrentCategory = playProdType;
+		CurrentCategory = playProdType-1;
 	}
 	public MediaController(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -334,6 +334,10 @@ public class MediaController extends FrameLayout  {
 //			CurrentQuality = 1;
 //			lv_radio1.setChecked(true);
 			radioGroup.setOnCheckedChangeListener(mRadioGroupListener);
+			if (m_ReturnProgramView != null) {
+				mHandler.removeMessages(FADE_OUT);
+				mHandler.sendEmptyMessageDelayed(SHOW_PRODDATA, 100);
+			}
 		}
 		
 		if (mPauseButton != null) {
@@ -376,10 +380,12 @@ public class MediaController extends FrameLayout  {
 	public void OnClickSelect(int index) {
 		mPlayer.pause();
 		
+	
 		CurrentIndex = index;
 		
 		groupAdapter.notifyDataSetChanged();
 		lv_group.invalidate();
+				
 		String PROD_SOURCE = null;
 		String title = null;
 
@@ -602,8 +608,7 @@ public class MediaController extends FrameLayout  {
 
 	public void setProd_Data(ReturnProgramView m_ReturnProgramView) {
 		this.m_ReturnProgramView = m_ReturnProgramView;
-		mHandler.removeMessages(FADE_OUT);
-		mHandler.sendEmptyMessageDelayed(SHOW_PRODDATA, 100);
+		
 	}
 	public void ShowProdData(){
 		if (this.m_ReturnProgramView != null) {
@@ -915,6 +920,10 @@ public class MediaController extends FrameLayout  {
 			if (mLayout > VideoView.VIDEO_LAYOUT_ZOOM)
 				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
 			mPlayer.setVideoLayout(mLayout, 0);
+			if(mLayout == VideoView.VIDEO_LAYOUT_ZOOM)
+				mReduceButton.setBackgroundResource(R.drawable.player_full);
+			else 
+				mReduceButton.setBackgroundResource(R.drawable.player_reduce);
 		}
 	};
 	private View.OnClickListener mPreListener = new View.OnClickListener() {
