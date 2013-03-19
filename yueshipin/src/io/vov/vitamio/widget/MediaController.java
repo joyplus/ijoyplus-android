@@ -536,6 +536,10 @@ public class MediaController extends FrameLayout  {
 //		if (mFileName != null)
 //			mFileName.setText(mTitle);
 	}
+	public void DisableButtom(){
+		mQualityButton.setVisibility(View.INVISIBLE);
+		mSelectButton.setVisibility(View.INVISIBLE);
+	}
 	public void setSubName(String name) {
 		this.mSubName = name;
 	}
