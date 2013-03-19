@@ -196,8 +196,10 @@ public class VideoPlayerActivity extends Activity implements
 		//
 		mVideoView.setOnCompletionListener(this);
 
-		if(URLUtil.isNetworkUrl(mPath))
+		if(!URLUtil.isNetworkUrl(mPath)){
+			aq.id(R.id.textViewRate).gone();
 			mMediaController.DisableButtom();
+		}
 		// mVideoView.setBackgroundColor(color.black);
 
 		// 设置显示名称
@@ -504,7 +506,7 @@ public class VideoPlayerActivity extends Activity implements
 					ReturnProgramView.class);
 			mPath = GetRedirectURL();
 			if(mPath != null && mPath.length() >0)
-				mVideoView.setVideoPath(mPath);
+				mVideoView.setVideoPath(app.getURLPath());
 			
 			if (mMediaController != null)
 				mMediaController.setProd_Data(m_ReturnProgramView);
