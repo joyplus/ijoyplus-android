@@ -180,7 +180,7 @@ public class App extends Application {
 	 * @param id 
 	 * @return
 	 */
-	public boolean CheckUrlIsValidFromServer(String url , int id) {
+	public boolean CheckUrlIsValidFromServer(String url , String id) {
 		
 		if(CheckUrl(url)) {
 				
@@ -356,7 +356,7 @@ public class App extends Application {
 	 * @param id
 	 * @return 字符串
 	 */
-	private String newATask(String url, int sourceId) {
+	private String newATask(String url, String sourceId) {
 		
 		AsyncTask<String,Void,String> aynAsyncTask = new AsyncTask<String, Void, String>(){
 
