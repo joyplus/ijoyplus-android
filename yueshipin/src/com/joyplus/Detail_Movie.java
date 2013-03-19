@@ -1158,7 +1158,7 @@ public class Detail_Movie extends Activity {
 		}
 		
 		if(BuildConfig.DEBUG) Log.i(TAG, "CallVideoPlayActivity--->>sourceId : " + sourceId);
-		app.CheckUrlIsValidFromServer(m_uri, sourceId);//连接服务器，看链接是否有效
+//		app.CheckUrlIsValidFromServer(m_uri, sourceId);//连接服务器，看链接是否有效
 		Intent intent = new Intent();
 		Bundle bundle = new Bundle();
 		bundle.putString("path", m_uri);
