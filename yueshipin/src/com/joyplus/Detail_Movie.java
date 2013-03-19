@@ -1144,7 +1144,22 @@ public class Detail_Movie extends Activity {
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
 		// Intent intent = new Intent(this, VideoPlayerActivity.class);
-		app.IfSupportFormat(m_uri);
+		
+		int sourceId = -1;//如果是风行那值为1,如果不是那就为其他的值
+		
+		if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
+			
+			for (int j = 0; j < m_ReturnProgramView.movie.episodes[0].down_urls.length; j++) {
+				
+				if (m_ReturnProgramView.movie.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("fengxing")) {
+					sourceId = 1;
+				}
+			}
+		}
+		
+		if(BuildConfig.DEBUG) Log.i(TAG, "CallVideoPlayActivity--->>sourceId : " + sourceId);
+		app.CheckUrlIsValidFromServer(m_uri, sourceId);//连接服务器，看链接是否有效
 		Intent intent = new Intent();
 		Bundle bundle = new Bundle();
 		bundle.putString("path", m_uri);
