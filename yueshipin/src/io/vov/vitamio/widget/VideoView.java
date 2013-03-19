@@ -833,6 +833,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				lp.alpha = 0.6f;
 				window.setAttributes(lp);
 				alert.show();
+				
 			}
 		}
 		// else {

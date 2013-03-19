@@ -62,8 +62,16 @@ public class App extends Application {
 	public boolean ThreadStartFlag = false;
 	public boolean use2G3G = false;
 	private String mURLPath;
+	private Map<String, String> headers;
 
 
+	public Map<String, String> getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = headers;
+	}
 
 	@Override
 	public void onCreate() {

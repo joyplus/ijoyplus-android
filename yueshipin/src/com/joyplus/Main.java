@@ -44,6 +44,7 @@ public class Main extends TabActivity {
 	private TabHost mTabHost;
 
 	private Intent mTab1, mTab2, mTab3;
+	private Map<String, String> headers;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,10 @@ public class Main extends TabActivity {
 		app = (App) getApplicationContext();
 		aq = new AQuery(this);
 		
+		headers = new HashMap<String, String>();
+		headers.put("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+			
 		Intent intent = new Intent(Main.this, DlnaSelectDevice.class);
 		startService(intent);
 		
@@ -60,8 +65,12 @@ public class Main extends TabActivity {
 		PushService.setDefaultPushCallback(this, Main.class);
 		if(!Constant.TestEnv)
 			ReadLocalAppKey();
+		else
+			headers.put("app_key", Constant.APPKEY);
 		CheckLogin();
 		setupIntent();
+		
+		app.setHeaders(headers);
 	}
 	
 	@Override
@@ -229,6 +238,7 @@ public class Main extends TabActivity {
 		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
 		if (OnLine_Appkey != null && OnLine_Appkey.length() >0) {
 			Constant.APPKEY = OnLine_Appkey;
+			headers.put("app_key", OnLine_Appkey);
 		}
 	}
 	public boolean CheckLogin() {
@@ -264,6 +274,7 @@ public class Main extends TabActivity {
 			try {
 				json = new JSONObject(UserInfo);
 				app.UserID = json.getString("user_id").trim();
+				headers.put("user_id", app.UserID);
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -279,6 +290,7 @@ public class Main extends TabActivity {
 			app.SaveServiceData("UserInfo", json.toString());
 			try {
 				app.UserID = json.getString("user_id").trim();
+				headers.put("user_id", app.UserID);
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
