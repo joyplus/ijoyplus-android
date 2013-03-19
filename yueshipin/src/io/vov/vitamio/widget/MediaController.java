@@ -642,7 +642,10 @@ public class MediaController extends FrameLayout  {
 			ShowQuality();
 		}
 	}
-
+	public void ShowProdData(){
+		
+	}
+	SHOW_PRODDATA
 	/**
 	 * Set the View to hold some information when interact with the
 	 * MediaController
@@ -794,6 +797,9 @@ public class MediaController extends FrameLayout  {
 				break;
 			case SHOW_BOTTOMRIGHT:
 				updateBottomRight();
+				break;
+			case SHOW_PRODDATA:
+				d
 				break;
 			}
 			
