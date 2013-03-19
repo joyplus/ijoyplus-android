@@ -47,6 +47,8 @@ import com.parse.Parse;
 @SuppressLint("DefaultLocale")
 public class App extends Application {
 	private final String TAG = "App";
+	private static final String NOT_VALID_LINK = "NULL";
+	private static final String FENGXING = "1";
 
 	private static App instance;
 	public String UserID;
@@ -159,14 +161,17 @@ public class App extends Application {
 		return mURLPath;
 	}
 	
+	/**
+	 * 只是简单文本判断
+	 * @param Url
+	 * @return
+	 */
 	public boolean IfSupportFormat(String Url) {
 		/*
 		 * URLUtil里面可以检测网址是否有效
 		 */
 //		return URLUtil.isNetworkUrl(Url);
 		if(CheckUrl(Url)) {
-			
-			mURLPath = newATask(Url);
 			
 			if(CheckUrl(mURLPath)) {
 				
@@ -327,15 +332,18 @@ public class App extends Application {
 	}
 	
 	/**
+	 * id 对应播放源 letv 0、fengxing 1、qiyi 2、youku 3、sinahd 4、
+	 *                       sohu 5、56 6、qq 7、pptv 8、m1905 9.
 	 * 启动一个异步任务，把网络相关放在此任务中
 	 * 重定向新的链接，直到拿到资源URL
 	 * 
 	 * 注意：因为网络或者服务器原因，重定向时间有可能比较长
 	 * 因此需要较长时间等待
 	 * @param url
+	 * @param id
 	 * @return 字符串
 	 */
-	private String newATask(String url) {
+	private String newATask(String url, int sourceId) {
 		
 		AsyncTask<String,Void,String> aynAsyncTask = new AsyncTask<String, Void, String>(){
 
@@ -344,23 +352,29 @@ public class App extends Application {
 				// TODO Auto-generated method stub
 				
 				List<String> list = new ArrayList<String>();
-				String dstUrl = null;
+				String dstUrl = params[0];
+				if(BuildConfig.DEBUG) Log.i(TAG, "newATask--->>params : " + params[0] + params[1]);
 				try {
-					simulateFirfoxRequest(Constant.USER_AGENT_IOS,params[0] ,list);//使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
+					simulateFirfoxRequest(Constant.USER_AGENT_IOS,params ,list);//使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
 					
 					dstUrl = list.get(list.size() - 1);
 					if(BuildConfig.DEBUG) Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
 					list.clear();
+					
+					if(! dstUrl.equals(NOT_VALID_LINK)) {
+						return dstUrl;
+					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					if(BuildConfig.DEBUG) Log.i(TAG, "TimeOut!!!!!! : " + e);
 					e.printStackTrace();
 				}
 				
-				return dstUrl;
+				return params[0];//如果TimeOut或者不能够拿到真正地址，那就把最原始链接返回
 			}
 			
-		}.execute(url);
+		}.execute(new String[]{url , ""+ sourceId});
+		
 		try {
 			String redirectUrl = aynAsyncTask.get();//从异步任务中获取结果
 			
@@ -370,22 +384,32 @@ public class App extends Application {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return url;
 	}
 	
 	/**
 	 * 模拟火狐浏览器给服务器发送不同请求，有火狐本身请求，IOS请求，Android请求
 	 * @param userAgent firfox ios android
-	 * @param srcUrl 原始地址【可能可以播放，可能需要跳转】
+	 * @param params包括srcUrl 原始地址【可能可以播放，可能需要跳转】和 sourceID 例："1"
 	 * @param list 存储播放地址
 	 */
-	private void simulateFirfoxRequest(String userAgent,String srcUrl , List<String> list) {
+	private void simulateFirfoxRequest(String userAgent,String[] params , List<String> list) {
+		if(params == null || params.length < 2) {
+			
+			if(BuildConfig.DEBUG) Log.i(TAG, "Params Wrong");
+			list.add(NOT_VALID_LINK);
+			return ;
+		}
+		
+		String srcUrl = params[0];//源地址
+		String sourceId = params[1];//资源来源id
+		
 		//模拟火狐ios发用请求  使用userAgent
 		AndroidHttpClient mAndroidHttpClient = AndroidHttpClient.newInstance(userAgent);
 		
 		HttpParams httpParams =  mAndroidHttpClient.getParams();
-		//连接时间最长3秒，可以更改
-		HttpConnectionParams.setConnectionTimeout(httpParams, 3000 * 1);
+		//连接时间最长5秒，可以更改
+		HttpConnectionParams.setConnectionTimeout(httpParams, 5000 * 1);
 				
 		try {
 			URL url = new URL(srcUrl);
@@ -399,43 +423,58 @@ public class App extends Application {
 			
 			if(BuildConfig.DEBUG) Log.i(TAG, "HTTP STATUS : " + status);
 			
+			//如果资源来源为风行，那就对url进行重定向 如果不是就只是简单判断
+			//风行资源id 为 1
 			//如果拿到资源直接返回url  如果没有拿到资源，并且要进行跳转,那就使用递归跳转
 			if(status != HttpStatus.SC_OK) {
 				if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK   start");
 				
-				if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK start");
-				if(status == HttpStatus.SC_MOVED_PERMANENTLY ||//网址被永久移除
-						status == HttpStatus.SC_MOVED_TEMPORARILY ||//网址暂时性移除
-						status ==HttpStatus.SC_SEE_OTHER ||//重新定位资源
-						status == HttpStatus.SC_TEMPORARY_REDIRECT) {//暂时定向
+				if(sourceId != null && sourceId.equals(FENGXING)) {
 					
-					Header header = response.getFirstHeader("Location");//拿到重新定位后的header
-					String location = header.getValue();//从header重新取出信息
-					list.add(location);
-					
-					mAndroidHttpClient.close();//关闭此次连接
-					
-					if(BuildConfig.DEBUG) Log.i(TAG, "Location: " + location);
-					//进行下一次递归
-					simulateFirfoxRequest(userAgent,location , list);
+					if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK start");
+						if(status == HttpStatus.SC_MOVED_PERMANENTLY ||//网址被永久移除
+								status == HttpStatus.SC_MOVED_TEMPORARILY ||//网址暂时性移除
+								status ==HttpStatus.SC_SEE_OTHER ||//重新定位资源
+								status == HttpStatus.SC_TEMPORARY_REDIRECT) {//暂时定向
+						
+							Header header = response.getFirstHeader("Location");//拿到重新定位后的header
+							String location = header.getValue();//从header重新取出信息
+							list.add(location);
+						
+							mAndroidHttpClient.close();//关闭此次连接
+						
+							if(BuildConfig.DEBUG) Log.i(TAG, "Location: " + location);
+							//进行下一次递归
+							simulateFirfoxRequest(userAgent,new String[]{location , FENGXING} , list);
+						} else {
+							
+							//如果地址真的不存在，那就往里面加NULL字符串
+							mAndroidHttpClient.close();
+							list.add(NOT_VALID_LINK);
+						}
 				} else {
+					
 					//如果地址真的不存在，那就往里面加NULL字符串
 					mAndroidHttpClient.close();
-					list.add("NULL");
+					list.add(NOT_VALID_LINK);
 				}
-				
 			} else {
-				list.add(srcUrl);
+				//正确的话直接返回，不进行下面的步骤
 				mAndroidHttpClient.close();
+				list.add(srcUrl);
 			}
-			
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK" + e);
+			
+			//如果地址真的不存在，那就往里面加NULL字符串
 			mAndroidHttpClient.close();
+			list.add(NOT_VALID_LINK);
 			e.printStackTrace();
 		}
+		
+
 		
 	}
 
