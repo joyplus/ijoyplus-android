@@ -169,6 +169,7 @@ public class Video_Cache extends Activity {
 						bundle.putString("title", info.getMy_name());
 						bundle.putString("prod_id", info.getProd_id());
 						bundle.putString("prod_type", "1");
+						bundle.putLong("current_time", 0);
 						intent.putExtras(bundle);
 						try {
 							startActivity(intent);

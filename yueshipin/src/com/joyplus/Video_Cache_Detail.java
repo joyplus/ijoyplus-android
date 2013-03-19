@@ -171,6 +171,7 @@ public class Video_Cache_Detail extends Activity {
 					bundle.putString("path", localfile);
 					bundle.putString("title", info.getMy_name());
 					bundle.putString("prod_id", info.getProd_id());
+					bundle.putLong("current_time", 0);
 					
 					if(info.getMy_index().contains("_tv"))
 					{
