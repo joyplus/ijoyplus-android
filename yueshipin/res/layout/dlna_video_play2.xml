@@ -42,7 +42,8 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:background="@drawable/player_select" />
+            android:background="@drawable/player_select"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 
@@ -113,7 +114,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="41dp"
                 android:layout_toLeftOf="@+id/imageButton2"
-                android:background="@drawable/player_prev" />
+                android:background="@drawable/player_prev"
+                android:visibility="invisible"  />
 
             <ImageButton
                 android:id="@+id/imageButton4"
@@ -122,7 +124,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="41dp"
                 android:layout_toRightOf="@+id/imageButton2"
-                android:background="@drawable/player_next" />
+                android:background="@drawable/player_next"
+                android:visibility="invisible"  />
 
             <ImageButton
                 android:id="@+id/imageButton5"
