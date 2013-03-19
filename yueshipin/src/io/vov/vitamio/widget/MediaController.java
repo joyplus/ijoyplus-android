@@ -111,6 +111,7 @@ public class MediaController extends FrameLayout  {
 	private View mRoot;
 	private View mViewBottomRight;
 	private View mViewTopRight;
+	private View mimageView33;
 	private SeekBar mSeekBar;
 	private TextView mEndTime, mCurrentTime;
 	private TextView mFileName;
@@ -141,6 +142,7 @@ public class MediaController extends FrameLayout  {
 	private TextView mTextView1;
 	private TextView mTextView2;
 	private TextView mTextViewDownloadRate;
+	
 
 	private AudioManager mAM;
 	
@@ -262,7 +264,7 @@ public class MediaController extends FrameLayout  {
 		mTextView1 = (TextView) v.findViewById(R.id.textView1);
 		mTextView2 = (TextView) v.findViewById(R.id.textView2);
 		mTextViewDownloadRate = (TextView) v.findViewById(R.id.textViewDownloadRate);
-		
+		mimageView33 =  v.findViewById(R.id.imageView33);
 		mViewTopRight = v.findViewById(R.id.relativeLayoutTopRight);
 		mViewBottomRight = v.findViewById(R.id.relativeLayoutBottomRight);
 		
@@ -537,6 +539,8 @@ public class MediaController extends FrameLayout  {
 //			mFileName.setText(mTitle);
 	}
 	public void DisableButtom(){
+		mTextViewDownloadRate.setVisibility(View.INVISIBLE);
+		mimageView33.setVisibility(View.INVISIBLE);
 		mQualityButton.setVisibility(View.INVISIBLE);
 		mSelectButton.setVisibility(View.INVISIBLE);
 	}

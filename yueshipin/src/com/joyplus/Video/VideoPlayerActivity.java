@@ -196,8 +196,10 @@ public class VideoPlayerActivity extends Activity implements
 		//
 		mVideoView.setOnCompletionListener(this);
 
-		if(URLUtil.isNetworkUrl(mPath))
+		if(!URLUtil.isNetworkUrl(mPath)){
+			aq.id(R.id.textViewRate).gone();
 			mMediaController.DisableButtom();
+		}
 		// mVideoView.setBackgroundColor(color.black);
 
 		// 设置显示名称
