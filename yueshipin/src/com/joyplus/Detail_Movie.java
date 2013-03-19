@@ -1151,6 +1151,7 @@ public class Detail_Movie extends Activity {
 		bundle.putString("title", title);
 		bundle.putString("prod_id", prod_id);
 		bundle.putString("prod_type", "1");
+		bundle.putInt("prod_quality", 0);
 		bundle.putLong("current_time", 0);
 		intent.putExtras(bundle);
 		intent.setClass(Detail_Movie.this, VideoPlayerActivity.class);

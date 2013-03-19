@@ -876,6 +876,7 @@ public class Detail_Show extends Activity {
 		bundle.putString("path", m_uri);
 		bundle.putString("title", title);
 		bundle.putString("prod_id", prod_id);
+		bundle.putInt("prod_quality", 0);
 		bundle.putString("prod_subname", m_ReturnProgramView.show.episodes[current_index].name);
 		bundle.putString("prod_type", "3");
 		bundle.putLong("current_time", 0);
