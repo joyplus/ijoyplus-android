@@ -881,7 +881,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			mPath = app.getURLPath();
 		else 
 			mPath = path;
-		setVideoPath(app.getURLPath());
+		setVideoPath(mPath);
 	}
 	
 	@Override
