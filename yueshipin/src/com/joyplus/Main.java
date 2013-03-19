@@ -68,6 +68,7 @@ public class Main extends TabActivity {
 			e.printStackTrace();
 		}
 	
+		headers.put("app_key", Constant.APPKEY);
 		headers.put("client","android");
 			
 		Intent intent = new Intent(Main.this, DlnaSelectDevice.class);
@@ -77,8 +78,7 @@ public class Main extends TabActivity {
 		PushService.setDefaultPushCallback(this, Main.class);
 		if(!Constant.TestEnv)
 			ReadLocalAppKey();
-		else
-			headers.put("app_key", Constant.APPKEY);
+
 		CheckLogin();
 		setupIntent();
 		
@@ -250,6 +250,7 @@ public class Main extends TabActivity {
 		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
 		if (OnLine_Appkey != null && OnLine_Appkey.length() >0) {
 			Constant.APPKEY = OnLine_Appkey;
+			headers.remove("app_key");
 			headers.put("app_key", OnLine_Appkey);
 		}
 	}
