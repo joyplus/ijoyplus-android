@@ -42,7 +42,6 @@ import com.joyplus.download.DownloadTask;
 import com.joyplus.download.Downloader;
 import com.joyplus.weibo.net.Weibo;
 import com.joyplus.weibo.net.WeiboDialogListener;
-import com.parse.BuildConfig;
 import com.parse.Parse;
 
 @SuppressLint("DefaultLocale")
