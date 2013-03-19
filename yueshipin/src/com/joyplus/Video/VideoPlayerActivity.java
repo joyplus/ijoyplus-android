@@ -107,7 +107,6 @@ public class VideoPlayerActivity extends Activity implements
 	private String playPlayType = null;// 播放的类别 1: 视频地址播放 2:webview播放
 	private String playVideoUrl = null;// 视频url
 	private int playProdType = 0;// 视频类别 1：电影，2：电视剧，3：综艺，4：视频
-	private int prod_quality = 0;
 
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -193,8 +192,7 @@ public class VideoPlayerActivity extends Activity implements
 		}
 		mVideoView.setApp(app);
 		mMediaController.setApp(app);
-		mMediaController.setQuality(prod_quality);
-		mMediaController.setProdType(playProdType);
+	
 		mVideoView.setVideoPath(mPath);
 		//
 		mVideoView.setOnCompletionListener(this);
@@ -257,7 +255,6 @@ public class VideoPlayerActivity extends Activity implements
 		playProdId = bundle.getString("prod_id");
 		playProdSubName = bundle.getString("prod_subname");
 		playProdType = Integer.parseInt(bundle.getString("prod_type"));
-		prod_quality = bundle.getInt("prod_quality");
 		play_current_time = bundle.getLong("current_time");
 		playhistory = new PlayHistory(playProdId, playProdSubName,//这个历史播放记录变量总是要初始化
 				play_current_time + "");
@@ -277,7 +274,7 @@ public class VideoPlayerActivity extends Activity implements
 			}
 			
 		}
-//		if( playProdType == 1)
+		if( playProdType == 1)
 			aq.id(R.id.imageButton6).gone();
 	}
 
@@ -288,7 +285,7 @@ public class VideoPlayerActivity extends Activity implements
 			/*
 			 * 获取当前播放时间和总时间,将播放时间和总时间放在服务器上
 			 */
-			long current_time = mVideoView.getCurrentPosition();
+			current_time = mVideoView.getCurrentPosition();
 			long total_time = mVideoView.getDuration();
 			SaveToServer(current_time, total_time);
 			if(current_time >0)
@@ -296,6 +293,7 @@ public class VideoPlayerActivity extends Activity implements
 				// 保存播放记录在本地
 				playhistory.setPlay_time(current_time+"");
 				Dao.getInstance(VideoPlayerActivity.this).updatePlayHistory(playhistory);
+				play_current_time = current_time;
 			}	 
 			mVideoView.pause();
 		}

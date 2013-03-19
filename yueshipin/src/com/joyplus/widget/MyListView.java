@@ -140,7 +140,7 @@ public class MyListView extends ListView implements OnScrollListener {
 				if (firstItemIndex == 0 && !isRecored) {
 					isRecored = true;
 					startY = (int) event.getY();
-					Log.v(TAG, "在down时候记录当前位置‘");
+//					Log.v(TAG, "在down时候记录当前位置‘");
 				}
 				break;
 
@@ -154,14 +154,14 @@ public class MyListView extends ListView implements OnScrollListener {
 						state = DONE;
 						changeHeaderViewByState();
 
-						Log.v(TAG, "由下拉刷新状态，到done状态");
+//						Log.v(TAG, "由下拉刷新状态，到done状态");
 					}
 					if (state == RELEASE_To_REFRESH) {
 						state = REFRESHING;
 						changeHeaderViewByState();
 						onRefresh();
 
-						Log.v(TAG, "由松开刷新状态，到done状态");
+//						Log.v(TAG, "由松开刷新状态，到done状态");
 					}
 				}
 
@@ -174,7 +174,7 @@ public class MyListView extends ListView implements OnScrollListener {
 				int tempY = (int) event.getY();
 
 				if (!isRecored && firstItemIndex == 0) {
-					Log.v(TAG, "在move时候记录下位置");
+//					Log.v(TAG, "在move时候记录下位置");
 					isRecored = true;
 					startY = tempY;
 				}
@@ -201,7 +201,7 @@ public class MyListView extends ListView implements OnScrollListener {
 							state = DONE;
 							changeHeaderViewByState();
 
-							Log.v(TAG, "由松开刷新状态转变到done状态");
+//							Log.v(TAG, "由松开刷新状态转变到done状态");
 						}
 						// 往下拉了，或者还没有上推到屏幕顶部掩盖head的地步
 						else {
@@ -219,14 +219,14 @@ public class MyListView extends ListView implements OnScrollListener {
 							isBack = true;
 							changeHeaderViewByState();
 
-							Log.v(TAG, "由done或者下拉刷新状态转变到松开刷新");
+//							Log.v(TAG, "由done或者下拉刷新状态转变到松开刷新");
 						}
 						// 上推到顶了
 						else if (tempY - startY <= 0) {
 							state = DONE;
 							changeHeaderViewByState();
 
-							Log.v(TAG, "由DOne或者下拉刷新状态转变到done状态");
+//							Log.v(TAG, "由DOne或者下拉刷新状态转变到done状态");
 						}
 					}
 
@@ -274,7 +274,7 @@ public class MyListView extends ListView implements OnScrollListener {
 
 			tipsTextview.setText("松开刷新");
 
-			Log.v(TAG, "当前状态，松开刷新");
+//			Log.v(TAG, "当前状态，松开刷新");
 			break;
 		case PULL_To_REFRESH:
 			progressBar.setVisibility(View.GONE);
@@ -292,7 +292,7 @@ public class MyListView extends ListView implements OnScrollListener {
 			} else {
 				tipsTextview.setText("下拉刷新");
 			}
-			Log.v(TAG, "当前状态，下拉刷新");
+//			Log.v(TAG, "当前状态，下拉刷新");
 			break;
 
 		case REFRESHING:
@@ -305,7 +305,7 @@ public class MyListView extends ListView implements OnScrollListener {
 			tipsTextview.setText("正在刷新...");
 			lastUpdatedTextView.setVisibility(View.VISIBLE);
 
-			Log.v(TAG, "当前状态,正在刷新...");
+//			Log.v(TAG, "当前状态,正在刷新...");
 			break;
 		case DONE:
 			headView.setPadding(0, -1 * headContentHeight, 0, 0);
@@ -316,7 +316,7 @@ public class MyListView extends ListView implements OnScrollListener {
 			tipsTextview.setText("下拉刷新");
 			lastUpdatedTextView.setVisibility(View.VISIBLE);
 
-			Log.v(TAG, "当前状态，done");
+//			Log.v(TAG, "当前状态，done");
 			break;
 		}
 	}

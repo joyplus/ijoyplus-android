@@ -51,6 +51,7 @@
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/scrollView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
@@ -157,7 +158,18 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
 
-                <com.joyplus.appRecommendListView
+                <com.joyplus.widget.InnerListView
+                    android:id="@+id/list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="#00000000"
+                    android:cacheColorHint="#00000000"
+                    android:divider="#dedfde"
+                    android:dividerHeight="1px"
+                    android:listSelector="#00000000" >
+                </com.joyplus.widget.InnerListView>
+                <!--
+                ListView
                     android:id="@+id/list"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -166,7 +178,9 @@
                     android:divider="#dedfde"
                     android:dividerHeight="1px"
                     android:listSelector="#00000000" >
-                </com.joyplus.appRecommendListView>
+                </ListView>
+                -->
+
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>

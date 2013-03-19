@@ -58,12 +58,12 @@ IOS: ijoyplusios001bj
 	public static String SINA_REDIRECTURL = "https://api.weibo.com/oauth2/default.html";
 
 	// Test Env
-	public static String Parse_AppId = "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB";
-	public static String Parse_ClientKey = "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl";
+//	public static String Parse_AppId = "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB";
+//	public static String Parse_ClientKey = "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl";
 	
 	//Production Env
-//	public static String Parse_AppId = "UBgv7IjGR8i6AN0nS4diS48oQTk6YErFi3LrjK4P";
-//	public static String Parse_ClientKey = "Y2lKxqco7mN3qBmZ05S8jxSP8nhN92hSN4OHDZR8";
+	public static String Parse_AppId = "UBgv7IjGR8i6AN0nS4diS48oQTk6YErFi3LrjK4P";
+	public static String Parse_ClientKey = "Y2lKxqco7mN3qBmZ05S8jxSP8nhN92hSN4OHDZR8";
 	
 	public final static int MSG_DMR_CHANGED = 0;
 	public final static int MSG_PUSH_LOCAL_FILE = 1;
@@ -105,10 +105,6 @@ IOS: ijoyplusios001bj
 	public static final String[] video_index = { "letv",
 	"fengxing","qiyi","youku","sinahd","sohu","56","qq","pptv","m1905"};
 
-	/*
-	 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
-	 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
-	 */
 	public static final String[] quality_index = { "mp4",
 		"flv","hd2","3gp"};
 

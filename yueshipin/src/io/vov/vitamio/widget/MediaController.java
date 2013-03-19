@@ -128,7 +128,6 @@ public class MediaController extends FrameLayout  {
 	private static final int SHOW_PROGRESS = 2;
 	private static final int SHOW_TOPRIGHT = 3;
 	private static final int SHOW_BOTTOMRIGHT = 4;
-	private static final int SHOW_PRODDATA = 5;
 	private boolean mFromXml = false;
 	private ImageButton mPauseButton;
 	private ImageButton mDlnaButton;
@@ -153,12 +152,6 @@ public class MediaController extends FrameLayout  {
 	
 	public void setApp(App app){
 		this.app = app;
-	}
-	public void setQuality(int prod_quality ){
-		CurrentQuality = prod_quality;
-	}
-	public void setProdType(int playProdType){
-		CurrentCategory = playProdType;
 	}
 	public MediaController(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -264,10 +257,6 @@ public class MediaController extends FrameLayout  {
 		mNextButton = (ImageButton) v.findViewById(R.id.imageButton4);
 		mQualityButton = (ImageButton) v.findViewById(R.id.imageButton5);
 		mSelectButton = (ImageButton) v.findViewById(R.id.imageButton6);
-		if(CurrentCategory == 0){
-			mSelectButton.setVisibility(View.INVISIBLE);
-			mNextButton.setVisibility(View.INVISIBLE);
-		}
 
 		mTextView1 = (TextView) v.findViewById(R.id.textView1);
 		mTextView2 = (TextView) v.findViewById(R.id.textView2);
@@ -320,19 +309,8 @@ public class MediaController extends FrameLayout  {
 			lv_radio0 = (RadioButton)v.findViewById(R.id.radio0);
 			lv_radio1 = (RadioButton)v.findViewById(R.id.radio1);
 			lv_radio2 = (RadioButton)v.findViewById(R.id.radio2);
-			switch (CurrentQuality) {
-			case 0:
-				lv_radio1.setChecked(true);
-				break;
-			case 1:
-				lv_radio1.setChecked(true);
-				break;
-			case 2:
-				lv_radio1.setChecked(true);
-				break;
-			}
-//			CurrentQuality = 1;
-//			lv_radio1.setChecked(true);
+			CurrentQuality = 1;
+			lv_radio1.setChecked(true);
 			radioGroup.setOnCheckedChangeListener(mRadioGroupListener);
 		}
 		
@@ -602,18 +580,12 @@ public class MediaController extends FrameLayout  {
 
 	public void setProd_Data(ReturnProgramView m_ReturnProgramView) {
 		this.m_ReturnProgramView = m_ReturnProgramView;
-		mHandler.removeMessages(FADE_OUT);
-		mHandler.sendEmptyMessageDelayed(SHOW_PRODDATA, 100);
-	}
-	public void ShowProdData(){
 		if (this.m_ReturnProgramView != null) {
 			if (m_ReturnProgramView.movie != null) {
 				CurrentCategory = 0;
 				CurrentIndex = 0;
 				if(mSelectButton != null)
 					mSelectButton.setVisibility(View.INVISIBLE);
-				if(mNextButton != null)
-					mNextButton.setVisibility(View.INVISIBLE);
 			} else if (m_ReturnProgramView.tv != null) {
 				CurrentCategory = 1;
 				if (mSubName != null) {
@@ -646,8 +618,6 @@ public class MediaController extends FrameLayout  {
 			}
 			ShowQuality();
 		}
-		mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
-				sDefaultTimeout);
 	}
 
 	/**
@@ -801,9 +771,6 @@ public class MediaController extends FrameLayout  {
 				break;
 			case SHOW_BOTTOMRIGHT:
 				updateBottomRight();
-				break;
-			case SHOW_PRODDATA:
-				ShowProdData();
 				break;
 			}
 			
