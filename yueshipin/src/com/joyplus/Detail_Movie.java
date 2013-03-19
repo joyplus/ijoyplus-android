@@ -1143,7 +1143,6 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
-		// Intent intent = new Intent(this, VideoPlayerActivity.class);
 		
 		int sourceId = -1;//如果是风行那值为1,如果不是那就为其他的值
 		
