@@ -654,7 +654,7 @@ public class Detail_Show extends Activity {
 		}
 		
 		//电视剧type为3 ，sbuname 为当前集数
-		app.StatisticsClicksShow(aq, prod_id, prod_name,
+		StatisticsUtils.StatisticsClicksShow(aq,app, prod_id, prod_name,
 				(String)download_names.get(current_index), 3);
 		
 		app.checkUserSelect(Detail_Show.this);
@@ -756,9 +756,9 @@ public class Detail_Show extends Activity {
 			return;
 		}
 		
-		//电视剧type为3 ，sbuname 为当前集数
-		app.StatisticsClicksShow(aq, prod_id, prod_name,
-				(String)download_names.get(current_index), 3);
+//		//电视剧type为3 ，sbuname 为当前集数
+//		app.StatisticsClicksShow(aq, prod_id, prod_name,
+//				(String)download_names.get(current_index), 3);
 		
 		//videoSourceSort(index);
 		if (m_ReturnProgramView.show.episodes != null

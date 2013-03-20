@@ -421,7 +421,7 @@ public class MediaController extends FrameLayout  {
 		for (int k = 0; k < m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
 			CurrentQuality = k;
 			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls[k];
-			if (CurrentURLS != null && CurrentURLS.url != null && app.IfSupportFormat(CurrentURLS.url.trim())) {
+			if (CurrentURLS != null && CurrentURLS.url != null && app.CheckUrlIsValidFromServer(CurrentURLS.url.trim(),"1")) {
 					for (int i = 0; i < Constant.quality_index.length; i++) {
 						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
 							PROD_SOURCE = CurrentURLS.url.trim();
@@ -437,7 +437,7 @@ public class MediaController extends FrameLayout  {
 		for (int k = 0; k < m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
 			CurrentQuality = k;
 			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls[k];
-			if (CurrentURLS != null && CurrentURLS.url != null && app.IfSupportFormat(CurrentURLS.url.trim())) {
+			if (CurrentURLS != null && CurrentURLS.url != null && app.CheckUrlIsValidFromServer(CurrentURLS.url.trim(),"1")) {
 					for (int i = 0; i < Constant.quality_index.length; i++) {
 						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
 							PROD_SOURCE = CurrentURLS.url.trim();
@@ -465,22 +465,37 @@ public class MediaController extends FrameLayout  {
 		ReturnProgramView.DOWN_URLS.URLS CurrentURLS = null;
 		switch (CurrentCategory) {
 		case 0:
-			CurrentURLS = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[index];
+			for (int k = 0; k < m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; k++) {
+				if(m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type.equalsIgnoreCase(Constant.quality_index[index])){
+					CurrentURLS = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[k];
+					break;
+				}
+			}
+			
 			break;
 		case 1:
-			CurrentURLS = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[index];
+			for (int k = 0; k < m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; k++) {
+				if(m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type.equalsIgnoreCase(Constant.quality_index[index])){
+					CurrentURLS = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[k];
+					break;
+				}
+			}
 			break;
 		case 2:
-			CurrentURLS = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[index];
+			for (int k = 0; k < m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; k++) {
+				if(m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type.equalsIgnoreCase(Constant.quality_index[index])){
+					CurrentURLS = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[k];
+					break;
+				}
+			}
+			
 			break;
 
 		}
 		
-		if (CurrentURLS != null && CurrentURLS.url != null) {
-				if (CurrentURLS.type.trim().equalsIgnoreCase(
-								Constant.quality_index[index])) {
+		if (CurrentURLS != null && CurrentURLS.url != null)  {
 					PROD_SOURCE = CurrentURLS.url.trim();
-				}
+					app.CheckUrlIsValidFromServer(PROD_SOURCE,"1");
 		}
 		if (PROD_SOURCE != null)
 			mPlayer.setContinueVideoPath(null,PROD_SOURCE);
