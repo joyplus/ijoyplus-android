@@ -473,6 +473,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_gravity="left"
                         android:layout_marginLeft="5dp"
+                        android:textSize="15dp"
                         android:clickable="true"
                         android:onClick="OnClickPre15"
                         android:text="@string/ tv_string1"
@@ -485,6 +486,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_gravity="right"
                         android:layout_marginRight="5dp"
+                        android:textSize="15dp"
                         android:clickable="true"
                         android:onClick="OnClickNext15"
                         android:text="@string/ tv_string2" />
