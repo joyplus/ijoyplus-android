@@ -130,7 +130,7 @@ public class Detail_Movie extends Activity {
 
 		if (prod_id != null)
 			CheckSaveData();
-//			GetServiceData();
+		// GetServiceData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -545,9 +545,8 @@ public class Detail_Movie extends Activity {
 		try {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
-			if(m_ReturnProgramView != null&&prod_id!=null)
-			{
-				app.SaveServiceData(prod_id, json.toString());//根据id保存住
+			if (m_ReturnProgramView != null && prod_id != null) {
+				app.SaveServiceData(prod_id, json.toString());// 根据id保存住
 			}
 			// 创建数据源对象
 			InitData();
@@ -565,7 +564,7 @@ public class Detail_Movie extends Activity {
 		}
 
 	}
-	
+
 	private void CheckSaveData() {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -574,7 +573,8 @@ public class Detail_Movie extends Activity {
 			GetServiceData();
 		} else {
 			try {
-				m_ReturnProgramView = mapper.readValue(SaveData, ReturnProgramView.class);
+				m_ReturnProgramView = mapper.readValue(SaveData,
+						ReturnProgramView.class);
 				// 创建数据源对象
 				// 创建数据源对象
 				InitData();
@@ -601,7 +601,7 @@ public class Detail_Movie extends Activity {
 
 		}
 	}
-	
+
 	// InitListData
 	public void GetServiceData() {
 		String url = Constant.BASE_URL + "program/view?prod_id=" + prod_id;
@@ -610,10 +610,10 @@ public class Detail_Movie extends Activity {
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
 		cb.SetHeader(app.getHeaders());
-//		cb.header("User-Agent",
-//				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-//		cb.header("app_key", Constant.APPKEY);
-//		cb.header("user_id", app.UserID);
+		// cb.header("User-Agent",
+		// "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+		// cb.header("app_key", Constant.APPKEY);
+		// cb.header("user_id", app.UserID);
 
 		aq.id(R.id.ProgressText).visible();
 		aq.progress(R.id.progress).ajax(cb);
@@ -662,8 +662,7 @@ public class Detail_Movie extends Activity {
 
 	public void OnClickCacheDown(View v) {
 		app.checkUserSelect(Detail_Movie.this);
-		if(app.use2G3G)
-		{
+		if (app.use2G3G) {
 			if (DOWNLOAD_SOURCE != null) {
 				String urlstr = DOWNLOAD_SOURCE;
 				String urlposter = m_ReturnProgramView.movie.poster;
@@ -678,11 +677,11 @@ public class Detail_Movie extends Activity {
 						urlposter, my_name, download_state);
 				aq.id(R.id.button9).background(R.drawable.yi_huan_cun);// 点击下载后直接把下载按钮的状态改变掉
 				aq.id(R.id.button9).clickable(false);
-				Toast.makeText(Detail_Movie.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(Detail_Movie.this, "视频已加入下载队列",
+						Toast.LENGTH_SHORT).show();
 			} else {
-				Toast.makeText(Detail_Movie.this, "该视频不支持下载", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(Detail_Movie.this, "该视频不支持下载",
+						Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -774,14 +773,18 @@ public class Detail_Movie extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
+
+		// 统计点击次数
+		StatisticsClicksShow();
+
 		app.checkUserSelect(Detail_Movie.this);
-		if(app.use2G3G)
-		{
+		if (app.use2G3G) {
 			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 				if (PROD_SOURCE.contains("test=m3u8")) {
 					PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
 				}
-				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
+				CallVideoPlayActivity(PROD_SOURCE,
+						m_ReturnProgramView.movie.name);
 
 			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
@@ -1143,22 +1146,23 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
-		
-		int sourceId = -1;//如果是风行那值为1,如果不是那就为其他的值
-		
+
+		int sourceId = -1;// 如果是风行那值为1,如果不是那就为其他的值
+
 		if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
-			
+
 			for (int j = 0; j < m_ReturnProgramView.movie.episodes[0].down_urls.length; j++) {
-				
+
 				if (m_ReturnProgramView.movie.episodes[0].down_urls[j].source
 						.equalsIgnoreCase("fengxing")) {
 					sourceId = 1;
 				}
 			}
 		}
-		
-		if(BuildConfig.DEBUG) Log.i(TAG, "CallVideoPlayActivity--->>sourceId : " + sourceId);
-//		app.CheckUrlIsValidFromServer(m_uri, sourceId);//连接服务器，看链接是否有效
+
+		if (BuildConfig.DEBUG)
+			Log.i(TAG, "CallVideoPlayActivity--->>sourceId : " + sourceId);
+		// app.CheckUrlIsValidFromServer(m_uri, sourceId);//连接服务器，看链接是否有效
 		Intent intent = new Intent();
 		Bundle bundle = new Bundle();
 		bundle.putString("path", m_uri);
@@ -1173,5 +1177,44 @@ public class Detail_Movie extends Activity {
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "mp4 fail", ex);
 		}
+	}
+
+	/**
+	 * 用来统计用户点击播放视屏后正常跳转的次数 有可能跳转到播放器，也有可能跳转到浏览器
+	 * 
+	 * 数据从服务器上获取
+	 */
+	private void StatisticsClicksShow() {
+
+		String url = Constant.BASE_URL + "program/recordPlay";
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("app_key", Constant.APPKEY);// required string //
+												// 申请应用时分配的AppKey。
+
+		params.put("prod_id", prod_id);// required string // 视频id
+
+		params.put("prod_name", prod_name);// required // string 视频名字
+
+		params.put("prod_subname", "");// required // string 视频的集数 电影的subname为空
+
+		params.put("prod_type", 1);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
+
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		// cb.SetHeader(app.getHeaders());
+		cb.params(params).url(url).type(JSONObject.class)
+				.weakHandler(this, "CallStaticsPlayResulrt");
+		// cb.params(params).url(url);
+		aq.ajax(cb);
+	}
+
+	public void CallStaticsPlayResulrt(String url, JSONObject json,
+			AjaxStatus status) {
+		if (json == null) {
+			return;
+		}
+		if (BuildConfig.DEBUG)
+			Log.i(TAG + "YangZhg", "JSON:" + json.toString());
+
 	}
 }
