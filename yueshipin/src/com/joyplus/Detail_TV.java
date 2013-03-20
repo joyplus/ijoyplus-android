@@ -497,7 +497,7 @@ public class Detail_TV extends Activity {
 								.findViewById(getResources().getIdentifier(
 										"tv_button" + m_j, "id",
 										getPackageName()));
-						m_button.setVisibility(View.GONE);
+						m_button.setVisibility(View.INVISIBLE);
 						aq.id(R.id.textView9).gone();
 					}
 				}
@@ -836,7 +836,7 @@ public class Detail_TV extends Activity {
 					Button m_button = (Button) this.findViewById(getResources()
 							.getIdentifier("tv_button" + m_j, "id",
 									getPackageName()));
-					m_button.setVisibility(View.GONE);
+					m_button.setVisibility(View.INVISIBLE);
 					aq.id(R.id.textView9).gone();
 				}
 			}
@@ -894,7 +894,7 @@ public class Detail_TV extends Activity {
 					Button m_button = (Button) this.findViewById(getResources()
 							.getIdentifier("tv_button" + m_j, "id",
 									getPackageName()));
-					m_button.setVisibility(View.GONE);
+					m_button.setVisibility(View.INVISIBLE);
 				}
 			}
 		}
@@ -1493,7 +1493,7 @@ public class Detail_TV extends Activity {
 			Button m_button = (Button) popupview.findViewById(getResources()
 					.getIdentifier("download_button" + m_j, "id",
 							getPackageName()));
-			m_button.setVisibility(View.GONE);
+			m_button.setVisibility(View.INVISIBLE);
 		}
 		for (i = 0; (i + index * 15 + current_download_pagenum * 60) < m_ReturnProgramView.tv.episodes.length
 				&& i < 15; i++) {
@@ -1599,7 +1599,7 @@ public class Detail_TV extends Activity {
 			Button m_button = (Button) menuView.findViewById(getResources()
 					.getIdentifier("download_btn_page" + m_j, "id",
 							getPackageName()));
-			m_button.setVisibility(View.GONE);
+			m_button.setVisibility(View.INVISIBLE);
 		}
 		for (k = 0; (k < 4)
 				&& (k < (total - (current_download_pagenum) * 60) / 15); k++) {
@@ -1666,7 +1666,7 @@ public class Detail_TV extends Activity {
 				Button m_button = (Button) menuView.findViewById(getResources()
 						.getIdentifier("download_button" + m_j, "id",
 								getPackageName()));
-				m_button.setVisibility(View.GONE);
+				m_button.setVisibility(View.INVISIBLE);
 				aq.id(R.id.textView9).gone();
 			}
 		}

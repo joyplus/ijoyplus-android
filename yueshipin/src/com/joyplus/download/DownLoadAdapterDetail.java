@@ -65,7 +65,6 @@ private static final int MAX = 100;
 			holder.resourceImage = (ImageView)convertView.findViewById(R.id.movieImageview);
 			holder.resourceDownProgress =(ProgressBar)convertView.findViewById(R.id.downloadprogress);
 			holder.resourcePercentDown = (TextView)convertView.findViewById(R.id.precentDownload);
-			
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
