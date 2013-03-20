@@ -310,87 +310,51 @@
                         android:layout_marginTop="11dp" >
 
                         <!-- 按钮不是15的整数时,不往左靠第一个TableRow多余的 -->
-
-                        <TableRow
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" >
-
-                            <Button
-                                android:layout_width="wrap_content"
-                                android:layout_height="1dp"
-                                android:background="@android:color/transparent"
-                                android:ems="3" />
-
-                            <Button
-                                android:layout_width="wrap_content"
-                                android:layout_height="1dp"
-                                android:background="@android:color/transparent"
-                                android:ems="3" />
-
-                            <Button
-                                android:layout_width="wrap_content"
-                                android:layout_height="1dp"
-                                android:background="@android:color/transparent"
-                                android:ems="3" />
-
-                            <Button
-                                android:layout_width="wrap_content"
-                                android:layout_height="1dp"
-                                android:background="@android:color/transparent"
-                                android:ems="3" />
-
-                            <Button
-                                android:layout_width="wrap_content"
-                                android:layout_height="1dp"
-                                android:background="@android:color/transparent"
-                                android:ems="3" />
-                        </TableRow>
-
-                        <TableRow
-                            android:layout_width="wrap_content"
+                        <TableRow
+                            android:layout_width="fill_parent"
                             android:layout_height="wrap_content" >
 
                             <Button
                                 android:id="@+id/tv_button4"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button5"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button6"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button7"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button8"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
@@ -402,45 +366,45 @@
 
                             <Button
                                 android:id="@+id/tv_button9"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button10"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button11"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button12"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button13"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
@@ -452,45 +416,45 @@
 
                             <Button
                                 android:id="@+id/tv_button14"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button15"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button16"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button17"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
 
                             <Button
                                 android:id="@+id/tv_button18"
-                                style="?android:attr/buttonStyleSmall"
-                                android:layout_width="wrap_content"
+                                android:layout_width="fill_parent"
                                 android:layout_height="30dp"
+                                android:layout_weight="1"
                                 android:background="@drawable/tv_play_btn"
                                 android:onClick="OnClickTVPlay"
                                 android:text="01" />
