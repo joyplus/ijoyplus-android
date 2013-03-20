@@ -312,8 +312,8 @@ public class MediaController extends FrameLayout  {
 			lv_radio0 = (RadioButton)v.findViewById(R.id.radio0);
 			lv_radio1 = (RadioButton)v.findViewById(R.id.radio1);
 			lv_radio2 = (RadioButton)v.findViewById(R.id.radio2);
-			CurrentQuality = 1;
-			lv_radio1.setChecked(true);
+//			CurrentQuality = 1;
+//			lv_radio1.setChecked(true);
 			radioGroup.setOnCheckedChangeListener(mRadioGroupListener);
 			if (m_ReturnProgramView != null) {
 				mHandler.removeMessages(FADE_OUT);
@@ -455,7 +455,21 @@ public class MediaController extends FrameLayout  {
 	return PROD_SOURCE;
 	 
  }
-
+ public void ShowQuality(int index) {
+	 CurrentQuality = index;
+	 switch (CurrentCategory) {
+	 case 0:
+		 lv_radio0.setChecked(true);
+		 break;
+	 case 1:
+		 lv_radio1.setChecked(true);
+		 break;
+	 case 2:
+		 lv_radio2.setChecked(true);
+		 break;
+	 }
+	 
+ }
 	public void SelectQuality(int index) {
 		mPlayer.pause();
 
@@ -568,6 +582,7 @@ public class MediaController extends FrameLayout  {
 		lv_radio0.setVisibility(View.INVISIBLE);
 		lv_radio1.setVisibility(View.INVISIBLE);
 		lv_radio2.setVisibility(View.INVISIBLE);
+		
 		switch (CurrentCategory) {
 		case 0:
 			for(int i = 0; i<m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls.length;i++){

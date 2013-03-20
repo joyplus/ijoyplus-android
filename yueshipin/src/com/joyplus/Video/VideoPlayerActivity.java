@@ -94,6 +94,7 @@ public class VideoPlayerActivity extends Activity implements
 	private Handler mHandler = new Handler();
 	private long mStartRX = 0;
 	private long mStartTX = 0;
+	private int CurrentQuality = 0;
 
 
 	/*
@@ -513,8 +514,10 @@ public class VideoPlayerActivity extends Activity implements
 			if(mPath != null && mPath.length() >0)
 				mVideoView.setVideoPath(app.getURLPath());
 			
-			if (mMediaController != null)
+			if (mMediaController != null){
+				mMediaController.ShowQuality(CurrentQuality);
 				mMediaController.setProd_Data(m_ReturnProgramView);
+			}
 	
 			// 创建数据源对象
 		} catch (JsonParseException e) {
@@ -545,25 +548,15 @@ public class VideoPlayerActivity extends Activity implements
 							 */
 							if (urls.url != null
 									&& app.CheckUrlIsValidFromServer(urls.url,"1")) {
-								if (PROD_SOURCE == null
-										&& !app.IfIncludeM3U(urls.url))
-									PROD_SOURCE = urls.url.trim();
-								if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"mp4"))
-									PROD_SOURCE = urls.url.trim();
-								else if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"flv"))
-									PROD_SOURCE = urls.url.trim();
-								else if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"hd2"))
-									PROD_SOURCE = urls.url.trim();
-								else if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"3gp"))
-									PROD_SOURCE = urls.url.trim();
+								for(int qindex = 0;qindex<Constant.quality_index.length;qindex++){
+									if (PROD_SOURCE == null
+											&& urls.type.trim().equalsIgnoreCase(
+													Constant.quality_index[qindex])){
+										PROD_SOURCE = urls.url.trim();
+										CurrentQuality = qindex;
+										break;
+									}
+								}
 							}
 							if (PROD_SOURCE != null)
 								break;
@@ -589,25 +582,15 @@ public class VideoPlayerActivity extends Activity implements
 							 */
 							if (urls.url != null
 									&& app.CheckUrlIsValidFromServer(urls.url,"1")) {
-								if (PROD_SOURCE == null
-										&& !app.IfIncludeM3U(urls.url))
-									PROD_SOURCE = urls.url.trim();
-								if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"mp4"))
-									PROD_SOURCE = urls.url.trim();
-								else if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"flv"))
-									PROD_SOURCE = urls.url.trim();
-								else if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"hd2"))
-									PROD_SOURCE = urls.url.trim();
-								else if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"3gp"))
-									PROD_SOURCE = urls.url.trim();
+								for(int qindex = 0;qindex<Constant.quality_index.length;qindex++){
+									if (PROD_SOURCE == null
+											&& urls.type.trim().equalsIgnoreCase(
+													Constant.quality_index[qindex])){
+										PROD_SOURCE = urls.url.trim();
+										CurrentQuality = qindex;
+										break;
+									}
+								}
 							}
 							if (PROD_SOURCE != null)
 								break;
@@ -633,25 +616,19 @@ public class VideoPlayerActivity extends Activity implements
 							 */
 							if (urls.url != null
 									&& app.CheckUrlIsValidFromServer(urls.url,"1")) {
-								if (PROD_SOURCE == null
-										&& !app.IfIncludeM3U(urls.url))
-									PROD_SOURCE = urls.url.trim();
-								if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"mp4"))
-									PROD_SOURCE = urls.url.trim();
-								else if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"flv"))
-									PROD_SOURCE = urls.url.trim();
-								else if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"hd2"))
-									PROD_SOURCE = urls.url.trim();
-								else if (PROD_SOURCE == null
-										&& urls.type.trim().equalsIgnoreCase(
-												"3gp"))
-									PROD_SOURCE = urls.url.trim();
+//								if (PROD_SOURCE == null
+//										&& !app.IfIncludeM3U(urls.url))
+//									PROD_SOURCE = urls.url.trim();
+								for(int qindex = 0;qindex<Constant.quality_index.length;qindex++){
+									if (PROD_SOURCE == null
+											&& urls.type.trim().equalsIgnoreCase(
+													Constant.quality_index[qindex])){
+										PROD_SOURCE = urls.url.trim();
+										CurrentQuality = qindex;
+										break;
+									}
+								}
+								
 							}
 							if (PROD_SOURCE != null)
 								break;
