@@ -23,6 +23,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
@@ -246,7 +249,30 @@ public class App extends Application {
 		}
 		return false;
 	}
-
+	
+//	//获取路径
+//	public String getpath() {
+//		Dev_MountInfo dev = Dev_MountInfo.getInstance();
+//
+//		PackageManager pm = getPackageManager();
+//
+//		ApplicationInfo appInfo = null;
+//		try {
+//			appInfo = pm.getApplicationInfo(getPackageName(), 0);
+//		} catch (NameNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		String path = "";
+//		if ((appInfo.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE) != 0) {
+//
+//			path = dev.getExternalInfo().getPath();
+//		} else {
+//			path = dev.getInternalInfo().getPath();
+//		}
+//		return path;
+//	}
+	
 	public boolean IfIncludeM3U(String Url) {
 		for (int i = 0; i < Constant.video_dont_support_extensions.length; i++) {
 
@@ -480,16 +506,10 @@ public class App extends Application {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK" + e);
-			
 			//如果地址真的不存在，那就往里面加NULL字符串
 			mAndroidHttpClient.close();
 			list.add(NOT_VALID_LINK);
 			e.printStackTrace();
-		}
-		
-
-		
+		}	
 	}
-
-
 }

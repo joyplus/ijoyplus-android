@@ -87,7 +87,8 @@ public class Video_Cache_Detail extends Activity {
 				tempview = view;
 				DownloadInfo info = data.get(position);
 				if (app.isNetworkAvailable()) {
-					if (info.getDownload_state().equalsIgnoreCase("downloading")) {
+					if (info.getDownload_state()
+							.equalsIgnoreCase("downloading")) {
 						info.setDownload_state("pause");
 						Dao.getInstance(Video_Cache_Detail.this)
 								.updataInfoState(info.getDownload_state(),
@@ -99,16 +100,18 @@ public class Video_Cache_Detail extends Activity {
 							App.downloaders.get(localfile).pause();
 							autoDownloadFile();
 						}
-					} else if (info.getDownload_state().equalsIgnoreCase("wait")) {
+					} else if (info.getDownload_state()
+							.equalsIgnoreCase("wait")) {
 						if (Dao.getInstance(Video_Cache_Detail.this)
 								.isHasInforsDownloading("downloading")) {
-								info.setDownload_state("downloading");
-								Dao.getInstance(Video_Cache_Detail.this).updataInfoState(
-										info.getDownload_state(), info.getProd_id(),
-										info.getMy_index());//更新为正在下载中
+							info.setDownload_state("downloading");
+							Dao.getInstance(Video_Cache_Detail.this)
+									.updataInfoState(info.getDownload_state(),
+											info.getProd_id(),
+											info.getMy_index());// 更新为正在下载中
 							String localfile = Constant.PATH_VIDEO
-									+ info.getProd_id() + "_" + info.getMy_index()
-									+ ".mp4";
+									+ info.getProd_id() + "_"
+									+ info.getMy_index() + ".mp4";
 							// 点击后就开始下载这个item里面的内容
 							DownloadTask downloadtask = new DownloadTask(view,
 									activity, context, info.getProd_id(), info
@@ -122,21 +125,24 @@ public class Video_Cache_Detail extends Activity {
 							info.setDownload_state("pause");
 							Dao.getInstance(Video_Cache_Detail.this)
 									.updataInfoState(info.getDownload_state(),
-											info.getProd_id(), info.getMy_index());
+											info.getProd_id(),
+											info.getMy_index());
 						}
-					} else if (info.getDownload_state().equalsIgnoreCase("pause")) {
+					} else if (info.getDownload_state().equalsIgnoreCase(
+							"pause")) {
 						/*
 						 * 判断当前是否有下载,有下载则转为等待,没下载则直接为下载
 						 */
 						if (Dao.getInstance(Video_Cache_Detail.this)
 								.isHasInforsDownloading("downloading")) {
-								info.setDownload_state("downloading");
-								Dao.getInstance(Video_Cache_Detail.this).updataInfoState(
-										info.getDownload_state(), info.getProd_id(),
-										info.getMy_index());//更新为正在下载中
+							info.setDownload_state("downloading");
+							Dao.getInstance(Video_Cache_Detail.this)
+									.updataInfoState(info.getDownload_state(),
+											info.getProd_id(),
+											info.getMy_index());// 更新为正在下载中
 							String localfile = Constant.PATH_VIDEO
-									+ info.getProd_id() + "_" + info.getMy_index()
-									+ ".mp4";
+									+ info.getProd_id() + "_"
+									+ info.getMy_index() + ".mp4";
 							// 点击后就开始下载这个item里面的内容
 							DownloadTask downloadtask = new DownloadTask(view,
 									activity, context, info.getProd_id(), info
@@ -150,12 +156,12 @@ public class Video_Cache_Detail extends Activity {
 							info.setDownload_state("wait");
 							Dao.getInstance(Video_Cache_Detail.this)
 									.updataInfoState(info.getDownload_state(),
-											info.getProd_id(), info.getMy_index());
+											info.getProd_id(),
+											info.getMy_index());
 						}
 					}
 				} else {
-					if(info.getCompeleteSize()<info.getFileSize())
-					{
+					if (info.getCompeleteSize() < info.getFileSize()) {
 						app.MyToast(Video_Cache_Detail.this, getResources()
 								.getString(R.string.networknotwork));
 					}
@@ -171,16 +177,14 @@ public class Video_Cache_Detail extends Activity {
 					bundle.putString("title", info.getMy_name());
 					bundle.putString("prod_id", info.getProd_id());
 					bundle.putLong("current_time", 0);
-					
-					if(info.getMy_index().contains("_tv"))
-					{
+
+					if (info.getMy_index().contains("_tv")) {
 						bundle.putString("prod_type", "3");
-						bundle.putString("prod_subname", info.getMy_index());//???
-					}
-					else
-					{
+						bundle.putString("prod_subname", info.getMy_index());// ???
+					} else {
 						bundle.putString("prod_type", "2");
-						bundle.putString("prod_subname","第"+ info.getMy_index() + "集"); // yu 
+						bundle.putString("prod_subname",
+								"第" + info.getMy_index() + "集"); // yu
 					}
 					intent.putExtras(bundle);
 					try {
@@ -210,8 +214,8 @@ public class Video_Cache_Detail extends Activity {
 				Downloader downloader = new Downloader(data.get(i)
 						.getCompeleteSize(), data.get(i).getFileSize(), data
 						.get(i).getProd_id(), data.get(i).getMy_index(), data
-						.get(i).getUrl(), data.get(i).getUrlposter(), data.get(i)
-						.getMy_name(), data.get(i).getDownload_state(),
+						.get(i).getUrl(), data.get(i).getUrlposter(), data.get(
+						i).getMy_name(), data.get(i).getDownload_state(),
 						Video_Cache_Detail.this);
 				App.downloaders.put(localfile, downloader);
 			}
@@ -220,7 +224,8 @@ public class Video_Cache_Detail extends Activity {
 	}
 
 	public void OnDeleteGridViewItem(final int item) {
-		String program_name = "你确定删除影片:<<" + data.get(item).getMy_name() + ">>吗？";// 最好加上名字
+		String program_name = "你确定删除影片:<<" + data.get(item).getMy_name()
+				+ ">>吗？";// 最好加上名字
 		AlertDialog.Builder builder = new AlertDialog.Builder(
 				Video_Cache_Detail.this);
 		builder.setTitle("下载记录").setMessage(program_name)
@@ -232,9 +237,10 @@ public class Video_Cache_Detail extends Activity {
 						if (App.downloaders.get(Constant.PATH_VIDEO
 								+ info.getProd_id() + "_" + info.getMy_index()
 								+ ".mp4") != null) {
-							App.downloaders.get(
-									Constant.PATH_VIDEO + info.getProd_id()
-											+ "_" + info.getMy_index() + ".mp4")
+							App.downloaders
+									.get(Constant.PATH_VIDEO
+											+ info.getProd_id() + "_"
+											+ info.getMy_index() + ".mp4")
 									.pause();
 						}
 						Dao.getInstance(Video_Cache_Detail.this).delete(
@@ -261,46 +267,46 @@ public class Video_Cache_Detail extends Activity {
 		}
 	}
 
-	public  String getpath(){
+	public String getpath() {
 		Dev_MountInfo dev = Dev_MountInfo.getInstance();
 
-		PackageManager pm = getPackageManager(); 
-		
+		PackageManager pm = getPackageManager();
+
 		ApplicationInfo appInfo = null;
 		try {
 			appInfo = pm.getApplicationInfo(getPackageName(), 0);
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 		String path = "";
-		if ((appInfo.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE) != 0) { 
+		if ((appInfo.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE) != 0) {
 			path = dev.getExternalInfo().getPath();
-         }else{
-        	 path = dev.getInternalInfo().getPath();
-         }
+		} else {
+			path = dev.getInternalInfo().getPath();
+		}
 
 		return path;
-		 }
-	
+	}
+
 	void getSize() {
 		// viewHolder.myTextView.setText("");
 		progressBar.setProgress(0);
 		// 判断是否有插入存储卡
-		
-			// 取得sdcard文件路径
-			StatFs statfs = new StatFs(getpath());
-			long blocSize = statfs.getBlockSize();
-			float totalBlocks = statfs.getBlockCount();
-			int sizeInMb = (int) (blocSize * totalBlocks) / 1024 / 1024; // 计算总容量
-			long availableBlocks = statfs.getAvailableBlocks(); // 获取可用容量
-			float percent = 1 - availableBlocks / totalBlocks; // 获取已用比例
-			percent = (int) (percent * 100);
-			progressBar.setProgress((int) (percent));
-			String Text = "总共：" + sizeInMb + "MB" + "   " + "已用:" + sizeInMb
-					* percent / 100 + "MB";
-			aq.id(R.id.SDcardTextView).text(Text);
-		
+
+		// 取得sdcard文件路径
+		StatFs statfs = new StatFs(getpath());
+		long blocSize = statfs.getBlockSize();
+		float totalBlocks = statfs.getBlockCount();
+		int sizeInMb = (int) (blocSize * totalBlocks) / 1024 / 1024; // 计算总容量
+		long availableBlocks = statfs.getAvailableBlocks(); // 获取可用容量
+		float percent = 1 - availableBlocks / totalBlocks; // 获取已用比例
+		percent = (int) (percent * 100);
+		progressBar.setProgress((int) (percent));
+		String Text = "总共：" + sizeInMb + "MB" + "   " + "已用:" + sizeInMb
+				* percent / 100 + "MB";
+		aq.id(R.id.SDcardTextView).text(Text);
+
 	}
 
 	// 返回数组，下标1代表大小，下标2代表单位 KB/MB
@@ -362,14 +368,15 @@ public class Video_Cache_Detail extends Activity {
 	public void autoDownloadFile() {
 		if (Dao.getInstance(Video_Cache_Detail.this).isHasInforsDownloading(
 				"downloading")) {
-			
-			if(Dao.getInstance(Video_Cache_Detail.this).getOneStateInfo("wait")!=null)
-			{
-				DownloadInfo infos = Dao.getInstance(Video_Cache_Detail.this).getOneStateInfo("wait");
+
+			if (Dao.getInstance(Video_Cache_Detail.this)
+					.getOneStateInfo("wait") != null) {
+				DownloadInfo infos = Dao.getInstance(Video_Cache_Detail.this)
+						.getOneStateInfo("wait");
 				infos.setDownload_state("downloading");
 				Dao.getInstance(Video_Cache_Detail.this).updataInfoState(
 						infos.getDownload_state(), infos.getProd_id(),
-						infos.getMy_index());//更新为正在下载中
+						infos.getMy_index());// 更新为正在下载中
 				String localfile = Constant.PATH_VIDEO + infos.getProd_id()
 						+ "_" + infos.getMy_index() + ".mp4";
 				// 点击后就开始下载这个item里面的内容
@@ -377,8 +384,8 @@ public class Video_Cache_Detail extends Activity {
 						activity, context, infos.getProd_id(),
 						infos.getMy_index(), infos.getUrl(), localfile);
 				downloadtask.execute(infos.getProd_id(), infos.getMy_index(),
-						infos.getUrl(), infos.getUrlposter(), infos.getMy_name(),
-						infos.getDownload_state());
+						infos.getUrl(), infos.getUrlposter(),
+						infos.getMy_name(), infos.getDownload_state());
 			}
 		}
 	}
