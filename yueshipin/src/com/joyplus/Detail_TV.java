@@ -181,7 +181,7 @@ public class Detail_TV extends Activity {
 		InitTVButtom();
 		if (prod_id != null)
 			CheckSaveData();
-//			GetServiceData();
+			GetServiceData();
 	}
 
 	public void InitTVButtom() {
@@ -572,7 +572,7 @@ public class Detail_TV extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR&&app.GetServiceData(prod_id) == null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -621,13 +621,6 @@ public class Detail_TV extends Activity {
 				InitData();
 				aq.id(R.id.ProgressText).gone();
 				aq.id(R.id.scrollView1).visible();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData();
-					}
-				}, 10000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
@@ -651,9 +644,16 @@ public class Detail_TV extends Activity {
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
 		cb.SetHeader(app.getHeaders());
-
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+		if(app.GetServiceData(prod_id) == null)
+		{
+			aq.id(R.id.ProgressText).visible();
+			aq.progress(R.id.progress).ajax(cb);
+		}
+		else
+		{
+			aq.ajax(cb);
+		}
+		
 
 	}
 

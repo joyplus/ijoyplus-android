@@ -539,7 +539,7 @@ public class MediaController extends FrameLayout  {
 //			mFileName.setText(mTitle);
 	}
 	public void DisableButtom(){
-		if(mTextViewDownloadRate!=null)
+//		if(mTextViewDownloadRate!=null)
 		mTextViewDownloadRate.setVisibility(View.INVISIBLE);
 		mimageView33.setVisibility(View.INVISIBLE);
 		mQualityButton.setVisibility(View.INVISIBLE);

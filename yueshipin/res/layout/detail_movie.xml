@@ -3,15 +3,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#F2F2F2" >
-	
-    <LinearLayout 
-	    android:id="@+id/none_net"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:background="@drawable/none_net"
-	    android:visibility="gone">
-	    
-	</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/none_net"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/none_net"
+        android:visibility="gone" >
+    </LinearLayout>
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
@@ -117,26 +117,28 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="13dp"
                     android:scaleType="fitXY" />
-				<Button
-                        android:id="@+id/button2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="128dp"
-                        android:layout_marginTop="20dp"
-                        android:drawableLeft="@drawable/detail_movie_fa"
-                        android:background="@drawable/collecteviedo"
-                        android:onClick="OnClickFavorityNum"
-                        android:text="收藏" />
-				<Button
-                        android:id="@+id/button3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="220dp"
-                        android:layout_marginTop="20dp"
-                        android:drawableLeft="@drawable/detail_movie_ding"
-                        android:background="@drawable/pushviedo"
-                        android:onClick="OnClickSupportNum"
-                        android:text="顶" />
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="128dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/collecteviedo"
+                    android:drawableLeft="@drawable/detail_movie_fa"
+                    android:onClick="OnClickFavorityNum"
+                    android:text="收藏" />
+
+                <Button
+                    android:id="@+id/button3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="220dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/pushviedo"
+                    android:drawableLeft="@drawable/detail_movie_ding"
+                    android:onClick="OnClickSupportNum"
+                    android:text="顶" />
 
                 <TextView
                     android:id="@+id/textView1"
@@ -224,46 +226,46 @@
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal" >
 
-           
-                <LinearLayout 
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:padding="2dp">
+                    android:padding="2dp" >
+
                     <Button
                         android:id="@+id/button11"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/report_problem"
-                        android:onClick="OnClickReportProblem"
-                        />
+                        android:onClick="OnClickReportProblem" />
                 </LinearLayout>
-                <LinearLayout 
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:padding="2dp">
-                    <Button 
+                    android:padding="2dp" >
+
+                    <Button
                         android:id="@+id/button1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/playmovie"
-                        android:onClick="OnClickPlay"/>
+                        android:onClick="OnClickPlay" />
                 </LinearLayout>
 
-                
-                
-                <LinearLayout 
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:padding="2dp">
-                    <Button 
+                    android:padding="2dp" >
+
+                    <Button
                         android:id="@+id/button9"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:onClick="OnClickCacheDown"
-                        android:background="@drawable/cache_download"/>
+                        android:background="@drawable/cache_download"
+                        android:onClick="OnClickCacheDown" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -337,51 +339,51 @@
                         android:id="@+id/button5"
                         android:layout_width="match_parent"
                         android:layout_height="28dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="3dp"
                         android:background="@drawable/detail_movie_button"
                         android:drawableBottom="@drawable/tab1_divider"
                         android:drawableRight="@drawable/detailed_movie_related_in_bg"
                         android:gravity="center_vertical"
                         android:onClick="OnClickMovieBangdan"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="3dp"
                         android:text="    加载中..." />
 
                     <Button
                         android:id="@+id/button6"
                         android:layout_width="match_parent"
                         android:layout_height="28dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="3dp"
                         android:background="@drawable/detail_movie_button"
                         android:drawableBottom="@drawable/tab1_divider"
                         android:drawableRight="@drawable/detailed_movie_related_in_bg"
                         android:gravity="center_vertical"
                         android:onClick="OnClickMovieBangdan"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="3dp"
                         android:text="    加载中..." />
 
                     <Button
                         android:id="@+id/button7"
                         android:layout_width="match_parent"
                         android:layout_height="28dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="3dp"
                         android:background="@drawable/detail_movie_button"
                         android:drawableBottom="@drawable/tab1_divider"
                         android:drawableRight="@drawable/detailed_movie_related_in_bg"
                         android:gravity="center_vertical"
                         android:onClick="OnClickMovieBangdan"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="3dp"
                         android:text="    加载中..." />
 
                     <Button
                         android:id="@+id/button8"
                         android:layout_width="match_parent"
                         android:layout_height="28dp"
-                        android:paddingLeft="8dp"
-                        android:paddingR="3dp"
                         android:background="@drawable/detail_movie_button"
                         android:drawableRight="@drawable/detailed_movie_related_in_bg"
                         android:gravity="center_vertical"
                         android:onClick="OnClickMovieBangdan"
+                        android:paddingRight="3dp"
+                        android:paddingLeft="8dp"
                         android:text="    加载中..." />
                 </LinearLayout>
             </LinearLayout>

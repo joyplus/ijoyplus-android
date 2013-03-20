@@ -83,12 +83,12 @@ public class Detail_Movie extends Activity {
 	private String token = null;
 	private String expires_in = null;
 	String name;
-	private Drawable downloaddisable = null;
+//	private Drawable downloaddisable = null;
 	// 播放记录变量
 	public static int REQUESTPLAYTIME = 200;
 	public static int RETURN_CURRENT_TIME = 150;
-	private int current_time = 0;
-	private int total_time = 0;
+//	private int current_time = 0;
+//	private int total_time = 0;
 
 	/**
 	 * 利用消息处理机制适时更新APP里的数据
@@ -125,12 +125,12 @@ public class Detail_Movie extends Activity {
 			}
 		});
 		// 添加下载按钮的暂无下载的效果图
-		downloaddisable = this.getResources().getDrawable(
-				R.drawable.tab2_video_8);
+//		downloaddisable = this.getResources().getDrawable(
+//				R.drawable.tab2_video_8);
 
 		if (prod_id != null)
 			CheckSaveData();
-//			GetServiceData();
+			GetServiceData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -534,7 +534,7 @@ public class Detail_Movie extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR&&app.GetServiceData(prod_id) == null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -580,13 +580,13 @@ public class Detail_Movie extends Activity {
 				InitData();
 				aq.id(R.id.ProgressText).gone();
 				aq.id(R.id.scrollView1).visible();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData();
-					}
-				}, 10000);
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						GetServiceData();
+//					}
+//				}, 10000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
@@ -614,9 +614,16 @@ public class Detail_Movie extends Activity {
 //				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
 //		cb.header("app_key", Constant.APPKEY);
 //		cb.header("user_id", app.UserID);
-
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+		if(app.GetServiceData(prod_id) == null)
+		{
+			aq.id(R.id.ProgressText).visible();
+			aq.progress(R.id.progress).ajax(cb);
+		}
+		
+		else
+		{
+			aq.ajax(cb);
+		}
 
 	}
 
@@ -665,7 +672,7 @@ public class Detail_Movie extends Activity {
 		if(app.use2G3G)
 		{
 			if (DOWNLOAD_SOURCE != null) {
-				String urlstr = DOWNLOAD_SOURCE;
+//				String urlstr = DOWNLOAD_SOURCE;
 				String urlposter = m_ReturnProgramView.movie.poster;
 				String localfile = Constant.PATH_VIDEO + prod_id + "_"
 						+ download_index + ".mp4";
@@ -1065,82 +1072,82 @@ public class Detail_Movie extends Activity {
 		}
 	}
 
-	private void GetVideoSource(final int episodeNum, String url) {
-
-		aq.progress(R.id.progress).ajax(url, InputStream.class,
-				new AjaxCallback<InputStream>() {
-
-					public void callback(String url, InputStream is,
-							AjaxStatus status) {
-						String urlsave = Constant.BASE_URL + "program/play";
-						if (is != null) {
-
-							Map<String, Object> params = new HashMap<String, Object>();
-							params.put("app_key", Constant.APPKEY);// required
-																	// string
-																	// 申请应用时分配的AppKey。
-							params.put("prod_id", m_ReturnProgramView.movie.id);// required
-																				// string
-																				// 视频id
-							params.put("prod_name",
-									m_ReturnProgramView.movie.name);// required
-																	// string
-																	// 视频名字
-							params.put("prod_subname",
-									m_ReturnProgramView.movie.episodes.length);// required
-																				// string
-																				// 视频的集数
-							params.put("prod_type", 1);// required int 视频类别
-														// 1：电影，2：电视剧，3：综艺，4：视频
-							params.put("playback_time", 0);// _time required int
-															// 上次播放时间，单位：秒
-							params.put("duration", 0);// required int 视频时长， 单位：秒
-							params.put("play_type", "1");// required string
-															// 播放的类别 1: 视频地址播放
-							// 2:webview播放
-							params.put("video_url", url);// required
-															// string
-															// 视频url
-
-							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-							cb.SetHeader(app.getHeaders());
-
-							cb.params(params).url(urlsave);
-							aq.ajax(cb);
-
-							CallVideoPlayActivity(url,
-									m_ReturnProgramView.movie.name);
-						} else {
-							if (m_ReturnProgramView.movie.episodes[episodeNum].down_urls != null) {
-								for (int k = 0; k < m_ReturnProgramView.movie.episodes[episodeNum].down_urls[0].urls.length; k++) {
-									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[episodeNum].down_urls[0].urls[k];
-									if (urls != null) {
-										if (urls.url != null) {
-											if (urls.type.trim()
-													.equalsIgnoreCase("mp4"))
-												PROD_SOURCE = urls.url.trim();
-											else if (urls.type.trim()
-													.equalsIgnoreCase("flv"))
-												PROD_SOURCE = urls.url.trim();
-											else if (urls.type.trim()
-													.equalsIgnoreCase("hd2"))
-												PROD_SOURCE = urls.url.trim();
-											else if (urls.type.trim()
-													.equalsIgnoreCase("3gp"))
-												PROD_SOURCE = urls.url.trim();
-										}
-										if (PROD_SOURCE != null) {
-											GetVideoSource(episodeNum,
-													PROD_SOURCE);
-										}
-									}
-								}
-							}
-						}
-					}
-
-				});
-	}
+//	private void GetVideoSource(final int episodeNum, String url) {
+//
+//		aq.progress(R.id.progress).ajax(url, InputStream.class,
+//				new AjaxCallback<InputStream>() {
+//
+//					public void callback(String url, InputStream is,
+//							AjaxStatus status) {
+//						String urlsave = Constant.BASE_URL + "program/play";
+//						if (is != null) {
+//
+//							Map<String, Object> params = new HashMap<String, Object>();
+//							params.put("app_key", Constant.APPKEY);// required
+//																	// string
+//																	// 申请应用时分配的AppKey。
+//							params.put("prod_id", m_ReturnProgramView.movie.id);// required
+//																				// string
+//																				// 视频id
+//							params.put("prod_name",
+//									m_ReturnProgramView.movie.name);// required
+//																	// string
+//																	// 视频名字
+//							params.put("prod_subname",
+//									m_ReturnProgramView.movie.episodes.length);// required
+//																				// string
+//																				// 视频的集数
+//							params.put("prod_type", 1);// required int 视频类别
+//														// 1：电影，2：电视剧，3：综艺，4：视频
+//							params.put("playback_time", 0);// _time required int
+//															// 上次播放时间，单位：秒
+//							params.put("duration", 0);// required int 视频时长， 单位：秒
+//							params.put("play_type", "1");// required string
+//															// 播放的类别 1: 视频地址播放
+//							// 2:webview播放
+//							params.put("video_url", url);// required
+//															// string
+//															// 视频url
+//
+//							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+//							cb.SetHeader(app.getHeaders());
+//
+//							cb.params(params).url(urlsave);
+//							aq.ajax(cb);
+//
+//							CallVideoPlayActivity(url,
+//									m_ReturnProgramView.movie.name);
+//						} else {
+//							if (m_ReturnProgramView.movie.episodes[episodeNum].down_urls != null) {
+//								for (int k = 0; k < m_ReturnProgramView.movie.episodes[episodeNum].down_urls[0].urls.length; k++) {
+//									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[episodeNum].down_urls[0].urls[k];
+//									if (urls != null) {
+//										if (urls.url != null) {
+//											if (urls.type.trim()
+//													.equalsIgnoreCase("mp4"))
+//												PROD_SOURCE = urls.url.trim();
+//											else if (urls.type.trim()
+//													.equalsIgnoreCase("flv"))
+//												PROD_SOURCE = urls.url.trim();
+//											else if (urls.type.trim()
+//													.equalsIgnoreCase("hd2"))
+//												PROD_SOURCE = urls.url.trim();
+//											else if (urls.type.trim()
+//													.equalsIgnoreCase("3gp"))
+//												PROD_SOURCE = urls.url.trim();
+//										}
+//										if (PROD_SOURCE != null) {
+//											GetVideoSource(episodeNum,
+//													PROD_SOURCE);
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//
+//				});
+//	}
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
 		
