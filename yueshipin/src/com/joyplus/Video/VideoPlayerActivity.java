@@ -544,7 +544,7 @@ public class VideoPlayerActivity extends Activity implements
 							 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
 							 */
 							if (urls.url != null
-									&& app.CheckUrlIsValidFromServer(urls.url,playProdId)) {
+									&& app.CheckUrlIsValidFromServer(urls.url,"1")) {
 								if (PROD_SOURCE == null
 										&& !app.IfIncludeM3U(urls.url))
 									PROD_SOURCE = urls.url.trim();
@@ -588,7 +588,7 @@ public class VideoPlayerActivity extends Activity implements
 							 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
 							 */
 							if (urls.url != null
-									&& app.CheckUrlIsValidFromServer(urls.url,playProdId)) {
+									&& app.CheckUrlIsValidFromServer(urls.url,"1")) {
 								if (PROD_SOURCE == null
 										&& !app.IfIncludeM3U(urls.url))
 									PROD_SOURCE = urls.url.trim();
@@ -632,7 +632,7 @@ public class VideoPlayerActivity extends Activity implements
 							 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
 							 */
 							if (urls.url != null
-									&& app.CheckUrlIsValidFromServer(urls.url,playProdId)) {
+									&& app.CheckUrlIsValidFromServer(urls.url,"1")) {
 								if (PROD_SOURCE == null
 										&& !app.IfIncludeM3U(urls.url))
 									PROD_SOURCE = urls.url.trim();
