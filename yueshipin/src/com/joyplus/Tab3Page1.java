@@ -222,7 +222,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR&&app.GetServiceData("user_Histories")==null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -600,8 +600,16 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			}
 			if (m_Tab3Page1ListData.Pro_time > 0
 					&& m_Tab3Page1ListData.Pro_time < m_Tab3Page1ListData.Pro_duration)
+				{((Button) view.findViewById(R.id.button1))
+				.setBackgroundResource(R.drawable.tab3_page1_icon_see);
+				}
+			else
+			{
 				((Button) view.findViewById(R.id.button1))
-						.setBackgroundResource(R.drawable.tab3_page1_replay_icon_see);
+				.setBackgroundResource(R.drawable.tab3_page1_replay_icon_see);
+			}
+//						.setBackgroundResource(R.drawable.tab3_page1_replay_icon_see);
+				
 			return view;
 		}
 	}

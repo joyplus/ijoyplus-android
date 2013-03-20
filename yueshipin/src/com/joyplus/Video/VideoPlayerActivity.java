@@ -196,10 +196,7 @@ public class VideoPlayerActivity extends Activity implements
 		//
 		mVideoView.setOnCompletionListener(this);
 
-		if(!URLUtil.isNetworkUrl(mPath)){
-			aq.id(R.id.textViewRate).gone();
-			mMediaController.DisableButtom();
-		}
+
 		// mVideoView.setBackgroundColor(color.black);
 
 		// 设置显示名称
@@ -222,8 +219,16 @@ public class VideoPlayerActivity extends Activity implements
 		i.setClass(this, DlnaSelectDevice.class);
 		bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 		checkBind = true;
-		if (playProdId != null)
-			GetServiceData();
+		
+		if(!URLUtil.isNetworkUrl(mPath)){
+			aq.id(R.id.textViewRate).gone();
+			
+			mVideoView.setVideoPath(mPath);
+			
+		}else {
+			if (playProdId != null)
+				GetServiceData();
+		}
 
 	}
 

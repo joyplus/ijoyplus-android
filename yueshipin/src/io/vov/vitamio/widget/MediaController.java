@@ -539,7 +539,7 @@ public class MediaController extends FrameLayout  {
 //			mFileName.setText(mTitle);
 	}
 	public void DisableButtom(){
-		if(mTextViewDownloadRate!=null)
+		mNextButton.setVisibility(View.INVISIBLE);
 		mTextViewDownloadRate.setVisibility(View.INVISIBLE);
 		mimageView33.setVisibility(View.INVISIBLE);
 		mQualityButton.setVisibility(View.INVISIBLE);
@@ -600,6 +600,8 @@ public class MediaController extends FrameLayout  {
 			if (m_ReturnProgramView.movie != null) {
 				CurrentCategory = 0;
 				CurrentIndex = 0;
+				if(mNextButton != null)
+					mNextButton.setVisibility(View.INVISIBLE);
 				if(mSelectButton != null)
 					mSelectButton.setVisibility(View.INVISIBLE);
 			} else if (m_ReturnProgramView.tv != null) {

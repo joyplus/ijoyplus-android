@@ -58,6 +58,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -219,6 +220,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		openVideo();
 		requestLayout();
 		invalidate();
+		
+
 	}
 	public void setTitle(String name) {
 		mTitle = name;
@@ -304,6 +307,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				mMediaController.setAnchorView(anchorView);
 			}
 			mMediaController.setEnabled(isInPlaybackState());
+			if(!URLUtil.isNetworkUrl(mUri.toString()))
+				mMediaController.DisableButtom();
 
 			// if (mUri != null) {
 			// List<String> paths = mUri.getPathSegments();
