@@ -249,8 +249,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		try {
 			mDuration = -1;
 			mCurrentBufferPercentage = 0;
-			mMediaPlayer = new MediaPlayer(mContext,true);
-//			mMediaPlayer = new MediaPlayer(mContext);
+//			mMediaPlayer = new MediaPlayer(mContext,true);
+			mMediaPlayer = new MediaPlayer(mContext);
 			mMediaPlayer.setOnPreparedListener(mPreparedListener);
 			mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
 			mMediaPlayer.setOnCompletionListener(mCompletionListener);
