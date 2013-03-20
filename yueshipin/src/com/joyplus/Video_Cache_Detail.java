@@ -21,6 +21,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -258,15 +261,35 @@ public class Video_Cache_Detail extends Activity {
 		}
 	}
 
+	public  String getpath(){
+		Dev_MountInfo dev = Dev_MountInfo.getInstance();
+
+		PackageManager pm = getPackageManager(); 
+		
+		ApplicationInfo appInfo = null;
+		try {
+			appInfo = pm.getApplicationInfo(getPackageName(), 0);
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		String path = "";
+		if ((appInfo.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE) != 0) { 
+			path = dev.getExternalInfo().getPath();
+         }else{
+        	 path = dev.getInternalInfo().getPath();
+         }
+
+		return path;
+		 }
+	
 	void getSize() {
 		// viewHolder.myTextView.setText("");
 		progressBar.setProgress(0);
 		// 判断是否有插入存储卡
-		if (Environment.getExternalStorageState().equals(
-				Environment.MEDIA_MOUNTED)) {
-			File path = Environment.getExternalStorageDirectory();
+		
 			// 取得sdcard文件路径
-			StatFs statfs = new StatFs(path.getPath());
+			StatFs statfs = new StatFs(getpath());
 			long blocSize = statfs.getBlockSize();
 			float totalBlocks = statfs.getBlockCount();
 			int sizeInMb = (int) (blocSize * totalBlocks) / 1024 / 1024; // 计算总容量
@@ -277,11 +300,7 @@ public class Video_Cache_Detail extends Activity {
 			String Text = "总共：" + sizeInMb + "MB" + "   " + "已用:" + sizeInMb
 					* percent / 100 + "MB";
 			aq.id(R.id.SDcardTextView).text(Text);
-		} else if (Environment.getExternalStorageState().equals(
-				Environment.MEDIA_REMOVED)) {
-			Toast.makeText(Video_Cache_Detail.this, "没有sdCard",
-					Toast.LENGTH_SHORT).show();
-		}
+		
 	}
 
 	// 返回数组，下标1代表大小，下标2代表单位 KB/MB
