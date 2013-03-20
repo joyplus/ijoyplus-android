@@ -652,6 +652,11 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
+		
+		//电视剧type为3 ，sbuname 为当前集数
+		app.StatisticsClicksShow(aq, prod_id, prod_name,
+				(String)download_names.get(current_index), 3);
+		
 		app.checkUserSelect(Detail_Show.this);
 		if(app.use2G3G)
 		{
@@ -750,6 +755,11 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
+		
+		//电视剧type为3 ，sbuname 为当前集数
+		app.StatisticsClicksShow(aq, prod_id, prod_name,
+				(String)download_names.get(current_index), 3);
+		
 		//videoSourceSort(index);
 		if (m_ReturnProgramView.show.episodes != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls != null
