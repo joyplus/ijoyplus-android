@@ -450,9 +450,15 @@ public class Detail_TV extends Activity {
 				// sort the tv's playStateIndex by yyc
 				Arrays.sort(m_ReturnProgramView.tv.episodes, new EComparator());
 
-				if (m_ReturnProgramView.tv.episodes.length > 15) {
+				int m = 15 * (page_num + 1);
+                if((m_ReturnProgramView.tv.episodes.length > 15) && (m_ReturnProgramView.tv.episodes.length - m > 15)){
+                	aq.id(R.id.textView9).visible();
+                	
+                }else if ((m_ReturnProgramView.tv.episodes.length > 15) && (m_ReturnProgramView.tv.episodes.length - m <= 15)) {
+					aq.id(R.id.textView9).text(String.format("后%s集 >", m_ReturnProgramView.tv.episodes.length - m));
 					aq.id(R.id.textView9).visible();
 				}
+                
 				for (i = 0; i < m_ReturnProgramView.tv.episodes.length
 						&& i < 15; i++) {
 					m_j = Integer.toString(i + 4);// m_ReturnProgramView.tv.episodes[i].name;
@@ -803,7 +809,13 @@ public class Detail_TV extends Activity {
 		int j = 0;
 		int i = 0;
 		page_num++;
-		if ((page_num + 1) * 15 >= m_ReturnProgramView.tv.episodes.length) {
+		int m = 15 * (page_num + 1);
+		
+        if ((m_ReturnProgramView.tv.episodes.length - m > 0) && (m_ReturnProgramView.tv.episodes.length - m <= 15)) {
+			aq.id(R.id.textView9).text(String.format("后%s集 >", m_ReturnProgramView.tv.episodes.length - m));
+			aq.id(R.id.textView9).visible();
+		}
+        if ((page_num + 1) * 15 >= m_ReturnProgramView.tv.episodes.length) {
 			aq.id(R.id.textView9).gone();
 		}
 		aq.id(R.id.textView15).visible();
@@ -860,8 +872,18 @@ public class Detail_TV extends Activity {
 
 		}
 		if (page_num * 15 < m_ReturnProgramView.tv.episodes.length) {
+			aq.id(R.id.textView9).text("后15集 >");
 			aq.id(R.id.textView9).visible();
 		}
+        int m = 15 * page_num ;
+		
+        if ((m_ReturnProgramView.tv.episodes.length - m > 0) && (m_ReturnProgramView.tv.episodes.length - m <= 15)) {
+			aq.id(R.id.textView9).text(String.format("后%s集 >", m_ReturnProgramView.tv.episodes.length - m));
+			aq.id(R.id.textView9).visible();
+		}
+        
+		
+        
 		page_num--;
 		if (m_ReturnProgramView.tv.episodes != null && page_num >= 0) {
 			for (i = 15 * page_num; i < m_ReturnProgramView.tv.episodes.length
