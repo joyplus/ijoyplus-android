@@ -775,7 +775,8 @@ public class Detail_Movie extends Activity {
 		}
 
 		// 统计点击次数
-		StatisticsClicksShow();
+		//因为电影 只有一集，所以为“”，电影type为1
+		app.StatisticsClicksShow(aq, prod_id, prod_name, "", 1);
 
 		app.checkUserSelect(Detail_Movie.this);
 		if (app.use2G3G) {
@@ -1177,44 +1178,5 @@ public class Detail_Movie extends Activity {
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "mp4 fail", ex);
 		}
-	}
-
-	/**
-	 * 用来统计用户点击播放视屏后正常跳转的次数 有可能跳转到播放器，也有可能跳转到浏览器
-	 * 
-	 * 数据从服务器上获取
-	 */
-	private void StatisticsClicksShow() {
-
-		String url = Constant.BASE_URL + "program/recordPlay";
-
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("app_key", Constant.APPKEY);// required string //
-												// 申请应用时分配的AppKey。
-
-		params.put("prod_id", prod_id);// required string // 视频id
-
-		params.put("prod_name", prod_name);// required // string 视频名字
-
-		params.put("prod_subname", "");// required // string 视频的集数 电影的subname为空
-
-		params.put("prod_type", 1);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
-
-		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		// cb.SetHeader(app.getHeaders());
-		cb.params(params).url(url).type(JSONObject.class)
-				.weakHandler(this, "CallStaticsPlayResulrt");
-		// cb.params(params).url(url);
-		aq.ajax(cb);
-	}
-
-	public void CallStaticsPlayResulrt(String url, JSONObject json,
-			AjaxStatus status) {
-		if (json == null) {
-			return;
-		}
-		if (BuildConfig.DEBUG)
-			Log.i(TAG + "YangZhg", "JSON:" + json.toString());
-
 	}
 }
