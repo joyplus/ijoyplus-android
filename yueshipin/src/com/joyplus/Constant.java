@@ -105,6 +105,9 @@ IOS: ijoyplusios001bj
 	public static final String[] video_index = { "letv",
 	"fengxing","qiyi","youku","sinahd","sohu","56","qq","pptv","m1905"};
 
+	/*
+	 *  "type": "mp4", mp4:高清，flv：标清，hd2：超清
+	 */
 	public static final String[] quality_index = { "mp4",
 		"flv","hd2","3gp"};
 

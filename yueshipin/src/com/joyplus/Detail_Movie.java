@@ -43,6 +43,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnTops;
@@ -87,6 +88,8 @@ public class Detail_Movie extends Activity {
 	// 播放记录变量
 	public static int REQUESTPLAYTIME = 200;
 	public static int RETURN_CURRENT_TIME = 150;
+	
+	private CurrentPlayData mCurrentPlayData;
 //	private int current_time = 0;
 //	private int total_time = 0;
 
@@ -127,7 +130,8 @@ public class Detail_Movie extends Activity {
 		// 添加下载按钮的暂无下载的效果图
 //		downloaddisable = this.getResources().getDrawable(
 //				R.drawable.tab2_video_8);
-
+		mCurrentPlayData = new CurrentPlayData();
+		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
 			CheckSaveData();
 			GetServiceData();
@@ -1171,6 +1175,10 @@ public class Detail_Movie extends Activity {
 
 		if (BuildConfig.DEBUG)
 			Log.i(TAG, "CallVideoPlayActivity--->>sourceId : " + sourceId);
+		
+		mCurrentPlayData.CurrentCategory = 0;
+		mCurrentPlayData.CurrentIndex = 0;
+		app.setCurrentPlayData(mCurrentPlayData);
 		// app.CheckUrlIsValidFromServer(m_uri, sourceId);//连接服务器，看链接是否有效
 		Intent intent = new Intent();
 		Bundle bundle = new Bundle();

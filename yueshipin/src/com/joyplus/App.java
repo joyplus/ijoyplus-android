@@ -45,6 +45,8 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
+import com.joyplus.Adapters.CurrentPlayData;
+import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.download.Downloader;
 import com.joyplus.weibo.net.Weibo;
@@ -72,7 +74,25 @@ public class App extends Application {
 	public boolean use2G3G = false;
 	private String mURLPath;
 	private Map<String, String> headers;
+	private CurrentPlayData mCurrentPlayData;
+	private ReturnProgramView m_ReturnProgramView = null;
 
+
+	public ReturnProgramView get_ReturnProgramView() {
+		return m_ReturnProgramView;
+	}
+
+	public void set_ReturnProgramView(ReturnProgramView m_ReturnProgramView) {
+		this.m_ReturnProgramView = m_ReturnProgramView;
+	}
+
+	public CurrentPlayData getCurrentPlayData() {
+		return mCurrentPlayData;
+	}
+
+	public void setCurrentPlayData(CurrentPlayData mCurrentPlayData) {
+		this.mCurrentPlayData = mCurrentPlayData;
+	}
 
 	public Map<String, String> getHeaders() {
 		return headers;

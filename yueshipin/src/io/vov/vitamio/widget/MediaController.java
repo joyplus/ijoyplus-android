@@ -20,6 +20,7 @@ import com.joyplus.App;
 import com.joyplus.BuildConfig;
 import com.joyplus.Constant;
 import com.joyplus.R;
+import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Adapters.Tab3Page1ListData;
 import com.joyplus.Service.Return.ReturnProgramView;
 
@@ -145,6 +146,8 @@ public class MediaController extends FrameLayout  {
 	
 
 	private AudioManager mAM;
+	
+	private CurrentPlayData mCurrentPlayData;
 	
 	private int CurrentCategory = 0;
 	private int CurrentIndex = 0;
@@ -455,21 +458,36 @@ public class MediaController extends FrameLayout  {
 	return PROD_SOURCE;
 	 
  }
- public void ShowQuality(int index) {
-	 CurrentQuality = index;
-	 switch (CurrentCategory) {
-	 case 0:
-		 lv_radio0.setChecked(true);
-		 break;
-	 case 1:
-		 lv_radio1.setChecked(true);
-		 break;
-	 case 2:
-		 lv_radio2.setChecked(true);
-		 break;
-	 }
-	 
- }
+
+	public void ShowCurrentPlayData(CurrentPlayData mCurrentPlayData) {
+		CurrentCategory = mCurrentPlayData.CurrentCategory;
+		CurrentIndex = mCurrentPlayData.CurrentIndex;
+		CurrentSource = mCurrentPlayData.CurrentSource;
+		CurrentQuality = mCurrentPlayData.CurrentQuality;
+		
+
+		switch (CurrentQuality) {
+		case 1:
+			lv_radio0.setChecked(true);
+			break;
+		case 0:
+			lv_radio1.setChecked(true);
+			break;
+		case 2:
+			lv_radio2.setChecked(true);
+			break;
+		}
+		if(CurrentQuality >2){
+			if(lv_radio2.getVisibility() == View.VISIBLE)
+				lv_radio2.setChecked(true);
+			else if(lv_radio1.getVisibility() == View.VISIBLE)
+				lv_radio1.setChecked(true);
+			else if(lv_radio0.getVisibility() == View.VISIBLE)
+				lv_radio0.setChecked(true);
+		}
+
+	}
+
 	public void SelectQuality(int index) {
 		mPlayer.pause();
 
@@ -582,7 +600,7 @@ public class MediaController extends FrameLayout  {
 		lv_radio0.setVisibility(View.INVISIBLE);
 		lv_radio1.setVisibility(View.INVISIBLE);
 		lv_radio2.setVisibility(View.INVISIBLE);
-		
+
 		switch (CurrentCategory) {
 		case 0:
 			for(int i = 0; i<m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls.length;i++){
@@ -593,7 +611,7 @@ public class MediaController extends FrameLayout  {
 					lv_radio0.setVisibility(View.VISIBLE);
 				
 				if(m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("hd2"))
-					lv_radio0.setVisibility(View.VISIBLE);
+					lv_radio2.setVisibility(View.VISIBLE);
 			}
 			break;
 		case 1:

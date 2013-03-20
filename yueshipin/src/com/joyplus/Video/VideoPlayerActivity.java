@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.App;
 import com.joyplus.Constant;
 import com.joyplus.R;
+import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.download.Dao;
@@ -94,7 +95,11 @@ public class VideoPlayerActivity extends Activity implements
 	private Handler mHandler = new Handler();
 	private long mStartRX = 0;
 	private long mStartTX = 0;
-	private int CurrentQuality = 0;
+	private CurrentPlayData mCurrentPlayData;
+//	private int CurrentCategory = 0;
+//	private int CurrentIndex = 0;
+//	private int CurrentSource = 0;
+//	private int CurrentQuality = 0;
 
 
 	/*
@@ -227,6 +232,7 @@ public class VideoPlayerActivity extends Activity implements
 			mVideoView.setVideoPath(mPath);
 			
 		}else {
+			mCurrentPlayData = app.getCurrentPlayData();
 			if (playProdId != null)
 				GetServiceData();
 		}
@@ -258,6 +264,7 @@ public class VideoPlayerActivity extends Activity implements
 		else 
 			mPath = bundle.getString("path");
 
+		
 		mTitle = bundle.getString("title");
 		playProdName = mTitle;
 		playVideoUrl = mPath;
@@ -515,8 +522,11 @@ public class VideoPlayerActivity extends Activity implements
 				mVideoView.setVideoPath(app.getURLPath());
 			
 			if (mMediaController != null){
-				mMediaController.ShowQuality(CurrentQuality);
-				mMediaController.setProd_Data(m_ReturnProgramView);
+			
+				app.setCurrentPlayData(mCurrentPlayData);
+				app.set_ReturnProgramView(m_ReturnProgramView);
+//				mMediaController.ShowCurrentPlayData(mCurrentPlayData);
+//				mMediaController.setProd_Data(m_ReturnProgramView);
 			}
 	
 			// 创建数据源对象
@@ -534,6 +544,8 @@ public class VideoPlayerActivity extends Activity implements
 	}
    private String GetRedirectURL(){
 	   String PROD_SOURCE = null;
+	  
+	   mCurrentPlayData.CurrentCategory = playProdType -1;
 	   switch (playProdType) {
 	case 1:
 	{
@@ -552,8 +564,9 @@ public class VideoPlayerActivity extends Activity implements
 									if (PROD_SOURCE == null
 											&& urls.type.trim().equalsIgnoreCase(
 													Constant.quality_index[qindex])){
+										mCurrentPlayData.CurrentSource = i;
+										mCurrentPlayData.CurrentQuality = qindex;
 										PROD_SOURCE = urls.url.trim();
-										CurrentQuality = qindex;
 										break;
 									}
 								}
@@ -571,10 +584,10 @@ public class VideoPlayerActivity extends Activity implements
 		break;
 	case 2:
 	{
-		   if (m_ReturnProgramView.tv.episodes[0].down_urls != null) {
-				for (int i = 0; i < m_ReturnProgramView.tv.episodes[0].down_urls.length; i++) {
-					for (int k = 0; k < m_ReturnProgramView.tv.episodes[0].down_urls[i].urls.length; k++) {
-						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[0].down_urls[i].urls[k];
+		   if (m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls != null) {
+				for (int i = 0; i < m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls.length; i++) {
+					for (int k = 0; k < m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls.length; k++) {
+						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[k];
 						if (urls != null) {
 							/*
 							 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
@@ -586,8 +599,10 @@ public class VideoPlayerActivity extends Activity implements
 									if (PROD_SOURCE == null
 											&& urls.type.trim().equalsIgnoreCase(
 													Constant.quality_index[qindex])){
+										mCurrentPlayData.CurrentSource = i;
+										mCurrentPlayData.CurrentQuality = qindex;
 										PROD_SOURCE = urls.url.trim();
-										CurrentQuality = qindex;
+										 
 										break;
 									}
 								}
@@ -623,8 +638,9 @@ public class VideoPlayerActivity extends Activity implements
 									if (PROD_SOURCE == null
 											&& urls.type.trim().equalsIgnoreCase(
 													Constant.quality_index[qindex])){
+										mCurrentPlayData.CurrentSource = i;
+										mCurrentPlayData.CurrentQuality = qindex;
 										PROD_SOURCE = urls.url.trim();
-										CurrentQuality = qindex;
 										break;
 									}
 								}

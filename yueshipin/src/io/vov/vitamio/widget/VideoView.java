@@ -305,6 +305,10 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 						.getParent() : this;
 
 				mMediaController.setAnchorView(anchorView);
+				
+				mMediaController.setProd_Data(app.get_ReturnProgramView());
+				mMediaController.ShowCurrentPlayData(app.getCurrentPlayData());
+				
 			}
 			mMediaController.setEnabled(isInPlaybackState());
 			if(!URLUtil.isNetworkUrl(mUri.toString()))

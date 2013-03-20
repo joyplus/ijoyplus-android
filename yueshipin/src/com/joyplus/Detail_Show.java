@@ -52,6 +52,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Detail_TV.EComparatorIndex;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
@@ -99,6 +100,7 @@ public class Detail_Show extends Activity {
 	private ArrayList download_indexs = new ArrayList();
 	private int current_index = -1; // yy
 	boolean pageShow = true;
+	private CurrentPlayData mCurrentPlayData;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +138,8 @@ public class Detail_Show extends Activity {
 		download_press = this.getResources().getDrawable(R.drawable.download);
 		download_focuse = this.getResources().getDrawable(R.drawable.download2);
 
+		mCurrentPlayData = new CurrentPlayData();
+		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
 			CheckSaveData();
 			GetServiceData();
@@ -886,6 +890,9 @@ public class Detail_Show extends Activity {
 		
 	public void CallVideoPlayActivity(String m_uri, String title) {
 		app.IfSupportFormat(m_uri);
+		mCurrentPlayData.CurrentCategory = 2;
+		mCurrentPlayData.CurrentIndex = current_index;
+		app.setCurrentPlayData(mCurrentPlayData);
 		
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		Bundle bundle = new Bundle();

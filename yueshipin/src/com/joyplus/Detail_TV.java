@@ -59,6 +59,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Detail_Movie.EComparatorIndex;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
@@ -120,6 +121,8 @@ public class Detail_TV extends Activity {
 
 	private int current_index = -1; // yy
 	private static final String MY_SETTING = "myTvSetting";
+	
+	private CurrentPlayData mCurrentPlayData;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +181,8 @@ public class Detail_TV extends Activity {
 		aq.id(R.id.textView13).gone();
 		aq.id(R.id.scrollView1).gone();
 
+		mCurrentPlayData = new CurrentPlayData();
+		mCurrentPlayData.prod_id = prod_id;
 		InitTVButtom();
 		if (prod_id != null)
 			CheckSaveData();
@@ -791,6 +796,7 @@ public class Detail_TV extends Activity {
 					.commit();
 
 			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				mCurrentPlayData.CurrentIndex = 0;
 				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
 			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 				SaveToServer(2, PROD_URI, 1);
@@ -988,6 +994,7 @@ public class Detail_TV extends Activity {
 			}
 
 			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				mCurrentPlayData.CurrentIndex = index;
 				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
 			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 				SaveToServer(2, PROD_URI, index + 1);
@@ -1247,6 +1254,9 @@ public class Detail_TV extends Activity {
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
 		app.IfSupportFormat(m_uri);
+		mCurrentPlayData.CurrentCategory = 1;
+	
+		app.setCurrentPlayData(mCurrentPlayData);
 		
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		Bundle bundle = new Bundle();
