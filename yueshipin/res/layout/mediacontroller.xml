@@ -18,9 +18,9 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="热血高校热血高校热血高校"
-             android:ellipsize="end"
-              android:singleLine="true"
-              android:maxEms = "9"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:maxEms = "9"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
 
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/imageButton6"
-             android:layout_marginRight="4dp"
+            android:layout_marginRight="4dp"
             android:text="100k/s"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/grey" />
