@@ -378,6 +378,11 @@
                         android:id="@+id/button8"
                         android:layout_width="match_parent"
                         android:layout_height="28dp"
+<<<<<<< HEAD
+=======
+                        android:paddingLeft="8dp"
+                        android:paddingRight="3dp"
+>>>>>>> branch 'dev-joyplus' of https://github.com/joyplus/ijoyplus-android.git
                         android:background="@drawable/detail_movie_button"
                         android:drawableRight="@drawable/detailed_movie_related_in_bg"
                         android:gravity="center_vertical"

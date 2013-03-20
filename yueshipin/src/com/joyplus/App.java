@@ -468,7 +468,7 @@ public class App extends Application {
 			if(status != HttpStatus.SC_OK) {
 				if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK   start");
 				
-				if(sourceId != null && sourceId.equals(FENGXING)) {
+//				if(sourceId != null && sourceId.equals(FENGXING)) {
 					
 					if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK start");
 						if(status == HttpStatus.SC_MOVED_PERMANENTLY ||//网址被永久移除
@@ -491,12 +491,12 @@ public class App extends Application {
 							mAndroidHttpClient.close();
 							list.add(NOT_VALID_LINK);
 						}
-				} else {
-					
-					//如果地址真的不存在，那就往里面加NULL字符串
-					mAndroidHttpClient.close();
-					list.add(NOT_VALID_LINK);
-				}
+//				} else {
+//					
+//					//如果地址真的不存在，那就往里面加NULL字符串
+//					mAndroidHttpClient.close();
+//					list.add(NOT_VALID_LINK);
+//				}
 			} else {
 				//正确的话直接返回，不进行下面的步骤
 				mAndroidHttpClient.close();
