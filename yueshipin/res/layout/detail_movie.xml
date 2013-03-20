@@ -378,13 +378,12 @@
                         android:id="@+id/button8"
                         android:layout_width="match_parent"
                         android:layout_height="28dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="3dp"
                         android:background="@drawable/detail_movie_button"
-                        android:drawableBottom="@drawable/tab1_divider"
                         android:drawableRight="@drawable/detailed_movie_related_in_bg"
                         android:gravity="center_vertical"
                         android:onClick="OnClickMovieBangdan"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="3dp"
                         android:text="    加载中..." />
                 </LinearLayout>
             </LinearLayout>

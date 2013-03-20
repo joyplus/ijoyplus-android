@@ -16,6 +16,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -39,6 +40,9 @@ import android.view.Gravity;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 import com.joyplus.download.DownloadTask;
@@ -511,5 +515,53 @@ public class App extends Application {
 			list.add(NOT_VALID_LINK);
 			e.printStackTrace();
 		}	
+	}
+	
+/**
+ * 用来统计用户点击播放视屏后正常跳转的次数 有可能跳转到播放器，也有可能跳转到浏览器
+ * 
+ * 数据从服务器上获取
+ * @param aq
+ * @param prod_id
+ * @param prod_name
+ * @param prod_subname
+ * @param pro_type
+ */
+	public void StatisticsClicksShow(AQuery aq , String prod_id , String prod_name , String prod_subname , int pro_type) {
+
+		String url = Constant.BASE_URL + "program/recordPlay";
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("app_key", Constant.APPKEY);// required string //
+												// 申请应用时分配的AppKey。
+
+		params.put("prod_id", prod_id);// required string // 视频id
+
+		params.put("prod_name", prod_name);// required // string 视频名字
+
+		params.put("prod_subname", "");// required // string 视频的集数 电影的subname为空
+
+		params.put("prod_type", 1);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
+
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		 cb.SetHeader(getHeaders());
+		cb.params(params).url(url).type(JSONObject.class)
+				.weakHandler(this, "CallStaticsPlayResulrt");
+		
+//		if (BuildConfig.DEBUG)
+//			Log.i(TAG + "YangZhg", "URL:" + cb.getResult().toString());
+		// cb.params(params).url(url);
+		
+		aq.ajax(cb);
+	}
+
+	public void CallStaticsPlayResulrt(String url, JSONObject json,
+			AjaxStatus status) {
+		if (json == null) {
+			return;
+		}
+		if (BuildConfig.DEBUG)
+			Log.i(TAG + "YangZhg", "JSON:" + json.toString());
+
 	}
 }
