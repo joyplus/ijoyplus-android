@@ -772,7 +772,7 @@ public class Detail_TV extends Activity {
 		}
 		
 		//电视剧type为2 ，sbuname 为当前集数
-		app.StatisticsClicksShow(aq, prod_id, prod_name, current_index + "", 2);
+		StatisticsUtils.StatisticsClicksShow(aq, app,prod_id, prod_name, current_index + "", 2);
 		
 		app.checkUserSelect(Detail_TV.this);
 		if(app.use2G3G)
@@ -909,7 +909,7 @@ public class Detail_TV extends Activity {
 		int index = Integer.parseInt(v.getTag().toString());
 		
 		//电视剧type为2 ，sbuname 为当前集数
-		app.StatisticsClicksShow(aq, prod_id, prod_name, index + "", 2);
+		StatisticsUtils.StatisticsClicksShow(aq, app,prod_id, prod_name, current_index + "", 2);
 		
 		app.checkUserSelect(Detail_TV.this);
 		if(app.use2G3G)

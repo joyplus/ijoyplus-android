@@ -784,7 +784,7 @@ public class Detail_Movie extends Activity {
 
 		// 统计点击次数
 		//因为电影 只有一集，所以为“”，电影type为1
-		app.StatisticsClicksShow(aq, prod_id, prod_name, "", 1);
+		StatisticsUtils.StatisticsClicksShow(aq,app, prod_id, prod_name, "", 1);
 
 		app.checkUserSelect(Detail_Movie.this);
 		if(app.use2G3G)
