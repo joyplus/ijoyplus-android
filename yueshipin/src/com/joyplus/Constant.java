@@ -106,9 +106,9 @@ IOS: ijoyplusios001bj
 	"fengxing","qiyi","youku","sinahd","sohu","56","qq","pptv","m1905"};
 
 	/*
-	 *  "type": "mp4", mp4:高清，flv：标清，hd2：超清
+	 *  "type": flv,3gp：标清 (普清就是标清) ,"mp4", mp4:高清，hd2：超清
 	 */
-	public static final String[] quality_index = { "mp4",
-		"flv","hd2","3gp"};
+	public static final String[] quality_index = { "flv","mp4",
+		"hd2","3gp"};
 
 }

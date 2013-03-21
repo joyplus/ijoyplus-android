@@ -674,24 +674,27 @@ public class MediaController extends FrameLayout  {
 			ShowQuality();
 		}
 		switch (CurrentQuality) {
-		case 1:
+		case 0:
 			lv_radio0.setChecked(true);
 			break;
-		case 0:
+		case 1:
 			lv_radio1.setChecked(true);
 			break;
 		case 2:
 			lv_radio2.setChecked(true);
 			break;
+		default:
+			lv_radio0.setChecked(true);
+			break;
 		}
-		if (CurrentQuality > 2) {
-			if (lv_radio2.getVisibility() == View.VISIBLE)
-				lv_radio2.setChecked(true);
-			else if (lv_radio1.getVisibility() == View.VISIBLE)
-				lv_radio1.setChecked(true);
-			else if (lv_radio0.getVisibility() == View.VISIBLE)
-				lv_radio0.setChecked(true);
-		}
+//		if (CurrentQuality == 3) {
+////			if (lv_radio2.getVisibility() == View.VISIBLE)
+////				lv_radio2.setChecked(true);
+////			else if (lv_radio1.getVisibility() == View.VISIBLE)
+//				lv_radio0.setChecked(true);
+////			else if (lv_radio0.getVisibility() == View.VISIBLE)
+////				lv_radio0.setChecked(true);
+//		}
 	}
 
 	/**
