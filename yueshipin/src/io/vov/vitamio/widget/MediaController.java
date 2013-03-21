@@ -955,14 +955,16 @@ public class MediaController extends FrameLayout  {
 		@Override
 		public void onClick(View v) {
 			int mLayout = mPlayer.GetCurrentVideoLayout();
-			mLayout++;
-			if (mLayout > VideoView.VIDEO_LAYOUT_ZOOM)
-				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
-			mPlayer.setVideoLayout(mLayout, 0);
-			if(mLayout == VideoView.VIDEO_LAYOUT_ZOOM)
+			if(mLayout == VideoView.VIDEO_LAYOUT_SCALE){
+				mLayout = VideoView.VIDEO_LAYOUT_ZOOM;
 				mReduceButton.setBackgroundResource(R.drawable.player_full);
-			else 
+			}
+			else {
+				mLayout = VideoView.VIDEO_LAYOUT_SCALE;
 				mReduceButton.setBackgroundResource(R.drawable.player_reduce);
+			}
+			mPlayer.setVideoLayout(mLayout, 0);
+			
 		}
 	};
 	private View.OnClickListener mPreListener = new View.OnClickListener() {
