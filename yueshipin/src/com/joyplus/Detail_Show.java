@@ -457,11 +457,14 @@ public class Detail_Show extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR&&app.GetServiceData(prod_id) == null) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
-			aq.id(R.id.none_net).visible();
+			if(app.GetServiceData(prod_id) == null)
+			{
+				aq.id(R.id.none_net).visible();
+			}
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();

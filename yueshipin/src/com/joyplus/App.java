@@ -231,26 +231,34 @@ public class App extends Application {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context  
 	            .getSystemService(Context.CONNECTIVITY_SERVICE);  
 	    NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();  
-	    if (activeNetInfo != null  
-	            && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {  
-	    	use2G3G = true;
+	    if(activeNetInfo != null)
+	    {
+	    	if (activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {  
+		    	use2G3G = true;
+		    }
+		    else
+		    {
+		    	AlertDialog.Builder builder = new AlertDialog.Builder(
+						context);
+				builder.setTitle("温馨提醒")
+						.setMessage("您目前在3G/2G网络环境下，确定继续?")
+						.setPositiveButton("确定",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										use2G3G = true;
+									}
+								}).setNegativeButton("取消", null).create();
+				builder.show();
+		    }
 	    }
 	    else
 	    {
-	    	AlertDialog.Builder builder = new AlertDialog.Builder(
-					context);
-			builder.setTitle("温馨提醒")
-					.setMessage("您目前在3G/2G网络环境下，确定继续?")
-					.setPositiveButton("确定",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									use2G3G = true;
-								}
-							}).setNegativeButton("取消", null).create();
-			builder.show();
+	    	Toast.makeText(context, "哎呀,你的网络好像有问题,请重试", Toast.LENGTH_SHORT).show();
+	    	return;
 	    }
+	    
 	}
 	
 	

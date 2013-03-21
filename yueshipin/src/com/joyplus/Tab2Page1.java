@@ -43,7 +43,7 @@ public class Tab2Page1 extends Activity implements
 	private ArrayList dataStruct;
 	private MyListView ItemsListView;
 	private Tab2Page1ListAdapter Tab2Page1Adapter;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,40 +51,41 @@ public class Tab2Page1 extends Activity implements
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		// »ñÈ¡listview¶ÔÏó
-		ItemsListView = (MyListView)findViewById(R.id.listView1);
+		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
-				
+
 				new GetDataTask().execute();
-				
+
 				GetServiceData();
-		}});
+			}
+		});
 		CheckSaveData();
+		GetServiceData();
 	}
-	
-	 private class GetDataTask extends AsyncTask<Void, Void, String[]> {
 
-	        @Override
-	        protected String[] doInBackground(Void... params) {
-	            // Simulates a background job.
-	            try {
-	                Thread.sleep(1000);
-	            } catch (InterruptedException e) {
-	                ;
-	            }
-	            return null;
-	        }
+	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
 
-	        @Override
-	        protected void onPostExecute(String[] result) {
-	        	ItemsListView.onRefreshComplete();
-//	        	Tab2Page1Adapter.notifyDataSetChanged();
-	            super.onPostExecute(result);
-	        }
-	    }
+		@Override
+		protected String[] doInBackground(Void... params) {
+			// Simulates a background job.
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				;
+			}
+			return null;
+		}
 
-	
+		@Override
+		protected void onPostExecute(String[] result) {
+			ItemsListView.onRefreshComplete();
+			// Tab2Page1Adapter.notifyDataSetChanged();
+			super.onPostExecute(result);
+		}
+	}
+
 	public void OnClickTab1TopLeft(View v) {
 		Intent i = new Intent(this, Search.class);
 		startActivity(i);
@@ -168,12 +169,12 @@ public class Tab2Page1 extends Activity implements
 	}
 
 	public void OnClickImageView(View v) {
-	
+
 	}
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -184,7 +185,7 @@ public class Tab2Page1 extends Activity implements
 			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
 			if (m_ReturnTops.tops.length > 0)
 				app.SaveServiceData("tv_tops", json.toString());
-			//创建视频源
+			// 创建视频源
 			GetVideoMovies();
 			aq.id(R.id.ProgressText).gone();
 		} catch (JsonParseException e) {
@@ -259,13 +260,13 @@ public class Tab2Page1 extends Activity implements
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
 				// 创建数据源对象
 				GetVideoMovies();
-//				new Handler().postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						// execute the task
-//						GetServiceData();
-//					}
-//				}, 100000);
+				// new Handler().postDelayed(new Runnable() {
+				// @Override
+				// public void run() {
+				// // execute the task
+				// GetServiceData();
+				// }
+				// }, 100000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
@@ -283,15 +284,18 @@ public class Tab2Page1 extends Activity implements
 
 	// InitListData
 	public void GetServiceData() {
-	String url = Constant.BASE_URL + "tv_tops";
+		String url = Constant.BASE_URL + "tv_tops";
 
-	AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-	cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-	cb.SetHeader(app.getHeaders());
+		cb.SetHeader(app.getHeaders());
+		if (app.GetServiceData("tv_tops") == null) {
+			aq.id(R.id.ProgressText).visible();
+			aq.progress(R.id.progress).ajax(cb);
+		} else {
+			aq.ajax(cb);
+		}
 
-	aq.id(R.id.ProgressText).visible();
-	aq.progress(R.id.progress).ajax(cb);
-
-}
+	}
 }

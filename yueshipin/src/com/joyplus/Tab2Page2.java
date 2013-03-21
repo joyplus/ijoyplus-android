@@ -64,6 +64,7 @@ public class Tab2Page2 extends Activity implements
 				GetServiceData();
 		}});
 		CheckSaveData();
+		GetServiceData();
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
@@ -301,9 +302,16 @@ public class Tab2Page2 extends Activity implements
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
 		cb.SetHeader(app.getHeaders());
-
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+		if(app.GetServiceData("movie_tops")==null)
+		{
+			aq.id(R.id.ProgressText).visible();
+			aq.progress(R.id.progress).ajax(cb);
+		}
+		else
+		{
+			aq.ajax(cb);
+		}
+		
 
 	}
 }

@@ -59,6 +59,7 @@ public class Detail_BangDan extends Activity implements
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
 		CheckSaveData();
+		GetServiceData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -110,7 +111,10 @@ public class Detail_BangDan extends Activity implements
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(this, getResources().getString(R.string.networknotwork));
-			aq.id(R.id.none_net).visible();
+			if(app.GetServiceData("top_items_" + BangDan_id)==null)
+			{
+				aq.id(R.id.none_net).visible();
+			}
 			return;
 		}
 		try {
@@ -219,13 +223,13 @@ public class Detail_BangDan extends Activity implements
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData();
-					}
-				}, 100000);
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						GetServiceData();
+//					}
+//				}, 100000);
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -249,9 +253,15 @@ public class Detail_BangDan extends Activity implements
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
 		cb.SetHeader(app.getHeaders());
-
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+		if(app.GetServiceData("top_items_" + BangDan_id)==null)
+		{
+			aq.id(R.id.ProgressText).visible();
+			aq.progress(R.id.progress).ajax(cb);
+		}
+		else
+		{
+			aq.ajax(cb);
+		}
 
 	}
 
