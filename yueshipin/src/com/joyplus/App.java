@@ -241,7 +241,7 @@ public class App extends Application {
 		    	AlertDialog.Builder builder = new AlertDialog.Builder(
 						context);
 				builder.setTitle("温馨提醒")
-						.setMessage("您目前在3G/2G网络环境下，确定继续?")
+						.setMessage("播放视频会消耗大量流量，您确定要在非WiFi环境下播放吗？")
 						.setPositiveButton("确定",
 								new DialogInterface.OnClickListener() {
 									@Override

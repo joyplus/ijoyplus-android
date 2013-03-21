@@ -141,6 +141,11 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		if (m_Tab3Page1ListData != null) {
 			app.checkUserSelect(Tab3Page1.this.getParent());// 创建对话框必须在看见的最低层的Activity
 			if (app.use2G3G) {
+				//历史记录
+				StatisticsUtils.StatisticsClicksShow(aq, app, m_ReturnUserPlayHistories.histories[position].prod_id
+						, m_ReturnUserPlayHistories.histories[position].prod_name, 
+						m_ReturnUserPlayHistories.histories[position].prod_subname, 
+						m_ReturnUserPlayHistories.histories[position].prod_type);
 				if (m_Tab3Page1ListData.Pro_urlType.equalsIgnoreCase("1")) {
 					CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
 							m_Tab3Page1ListData.Pro_url,

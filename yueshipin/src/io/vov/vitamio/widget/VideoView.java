@@ -120,6 +120,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	private OnBufferingUpdateListener mOnBufferingUpdateListener;
 	private int mCurrentBufferPercentage;
 	private long mSeekWhenPrepared;
+	private long mSeekTime = 0;
 	private boolean mCanPause = true;
 	private boolean mCanSeekBack = true;
 	private boolean mCanSeekForward = true;
@@ -306,8 +307,10 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
 				mMediaController.setAnchorView(anchorView);
 				
-				mMediaController.setProd_Data(app.get_ReturnProgramView());
-				mMediaController.ShowCurrentPlayData(app.getCurrentPlayData());
+				if(URLUtil.isNetworkUrl(mUri.toString())){
+					mMediaController.setProd_Data(app.get_ReturnProgramView());
+					mMediaController.ShowCurrentPlayData(app.getCurrentPlayData());
+				}
 				
 			}
 			mMediaController.setEnabled(isInPlaybackState());
@@ -367,6 +370,10 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
 			if (seekToPosition != 0)
 				seekTo(seekToPosition);
+			if(mSeekTime != 0){
+				seekTo(mSeekTime);
+				mSeekTime = 0;
+			}
 			if (mVideoWidth != 0 && mVideoHeight != 0) {
 				setVideoLayout(mVideoLayout, mAspectRatio);
 				if (mSurfaceWidth == mVideoWidth && mSurfaceHeight == mVideoHeight) {
@@ -674,6 +681,9 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			mSeekWhenPrepared = msec;
 		}
 	}
+	  public void JumpTo(long msec) {
+			mSeekTime = msec;
+		}
 
 	@Override
   public boolean isPlaying() {

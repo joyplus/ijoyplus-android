@@ -386,7 +386,7 @@ public class Detail_Show extends Activity {
 									getPackageName()));
 					m_j = Integer.toString(i + 1);
 					m_button.setTag(i + "");
-					m_button.setText(m_ReturnProgramView.show.episodes[i].name);
+					m_button.setText(" "+m_ReturnProgramView.show.episodes[i].name);
 					m_button.setVisibility(View.VISIBLE);
 				}
 				if (i < 4) {
@@ -660,13 +660,14 @@ public class Detail_Show extends Activity {
 			return;
 		}
 		
-		//电视剧type为3 ，sbuname 为当前集数
-		StatisticsUtils.StatisticsClicksShow(aq,app, prod_id, prod_name,
-				(String)download_names.get(current_index), 3);
-		
 		app.checkUserSelect(Detail_Show.this);
 		if(app.use2G3G)
 		{
+			
+			//综艺type为3 ，sbuname 为当前集数
+			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name,
+					m_ReturnProgramView.show.episodes[0].name , 3);
+			
 			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 				current_index = 0;
 				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
@@ -703,7 +704,7 @@ public class Detail_Show extends Activity {
 						.getIdentifier("show_button" + m_j, "id",
 								getPackageName()));
 				m_button.setTag(i + "");
-				m_button.setText(m_ReturnProgramView.show.episodes[i].name);
+				m_button.setText(" "+m_ReturnProgramView.show.episodes[i].name);
 				m_button.setVisibility(View.VISIBLE);
 			}
 			if (j < 4) {
@@ -738,7 +739,7 @@ public class Detail_Show extends Activity {
 								getPackageName()));
 				m_j = Integer.toString(i + 1);
 				m_button.setTag(i + "");
-				m_button.setText(m_ReturnProgramView.show.episodes[i].name);
+				m_button.setText(" "+m_ReturnProgramView.show.episodes[i].name);
 				m_button.setVisibility(View.VISIBLE);
 			}
 			if (j < 4) {
@@ -762,10 +763,6 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		
-//		//电视剧type为3 ，sbuname 为当前集数
-//		app.StatisticsClicksShow(aq, prod_id, prod_name,
-//				(String)download_names.get(current_index), 3);
 		
 		//videoSourceSort(index);
 		if (m_ReturnProgramView.show.episodes != null
@@ -807,6 +804,11 @@ public class Detail_Show extends Activity {
 		app.checkUserSelect(Detail_Show.this);
 		if(app.use2G3G)
 		{
+			
+			//综艺type为3 ，sbuname 为当前集数
+			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name,
+					m_ReturnProgramView.show.episodes[current_index].name, 3);
+			
 			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
 			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
