@@ -344,6 +344,7 @@ public class DlnaSelectDevice extends Service implements IMrcpListener{
 
 	@Override
 	public void onDestroy() {
+		mClient = null;
 		mMrcp.Stop();
 		Stack.Finalize();
 		super.onDestroy();
@@ -359,6 +360,7 @@ public class DlnaSelectDevice extends Service implements IMrcpListener{
 	@Override
 	public boolean onUnbind(Intent intent) {
 		Log.e(TAG, "start onUnbind~~~");
+		mClient = null;
 		return super.onUnbind(intent);
 	}
 
