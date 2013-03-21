@@ -298,7 +298,8 @@ public class VideoPlayerActivity extends Activity implements
 			 */
 			current_time = mVideoView.getCurrentPosition();
 			long total_time = mVideoView.getDuration();
-			SaveToServer(current_time, total_time);
+			if(URLUtil.isNetworkUrl(mPath))
+				SaveToServer(current_time, total_time);
 			if(current_time >0)
 			{
 				// 保存播放记录在本地
