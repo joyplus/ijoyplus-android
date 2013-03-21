@@ -353,8 +353,11 @@ public class Detail_Show extends Activity {
 		int j = 0;
 		if (m_ReturnProgramView.show != null) {
 			aq.id(R.id.program_name).text(m_ReturnProgramView.show.name);
-			aq.id(R.id.imageView3).image(m_ReturnProgramView.show.poster, true,
-					true);
+			if(m_ReturnProgramView.show.poster!=null)
+			{
+				aq.id(R.id.imageView3).image(m_ReturnProgramView.show.poster.trim(), true,
+						true);
+			}
 			aq.id(R.id.textView5).text(m_ReturnProgramView.show.publish_date);
 			aq.id(R.id.textView6).text(m_ReturnProgramView.show.area);
 			if (m_ReturnProgramView.show.stars.trim().length() > 0)

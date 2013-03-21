@@ -422,8 +422,11 @@ public class Detail_TV extends Activity {
 		int j = 0;
 		if (m_ReturnProgramView.tv != null) {
 			aq.id(R.id.program_name).text(m_ReturnProgramView.tv.name);
-			aq.id(R.id.imageView3).image(m_ReturnProgramView.tv.poster, true,
-					true);
+			if(m_ReturnProgramView.tv.poster!=null)
+			{
+				aq.id(R.id.imageView3).image(m_ReturnProgramView.tv.poster.trim(), true,
+						true);
+			}
 			aq.id(R.id.textView5).text(m_ReturnProgramView.tv.stars);
 			aq.id(R.id.textView6).text(m_ReturnProgramView.tv.area);
 			aq.id(R.id.textView7).text(m_ReturnProgramView.tv.directors);

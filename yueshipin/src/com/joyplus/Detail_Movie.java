@@ -342,8 +342,11 @@ public class Detail_Movie extends Activity {
 		String m_j = null;
 		if (m_ReturnProgramView.movie != null) {
 			aq.id(R.id.program_name).text(m_ReturnProgramView.movie.name);
-			aq.id(R.id.imageView3).image(m_ReturnProgramView.movie.poster,
-					true, true);
+			if(m_ReturnProgramView.movie.poster!=null)
+			{
+				aq.id(R.id.imageView3).image(m_ReturnProgramView.movie.poster.trim(),
+						true, true);
+			}
 			aq.id(R.id.textView5).text(m_ReturnProgramView.movie.stars);
 			aq.id(R.id.textView6).text(m_ReturnProgramView.movie.area);
 			aq.id(R.id.textView7).text(m_ReturnProgramView.movie.directors);
