@@ -67,6 +67,7 @@ public class Video_Cache extends Activity {
 		gridView = (GridView) findViewById(R.id.gridView);
 		gridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
 		data = Dao.getInstance(Video_Cache.this).getDownloadInfosGroup();
+		
 		adapter = new DownLoadAdapter(this, data);
 		gridView.setAdapter(adapter);
 
@@ -337,8 +338,21 @@ public class Video_Cache extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		showGridView();
+		 data = Dao.getInstance(Video_Cache.this).getDownloadInfosGroup();
+         for (int i = 0; i < data.size(); i++) {
+ 			String localfile = Constant.PATH_VIDEO + data.get(i).getProd_id()
+ 					+ "_" + data.get(i).getMy_index() + ".mp4";
+ 		    File file = new File(localfile);
+ 		    if(!file.exists()){
+ 		    	data.remove(i);
+ 		    }
+ 		}
+		adapter.refresh(data);
+		if (data.isEmpty()) {
+			aq.id(R.id.none_cache).visible();
+		}
 		MobclickAgent.onResume(this);
+		//
 	}
 
 	@Override

@@ -321,6 +321,16 @@ public class Video_Cache_Detail extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		 data = Dao.getInstance(Video_Cache_Detail.this).getDownloadInfosGroup();
+         for (int i = 0; i < data.size(); i++) {
+ 			String localfile = Constant.PATH_VIDEO + data.get(i).getProd_id()
+ 					+ "_" + data.get(i).getMy_index() + ".mp4";
+ 		    File file = new File(localfile);
+ 		    if(!file.exists()){
+ 		    	data.remove(i);
+ 		    }
+ 		}
+		adapter.refresh(data);
 		MobclickAgent.onResume(this);
 	}
 
