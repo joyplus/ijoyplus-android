@@ -789,10 +789,10 @@ public class Detail_Movie extends Activity {
 		app.checkUserSelect(Detail_Movie.this);
 		if(app.use2G3G)
 		{
+			
 			// 统计点击次数
 			//因为电影 只有一集，所以为“”，电影type为1
 			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name, "", 1);
-			
 			
 			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 				if (PROD_SOURCE.contains("test=m3u8")) {
