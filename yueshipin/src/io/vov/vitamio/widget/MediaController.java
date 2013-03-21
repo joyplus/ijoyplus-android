@@ -24,6 +24,7 @@ import com.joyplus.R;
 import com.joyplus.StatisticsUtils;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Adapters.Tab3Page1ListData;
+import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramView;
 
 import io.vov.utils.Log;
@@ -298,7 +299,7 @@ public class MediaController extends FrameLayout  {
 				@Override
 				public void onScrollStateChanged(AbsListView view, int scrollState) {
 					switch (scrollState) {
-					// 当不滚动时
+					// 当滚动时
 					case OnScrollListener.SCROLL_STATE_IDLE:
 						show(sDefaultTimeout);
 						break;
@@ -1234,19 +1235,23 @@ public class MediaController extends FrameLayout  {
 			if (convertView == null) {
 				convertView = LayoutInflater.from(context).inflate(
 						R.layout.player_detail_list, null);
-				
-				if(CurrentIndex == position)
-					convertView.setBackgroundColor(0xC57627);
 				holder = new ViewHolder();
-
-				convertView.setTag(holder);
 
 				holder.groupItem = (TextView) convertView
 						.findViewById(R.id.txt_video_caption);
 
+				convertView.setTag(holder);
+
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
+			if (CurrentIndex == position) {
+
+				holder.groupItem.setTextColor(Color.YELLOW);
+			} else {
+				holder.groupItem.setTextColor(Color.WHITE);
+			}
+
 			holder.groupItem.setText(list.get(position));
 
 			return convertView;
