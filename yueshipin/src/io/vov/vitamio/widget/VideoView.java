@@ -129,6 +129,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	
 	private View mLayoutBG;
 	private DlnaSelectDevice mMyService;
+	private AlertDialog alert = null;
 
 	public VideoView(Context context) {
 		super(context);
@@ -830,6 +831,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				for (int i = 0; i < mDmrCache.size(); i++)
 					items[i + 1] = mDmrCache.get(i).friendlyName;
 
+				
 				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 				builder.setTitle("请选择你的设备：");
 				builder.setSingleChoiceItems(items, 0,new DialogInterface.OnClickListener() {
@@ -841,12 +843,13 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 									.get(item - 1);
 							mMyService.SetCurrentDevice(item);
 							if (mMediaRenderer != null) {
+								alert.dismiss();
 								gotoDlnaVideoPlay2();
 							}
 						}
 					}
 				});
-				AlertDialog alert = builder.create();
+				alert = builder.create();
 				Window window = alert.getWindow();
 				WindowManager.LayoutParams lp = window.getAttributes();
 				lp.alpha = 0.6f;

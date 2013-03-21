@@ -518,17 +518,17 @@ public class VideoPlayerActivity extends Activity implements
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
 			mPath = GetRedirectURL();
-			if(mPath != null && mPath.length() >0)
-				mVideoView.setVideoPath(app.getURLPath());
 			
 			if (mMediaController != null){
-			
+				
 				app.setCurrentPlayData(mCurrentPlayData);
 				app.set_ReturnProgramView(m_ReturnProgramView);
 //				mMediaController.ShowCurrentPlayData(mCurrentPlayData);
 //				mMediaController.setProd_Data(m_ReturnProgramView);
 			}
-	
+			if(mPath != null && mPath.length() >0)
+				mVideoView.setVideoPath(app.getURLPath());
+
 			// 创建数据源对象
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
