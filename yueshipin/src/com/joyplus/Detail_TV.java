@@ -790,6 +790,9 @@ public class Detail_TV extends Activity {
 		{
 			// write current_index to myTvSetting file
 			current_index = 0;
+			
+			//电视剧type为2 ，sbuname 为当前集数
+			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name, "1", 2);
 			SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
 					Context.MODE_PRIVATE);
 			myPreference.edit().putString(prod_id, Integer.toString(current_index))
@@ -936,13 +939,14 @@ public class Detail_TV extends Activity {
 		
 		int index = Integer.parseInt(v.getTag().toString());
 		
-		//电视剧type为2 ，sbuname 为当前集数
-		StatisticsUtils.StatisticsClicksShow(aq, app,prod_id, prod_name, current_index + "", 2);
-		
 		app.checkUserSelect(Detail_TV.this);
 		if(app.use2G3G)
 		{
 			current_index = index;
+			
+			//电视剧type为2 ，sbuname 为当前集数
+			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name, (index + 1) + "", 2);
+			
 			SetPlayBtnFlag(current_index);
 
 			// write current_index to myTvSetting file
