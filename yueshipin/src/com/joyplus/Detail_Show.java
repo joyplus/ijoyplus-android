@@ -661,7 +661,7 @@ public class Detail_Show extends Activity {
 		if(app.use2G3G)
 		{
 			
-			//电视剧type为3 ，sbuname 为当前集数
+			//综艺type为3 ，sbuname 为当前集数
 			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name,
 					m_ReturnProgramView.show.episodes[0].name , 3);
 			
@@ -802,7 +802,7 @@ public class Detail_Show extends Activity {
 		if(app.use2G3G)
 		{
 			
-			//电视剧type为3 ，sbuname 为当前集数
+			//综艺type为3 ，sbuname 为当前集数
 			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name,
 					m_ReturnProgramView.show.episodes[current_index].name, 3);
 			
