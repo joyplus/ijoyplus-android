@@ -16,10 +16,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
+import com.androidquery.AQuery;
 import com.joyplus.App;
 import com.joyplus.BuildConfig;
 import com.joyplus.Constant;
 import com.joyplus.R;
+import com.joyplus.StatisticsUtils;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Adapters.Tab3Page1ListData;
 import com.joyplus.Service.Return.ReturnProgramView;
@@ -386,6 +388,11 @@ public class MediaController extends FrameLayout  {
 							title = "第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集";
 							mFileName.setText(title);
 							PROD_SOURCE =  GetSource(index,i);
+							
+							//yangzhg
+							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
+									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
+									m_ReturnProgramView.tv.episodes[CurrentIndex].name+ "", 2);
 							break;
 						}
 					}			
@@ -402,10 +409,16 @@ public class MediaController extends FrameLayout  {
 							title = m_ReturnProgramView.show.episodes[index].name;
 							mFileName.setText(title);
 							PROD_SOURCE =  GetSource(index,i);
+							
+							//yangzhg
+							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
+									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
+									m_ReturnProgramView.tv.episodes[CurrentIndex].name+ "", 3);
 							break;
 						}
 					}			
 				}
+
 			}
 			break;
 		}
@@ -973,7 +986,6 @@ public class MediaController extends FrameLayout  {
 				case 1:
 					
 					OnClickSelect(++CurrentIndex);
-					
 					break;
 				case 2:
 					
