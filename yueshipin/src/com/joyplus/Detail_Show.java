@@ -386,7 +386,7 @@ public class Detail_Show extends Activity {
 									getPackageName()));
 					m_j = Integer.toString(i + 1);
 					m_button.setTag(i + "");
-					m_button.setText(m_ReturnProgramView.show.episodes[i].name);
+					m_button.setText(" "+m_ReturnProgramView.show.episodes[i].name);
 					m_button.setVisibility(View.VISIBLE);
 				}
 				if (i < 4) {
@@ -700,7 +700,7 @@ public class Detail_Show extends Activity {
 						.getIdentifier("show_button" + m_j, "id",
 								getPackageName()));
 				m_button.setTag(i + "");
-				m_button.setText(m_ReturnProgramView.show.episodes[i].name);
+				m_button.setText(" "+m_ReturnProgramView.show.episodes[i].name);
 				m_button.setVisibility(View.VISIBLE);
 			}
 			if (j < 4) {
@@ -735,7 +735,7 @@ public class Detail_Show extends Activity {
 								getPackageName()));
 				m_j = Integer.toString(i + 1);
 				m_button.setTag(i + "");
-				m_button.setText(m_ReturnProgramView.show.episodes[i].name);
+				m_button.setText(" "+m_ReturnProgramView.show.episodes[i].name);
 				m_button.setVisibility(View.VISIBLE);
 			}
 			if (j < 4) {

@@ -349,7 +349,8 @@
                             android:ellipsize="end"
                             android:onClick="OnClickShowPlay"
                             android:singleLine="true"
-                            android:text="加载中..." />
+                            android:text="加载中..." 
+                            android:gravity="center_vertical"/>
 
                         <Button
                             android:id="@+id/show_button1"
@@ -361,7 +362,8 @@
                             android:ellipsize="end"
                             android:onClick="OnClickShowPlay"
                             android:singleLine="true"
-                            android:text="加载中..." />
+                            android:text="加载中..."
+                            android:gravity="center_vertical" />
 
                         <Button
                             android:id="@+id/show_button2"
@@ -373,7 +375,8 @@
                             android:ellipsize="end"
                             android:onClick="OnClickShowPlay"
                             android:singleLine="true"
-                            android:text="加载中..." />
+                            android:text="加载中..." 
+                            android:gravity="center_vertical"/>
 
                         <Button
                             android:id="@+id/show_button3"
@@ -385,7 +388,8 @@
                             android:ellipsize="end"
                             android:onClick="OnClickShowPlay"
                             android:singleLine="true"
-                            android:text="加载中..." />
+                            android:text="加载中..." 
+                            android:gravity="center_vertical"/>
                     </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>

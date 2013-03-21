@@ -285,7 +285,9 @@ public class Video_Cache_Detail extends Activity {
 		} else {
 			path = dev.getInternalInfo().getPath();
 		}
-
+		if("".equals(path)|| path == null){
+			path = Environment.getExternalStorageDirectory()+ "/joy/video/";
+		}
 		return path;
 	}
 
