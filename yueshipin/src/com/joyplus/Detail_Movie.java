@@ -345,8 +345,6 @@ public class Detail_Movie extends Activity {
 			aq.id(R.id.program_name).text(m_ReturnProgramView.movie.name);
 			aq.id(R.id.imageView3).image(m_ReturnProgramView.movie.poster,
 					true, true);
-			// m_j = m_ReturnProgramView.movie.stars;
-			// m_j.replace(" ", "\n");
 			aq.id(R.id.textView5).text(m_ReturnProgramView.movie.stars);
 			aq.id(R.id.textView6).text(m_ReturnProgramView.movie.area);
 			aq.id(R.id.textView7).text(m_ReturnProgramView.movie.directors);
