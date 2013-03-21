@@ -426,7 +426,7 @@ public class MediaController extends FrameLayout  {
 		ShowQuality();
 		
 		if (PROD_SOURCE != null )
-			mPlayer.setContinueVideoPath(title,PROD_SOURCE);
+			mPlayer.setContinueVideoPath(title,PROD_SOURCE,false);
 	}
  private String GetSource(int proi_index, int sourceIndex){
 	 String PROD_SOURCE = null;
@@ -477,27 +477,6 @@ public class MediaController extends FrameLayout  {
 		CurrentIndex = mCurrentPlayData.CurrentIndex;
 		CurrentSource = mCurrentPlayData.CurrentSource;
 		CurrentQuality = mCurrentPlayData.CurrentQuality;
-		
-
-		switch (CurrentQuality) {
-		case 1:
-			lv_radio0.setChecked(true);
-			break;
-		case 0:
-			lv_radio1.setChecked(true);
-			break;
-		case 2:
-			lv_radio2.setChecked(true);
-			break;
-		}
-		if(CurrentQuality >2){
-			if(lv_radio2.getVisibility() == View.VISIBLE)
-				lv_radio2.setChecked(true);
-			else if(lv_radio1.getVisibility() == View.VISIBLE)
-				lv_radio1.setChecked(true);
-			else if(lv_radio0.getVisibility() == View.VISIBLE)
-				lv_radio0.setChecked(true);
-		}
 
 	}
 
@@ -543,7 +522,7 @@ public class MediaController extends FrameLayout  {
 					app.CheckUrlIsValidFromServer(PROD_SOURCE,"1");
 		}
 		if (PROD_SOURCE != null)
-			mPlayer.setContinueVideoPath(null,PROD_SOURCE);
+			mPlayer.setContinueVideoPath(null,PROD_SOURCE,true);
 	}
 //	public void SetMediaPlayerControlBGGone() {
 //		if (mAnchor != null) {
@@ -660,7 +639,6 @@ public class MediaController extends FrameLayout  {
 		if (this.m_ReturnProgramView != null) {
 			if (m_ReturnProgramView.movie != null) {
 				CurrentCategory = 0;
-				CurrentIndex = 0;
 				if(mNextButton != null)
 					mNextButton.setVisibility(View.INVISIBLE);
 				if(mSelectButton != null)
@@ -674,8 +652,7 @@ public class MediaController extends FrameLayout  {
 //				mFileName.setText(mTitle+"第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集");
 				if (dataStruct != null) {
 					for (int i = 0; i < m_ReturnProgramView.tv.episodes.length; i++) {
-						if(mSubName.equalsIgnoreCase(m_ReturnProgramView.tv.episodes[i].name))
-							CurrentIndex = i;
+//						if(mSubName.equalsIgnoreCase(m_ReturnProgramView.tv.episodes[i].name))
 						dataStruct.add("第" + Integer.toString(i+1) + "集");
 						String str = m_ReturnProgramView.tv.episodes[i].name;
 					}
@@ -686,8 +663,7 @@ public class MediaController extends FrameLayout  {
 //				mFileName.setText(mTitle +"-"+m_ReturnProgramView.show.episodes[CurrentIndex].name);
 				if (dataStruct != null) {
 					for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
-						if(mSubName.equalsIgnoreCase(m_ReturnProgramView.show.episodes[i].name))
-							CurrentIndex = i;
+//						if(mSubName.equalsIgnoreCase(m_ReturnProgramView.show.episodes[i].name))
 						dataStruct
 								.add(m_ReturnProgramView.show.episodes[i].name);
 					}
@@ -696,6 +672,25 @@ public class MediaController extends FrameLayout  {
 				}
 			}
 			ShowQuality();
+		}
+		switch (CurrentQuality) {
+		case 1:
+			lv_radio0.setChecked(true);
+			break;
+		case 0:
+			lv_radio1.setChecked(true);
+			break;
+		case 2:
+			lv_radio2.setChecked(true);
+			break;
+		}
+		if (CurrentQuality > 2) {
+			if (lv_radio2.getVisibility() == View.VISIBLE)
+				lv_radio2.setChecked(true);
+			else if (lv_radio1.getVisibility() == View.VISIBLE)
+				lv_radio1.setChecked(true);
+			else if (lv_radio0.getVisibility() == View.VISIBLE)
+				lv_radio0.setChecked(true);
 		}
 	}
 
@@ -1392,7 +1387,7 @@ public class MediaController extends FrameLayout  {
 
 		int GetCurrentVideoLayout();
 		
-		 void setContinueVideoPath(String Title, String path);
+		 void setContinueVideoPath(String Title, String path,boolean PlayContinue);
 
 	}
 
