@@ -40,6 +40,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Adapters.Tab3Page1ListData;
 import com.joyplus.Service.Return.ReturnTops;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
@@ -62,6 +63,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	// 播放记录变量
 	private long current_play_time = 0;
 	Tab3Page1ListData tempPlayHistoryData = null;
+	private CurrentPlayData mCurrentPlayData;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +112,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		});
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mCurrentPlayData = new CurrentPlayData();
 		aq.id(R.id.Layout1).gone();
 	}
 
@@ -428,6 +431,13 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 
 	public void CallVideoPlayActivity(String prod_id, String m_uri, String title) {
 		app.IfSupportFormat(m_uri);
+		// 1：电影，2：电视剧，3：综艺，4：视频
+		mCurrentPlayData.prod_id = tempPlayHistoryData.Pro_ID;
+		mCurrentPlayData.CurrentCategory = tempPlayHistoryData.Pro_type-1;
+		if(tempPlayHistoryData.Pro_type == 2 || tempPlayHistoryData.Pro_type ==3)
+			mCurrentPlayData.CurrentIndex = Integer.parseInt(tempPlayHistoryData.Pro_name1) -1;
+		
+		app.setCurrentPlayData(mCurrentPlayData);
 		
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
 		Bundle bundle = new Bundle();
