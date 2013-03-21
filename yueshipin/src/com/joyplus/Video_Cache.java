@@ -364,7 +364,6 @@ public class Video_Cache extends Activity {
 			} else if (action.equals("completeDownload")) {
 				autoDownloadFile();
 			}
-
 		}
 	};
 
