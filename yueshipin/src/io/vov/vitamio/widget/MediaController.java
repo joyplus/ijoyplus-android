@@ -882,8 +882,8 @@ public class MediaController extends FrameLayout  {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 //		show(sDefaultTimeout);
-		if(mShowing)
-			hide();
+//		if(mShowing)
+//			hide();
 		return true;
 	}
 
