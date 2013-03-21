@@ -61,6 +61,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Detail_Movie.EComparatorIndex;
+import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
@@ -731,8 +732,12 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button3).text(
 							"顶(" + Integer.toString(m_SupportNum) + ")");
 					app.MyToast(this, "顶成功!");
-				} else
-					app.MyToast(this, "已顶过!");
+				} else{
+					m_SupportNum++;
+				    aq.id(R.id.button3).text(
+						"顶(" + Integer.toString(m_SupportNum) + ")");
+					app.MyToast(this, "顶成功!");
+				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1131,6 +1136,7 @@ public class Detail_TV extends Activity {
 						RelativeLayout.TRUE);
 
 				TextView valueTime = new TextView(this);
+				valueTime.setTextColor(color.grey);
 				valueTime.setText(m_ReturnProgramView.comments[i].create_date
 						.replaceAll(" 00:00:00", ""));
 				subLayout.addView(valueTime, params2);
@@ -1143,6 +1149,7 @@ public class Detail_TV extends Activity {
 				linearLayout.addView(subLayout, params3);
 
 				TextView valueContent = new TextView(this);
+				valueContent.setTextColor(color.grey);
 				valueContent.setText(m_ReturnProgramView.comments[i].content);
 				linearLayout.addView(valueContent);
 
