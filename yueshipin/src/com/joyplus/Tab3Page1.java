@@ -582,11 +582,11 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 						&& m_Tab3Page1ListData.Pro_name1.length() > 0) {
 					if ((m_Tab3Page1ListData.Pro_time > 0)
 							&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
-						holder.textView03.setText(m_Tab3Page1ListData.Pro_name1);
+						holder.textView03.setText("第"+m_Tab3Page1ListData.Pro_name1+"集");
 						holder.textView04
 								.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
 					} else {
-						holder.textView03.setText(m_Tab3Page1ListData.Pro_name1);
+						holder.textView03.setText("第"+m_Tab3Page1ListData.Pro_name1+"集");
 						holder.textView04.setText("");
 					}
 				} else {

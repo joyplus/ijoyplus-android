@@ -183,7 +183,7 @@ public class Detail_BangDan extends Activity implements
 			}
 			break;
 		case 131://动漫的type有可能是131
-		case 2:
+		case 2://字段为电视剧
 			intent.setClass(this, Detail_TV.class);
 			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
 			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
