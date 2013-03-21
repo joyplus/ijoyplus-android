@@ -673,7 +673,7 @@ public class MediaController extends FrameLayout  {
 			}
 			ShowQuality();
 		}
-		switch (CurrentQuality) {
+		switch (CurrentQuality) {ss
 		case 1:
 			lv_radio0.setChecked(true);
 			break;
