@@ -155,6 +155,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					mCurrentPlayData.CurrentCategory =m_ReturnUserPlayHistories.histories[position].prod_type-1;
 					if(m_ReturnUserPlayHistories.histories[position].prod_type == 2 || m_ReturnUserPlayHistories.histories[position].prod_type ==3)
 						mCurrentPlayData.CurrentIndex = Integer.parseInt(m_ReturnUserPlayHistories.histories[position].prod_subname) -1;
+					
 					CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
 							m_Tab3Page1ListData.Pro_url,
 							m_Tab3Page1ListData.Pro_name);

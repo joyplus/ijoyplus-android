@@ -30,8 +30,8 @@ IOS: ijoyplusios001bj
 
 	 */
 	public static boolean TestEnv = true;
-	public static final String BASE_URL = "http://apitest.joyplus.tv/joyplus-service/index.php/";
-	public static String DEFAULT_APPKEY = "ijoyplusandroid0001bj";
+	public static final String BASE_URL = "http://apitest.yue001.com/joyplus-service/index.php/";
+	public static String DEFAULT_APPKEY = "ijoyplus_android_0001bj";
 	public static String APPKEY = "ijoyplus_android_0001bj";
 
 	public static final String USER_AGENT_IOS = 
