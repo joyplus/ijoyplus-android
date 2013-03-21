@@ -64,7 +64,6 @@ public class Tab2Page2 extends Activity implements
 				GetServiceData();
 		}});
 		CheckSaveData();
-		GetServiceData();
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
@@ -272,13 +271,13 @@ public class Tab2Page2 extends Activity implements
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
 				// 创建数据源对象
 				GetVideoMovies();
-//				new Handler().postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						// execute the task
-//						GetServiceData();
-//					}
-//				}, 10000);
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						GetServiceData();
+					}
+				}, 2000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block

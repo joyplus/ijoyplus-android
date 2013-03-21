@@ -59,7 +59,6 @@ public class Detail_BangDan extends Activity implements
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
 		CheckSaveData();
-		GetServiceData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -223,13 +222,13 @@ public class Detail_BangDan extends Activity implements
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-//				new Handler().postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						// execute the task
-//						GetServiceData();
-//					}
-//				}, 100000);
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						GetServiceData();
+					}
+				}, 2000);
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

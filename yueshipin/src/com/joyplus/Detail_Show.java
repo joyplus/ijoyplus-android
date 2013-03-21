@@ -142,8 +142,6 @@ public class Detail_Show extends Activity {
 		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
 			CheckSaveData();
-			GetServiceData();
-
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -507,13 +505,13 @@ public class Detail_Show extends Activity {
 				InitData();
 				aq.id(R.id.ProgressText).gone();
 				aq.id(R.id.scrollView1).visible();
-//				new Handler().postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						// execute the task
-//						GetServiceData();
-//					}
-//				}, 10000);
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						GetServiceData();
+					}
+				}, 2000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
