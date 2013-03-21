@@ -150,6 +150,11 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 						m_ReturnUserPlayHistories.histories[position].prod_subname, 
 						m_ReturnUserPlayHistories.histories[position].prod_type);
 				if (m_Tab3Page1ListData.Pro_urlType.equalsIgnoreCase("1")) {
+					// 1：电影，2：电视剧，3：综艺，4：视频
+					mCurrentPlayData.prod_id = m_ReturnUserPlayHistories.histories[position].prod_id;
+					mCurrentPlayData.CurrentCategory =m_ReturnUserPlayHistories.histories[position].prod_type-1;
+					if(m_ReturnUserPlayHistories.histories[position].prod_type == 2 || m_ReturnUserPlayHistories.histories[position].prod_type ==3)
+						mCurrentPlayData.CurrentIndex = Integer.parseInt(m_ReturnUserPlayHistories.histories[position].prod_subname) -1;
 					CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
 							m_Tab3Page1ListData.Pro_url,
 							m_Tab3Page1ListData.Pro_name);
@@ -431,12 +436,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 
 	public void CallVideoPlayActivity(String prod_id, String m_uri, String title) {
 		app.IfSupportFormat(m_uri);
-		// 1：电影，2：电视剧，3：综艺，4：视频
-		mCurrentPlayData.prod_id = tempPlayHistoryData.Pro_ID;
-		mCurrentPlayData.CurrentCategory = tempPlayHistoryData.Pro_type-1;
-		if(tempPlayHistoryData.Pro_type == 2 || tempPlayHistoryData.Pro_type ==3)
-			mCurrentPlayData.CurrentIndex = Integer.parseInt(tempPlayHistoryData.Pro_name1) -1;
-		
+
 		app.setCurrentPlayData(mCurrentPlayData);
 		
 		Intent intent = new Intent(this, VideoPlayerActivity.class);

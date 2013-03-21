@@ -696,7 +696,7 @@ public class VideoPlayerActivity extends Activity implements
 											// 视频id
 		params.put("prod_name", playProdName);// required
 												// string 视频名字
-		params.put("prod_subname", playProdSubName);// required
+		params.put("prod_subname", Integer.toString(mCurrentPlayData.CurrentIndex+1));// required
 													// string
 													// 视频的集数
 		params.put("prod_type", playProdType);// required int 视频类别

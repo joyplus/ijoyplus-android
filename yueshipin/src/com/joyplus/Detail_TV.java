@@ -1347,7 +1347,7 @@ public class Detail_TV extends Activity {
 																					// string
 																					// 视频名字
 							params.put("prod_subname",
-									m_ReturnProgramView.tv.episodes.length);// required
+									Integer.toString(episodeNum));// required
 																			// string
 																			// 视频的集数
 							params.put("prod_type", 2);// required int 视频类别
