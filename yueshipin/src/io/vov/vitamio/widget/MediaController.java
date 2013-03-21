@@ -782,6 +782,31 @@ public class MediaController extends FrameLayout  {
 		return mShowing;
 	}
 
+	public void hideNow() {
+		if (mAnchor == null)
+			return;
+
+		if (mShowing) {
+			try {
+				mHandler.removeMessages(SHOW_PROGRESS);
+				if (mFromXml)
+					setVisibility(View.GONE);
+				else
+					mWindow.dismiss();
+				if (mViewBottomRight.getVisibility() == View.VISIBLE)
+					mViewBottomRight.setVisibility(View.GONE);
+
+				if (mViewTopRight.getVisibility() == View.VISIBLE)
+					mViewTopRight.setVisibility(View.GONE);
+			} catch (IllegalArgumentException ex) {
+				Log.d("MediaController already removed");
+			}
+			mShowing = false;
+			if (mHiddenListener != null)
+				mHiddenListener.onHidden();
+		}
+	}
+	
 	public void hide() {
 		if (mAnchor == null)
 			return;
