@@ -149,6 +149,7 @@
                     android:layout_below="@+id/button2"
                     android:layout_marginLeft="129dp"
                     android:layout_marginTop="14dp"
+                    android:textColor="@color/grey"
                     android:text="导演：" />
 
                 <TextView
@@ -158,6 +159,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/textView1"
                     android:layout_marginLeft="129dp"
+                    android:textColor="@color/grey"
                     android:text="主演：" />
 
                 <TextView
@@ -167,6 +169,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/textView2"
                     android:layout_marginLeft="129dp"
+                    android:textColor="@color/grey"
                     android:text="上映：" />
 
                 <TextView
@@ -176,6 +179,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/textView3"
                     android:layout_marginLeft="129dp"
+                    android:textColor="@color/grey"
                     android:text="地区：" />
 
                 <TextView
@@ -186,6 +190,7 @@
                     android:layout_marginTop="14dp"
                     android:layout_toRightOf="@+id/textView1"
                     android:ellipsize="end"
+                    android:textColor="@color/grey"
                     android:singleLine="true" />
 
                 <TextView
@@ -196,6 +201,7 @@
                     android:layout_alignBottom="@+id/textView2"
                     android:layout_toRightOf="@+id/textView2"
                     android:ellipsize="end"
+                    android:textColor="@color/grey"
                     android:singleLine="true" />
 
                 <TextView
@@ -206,6 +212,7 @@
                     android:layout_alignBottom="@+id/textView3"
                     android:layout_alignLeft="@+id/textView6"
                     android:ellipsize="end"
+                    android:textColor="@color/grey"
                     android:singleLine="true" />
 
                 <TextView
@@ -216,6 +223,7 @@
                     android:layout_alignBottom="@+id/textView4"
                     android:layout_toRightOf="@+id/textView4"
                     android:ellipsize="end"
+                    android:textColor="@color/grey"
                     android:singleLine="true" />
             </RelativeLayout>
 

@@ -575,8 +575,13 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
 //		boolean is = isInPlaybackState();
-		if (isInPlaybackState() && mMediaController != null)
-			toggleMediaControlsVisiblity();
+//		if (isInPlaybackState() && mMediaController != null)
+//			toggleMediaControlsVisiblity();
+		if (mMediaController.isShowing()) {
+			mMediaController.hideNow();
+		} else {
+			mMediaController.show();
+		}
 		return false;
 	}
 

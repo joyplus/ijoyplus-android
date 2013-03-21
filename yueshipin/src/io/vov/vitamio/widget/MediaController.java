@@ -782,6 +782,31 @@ public class MediaController extends FrameLayout  {
 		return mShowing;
 	}
 
+	public void hideNow() {
+		if (mAnchor == null)
+			return;
+
+		if (mShowing) {
+			try {
+				mHandler.removeMessages(SHOW_PROGRESS);
+				if (mFromXml)
+					setVisibility(View.GONE);
+				else
+					mWindow.dismiss();
+				if (mViewBottomRight.getVisibility() == View.VISIBLE)
+					mViewBottomRight.setVisibility(View.GONE);
+
+				if (mViewTopRight.getVisibility() == View.VISIBLE)
+					mViewTopRight.setVisibility(View.GONE);
+			} catch (IllegalArgumentException ex) {
+				Log.d("MediaController already removed");
+			}
+			mShowing = false;
+			if (mHiddenListener != null)
+				mHiddenListener.onHidden();
+		}
+	}
+	
 	public void hide() {
 		if (mAnchor == null)
 			return;
@@ -882,8 +907,8 @@ public class MediaController extends FrameLayout  {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 //		show(sDefaultTimeout);
-		if(mShowing)
-			hide();
+//		if(mShowing)
+//			hide();
 		return true;
 	}
 
@@ -955,14 +980,16 @@ public class MediaController extends FrameLayout  {
 		@Override
 		public void onClick(View v) {
 			int mLayout = mPlayer.GetCurrentVideoLayout();
-			mLayout++;
-			if (mLayout > VideoView.VIDEO_LAYOUT_ZOOM)
-				mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
-			mPlayer.setVideoLayout(mLayout, 0);
-			if(mLayout == VideoView.VIDEO_LAYOUT_ZOOM)
+			if(mLayout == VideoView.VIDEO_LAYOUT_SCALE){
+				mLayout = VideoView.VIDEO_LAYOUT_ZOOM;
 				mReduceButton.setBackgroundResource(R.drawable.player_full);
-			else 
+			}
+			else {
+				mLayout = VideoView.VIDEO_LAYOUT_SCALE;
 				mReduceButton.setBackgroundResource(R.drawable.player_reduce);
+			}
+			mPlayer.setVideoLayout(mLayout, 0);
+			
 		}
 	};
 	private View.OnClickListener mPreListener = new View.OnClickListener() {
