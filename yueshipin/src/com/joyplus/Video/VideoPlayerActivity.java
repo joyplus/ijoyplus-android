@@ -208,7 +208,7 @@ public class VideoPlayerActivity extends Activity implements
 		// 设置显示名称
 		if (play_current_time > 0){
 			aq.id(R.id.textView2).text("上次播放到 "+stringForTime(play_current_time));
-			mVideoView.seekTo(play_current_time);
+			mVideoView.JumpTo(play_current_time);
 		}
 		else {
 			aq.id(R.id.textView2).invisible();
