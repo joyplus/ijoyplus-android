@@ -392,7 +392,7 @@ public class MediaController extends FrameLayout  {
 							//yangzhg
 							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
 									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
-									m_ReturnProgramView.tv.episodes[CurrentIndex].name+ "", 2);
+									m_ReturnProgramView.tv.episodes[CurrentIndex].name, 2);
 							break;
 						}
 					}			
@@ -413,7 +413,7 @@ public class MediaController extends FrameLayout  {
 							//yangzhg
 							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
 									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
-									m_ReturnProgramView.tv.episodes[CurrentIndex].name+ "", 3);
+									m_ReturnProgramView.tv.episodes[CurrentIndex].name, 3);
 							break;
 						}
 					}			
