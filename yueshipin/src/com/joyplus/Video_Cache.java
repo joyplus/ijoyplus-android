@@ -284,38 +284,16 @@ public class Video_Cache extends Activity {
 		}
 	}
 
-	public String getpath() {
-		Dev_MountInfo dev = Dev_MountInfo.getInstance();
-
-		PackageManager pm = getPackageManager();
-
-		ApplicationInfo appInfo = null;
-		try {
-			appInfo = pm.getApplicationInfo(getPackageName(), 0);
-		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String path = "";
-		if ((appInfo.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE) != 0) {
-
-			path = dev.getExternalInfo().getPath();
-		} else {
-			path = dev.getInternalInfo().getPath();
-		}
-		if("".equals(path)|| path == null){
-			path = Environment.getExternalStorageDirectory()+ "/joy/video/";
-		}
-		return path;
-	}
-
+	
 	void getSize() {
 		// viewHolder.myTextView.setText("");
 		progressBar.setProgress(0);
 		// 判断是否有插入存储卡
-
+		if (Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
+			File path = Environment.getExternalStorageDirectory();
 		// 取得sdcard文件路径
-		StatFs statfs = new StatFs(getpath());
+		StatFs statfs = new StatFs(path.getPath());
 		long blocSize = statfs.getBlockSize();
 		float totalBlocks = statfs.getBlockCount();
 		int sizeInMb = (int) (blocSize * totalBlocks) / 1024 / 1024; // 计算总容量
@@ -326,7 +304,11 @@ public class Video_Cache extends Activity {
 		String Text = "总共：" + sizeInMb + "MB" + "   " + "已用:" + sizeInMb
 				* percent / 100 + "MB";
 		aq.id(R.id.SDcardTextView).text(Text);
-
+		} else if (Environment.getExternalStorageState().equals(
+				Environment.MEDIA_REMOVED)) {
+			Toast.makeText(Video_Cache.this, "未安装sdCard",
+					Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	// 返回数组，下标1代表大小，下标2代表单位 KB/MB
