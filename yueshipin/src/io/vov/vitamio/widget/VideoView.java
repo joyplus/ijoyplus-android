@@ -47,6 +47,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
+import android.text.format.Time;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -309,8 +310,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				mMediaController.setAnchorView(anchorView);
 				
 				if(URLUtil.isNetworkUrl(mUri.toString())){
-					mMediaController.setProd_Data(app.get_ReturnProgramView());
 					mMediaController.ShowCurrentPlayData(app.getCurrentPlayData());
+					mMediaController.setProd_Data(app.get_ReturnProgramView());
 				}
 				
 			}
@@ -887,10 +888,11 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	}
 
 	@Override
-	public void setContinueVideoPath(String Title, String path){
+	public void setContinueVideoPath(String Title, String path,boolean PlayContinue){
 		// TODO Auto-generated method stub
 		CONTINUEMODE = true;
 		String mPath = null;
+		long saveTime = getCurrentPosition();
 		if (mLayoutBG != null){
 			if(Title != null && Title.length() >0){
 				TextView mTextView1 = (TextView) mLayoutBG.findViewById(R.id.mediacontroller_file_name);
@@ -904,6 +906,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		else 
 			mPath = path;
 		setVideoPath(mPath);
+		if(PlayContinue)
+			seekTo(saveTime);
 	}
 	
 	@Override

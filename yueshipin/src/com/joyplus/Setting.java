@@ -277,9 +277,7 @@ public class Setting extends Activity {
 			params.put("device_type", "Android");
 
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
+			cb.SetHeader(app.getHeaders());
 
 			cb.params(params).url(url).type(JSONObject.class)
 					.weakHandler(this, "CallServiceResult");
@@ -453,9 +451,7 @@ public class Setting extends Activity {
 					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 					cb.url(url2).type(JSONObject.class)
 							.weakHandler(this, "AccountBindAccountResult3");
-					cb.header("User-Agent",
-							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-					cb.header("app_key", Constant.APPKEY);
+					cb.SetHeader(app.getHeaders());
 					aq.ajax(cb);
 				}
 			} catch (JSONException e) {

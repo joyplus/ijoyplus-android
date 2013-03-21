@@ -257,14 +257,9 @@ public class VideoPlayerActivity extends Activity implements
 	public void InitPlayData() {
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
-		
-//		mPath = bundle.getString("path");
-		if( app.getURLPath() != null && app.getURLPath().length() >0)
-			mPath = app.getURLPath();
-		else 
-			mPath = bundle.getString("path");
 
-		
+		mPath = bundle.getString("path");
+
 		mTitle = bundle.getString("title");
 		playProdName = mTitle;
 		playVideoUrl = mPath;
@@ -303,7 +298,8 @@ public class VideoPlayerActivity extends Activity implements
 			 */
 			current_time = mVideoView.getCurrentPosition();
 			long total_time = mVideoView.getDuration();
-			SaveToServer(current_time, total_time);
+			if(URLUtil.isNetworkUrl(mPath))
+				SaveToServer(current_time, total_time);
 			if(current_time >0)
 			{
 				// 保存播放记录在本地
@@ -711,10 +707,7 @@ public class VideoPlayerActivity extends Activity implements
 		// string
 		// 视频url
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallProgramPlayResult");
 		aq.ajax(cb);
