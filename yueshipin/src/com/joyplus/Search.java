@@ -165,7 +165,7 @@ public class Search extends Activity implements
 					m_SearchListData.Is_Ready_Have = false;
 				if(m_ReturnSearch.results[i].prod_pic_url!=null)
 				{
-					m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url.trim();
+					m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url;
 				}
 				m_SearchListData.Pic_name = m_ReturnSearch.results[i].prod_name;
 				m_SearchListData.prod_type = m_ReturnSearch.results[i].prod_type;

@@ -1019,6 +1019,7 @@ public class Detail_TV extends Activity {
 			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 				mCurrentPlayData.CurrentIndex = index;
 				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+				Log.i("yanyuchuang",PROD_SOURCE);
 			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 				SaveToServer(2, PROD_URI, index + 1);
 				Intent intent = new Intent();
