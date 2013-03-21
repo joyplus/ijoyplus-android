@@ -134,7 +134,6 @@ public class Detail_Movie extends Activity {
 		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
 			CheckSaveData();
-			GetServiceData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -343,8 +342,11 @@ public class Detail_Movie extends Activity {
 		String m_j = null;
 		if (m_ReturnProgramView.movie != null) {
 			aq.id(R.id.program_name).text(m_ReturnProgramView.movie.name);
-			aq.id(R.id.imageView3).image(m_ReturnProgramView.movie.poster,
-					true, true);
+			if(m_ReturnProgramView.movie.poster!=null)
+			{
+				aq.id(R.id.imageView3).image(m_ReturnProgramView.movie.poster.trim(),
+						true, true);
+			}
 			aq.id(R.id.textView5).text(m_ReturnProgramView.movie.stars);
 			aq.id(R.id.textView6).text(m_ReturnProgramView.movie.area);
 			aq.id(R.id.textView7).text(m_ReturnProgramView.movie.directors);
@@ -585,13 +587,13 @@ public class Detail_Movie extends Activity {
 				InitData();
 				aq.id(R.id.ProgressText).gone();
 				aq.id(R.id.scrollView1).visible();
-//				new Handler().postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						// execute the task
-//						GetServiceData();
-//					}
-//				}, 10000);
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						GetServiceData();
+					}
+				}, 2000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block

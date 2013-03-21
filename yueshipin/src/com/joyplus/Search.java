@@ -163,7 +163,10 @@ public class Search extends Activity implements
 					m_SearchListData.Is_Ready_Have = true;
 				} else
 					m_SearchListData.Is_Ready_Have = false;
-				m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url;
+				if(m_ReturnSearch.results[i].prod_pic_url!=null)
+				{
+					m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url.trim();
+				}
 				m_SearchListData.Pic_name = m_ReturnSearch.results[i].prod_name;
 				m_SearchListData.prod_type = m_ReturnSearch.results[i].prod_type;
 				if (Integer.valueOf(m_ReturnSearch.results[i].prod_type) == 3) {
@@ -178,7 +181,6 @@ public class Search extends Activity implements
 				m_SearchListData.Text_Area = m_ReturnSearch.results[i].area;
 				m_SearchListData.Text_Ding = m_ReturnSearch.results[i].support_num;
 				m_SearchListData.Text_Score = m_ReturnSearch.results[i].score;
-
 				dataStruct.add(m_SearchListData);
 			}
 		}
