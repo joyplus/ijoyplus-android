@@ -182,6 +182,7 @@ public class Detail_BangDan extends Activity implements
 				Log.e(TAG, "Call Detail_Movie failed", ex);
 			}
 			break;
+		case 131://动漫的type有可能是131
 		case 2:
 			intent.setClass(this, Detail_TV.class);
 			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);

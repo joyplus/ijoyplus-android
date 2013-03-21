@@ -267,9 +267,18 @@ public class VideoPlayerActivity extends Activity implements
 		playProdSubName = bundle.getString("prod_subname");
 		playProdType = Integer.parseInt(bundle.getString("prod_type"));
 		play_current_time = bundle.getLong("current_time");
-		playhistory = new PlayHistory(playProdId, playProdSubName,//这个历史播放记录变量总是要初始化
-				play_current_time + "");
-		if(play_current_time == 0)
+		if(playProdSubName==null)//电影的话没有参数传过来
+		{
+			playhistory = new PlayHistory(playProdId, "movie",//这个历史播放记录变量总是要初始化
+					play_current_time + "");
+		}
+		else
+		{
+			playhistory = new PlayHistory(playProdId, playProdSubName,//这个历史播放记录变量总是要初始化
+					play_current_time + "");
+		}
+		
+		if(play_current_time < 1)
 		{
 			if(Dao.getInstance(VideoPlayerActivity.this)
 					.queryPlayHistory(playhistory) == null)
@@ -300,6 +309,7 @@ public class VideoPlayerActivity extends Activity implements
 			long total_time = mVideoView.getDuration();
 			if(URLUtil.isNetworkUrl(mPath))
 				SaveToServer(current_time, total_time);
+			
 			if(current_time >0)
 			{
 				// 保存播放记录在本地
