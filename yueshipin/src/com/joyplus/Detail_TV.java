@@ -782,9 +782,6 @@ public class Detail_TV extends Activity {
 			return;
 		}
 		
-		//电视剧type为2 ，sbuname 为当前集数
-		StatisticsUtils.StatisticsClicksShow(aq, app,prod_id, prod_name, current_index + "", 2);
-		
 		app.checkUserSelect(Detail_TV.this);
 		if(app.use2G3G)
 		{
