@@ -257,14 +257,9 @@ public class VideoPlayerActivity extends Activity implements
 	public void InitPlayData() {
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
-		
-//		mPath = bundle.getString("path");
-		if( app.getURLPath() != null && app.getURLPath().length() >0)
-			mPath = app.getURLPath();
-		else 
-			mPath = bundle.getString("path");
 
-		
+		mPath = bundle.getString("path");
+
 		mTitle = bundle.getString("title");
 		playProdName = mTitle;
 		playVideoUrl = mPath;
