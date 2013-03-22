@@ -145,16 +145,16 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			app.checkUserSelect(Tab3Page1.this.getParent());// 创建对话框必须在看见的最低层的Activity
 			if (app.use2G3G) {
 				//历史记录
-				StatisticsUtils.StatisticsClicksShow(aq, app, m_ReturnUserPlayHistories.histories[position].prod_id
-						, m_ReturnUserPlayHistories.histories[position].prod_name, 
-						m_ReturnUserPlayHistories.histories[position].prod_subname, 
-						m_ReturnUserPlayHistories.histories[position].prod_type);
+				StatisticsUtils.StatisticsClicksShow(aq, app, m_Tab3Page1ListData.Pro_ID
+						, m_Tab3Page1ListData.Pro_name, 
+						m_Tab3Page1ListData.Pro_name1, 
+						m_Tab3Page1ListData.Pro_type);
 				if (m_Tab3Page1ListData.Pro_urlType.equalsIgnoreCase("1")) {
 					// 1：电影，2：电视剧，3：综艺，4：视频
-					mCurrentPlayData.prod_id = m_ReturnUserPlayHistories.histories[position].prod_id;
-					mCurrentPlayData.CurrentCategory =m_ReturnUserPlayHistories.histories[position].prod_type-1;
-					if(m_ReturnUserPlayHistories.histories[position].prod_type == 2 || m_ReturnUserPlayHistories.histories[position].prod_type ==3)
-						mCurrentPlayData.CurrentIndex = Integer.parseInt(m_ReturnUserPlayHistories.histories[position].prod_subname) -1;
+					mCurrentPlayData.prod_id = m_Tab3Page1ListData.Pro_ID;
+					mCurrentPlayData.CurrentCategory =m_Tab3Page1ListData.Pro_type-1;
+					if(m_Tab3Page1ListData.Pro_type == 2 || m_Tab3Page1ListData.Pro_type ==3)
+						mCurrentPlayData.CurrentIndex = Integer.parseInt(m_Tab3Page1ListData.Pro_name1) -1;
 					
 					CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
 							m_Tab3Page1ListData.Pro_url,
