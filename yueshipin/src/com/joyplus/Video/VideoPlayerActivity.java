@@ -23,6 +23,7 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.download.Dao;
+import com.umeng.analytics.MobclickAgent;
 
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnCompletionListener;
@@ -301,6 +302,7 @@ public class VideoPlayerActivity extends Activity implements
 	@Override
 	protected void onPause() {
 		super.onPause();
+		MobclickAgent.onPause(this);
 		if (mVideoView != null) {
 			/*
 			 * 获取当前播放时间和总时间,将播放时间和总时间放在服务器上
@@ -324,6 +326,7 @@ public class VideoPlayerActivity extends Activity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
+		MobclickAgent.onResume(this);
 		if (mVideoView != null) {
 			/*
 			 * 取得播放时间,设置播放时间,进行播放
