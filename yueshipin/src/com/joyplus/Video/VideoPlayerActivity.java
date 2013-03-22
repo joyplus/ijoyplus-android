@@ -203,7 +203,6 @@ public class VideoPlayerActivity extends Activity implements
 		//
 		mVideoView.setOnCompletionListener(this);
 
-
 		// mVideoView.setBackgroundColor(color.black);
 
 		// 设置显示名称
@@ -523,7 +522,6 @@ public class VideoPlayerActivity extends Activity implements
 		cb.SetHeader(app.getHeaders());
 
 		aq.ajax(cb);
-
 	}
 
 	// 初始化list数据函数

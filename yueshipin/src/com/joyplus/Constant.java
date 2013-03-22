@@ -4,9 +4,6 @@ import android.os.Environment;
 
 public class Constant {
 
-	
-//	 public static final String BASE_URL = 
-//	 "http://112.64.18.12/joyplus-service/index.php/";
 	// 正式环境
 //	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
 //	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
