@@ -235,19 +235,19 @@ public class VideoPlayerActivity extends Activity implements
 		}else {
 			mCurrentPlayData = app.getCurrentPlayData();
 			
-			if(app.get_ReturnProgramView() != null){
-				m_ReturnProgramView = app.get_ReturnProgramView();
-				mPath = GetRedirectURL();
-				
-				if (mMediaController != null){
-					app.setCurrentPlayData(mCurrentPlayData);
-				}
-				if(mPath != null && mPath.length() >0)
-					mVideoView.setVideoPath(app.getURLPath());
-			} else {
+//			if(app.get_ReturnProgramView() != null){
+//				m_ReturnProgramView = app.get_ReturnProgramView();
+//				mPath = GetRedirectURL();
+//				
+//				if (mMediaController != null){
+//					app.setCurrentPlayData(mCurrentPlayData);
+//				}
+//				if(mPath != null && mPath.length() >0)
+//					mVideoView.setVideoPath(app.getURLPath());
+//			} else {
 				if (playProdId != null)
 					GetServiceData();
-			}
+//			}
 		}
 
 	}
