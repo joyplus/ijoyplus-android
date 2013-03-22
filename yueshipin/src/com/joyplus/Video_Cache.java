@@ -282,6 +282,7 @@ public class Video_Cache extends Activity {
 		// TODO Auto-generated method stub
 		
 		data = Dao.getInstance(Video_Cache.this).getDownloadInfosGroup();
+	
 		if(isnotChecked){
 		for (int i = 0; i < data.size(); i++) {
  			String localfile = Constant.PATH_VIDEO + data.get(i).getProd_id()
@@ -293,6 +294,7 @@ public class Video_Cache extends Activity {
  		}
 		isnotChecked = false;
 		}
+		
 		adapter.refresh(data);
 		if (data.isEmpty()) {
 			aq.id(R.id.none_cache).visible();
