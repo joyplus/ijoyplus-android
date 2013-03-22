@@ -153,7 +153,9 @@ public class MediaController extends FrameLayout  {
 	private CurrentPlayData mCurrentPlayData;
 	
 	private int CurrentCategory = 0;
+
 	private int CurrentIndex = 0;
+
 	private int CurrentSource = 0;
 	private int CurrentQuality = 0;
 	
@@ -437,7 +439,6 @@ public class MediaController extends FrameLayout  {
 		
 		if (PROD_SOURCE != null )
 			mPlayer.setContinueVideoPath(title,PROD_SOURCE,false);
-//		mPlayer.setContinueVideoPath(Title, path, PlayContinue)
 	}
  private String GetSource(int proi_index, int sourceIndex){
 	 String PROD_SOURCE = null;
@@ -794,28 +795,28 @@ public class MediaController extends FrameLayout  {
 	}
 
 	public void hideNow() {
-		if (mAnchor == null)
-			return;
-
-		if (mShowing) {
-			try {
-				mHandler.removeMessages(SHOW_PROGRESS);
-				if (mFromXml)
-					setVisibility(View.GONE);
-				else
-					mWindow.dismiss();
-				if (mViewBottomRight.getVisibility() == View.VISIBLE)
-					mViewBottomRight.setVisibility(View.GONE);
-
-				if (mViewTopRight.getVisibility() == View.VISIBLE)
-					mViewTopRight.setVisibility(View.GONE);
-			} catch (IllegalArgumentException ex) {
-				Log.d("MediaController already removed");
-			}
-			mShowing = false;
-			if (mHiddenListener != null)
-				mHiddenListener.onHidden();
-		}
+//		hide();
+//		if (mAnchor == null)
+//			return;
+//
+//		if (mShowing) {
+//			try {
+//				if (mFromXml)
+//					setVisibility(View.GONE);
+//				else
+//					mWindow.dismiss();
+//				if (mViewBottomRight.getVisibility() == View.VISIBLE)
+//					mViewBottomRight.setVisibility(View.GONE);
+//
+//				if (mViewTopRight.getVisibility() == View.VISIBLE)
+//					mViewTopRight.setVisibility(View.GONE);
+//			} catch (IllegalArgumentException ex) {
+//				Log.d("MediaController already removed");
+//			}
+//			mShowing = false;
+//			if (mHiddenListener != null)
+//				mHiddenListener.onHidden();
+//		}
 	}
 	
 	public void hide() {
@@ -918,8 +919,8 @@ public class MediaController extends FrameLayout  {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 //		show(sDefaultTimeout);
-//		if(mShowing)
-//			hide();
+		if(mShowing) 
+			hide();
 		return true;
 	}
 
