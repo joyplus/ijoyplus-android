@@ -82,7 +82,7 @@ public class InitActivity extends Activity {
 			InitActivity ctx = (InitActivity) mContext.get();
 			switch (msg.what) {
 			case 0:
-				ctx.mPD.dismiss();
+//				ctx.mPD.dismiss();
 				Intent src = ctx.getIntent();
 				Intent i = new Intent();
 				i.setClassName(src.getStringExtra("package"), src.getStringExtra("className"));
