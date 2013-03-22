@@ -57,7 +57,6 @@ public class Video_Cache_Detail extends Activity {
 	DownLoadAdapterDetail adapter = null;
 	private boolean isnotChecked = true;
 
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -263,7 +262,6 @@ public class Video_Cache_Detail extends Activity {
 		// TODO Auto-generated method stub
 		data = Dao.getInstance(Video_Cache_Detail.this).getInfosOfProd_id(
 				prod_id);
-
 		if(isnotChecked){
 			for (int i = 0; i < data.size(); i++) {
 	 			String localfile = Constant.PATH_VIDEO + data.get(i).getProd_id()
@@ -275,14 +273,11 @@ public class Video_Cache_Detail extends Activity {
 	 		}
 			isnotChecked = false;
 			}
-		
 		adapter.refresh(data);
 		if (data.isEmpty()) {
 			aq.id(R.id.none_cache).visible();
 		}
 	}
-
-	
 
 	void getSize() {
 		// viewHolder.myTextView.setText("");
@@ -291,18 +286,18 @@ public class Video_Cache_Detail extends Activity {
 		if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED)) {
 			File path = Environment.getExternalStorageDirectory();
-		// 取得sdcard文件路径
-		StatFs statfs = new StatFs(path.getPath());
-		long blocSize = statfs.getBlockSize();
-		float totalBlocks = statfs.getBlockCount();
-		int sizeInMb = (int) (blocSize * totalBlocks) / 1024 / 1024; // 计算总容量
-		long availableBlocks = statfs.getAvailableBlocks(); // 获取可用容量
-		float percent = 1 - availableBlocks / totalBlocks; // 获取已用比例
-		percent = (int) (percent * 100);
-		progressBar.setProgress((int) (percent));
-		String Text = "总共：" + sizeInMb + "MB" + "   " + "已用:" + sizeInMb
-				* percent / 100 + "MB";
-		aq.id(R.id.SDcardTextView).text(Text);
+			// 取得sdcard文件路径
+			StatFs statfs = new StatFs(path.getPath());
+			long blocSize = statfs.getBlockSize();
+			float totalBlocks = statfs.getBlockCount();
+			int sizeInMb = (int) (blocSize * totalBlocks) / 1024 / 1024; // 计算总容量
+			long availableBlocks = statfs.getAvailableBlocks(); // 获取可用容量
+			float percent = 1 - availableBlocks / totalBlocks; // 获取已用比例
+			percent = (int) (percent * 100);
+			progressBar.setProgress((int) (percent));
+			String Text = "总共：" + sizeInMb + "MB" + "   " + "已用:" + sizeInMb
+					* percent / 100 + "MB";
+			aq.id(R.id.SDcardTextView).text(Text);
 		} else if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_REMOVED)) {
 			Toast.makeText(Video_Cache_Detail.this, "未安装sdCard",
@@ -336,7 +331,6 @@ public class Video_Cache_Detail extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		showGridView();
 		MobclickAgent.onResume(this);
 	}
 

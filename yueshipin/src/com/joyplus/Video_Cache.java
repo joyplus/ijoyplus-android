@@ -52,7 +52,7 @@ public class Video_Cache extends Activity {
 	public List<DownloadInfo> data;
 	View tempview = null;
 	DownLoadAdapter adapter = null;
-	
+
 	private boolean isnotChecked = true;
 
 	@Override
@@ -69,7 +69,7 @@ public class Video_Cache extends Activity {
 		gridView = (GridView) findViewById(R.id.gridView);
 		gridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
 		data = Dao.getInstance(Video_Cache.this).getDownloadInfosGroup();
-		
+
 		adapter = new DownLoadAdapter(this, data);
 		gridView.setAdapter(adapter);
 
@@ -280,9 +280,8 @@ public class Video_Cache extends Activity {
 
 	private void showGridView() {
 		// TODO Auto-generated method stub
-		
+
 		data = Dao.getInstance(Video_Cache.this).getDownloadInfosGroup();
-	
 		if(isnotChecked){
 		for (int i = 0; i < data.size(); i++) {
  			String localfile = Constant.PATH_VIDEO + data.get(i).getProd_id()
@@ -294,14 +293,12 @@ public class Video_Cache extends Activity {
  		}
 		isnotChecked = false;
 		}
-		
 		adapter.refresh(data);
 		if (data.isEmpty()) {
 			aq.id(R.id.none_cache).visible();
 		}
 	}
 
-	
 	void getSize() {
 		// viewHolder.myTextView.setText("");
 		progressBar.setProgress(0);
@@ -309,22 +306,22 @@ public class Video_Cache extends Activity {
 		if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED)) {
 			File path = Environment.getExternalStorageDirectory();
-		// 取得sdcard文件路径
-		StatFs statfs = new StatFs(path.getPath());
-		long blocSize = statfs.getBlockSize();
-		float totalBlocks = statfs.getBlockCount();
-		int sizeInMb = (int) (blocSize * totalBlocks) / 1024 / 1024; // 计算总容量
-		long availableBlocks = statfs.getAvailableBlocks(); // 获取可用容量
-		float percent = 1 - availableBlocks / totalBlocks; // 获取已用比例
-		percent = (int) (percent * 100);
-		progressBar.setProgress((int) (percent));
-		String Text = "总共：" + sizeInMb + "MB" + "   " + "已用:" + sizeInMb
-				* percent / 100 + "MB";
-		aq.id(R.id.SDcardTextView).text(Text);
+			// 取得sdcard文件路径
+			StatFs statfs = new StatFs(path.getPath());
+			long blocSize = statfs.getBlockSize();
+			float totalBlocks = statfs.getBlockCount();
+			int sizeInMb = (int) (blocSize * totalBlocks) / 1024 / 1024; // 计算总容量
+			long availableBlocks = statfs.getAvailableBlocks(); // 获取可用容量
+			float percent = 1 - availableBlocks / totalBlocks; // 获取已用比例
+			percent = (int) (percent * 100);
+			progressBar.setProgress((int) (percent));
+			String Text = "总共：" + sizeInMb + "MB" + "   " + "已用:" + sizeInMb
+					* percent / 100 + "MB";
+			aq.id(R.id.SDcardTextView).text(Text);
 		} else if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_REMOVED)) {
-			Toast.makeText(Video_Cache.this, "未安装sdCard",
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(Video_Cache.this, "未安装sdCard", Toast.LENGTH_SHORT)
+					.show();
 		}
 	}
 

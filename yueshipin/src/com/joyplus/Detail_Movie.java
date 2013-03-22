@@ -1186,7 +1186,6 @@ public class Detail_Movie extends Activity {
 		mCurrentPlayData.CurrentCategory = 0;
 		mCurrentPlayData.CurrentIndex = 0;
 		app.setCurrentPlayData(mCurrentPlayData);
-		// app.CheckUrlIsValidFromServer(m_uri, sourceId);//连接服务器，看链接是否有效
 		Intent intent = new Intent();
 		Bundle bundle = new Bundle();
 		bundle.putString("path", m_uri);
