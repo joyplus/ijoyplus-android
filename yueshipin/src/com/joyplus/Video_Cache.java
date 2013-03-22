@@ -52,6 +52,8 @@ public class Video_Cache extends Activity {
 	public List<DownloadInfo> data;
 	View tempview = null;
 	DownLoadAdapter adapter = null;
+	
+	private boolean isnotChecked = true;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -278,7 +280,19 @@ public class Video_Cache extends Activity {
 
 	private void showGridView() {
 		// TODO Auto-generated method stub
+		
 		data = Dao.getInstance(Video_Cache.this).getDownloadInfosGroup();
+		if(isnotChecked){
+		for (int i = 0; i < data.size(); i++) {
+ 			String localfile = Constant.PATH_VIDEO + data.get(i).getProd_id()
+ 					+ "_" + data.get(i).getMy_index() + ".mp4";
+ 		    File file = new File(localfile);
+ 		    if(!file.exists()){
+ 		    	data.remove(i);
+ 		    }
+ 		}
+		isnotChecked = false;
+		}
 		adapter.refresh(data);
 		if (data.isEmpty()) {
 			aq.id(R.id.none_cache).visible();
@@ -338,19 +352,7 @@ public class Video_Cache extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		 data = Dao.getInstance(Video_Cache.this).getDownloadInfosGroup();
-         for (int i = 0; i < data.size(); i++) {
- 			String localfile = Constant.PATH_VIDEO + data.get(i).getProd_id()
- 					+ "_" + data.get(i).getMy_index() + ".mp4";
- 		    File file = new File(localfile);
- 		    if(!file.exists()){
- 		    	data.remove(i);
- 		    }
- 		}
-		adapter.refresh(data);
-		if (data.isEmpty()) {
-			aq.id(R.id.none_cache).visible();
-		}
+		showGridView();
 		MobclickAgent.onResume(this);
 		//
 	}
