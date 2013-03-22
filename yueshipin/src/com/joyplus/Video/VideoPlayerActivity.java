@@ -538,6 +538,8 @@ public class VideoPlayerActivity extends Activity implements
 		try {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
+			if(m_ReturnProgramView == null)
+				finish();
 			mPath = GetRedirectURL();
 			
 			if (mMediaController != null){
