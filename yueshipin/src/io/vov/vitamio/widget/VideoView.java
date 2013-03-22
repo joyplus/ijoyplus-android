@@ -401,12 +401,35 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		@Override
     public void onCompletion(MediaPlayer mp) {
 			Log.d("onCompletion");
-			mCurrentState = STATE_PLAYBACK_COMPLETED;
-			mTargetState = STATE_PLAYBACK_COMPLETED;
-			if (mMediaController != null)
-				mMediaController.hide();
-			if (mOnCompletionListener != null)
-				mOnCompletionListener.onCompletion(mMediaPlayer);
+
+			   if(mMediaController != null) {
+				   
+				   if(mMediaController.getCurrentCategory() == 1) {
+					   
+					   if(mMediaController.getCurrentIndex() >= 0) {
+						   
+						   if(app.get_ReturnProgramView() != null) {
+							   
+							   int maxTVNum = app.get_ReturnProgramView().tv.episodes.length;
+							   
+							   if(mMediaController.getCurrentIndex() <maxTVNum) {
+								   
+								   mMediaController.OnClickSelect(mMediaController.getCurrentIndex() + 1);
+								   
+								   return ;
+							   }
+						   }
+					   }
+				   }
+			   }
+			   
+				mCurrentState = STATE_PLAYBACK_COMPLETED;
+				mTargetState = STATE_PLAYBACK_COMPLETED;
+				if (mMediaController != null)
+					mMediaController.hide();
+				if (mOnCompletionListener != null)
+					mOnCompletionListener.onCompletion(mMediaPlayer);
+			    
 		}
 	};
 

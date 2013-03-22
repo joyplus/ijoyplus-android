@@ -159,6 +159,15 @@ public class MediaController extends FrameLayout  {
 	
 //	private boolean DLNAMODE = false;
 	
+	public int getCurrentIndex() {
+		return CurrentIndex;
+	}
+	
+	public int getCurrentCategory() {
+		return CurrentCategory;
+	}
+	
+	
 	public void setApp(App app){
 		this.app = app;
 	}
@@ -428,6 +437,7 @@ public class MediaController extends FrameLayout  {
 		
 		if (PROD_SOURCE != null )
 			mPlayer.setContinueVideoPath(title,PROD_SOURCE,false);
+//		mPlayer.setContinueVideoPath(Title, path, PlayContinue)
 	}
  private String GetSource(int proi_index, int sourceIndex){
 	 String PROD_SOURCE = null;
