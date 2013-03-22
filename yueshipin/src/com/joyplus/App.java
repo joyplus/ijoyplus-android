@@ -437,7 +437,7 @@ public class App extends Application {
 					e.printStackTrace();
 				}
 
-				return params[0];// 如果TimeOut或者不能够拿到真正地址，那就把最原始链接返回
+				return NOT_VALID_LINK;// 如果TimeOut或者不能够拿到真正地址，那就把最原始链接返回
 			}
 
 		}.execute(new String[] { url, "" + sourceId });
@@ -451,7 +451,7 @@ public class App extends Application {
 			e.printStackTrace();
 		}
 
-		return url;
+		return NOT_VALID_LINK;
 	}
 
 	/**
