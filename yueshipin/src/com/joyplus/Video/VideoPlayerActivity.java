@@ -523,7 +523,6 @@ public class VideoPlayerActivity extends Activity implements
 		cb.SetHeader(app.getHeaders());
 
 		aq.ajax(cb);
-
 	}
 
 	// 初始化list数据函数
