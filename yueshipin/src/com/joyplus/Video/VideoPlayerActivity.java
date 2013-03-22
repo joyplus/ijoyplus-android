@@ -203,7 +203,6 @@ public class VideoPlayerActivity extends Activity implements
 		//
 		mVideoView.setOnCompletionListener(this);
 
-
 		// mVideoView.setBackgroundColor(color.black);
 
 		// 设置显示名称

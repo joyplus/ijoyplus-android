@@ -1436,5 +1436,4 @@ public class MediaController extends FrameLayout  {
 		 void setContinueVideoPath(String Title, String path,boolean PlayContinue);
 
 	}
-
 }
