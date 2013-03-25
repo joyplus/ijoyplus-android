@@ -162,8 +162,10 @@ public class MediaController extends FrameLayout  {
 	private int CurrentSource = 0;
 	private int CurrentQuality = 0;
 	
-//	private boolean DLNAMODE = false;
+	private boolean mIsPausedByHuman = false;
 	
+//	private boolean DLNAMODE = false;
+
 	public int getCurrentIndex() {
 		return CurrentIndex;
 	}
@@ -172,6 +174,9 @@ public class MediaController extends FrameLayout  {
 		return CurrentCategory;
 	}
 	
+	public boolean ismIsPausedByHuman() {
+		return mIsPausedByHuman;
+	}
 	
 	public void setApp(App app){
 		this.app = app;
@@ -1153,12 +1158,17 @@ public class MediaController extends FrameLayout  {
 	}
 
 	private void doPauseResume() {
-		if (mPlayer.isPlaying())
+		if (mPlayer.isPlaying()) {
+			mIsPausedByHuman = true;
 			mPlayer.pause();
-		else
+		}else {
+			mIsPausedByHuman = false;
 			mPlayer.start();
+		}
 		updatePausePlay();
 	}
+	
+	
 
 	private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
 		@Override
