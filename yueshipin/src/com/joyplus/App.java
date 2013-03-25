@@ -549,7 +549,7 @@ public class App extends Application {
 				Log.i(TAG, "NOT OK" + e);
 			// 如果地址真的不存在，那就往里面加NULL字符串
 			mAndroidHttpClient.close();
-			list.add(NOT_VALID_LINK);
+			list.add(params[0]);
 			e.printStackTrace();
 		}
 	}
