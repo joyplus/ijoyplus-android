@@ -549,16 +549,18 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			} else if (mMediaPlayer != null) {
 				if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START)
 					mMediaPlayer.pause();
-				//强制播放拖动地点
-				else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END || what == MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED)
-					if(!mMediaController.ismIsPausedByHuman()) {
-						
-						mMediaPlayer.start();
-					}
+				else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END)
+					mMediaPlayer.start();
 				else if (what == MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED && mMediaController.isShowing())
 					mMediaController.setDownloadRate(extra);
 				else 
 					Log.d("onInfo: (%d, %d)", what, extra);
+				//强制播放拖动地点
+				if(what == MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED && 
+						!mMediaController.ismIsPausedByHuman()) {
+					
+					mMediaPlayer.start();
+				}
 			}
 			return true;
 		}
