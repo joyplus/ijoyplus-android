@@ -17,7 +17,8 @@ public class Logo extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+//		MobclickAgent.setDebugMode(true);
+		MobclickAgent.onError(this);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);// 不显示标题
 		setContentView(R.layout.logo);// 显示welcom.xml
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
