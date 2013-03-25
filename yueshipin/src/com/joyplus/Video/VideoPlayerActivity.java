@@ -563,125 +563,118 @@ public class VideoPlayerActivity extends Activity implements
 		}
 
 	}
-   private String GetRedirectURL(){
-	   String PROD_SOURCE = null;
-	  
-	   mCurrentPlayData.CurrentCategory = playProdType -1;
-	   switch (playProdType) {
-	case 1:
-	{
-		   if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
+
+	private String GetRedirectURL() {
+		String PROD_SOURCE = null;
+
+		mCurrentPlayData.CurrentCategory = playProdType - 1;
+		switch (playProdType) {
+		case 1: {
+			if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
 				for (int i = 0; i < m_ReturnProgramView.movie.episodes[0].down_urls.length; i++) {
 					for (int k = 0; k < m_ReturnProgramView.movie.episodes[0].down_urls[i].urls.length; k++) {
-						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[0].down_urls[i].urls[k];
-						if (urls != null) {
-							/*
-							 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
-							 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
-							 */
-							if (urls.url != null
-									&& app.CheckUrlIsValidFromServer(urls.url,"1")) {
-								for(int qindex = 0;qindex<Constant.quality_index.length;qindex++){
-									if (PROD_SOURCE == null
-											&& urls.type.trim().equalsIgnoreCase(
-													Constant.quality_index[qindex])){
-										mCurrentPlayData.CurrentSource = i;
-										mCurrentPlayData.CurrentQuality = qindex;
-										PROD_SOURCE = urls.url.trim();
-										break;
+						  
+						for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
+							if (PROD_SOURCE == null)
+								for (int ki = 0; ki < m_ReturnProgramView.movie.episodes[0].down_urls[i].urls.length; ki++) {
+									if (m_ReturnProgramView.movie.episodes[0].down_urls[i].urls[ki].type
+											.equalsIgnoreCase(Constant.player_quality_index[qi])) {
+										ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[0].down_urls[i].urls[ki];
+										/*
+										 * #define GAO_QING @"mp4" #define
+										 * BIAO_QING @"flv" #define CHAO_QING
+										 * @"hd2" #define LIU_CHANG @"3gp"
+										 */
+										if (urls != null
+												&& urls.url != null
+												&& app.CheckUrlIsValidFromServer(
+														urls.url, "1")) {
+											mCurrentPlayData.CurrentSource = i;
+											mCurrentPlayData.CurrentQuality = ki;
+											mCurrentPlayData.ShowQuality = qi;
+											PROD_SOURCE = urls.url.trim();
+										}
+										if (PROD_SOURCE != null)
+											break;
 									}
 								}
-							}
 							if (PROD_SOURCE != null)
 								break;
 						}
-						if (PROD_SOURCE != null )
-							break;
+
 					}
 				}
 			}
-		
-	}
-		break;
-	case 2:
-	{
-		   if (m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls != null) {
+
+		}
+			break;
+		case 2: {
+			if (m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls != null) {
 				for (int i = 0; i < m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls.length; i++) {
-					for (int k = 0; k < m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls.length; k++) {
-						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[k];
-						if (urls != null) {
-							/*
-							 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
-							 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
-							 */
-							if (urls.url != null
-									&& app.CheckUrlIsValidFromServer(urls.url,"1")) {
-								for(int qindex = 0;qindex<Constant.quality_index.length;qindex++){
-									if (PROD_SOURCE == null
-											&& urls.type.trim().equalsIgnoreCase(
-													Constant.quality_index[qindex])){
+
+					for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
+						if (PROD_SOURCE == null)
+							for (int ki = 0; ki < m_ReturnProgramView.tv.episodes[0].down_urls[i].urls.length; ki++) {
+								if (m_ReturnProgramView.tv.episodes[0].down_urls[i].urls[ki].type
+										.equalsIgnoreCase(Constant.player_quality_index[qi])) {
+									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[0].down_urls[i].urls[ki];
+
+									if (urls != null
+											&& urls.url != null
+											&& app.CheckUrlIsValidFromServer(
+													urls.url, "1")) {
 										mCurrentPlayData.CurrentSource = i;
-										mCurrentPlayData.CurrentQuality = qindex;
+										mCurrentPlayData.CurrentQuality = ki;
 										PROD_SOURCE = urls.url.trim();
-										 
-										break;
 									}
+									if (PROD_SOURCE != null)
+										break;
 								}
 							}
-							if (PROD_SOURCE != null)
-								break;
-						}
-						if (PROD_SOURCE != null )
+						if (PROD_SOURCE != null)
 							break;
 					}
 				}
 			}
-		
-	}
-		break;
-	case 3:
-	{
-		   if (m_ReturnProgramView.show.episodes[0].down_urls != null) {
+
+		}
+			break;
+		case 3: {
+			if (m_ReturnProgramView.show.episodes[0].down_urls != null) {
 				for (int i = 0; i < m_ReturnProgramView.show.episodes[0].down_urls.length; i++) {
-					for (int k = 0; k < m_ReturnProgramView.show.episodes[0].down_urls[i].urls.length; k++) {
-						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[0].down_urls[i].urls[k];
-						if (urls != null) {
-							/*
-							 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
-							 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
-							 */
-							if (urls.url != null
-									&& app.CheckUrlIsValidFromServer(urls.url,"1")) {
-//								if (PROD_SOURCE == null
-//										&& !app.IfIncludeM3U(urls.url))
-//									PROD_SOURCE = urls.url.trim();
-								for(int qindex = 0;qindex<Constant.quality_index.length;qindex++){
-									if (PROD_SOURCE == null
-											&& urls.type.trim().equalsIgnoreCase(
-													Constant.quality_index[qindex])){
+
+
+					for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
+						if (PROD_SOURCE == null)
+							for (int ki = 0; ki < m_ReturnProgramView.show.episodes[0].down_urls[i].urls.length; ki++) {
+								if (m_ReturnProgramView.show.episodes[0].down_urls[i].urls[ki].type
+										.equalsIgnoreCase(Constant.player_quality_index[qi])) {
+									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[0].down_urls[i].urls[ki];
+
+									if (urls != null
+											&& urls.url != null
+											&& app.CheckUrlIsValidFromServer(
+													urls.url, "1")) {
 										mCurrentPlayData.CurrentSource = i;
-										mCurrentPlayData.CurrentQuality = qindex;
+										mCurrentPlayData.CurrentQuality = ki;
 										PROD_SOURCE = urls.url.trim();
-										break;
 									}
+									if (PROD_SOURCE != null)
+										break;
 								}
-								
 							}
-							if (PROD_SOURCE != null)
-								break;
-						}
-						if (PROD_SOURCE != null )
+						if (PROD_SOURCE != null)
 							break;
 					}
 				}
 			}
-		
+
+		}
+			break;
+		}
+
+		return PROD_SOURCE;
 	}
-		break;
-	}
-	
-	   return PROD_SOURCE;
-   }
 	private final Runnable mRunnable = new Runnable() {
 		long beginTimeMillis, timeTakenMillis, timeLeftMillis, rxByteslast,
 				m_bitrate;
