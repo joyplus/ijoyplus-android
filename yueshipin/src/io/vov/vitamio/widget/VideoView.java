@@ -131,6 +131,16 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	private View mLayoutBG;
 	private DlnaSelectDevice mMyService;
 	private AlertDialog alert = null;
+	
+	private long[] mRecordTime = {0,0,0,0,0,
+													  0,0,0,0,0,
+													  0,0,0,0,0,
+													  0,0,0,0,0,
+													  0,0,0,0,0,
+													  0,0,0,0,0};//创建一个长度为30的数组，数组初始值为0
+	
+	private int mCount = -1;//用来记录次数
+	public  static long mSeekTotime = 0;//定义一个全局的播放记录的时间
 
 	public VideoView(Context context) {
 		super(context);
@@ -191,7 +201,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		mAspectRatio = aspectRatio;
 	}
 
-	private void initVideoView(Context ctx) {		
+	private void initVideoView(Context ctx) {
+		mSeekTotime = 0;
 		mContext = ctx;
 		mVideoWidth = 0;
 		mVideoHeight = 0;
@@ -404,6 +415,31 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
 			   if(mMediaController != null) {
 				   
+				   //播放资源有问题的代码 处理
+				   long maxTime = -1;//获取数组中的最大值
+				   //获取数组中的最大值
+				   for(int i=0;i<mRecordTime.length;i++) {
+					   
+					   maxTime = Math.max(maxTime, mRecordTime[i]);
+				   }
+				   
+				   
+				   if(maxTime > mSeekTotime) {//如果临时获取的时间大于前一次播放的时间
+					   //把临时获取的时间赋给前一次播放的时间
+					   mSeekTotime = maxTime;
+				   }
+				   
+				   //视屏意外播放完成后，重新播放判断代码
+				   //前一段的时间
+				   if(maxTime < getDuration() && mSeekTotime != 0  && mSeekTotime < getDuration() - 5*1000 ) {
+					   
+					   mSeekTotime += 1 * 1000;//并且时间增加1秒
+					   seekTo(mSeekTotime);//跳转到下一个正常播放
+					   return;
+				   }
+				   
+				   
+				   //自动播放到下一集的代码
 				   if(mMediaController.getCurrentCategory() == 1) {
 					   
 					   if(mMediaController.getCurrentIndex() >= 0) {
@@ -471,16 +507,48 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				mOnBufferingUpdateListener.onBufferingUpdate(mp, percent);
 		}
 	};
+	
+	/**
+	 * 在infolistener里面存储播放时间
+	 * @param currentTime 当前播放时间
+	 */
+	private void store30PlayTime(long currentTime) {
+		//如果数组的最末一位为0，计数自动加 1
+		if(mRecordTime[mRecordTime.length -1] == 0) {
+			mCount ++;
+		}
+		
+		//如果数组最末一位不为0，计数初始化为-1，并且
+		//对把数组第一位数据删除，把新数据添加到数组的末尾
+		if(mRecordTime[mRecordTime.length -1] != 0) {
+			mCount = -1;
+			
+			for(int i=0;i<mRecordTime.length - 1;i++) {
+				
+				mRecordTime[i] = mRecordTime[i + 1];
+			}
+			
+			mRecordTime[mRecordTime.length -1] = currentTime;
+		} else {
+			//如果数组最末一位为0，把最新数据保存到当前计数所在的位置
+			mRecordTime[mCount] = currentTime;
+		}
+	}
 
 	private OnInfoListener mInfoListener = new OnInfoListener() {
 		@Override
 		public boolean onInfo(MediaPlayer mp, int what, int extra) {
+			
+			if(BuildConfig.DEBUG) android.util.Log.i("VideoViewYangzhg", "state : " + what);
+			store30PlayTime(getCurrentPosition());//当状态改变时，保存那一段时间到数组里面，并随时间更新而更新
+			
 			if (mOnInfoListener != null) {
 				mOnInfoListener.onInfo(mp, what, extra);
 			} else if (mMediaPlayer != null) {
 				if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START)
 					mMediaPlayer.pause();
-				else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END)
+				//强制播放拖动地点
+				else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END || what == MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED)
 					mMediaPlayer.start();
 				else if (what == MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED && mMediaController.isShowing())
 					mMediaController.setDownloadRate(extra);
