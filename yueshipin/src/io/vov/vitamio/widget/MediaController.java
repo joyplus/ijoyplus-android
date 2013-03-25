@@ -150,7 +150,7 @@ public class MediaController extends FrameLayout  {
 	
 	private RelativeLayout mTopBlockLayout;//播放器顶部模块
 	private RelativeLayout mBottomBlockLayout;//播放器底部模块
-
+	
 	private AudioManager mAM;
 	
 	private CurrentPlayData mCurrentPlayData;
@@ -161,7 +161,7 @@ public class MediaController extends FrameLayout  {
 
 	private int CurrentSource = 0;
 	private int CurrentQuality = 0;
-	
+	private int ShowQuality = 0;
 	private boolean mIsPausedByHuman = false;
 	
 //	private boolean DLNAMODE = false;
@@ -300,10 +300,10 @@ public class MediaController extends FrameLayout  {
 		// 加载数据
 		dataStruct = new ArrayList<String>();
 
-//		dataStruct.add("第一集");
-//		dataStruct.add("第二集");
-//		dataStruct.add("第三集");
-//		dataStruct.add("第四集");
+//		dataStruct.add("第一�?);
+//		dataStruct.add("第二�?);
+//		dataStruct.add("第三�?);
+//		dataStruct.add("第四�?);
 		groupAdapter = new GroupAdapter(mContext, dataStruct);
 //		lv_group.setItemsCanFocus(false);  
 		lv_group.setAdapter(groupAdapter);
@@ -451,7 +451,7 @@ public class MediaController extends FrameLayout  {
 		if (PROD_SOURCE != null )
 			mPlayer.setContinueVideoPath(title,PROD_SOURCE,false);
 	}
- private String GetSource(int proi_index, int sourceIndex){
+	private String GetSource(int proi_index, int sourceIndex){
 	 String PROD_SOURCE = null;
 	 switch (CurrentCategory) {
 	case 0:
@@ -500,13 +500,14 @@ public class MediaController extends FrameLayout  {
 		CurrentIndex = mCurrentPlayData.CurrentIndex;
 		CurrentSource = mCurrentPlayData.CurrentSource;
 		CurrentQuality = mCurrentPlayData.CurrentQuality;
+		ShowQuality = mCurrentPlayData.ShowQuality;
 
 	}
 
 	public void SelectQuality(int index) {
 		mPlayer.pause();
 
-		CurrentQuality = index;
+		ShowQuality = index;
 		String PROD_SOURCE = null;
 
 		ReturnProgramView.DOWN_URLS.URLS CurrentURLS = null;
@@ -656,7 +657,6 @@ public class MediaController extends FrameLayout  {
 
 		}
 	}
-
 	public void setProd_Data(ReturnProgramView m_ReturnProgramView) {
 		this.m_ReturnProgramView = m_ReturnProgramView;
 		if (this.m_ReturnProgramView != null) {
@@ -696,20 +696,14 @@ public class MediaController extends FrameLayout  {
 			}
 			ShowQuality();
 		}
-		switch (CurrentQuality) {
-		case 0:
+		//ShowQuality
+		if(Constant.player_quality_index[ShowQuality].equalsIgnoreCase("flv") ||
+				Constant.player_quality_index[ShowQuality].equalsIgnoreCase("3gp"))
 			lv_radio0.setChecked(true);
-			break;
-		case 1:
+		else 	if(Constant.player_quality_index[ShowQuality].equalsIgnoreCase("mp4") )
 			lv_radio1.setChecked(true);
-			break;
-		case 2:
+		else 	if(Constant.player_quality_index[ShowQuality].equalsIgnoreCase("hd2") )
 			lv_radio2.setChecked(true);
-			break;
-		default:
-			lv_radio0.setChecked(true);
-			break;
-		}
 //		if (CurrentQuality == 3) {
 ////			if (lv_radio2.getVisibility() == View.VISIBLE)
 ////				lv_radio2.setChecked(true);
@@ -719,7 +713,6 @@ public class MediaController extends FrameLayout  {
 ////				lv_radio0.setChecked(true);
 //		}
 	}
-
 	/**
 	 * Set the View to hold some information when interact with the
 	 * MediaController
@@ -1057,17 +1050,17 @@ public class MediaController extends FrameLayout  {
 			switch (checkedId) {
 
 			case R.id.radio0:
-				if(CurrentQuality != 0){
+				if(ShowQuality != 0){
 					SelectQuality(0);
 				}
 				break;
 			case R.id.radio1:
-				if(CurrentQuality != 1){
+				if(ShowQuality != 1){
 					SelectQuality(1);
 				}
 				break;
 			case R.id.radio2:
-				if(CurrentQuality != 2){
+				if(ShowQuality != 2){
 					SelectQuality(2);
 				}
 				break;
@@ -1298,7 +1291,7 @@ public class MediaController extends FrameLayout  {
 		 */
 		private boolean CheckUrl(String urlLink) {
 			
-			//url本身不正常 直接返回
+			//url本身不正�?直接返回
 			   if (urlLink == null || urlLink.length() <= 0) {     
 				   
 				    return false;                   
@@ -1314,14 +1307,11 @@ public class MediaController extends FrameLayout  {
 		}
 		
 		/**
-		 * 启动一个异步任务，把网络相关放在此任务中
-		 * 重定向新的链接，直到拿到资源URL
+		 * 启动一个异步任务，把网络相关放在此任务�?		 * 重定向新的链接，直到拿到资源URL
 		 * 
 		 * 注意：因为网络或者服务器原因，重定向时间有可能比较长
-		 * 因此需要较长时间等待
-		 * @param url
-		 * @return 字符串
-		 */
+		 * 因此需要较长时间等�?		 * @param url
+		 * @return 字符�?		 */
 		private String newATask(String url) {
 			
 			AsyncTask<String,Void,String> aynAsyncTask = new AsyncTask<String, Void, String>(){
@@ -1363,15 +1353,14 @@ public class MediaController extends FrameLayout  {
 		/**
 		 * 模拟火狐浏览器给服务器发送不同请求，有火狐本身请求，IOS请求，Android请求
 		 * @param userAgent firfox ios android
-		 * @param srcUrl 原始地址【可能可以播放，可能需要跳转】
-		 * @param list 存储播放地址
+		 * @param srcUrl 原始地址【可能可以播放，可能需要跳转�?		 * @param list 存储播放地址
 		 */
 		private void simulateFirfoxRequest(String userAgent,String srcUrl , List<String> list) {
 			//模拟火狐ios发用请求  使用userAgent
 			AndroidHttpClient mAndroidHttpClient = AndroidHttpClient.newInstance(userAgent);
 			
 			HttpParams httpParams =  mAndroidHttpClient.getParams();
-			//连接时间最长3秒，可以更改
+			//连接时间最�?秒，可以更改
 			HttpConnectionParams.setConnectionTimeout(httpParams, 3000 * 1);
 					
 			try {
@@ -1391,9 +1380,7 @@ public class MediaController extends FrameLayout  {
 					if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK   start");
 					
 					if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK start");
-					if(status == HttpStatus.SC_MOVED_PERMANENTLY ||//网址被永久移除
-							status == HttpStatus.SC_MOVED_TEMPORARILY ||//网址暂时性移除
-							status ==HttpStatus.SC_SEE_OTHER ||//重新定位资源
+					if(status == HttpStatus.SC_MOVED_PERMANENTLY ||//网址被永久移�?							status == HttpStatus.SC_MOVED_TEMPORARILY ||//网址暂时性移�?							status ==HttpStatus.SC_SEE_OTHER ||//重新定位资源
 							status == HttpStatus.SC_TEMPORARY_REDIRECT) {//暂时定向
 						
 						Header header = response.getFirstHeader("Location");//拿到重新定位后的header
@@ -1406,8 +1393,7 @@ public class MediaController extends FrameLayout  {
 						//进行下一次递归
 						simulateFirfoxRequest(userAgent,location , list);
 					} else {
-						//如果地址真的不存在，那就往里面加NULL字符串
-						list.add("NULL");
+						//如果地址真的不存在，那就往里面加NULL字符�?						list.add("NULL");
 					}
 					
 				} else {
