@@ -110,7 +110,10 @@ public class Detail_BangDan extends Activity implements
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(this, getResources().getString(R.string.networknotwork));
-			aq.id(R.id.none_net).visible();
+			if(app.GetServiceData("top_items_" + BangDan_id)==null)
+			{
+				aq.id(R.id.none_net).visible();
+			}
 			return;
 		}
 		try {
@@ -179,7 +182,8 @@ public class Detail_BangDan extends Activity implements
 				Log.e(TAG, "Call Detail_Movie failed", ex);
 			}
 			break;
-		case 2:
+		case 131://动漫的type有可能是131
+		case 2://字段为电视剧
 			intent.setClass(this, Detail_TV.class);
 			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
 			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
@@ -225,7 +229,7 @@ public class Detail_BangDan extends Activity implements
 						// execute the task
 						GetServiceData();
 					}
-				}, 100000);
+				}, 2000);
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -248,13 +252,16 @@ public class Detail_BangDan extends Activity implements
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
-
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+		cb.SetHeader(app.getHeaders());
+		if(app.GetServiceData("top_items_" + BangDan_id)==null)
+		{
+			aq.id(R.id.ProgressText).visible();
+			aq.progress(R.id.progress).ajax(cb);
+		}
+		else
+		{
+			aq.ajax(cb);
+		}
 
 	}
 

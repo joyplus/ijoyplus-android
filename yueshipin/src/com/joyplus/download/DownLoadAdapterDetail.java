@@ -65,7 +65,6 @@ private static final int MAX = 100;
 			holder.resourceImage = (ImageView)convertView.findViewById(R.id.movieImageview);
 			holder.resourceDownProgress =(ProgressBar)convertView.findViewById(R.id.downloadprogress);
 			holder.resourcePercentDown = (TextView)convertView.findViewById(R.id.precentDownload);
-			
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -77,26 +76,26 @@ private static final int MAX = 100;
 			long completesize = info.getCompeleteSize();
 			long filesize = info.getFileSize();
 			long percent =completesize*MAX/filesize;
-			String posterurl = info.getPoster();
-			if(info.getIndex().contains("_show"))
+			String posterurl = info.getUrlposter();
+			if(info.getMy_index().contains("_show"))
 			{
 				
-				holder.resourceDownloadName.setText(info.getName());
+				holder.resourceDownloadName.setText(info.getMy_name());
 				
 			}
 			else
 			{
-				holder.resourceDownloadName.setText("第"+info.getIndex()+"集");
+				holder.resourceDownloadName.setText("第"+info.getMy_index()+"集");
 			}
-			if(info.getState().equalsIgnoreCase("wait"))
+			if(info.getDownload_state().equalsIgnoreCase("wait"))
 			{
 				holder.resouceDownloadState.setText("等待下载");
 			}
-			else if(info.getState().equalsIgnoreCase("downloading"))
+			else if(info.getDownload_state().equalsIgnoreCase("downloading"))
 			{
 				holder.resouceDownloadState.setText("正在下载");
 			}
-			else if(info.getState().equalsIgnoreCase("stop"))
+			else if(info.getDownload_state().equalsIgnoreCase("pause"))
 			{
 				holder.resouceDownloadState.setText("暂停下载");
 			}

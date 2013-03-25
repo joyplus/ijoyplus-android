@@ -16,6 +16,7 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 //import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -47,7 +48,6 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 	private App app;
 	private ReturnUserFavorities m_ReturnUserFavorities = null;
 
-//	private int Fromepage;
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private Tab3Page2ListAdapter Tab3Page2Adapter;
@@ -70,7 +70,6 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				GotoDetail(position);
-
 			}
 		});
 		ItemsListView.setOnScrollListener(new OnScrollListener() {
@@ -104,11 +103,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 				return true;// 如果返回false那么onItemClick仍然会被调用
 			}
 		});
-		dataStruct = new ArrayList();
-		Tab3Page2Adapter = new Tab3Page2ListAdapter();
-		ItemsListView.setAdapter(Tab3Page2Adapter);
 		aq.id(R.id.Layout1).gone();
-		
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -139,9 +134,11 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(dataStruct != null && dataStruct.size() >1)
-			dataStruct.clear();
+		dataStruct = new ArrayList();
+		Tab3Page2Adapter = new Tab3Page2ListAdapter();
+		ItemsListView.setAdapter(Tab3Page2Adapter);
 		isLastisNext = 1;
+		CheckSaveData();
 		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
 	}
@@ -158,15 +155,23 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 	}
 
 	public void GetVideoMovies() {
-//		String m_j = null;
+		// String m_j = null;
 
-		if (m_ReturnUserFavorities.favorities == null){
-			if(isLastisNext ==1){
+		if (m_ReturnUserFavorities.favorities == null) {
+			if (isLastisNext == 1) {
 				aq.id(R.id.imageNoitemBG).visible();
 				aq.id(R.id.Layout1).gone();
 				aq.id(R.id.Layout2).gone();
 			}
 			return;
+		}
+		if(isLastisNext == 1)
+		{
+			for(int i = 0;i<dataStruct.size();i++)
+			{
+				dataStruct.remove(i);
+			}
+			dataStruct.clear();
 		}
 		for (int i = 0; i < m_ReturnUserFavorities.favorities.length; i++) {
 			Tab3Page2ListData m_Tab3Page2ListData = new Tab3Page2ListData();
@@ -180,13 +185,16 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 
 			m_Tab3Page2ListData.Text_Area = m_ReturnUserFavorities.favorities[i].area;
 			m_Tab3Page2ListData.Text_Score = m_ReturnUserFavorities.favorities[i].score;
+			if (dataStruct.contains(m_Tab3Page2ListData)) {
 
-			dataStruct.add(m_Tab3Page2ListData);
+			} else {
+				dataStruct.add(m_Tab3Page2ListData);
+			}
 		}
 		Tab3Page2Adapter.notifyDataSetChanged();
-		
+
 		int m_num = dataStruct.size();
-		
+
 		if (m_num == 0) {
 			aq.id(R.id.imageNoitemBG).visible();
 			aq.id(R.id.Layout1).gone();
@@ -211,7 +219,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR&&app.GetServiceData("user_favorities")==null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -219,14 +227,18 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			m_ReturnUserFavorities = mapper.readValue(json.toString(),
-					ReturnUserFavorities.class);
-			app.SaveServiceData("user_favorities", json.toString());
-
+			if (isLastisNext == 1) {
+				m_ReturnUserFavorities = mapper.readValue(json.toString(),
+						ReturnUserFavorities.class);
+				app.SaveServiceData("user_favorities", json.toString());
+			}
+			else if (isLastisNext > 1)
+			{
+				m_ReturnUserFavorities = null;
+				app.SaveServiceData("user_favorities", json.toString());
+			}
 			// 创建数据源对象
 			GetVideoMovies();
-			// aq.id(R.id.Layout1).visible();
-			// aq.id(R.id.Layout2).visible();
 
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -241,39 +253,32 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 
 	}
 
-//	private void CheckSaveData() {
-//		String SaveData = null;
-//		ObjectMapper mapper = new ObjectMapper();
-//		SaveData = app.GetServiceData("user_favorities");
-//		if (SaveData == null) {
-//			GetServiceData(1);
-//		} else {
-//			try {
-//				m_ReturnUserFavorities = mapper.readValue(SaveData,
-//						ReturnUserFavorities.class);
-//				// 创建数据源对象
-//				GetVideoMovies();
-//				new Handler().postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						// execute the task
-//						GetServiceData(1);
-//					}
-//				}, 10000);
-//
-//			} catch (JsonParseException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (JsonMappingException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//
-//		}
-//	}
+	private void CheckSaveData() {
+		String SaveData = null;
+		ObjectMapper mapper = new ObjectMapper();
+		SaveData = app.GetServiceData("user_favorities");
+		if (SaveData == null) {
+			GetServiceData(1);
+		} else {
+			try {
+				m_ReturnUserFavorities = mapper.readValue(SaveData,
+						ReturnUserFavorities.class);
+				// 创建数据源对象
+				GetVideoMovies();
+
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
 
 	private void OnDeleteListItem(final int item) {
 		final Tab3Page2ListData m_Tab3Page2ListData = (Tab3Page2ListData) ItemsListView
@@ -315,10 +320,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		params.put("prod_id", prod_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "UnfavorityResult");
@@ -331,7 +333,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 			try {
 				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
 					app.MyToast(this, "删除收藏成功!");
-//					GetServiceData(1);
+					// GetServiceData(1);
 				} else
 					app.MyToast(this, "删除收藏失败!");
 			} catch (JSONException e) {
@@ -342,8 +344,9 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		} else {
 
 			// ajax error, show error code
-			if (status.getCode() == AjaxStatus.NETWORK_ERROR) 
-			app.MyToast(this, getResources().getString(R.string.networknotwork));
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(this,
+						getResources().getString(R.string.networknotwork));
 		}
 	}
 
@@ -352,20 +355,15 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		String url = Constant.BASE_URL + "user/favorities" + "?page_num="
 				+ Integer.toString(index) + "&page_size=10";
 
-//		String url = Constant.BASE_URL + "user/favorities";
+		// String url = Constant.BASE_URL + "user/favorities";
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		
+
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		aq.ajax(cb);
-
 	}
 
 	private void GotoDetail(int item) {
@@ -409,68 +407,74 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 			break;
 		}
 	}
-    private static class ViewHolder {
-    	public ImageView mImageView;
-        public TextView mName;
-        public TextView mName1;
-        public TextView mYear;
-    }
+
+	private static class ViewHolder {
+		public ImageView mImageView;
+		public TextView mName;
+		public TextView mName1;
+		public TextView mYear;
+	}
+
 	public class Tab3Page2ListAdapter extends BaseAdapter {
 
-        @Override
-        public int getCount() {
-        	 return dataStruct.size();
-        }
+		@Override
+		public int getCount() {
+			return dataStruct.size();
+		}
 
-        @Override
-        public Tab3Page2ListData getItem(int position) {
-        	 return (Tab3Page2ListData)dataStruct.get(position);
-        }
+		@Override
+		public Tab3Page2ListData getItem(int position) {
+			return (Tab3Page2ListData) dataStruct.get(position);
+		}
 
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-        
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
 		// 获取显示当前的view
 		@Override
 		public View getView(int i, View view, ViewGroup viewgroup) {
-			
-//			Integer integer = Integer.valueOf(i);
+
+			// Integer integer = Integer.valueOf(i);
 			ViewHolder holder = null;
 
 			if (view == null) {
-				 
-				view = getLayoutInflater().inflate(R.layout.tab3page2_detail_list, viewgroup, false);
-				 
-				 holder = new ViewHolder();
-				
-				 holder.mImageView = (ImageView) view.findViewById(R.id.video_preview_img);
-	             holder.mName = (TextView) view.findViewById(R.id.txt_video_caption);
-	             holder.mName1 = (TextView) view.findViewById(R.id.TextView03);
-	             holder.mYear = (TextView) view.findViewById(R.id.TextView04);
+
+				view = getLayoutInflater().inflate(
+						R.layout.tab3page2_detail_list, viewgroup, false);
+
+				holder = new ViewHolder();
+
+				holder.mImageView = (ImageView) view
+						.findViewById(R.id.video_preview_img);
+				holder.mName = (TextView) view
+						.findViewById(R.id.txt_video_caption);
+				holder.mName1 = (TextView) view.findViewById(R.id.TextView03);
+				holder.mYear = (TextView) view.findViewById(R.id.TextView04);
 
 				view.setTag(holder);
-			}
-			else {
+			} else {
 				holder = (ViewHolder) view.getTag();
 			}
-			
+
 			// 获取当前数据项的数据
 			Tab3Page2ListData m_Tab3Page2ListData = (Tab3Page2ListData) getItem(i);
-			
+
 			AQuery aqlist = aq.recycle(view);
 			aqlist.id(holder.mName).text(m_Tab3Page2ListData.Pic_name);
 			aqlist.id(holder.mName1).text(m_Tab3Page2ListData.Text_Zhuyan);
 			aqlist.id(holder.mYear).text(m_Tab3Page2ListData.Text_Year);
-			aqlist.id(holder.mImageView).image(m_Tab3Page2ListData.Pic_url, true, true);
-//			aqlist.id(holder.mImageView).image(m_Tab3Page2ListData.Pic_url, true, true, 0, 0, null, 0, 1.0f);
-			
-//			aqlist.dismiss();
+			aqlist.id(holder.mImageView).image(m_Tab3Page2ListData.Pic_url,
+					true, true);
+			// aqlist.id(holder.mImageView).image(m_Tab3Page2ListData.Pic_url,
+			// true, true, 0, 0, null, 0, 1.0f);
+
+			// aqlist.dismiss();
 			return view;
 		}
 	}
-	
+
 	@Override
 	public void onTabActivityResult(int requestCode, int resultCode, Intent data) {
 

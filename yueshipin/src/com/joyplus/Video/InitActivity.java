@@ -1,15 +1,14 @@
 package com.joyplus.Video;
 
-import io.vov.utils.Log;
 import io.vov.vitamio.Vitamio;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.ref.WeakReference;
 
 import com.joyplus.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,71 +22,77 @@ public class InitActivity extends Activity {
 	public static final String EXTRA_MSG = "EXTRA_MSG";
 	public static final String EXTRA_FILE = "EXTRA_FILE";
 	private ProgressDialog mPD;
+	private UIHandler uiHandler;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
+		uiHandler = new UIHandler(this);
 
-		new AsyncTask<Object, Object, Object>() {
+		new AsyncTask<Object, Object, Boolean>() {
 			@Override
 			protected void onPreExecute() {
 				mPD = new ProgressDialog(InitActivity.this);
 				mPD.setCancelable(false);
-				mPD.setMessage(getText(R.string.init_decoders));
+				mPD.setMessage(getString(R.string.init_decoders));
 				mPD.show();
 			}
 
 			@Override
-			protected Object doInBackground(Object... params) {
-
-				Vitamio.initialize(getApplicationContext());
-//				if (Vitamio.isInitialized(getApplicationContext()))
-//					return null;
-//
-//				//反射解压
-//				try {
-//					Class c = Class.forName("io.vov.vitamio.Vitamio");
-//					Method extractLibs = c.getDeclaredMethod("extractLibs", new Class[] { android.content.Context.class, int.class });
-//					extractLibs.setAccessible(true);
-//					extractLibs.invoke(c, new Object[] { getApplicationContext(), R.raw.libarm });
-//					
-////					Field vitamioLibraryPath = c.getDeclaredField("vitamioLibraryPath");
-////
-////					 AndroidContextUtils.getDataDir(ctx) + "libs/"
-//					
-//				} catch (NoSuchMethodException e) {
-//					Log.e("extractLibs", e);
-//					e.printStackTrace();
-//				} catch (IllegalArgumentException e) {
-//					e.printStackTrace();
-//				} catch (IllegalAccessException e) {
-//					e.printStackTrace();
-//				} catch (InvocationTargetException e) {
-//					e.printStackTrace();
-//				} catch (ClassNotFoundException e) {
-//					e.printStackTrace();
-//				}
-
-				uiHandler.sendEmptyMessage(0);
-				return null;
+			protected Boolean doInBackground(Object... params) {
+				return Vitamio.initialize(InitActivity.this);
 			}
+
+			@Override
+			protected void onPostExecute(Boolean inited) {
+				if (inited) {
+					uiHandler.sendEmptyMessage(0);
+				}
+			}
+
 		}.execute();
 	}
 
-	private Handler uiHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			mPD.dismiss();
-			Intent src = getIntent();
-			Intent i = new Intent();
-			i.setClassName(src.getStringExtra("package"), src.getStringExtra("className"));
-			i.setData(src.getData());
-			i.putExtras(src);
-			i.putExtra(FROM_ME, true);
-			startActivity(i);
+//	private Handler uiHandler = new Handler() {
+//		@Override
+//		public void handleMessage(Message msg) {
+//			mPD.dismiss();
+//			Intent src = getIntent();
+//			Intent i = new Intent();
+//			i.setClassName(src.getStringExtra("package"), src.getStringExtra("className"));
+//			i.setData(src.getData());
+//			i.putExtras(src);
+//			i.putExtra(FROM_ME, true);
+//			startActivity(i);
+//
+//			finish();
+//		}
+//	};
+	
+	private static class UIHandler extends Handler {
+		private WeakReference<Context> mContext;
 
-			finish();
+		public UIHandler(Context c) {
+			mContext = new WeakReference<Context>(c);
+		}
+
+		public void handleMessage(Message msg) {
+			InitActivity ctx = (InitActivity) mContext.get();
+			switch (msg.what) {
+			case 0:
+//				ctx.mPD.dismiss();
+				Intent src = ctx.getIntent();
+				Intent i = new Intent();
+				i.setClassName(src.getStringExtra("package"), src.getStringExtra("className"));
+				i.setData(src.getData());
+				i.putExtras(src);
+				i.putExtra(FROM_ME, true);
+				ctx.startActivity(i);
+				ctx.finish();
+				break;
+			}
 		}
 	};
 }

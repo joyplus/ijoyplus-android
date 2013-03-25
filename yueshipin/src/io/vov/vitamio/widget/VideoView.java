@@ -16,18 +16,38 @@ import io.vov.vitamio.MediaPlayer.OnSubtitleUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnVideoSizeChangedListener;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+
+import com.dlcs.dlna.Stack.MediaRenderer;
+import com.joyplus.App;
+import com.joyplus.BuildConfig;
+import com.joyplus.Constant;
 import com.joyplus.R;
+import com.joyplus.Dlna.DlnaSelectDevice;
+import com.joyplus.Dlna.DlnaVideoPlay;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.net.http.AndroidHttpClient;
+import android.os.AsyncTask;
+import android.text.format.Time;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -35,8 +55,15 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
+import android.webkit.URLUtil;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 /**
@@ -50,6 +77,8 @@ import android.widget.ProgressBar;
  * {@link #setSubShown(boolean)}
  */
 public class VideoView extends SurfaceView implements MediaController.MediaPlayerControl {
+	private String TAG = "VideoView";
+	private App app;
 	private Uri mUri;
 	private String mTitle;
 	private long mDuration;
@@ -92,12 +121,26 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	private OnBufferingUpdateListener mOnBufferingUpdateListener;
 	private int mCurrentBufferPercentage;
 	private long mSeekWhenPrepared;
+	private long mSeekTime = 0;
 	private boolean mCanPause = true;
 	private boolean mCanSeekBack = true;
 	private boolean mCanSeekForward = true;
+	private boolean CONTINUEMODE = false;
 	private Context mContext;
 	
-	private ProgressBar mProgressBar;
+	private View mLayoutBG;
+	private DlnaSelectDevice mMyService;
+	private AlertDialog alert = null;
+	
+	private long[] mRecordTime = {0,0,0,0,0,
+													  0,0,0,0,0,
+													  0,0,0,0,0,
+													  0,0,0,0,0,
+													  0,0,0,0,0,
+													  0,0,0,0,0};//创建一个长度为30的数组，数组初始值为0
+	
+	private int mCount = -1;//用来记录次数
+	public  static long mSeekTotime = 0;//定义一个全局的播放记录的时间
 
 	public VideoView(Context context) {
 		super(context);
@@ -112,6 +155,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		super(context, attrs, defStyle);
 		initVideoView(context);
 	}
+	
+	
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -149,6 +194,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			boolean full = layout == VIDEO_LAYOUT_STRETCH;
 			lp.width = (full || windowRatio < videoRatio) ? windowWidth : (int) (videoRatio * windowHeight);
 			lp.height = (full || windowRatio > videoRatio) ? windowHeight : (int) (windowWidth / videoRatio);
+
 		}
 		setLayoutParams(lp);
 		getHolder().setFixedSize(mSurfaceWidth, mSurfaceHeight);
@@ -157,7 +203,8 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		mAspectRatio = aspectRatio;
 	}
 
-	private void initVideoView(Context ctx) {		
+	private void initVideoView(Context ctx) {
+		mSeekTotime = 0;
 		mContext = ctx;
 		mVideoWidth = 0;
 		mVideoHeight = 0;
@@ -174,17 +221,26 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	public boolean isValid() {
 		return (mSurfaceHolder != null && mSurfaceHolder.getSurface().isValid());
 	}
-
+	public void setApp(App app){
+		this.app = app;
+	}
 	public void setVideoPath(String path) {
-		setVideoURI(Uri.parse(path));
+			Uri uri = Uri.parse(path);
+			setVideoURI(uri);
 	}
 
 	public void setVideoURI(Uri uri) {
 		mUri = uri;
 		mSeekWhenPrepared = 0;
+				
 		openVideo();
 		requestLayout();
 		invalidate();
+		
+
+	}
+	public void setTitle(String name) {
+		mTitle = name;
 	}
 
 	public void stopPlayback() {
@@ -209,6 +265,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		try {
 			mDuration = -1;
 			mCurrentBufferPercentage = 0;
+//			mMediaPlayer = new MediaPlayer(mContext,true);
 			mMediaPlayer = new MediaPlayer(mContext);
 			mMediaPlayer.setOnPreparedListener(mPreparedListener);
 			mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
@@ -245,25 +302,56 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		mMediaController = controller;
 		attachMediaController();
 	}
-	public void setProgressBar(ProgressBar mProgressBar) {
-		this.mProgressBar = mProgressBar;
-		mProgressBar.setVisibility(View.VISIBLE);
+
+	public void setLayoutBG(View mRelativeLayoutBG) {
+		this.mLayoutBG = mRelativeLayoutBG;
+		
+	}
+	
+	public void setServiceConnection(DlnaSelectDevice mMyService) {
+		this.mMyService = mMyService;
 	}
 
 	private void attachMediaController() {
+
 		if (mMediaPlayer != null && mMediaController != null) {
 			mMediaController.setMediaPlayer(this);
-			View anchorView = this.getParent() instanceof View ? (View) this.getParent() : this;
-			
-			mMediaController.setAnchorView(anchorView);
+			if (!CONTINUEMODE) {
+				View anchorView = this.getParent() instanceof View ? (View) this
+						.getParent() : this;
+
+				mMediaController.setAnchorView(anchorView);
+				
+				if(URLUtil.isNetworkUrl(mUri.toString())){
+					mMediaController.ShowCurrentPlayData(app.getCurrentPlayData());
+					mMediaController.setProd_Data(app.get_ReturnProgramView());
+				}
+				
+			}
 			mMediaController.setEnabled(isInPlaybackState());
-			
-//			if (mUri != null) {
-//				List<String> paths = mUri.getPathSegments();
-//				String name = paths == null || paths.isEmpty() ? "null" : paths.get(paths.size() - 1);
-//				mMediaController.setFileName(name);
-//			}
+			if(!URLUtil.isNetworkUrl(mUri.toString()))
+				mMediaController.DisableButtom();
+
+			// if (mUri != null) {
+			// List<String> paths = mUri.getPathSegments();
+			// String name = paths == null || paths.isEmpty() ? "null" :
+			// paths.get(paths.size() - 1);
+			// mMediaController.setFileName(name);
+			// }
 		}
+		// if (mLayoutBG != null){
+		// mLayoutBG.setVisibility(View.VISIBLE);
+		// View anchorView = this.getParent() instanceof View ? (View)
+		// this.getParent() : this;
+		//
+		// ViewGroup.LayoutParams lp = anchorView.getLayoutParams();
+		// //
+		// // lp.width = (int)
+		// (findViewById(R.id.operation_full).getLayoutParams().width *
+		// lpa.screenBrightness);
+		// mLayoutBG.setLayoutParams(lp);
+		// }
+
 	}
 
 	OnVideoSizeChangedListener mSizeChangedListener = new OnVideoSizeChangedListener() {
@@ -297,13 +385,17 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
 			if (seekToPosition != 0)
 				seekTo(seekToPosition);
+			if(mSeekTime != 0){
+				seekTo(mSeekTime);
+				mSeekTime = 0;
+			}
 			if (mVideoWidth != 0 && mVideoHeight != 0) {
 				setVideoLayout(mVideoLayout, mAspectRatio);
 				if (mSurfaceWidth == mVideoWidth && mSurfaceHeight == mVideoHeight) {
 					if (mTargetState == STATE_PLAYING) {
 						start();
-						if (mProgressBar != null)
-							mProgressBar.setVisibility(View.GONE);
+						if (mLayoutBG != null)
+							mLayoutBG.setVisibility(View.GONE);
 						if (mMediaController != null)
 							mMediaController.show();
 						
@@ -322,12 +414,60 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 		@Override
     public void onCompletion(MediaPlayer mp) {
 			Log.d("onCompletion");
-			mCurrentState = STATE_PLAYBACK_COMPLETED;
-			mTargetState = STATE_PLAYBACK_COMPLETED;
-			if (mMediaController != null)
-				mMediaController.hide();
-			if (mOnCompletionListener != null)
-				mOnCompletionListener.onCompletion(mMediaPlayer);
+
+			   if(mMediaController != null) {
+				   
+				   //播放资源有问题的代码 处理
+				   long maxTime = -1;//获取数组中的最大值
+				   //获取数组中的最大值
+				   for(int i=0;i<mRecordTime.length;i++) {
+					   
+					   maxTime = Math.max(maxTime, mRecordTime[i]);
+				   }
+				   
+				   
+				   if(maxTime > mSeekTotime) {//如果临时获取的时间大于前一次播放的时间
+					   //把临时获取的时间赋给前一次播放的时间
+					   mSeekTotime = maxTime;
+				   }
+				   
+				   //视屏意外播放完成后，重新播放判断代码
+				   //前一段的时间
+				   if(maxTime < getDuration() && mSeekTotime != 0  && mSeekTotime < getDuration() - 5*1000 ) {
+					   
+					   mSeekTotime += 1 * 1000;//并且时间增加1秒
+					   seekTo(mSeekTotime);//跳转到下一个正常播放
+					   return;
+				   }
+				   
+				   
+				   //自动播放到下一集的代码
+				   if(mMediaController.getCurrentCategory() == 1) {
+					   
+					   if(mMediaController.getCurrentIndex() >= 0) {
+						   
+						   if(app.get_ReturnProgramView() != null) {
+							   
+							   int maxTVNum = app.get_ReturnProgramView().tv.episodes.length;
+							   
+							   if(mMediaController.getCurrentIndex() <maxTVNum) {
+								   
+								   mMediaController.OnClickSelect(mMediaController.getCurrentIndex() + 1);
+								   
+								   return ;
+							   }
+						   }
+					   }
+				   }
+			   }
+			   
+				mCurrentState = STATE_PLAYBACK_COMPLETED;
+				mTargetState = STATE_PLAYBACK_COMPLETED;
+				if (mMediaController != null)
+					mMediaController.hide();
+				if (mOnCompletionListener != null)
+					mOnCompletionListener.onCompletion(mMediaPlayer);
+			    
 		}
 	};
 
@@ -346,13 +486,14 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			}
 
 			if (getWindowToken() != null) {
-				int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback : R.string.VideoView_error_text_unknown;
+				int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback : R.string.addressnotwork;
 
-				new AlertDialog.Builder(mContext).setTitle(R.string.VideoView_error_title).setMessage(message).setPositiveButton(R.string.VideoView_error_button, new DialogInterface.OnClickListener() {
+				new AlertDialog.Builder(mContext).setTitle(R.string.netstate).setMessage(message).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					@Override
           public void onClick(DialogInterface dialog, int whichButton) {
-						if (mOnCompletionListener != null)
-							mOnCompletionListener.onCompletion(mMediaPlayer);
+						OnComplete();
+//						if (mOnCompletionListener != null)
+//							mOnCompletionListener.onCompletion(mMediaPlayer);
 					}
 				}).setCancelable(false).show();
 			}
@@ -368,11 +509,41 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				mOnBufferingUpdateListener.onBufferingUpdate(mp, percent);
 		}
 	};
+	
+	/**
+	 * 在infolistener里面存储播放时间
+	 * @param currentTime 当前播放时间
+	 */
+	private void store30PlayTime(long currentTime) {
+		//如果数组的最末一位为0，计数自动加 1
+		if(mRecordTime[mRecordTime.length -1] == 0) {
+			mCount ++;
+		}
+		
+		//如果数组最末一位不为0，计数初始化为-1，并且
+		//对把数组第一位数据删除，把新数据添加到数组的末尾
+		if(mRecordTime[mRecordTime.length -1] != 0) {
+			mCount = -1;
+			
+			for(int i=0;i<mRecordTime.length - 1;i++) {
+				
+				mRecordTime[i] = mRecordTime[i + 1];
+			}
+			
+			mRecordTime[mRecordTime.length -1] = currentTime;
+		} else {
+			//如果数组最末一位为0，把最新数据保存到当前计数所在的位置
+			mRecordTime[mCount] = currentTime;
+		}
+	}
 
 	private OnInfoListener mInfoListener = new OnInfoListener() {
 		@Override
 		public boolean onInfo(MediaPlayer mp, int what, int extra) {
-			Log.d("onInfo: (%d, %d)", what, extra);
+			
+			if(BuildConfig.DEBUG) android.util.Log.i("VideoViewYangzhg", "state : " + what);
+			store30PlayTime(getCurrentPosition());//当状态改变时，保存那一段时间到数组里面，并随时间更新而更新
+			
 			if (mOnInfoListener != null) {
 				mOnInfoListener.onInfo(mp, what, extra);
 			} else if (mMediaPlayer != null) {
@@ -380,8 +551,17 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 					mMediaPlayer.pause();
 				else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END)
 					mMediaPlayer.start();
+				else if (what == MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED && mMediaController.isShowing())
+					mMediaController.setDownloadRate(extra);
+				else 
+					Log.d("onInfo: (%d, %d)", what, extra);
+				//强制播放拖动地点
+				if(what == MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED && 
+						!mMediaController.ismIsPausedByHuman()) {
+					
+					mMediaPlayer.start();
+				}
 			}
-
 			return true;
 		}
 	};
@@ -492,8 +672,14 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
-		if (isInPlaybackState() && mMediaController != null)
-			toggleMediaControlsVisiblity();
+//		boolean is = isInPlaybackState();
+//		if (isInPlaybackState() && mMediaController != null)
+//			toggleMediaControlsVisiblity();
+		if (mMediaController.isShowing()) {
+			mMediaController.hide();
+		} else {
+			mMediaController.show();
+		}
 		return false;
 	}
 
@@ -600,6 +786,9 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			mSeekWhenPrepared = msec;
 		}
 	}
+	  public void JumpTo(long msec) {
+			mSeekTime = msec;
+		}
 
 	@Override
   public boolean isPlaying() {
@@ -736,4 +925,98 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
   public boolean canSeekForward() {
 		return mCanSeekForward;
 	}
+	@Override
+	public void gotoDlnaVideoPlay() {
+		if (mMyService != null) {
+			ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
+			if (mDmrCache.size() >= 0) {
+				CharSequence[] items = new String[mDmrCache.size() + 1];
+				items[0] = "我的设备";
+				for (int i = 0; i < mDmrCache.size(); i++)
+					items[i + 1] = mDmrCache.get(i).friendlyName;
+
+				
+				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+				builder.setTitle("请选择你的设备：");
+				builder.setSingleChoiceItems(items, 0,new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						if (item > 0) {
+							ArrayList<MediaRenderer> mDmrCache = mMyService
+									.getDmrCache();
+							MediaRenderer mMediaRenderer = mDmrCache
+									.get(item - 1);
+							mMyService.SetCurrentDevice(item);
+							if (mMediaRenderer != null) {
+								alert.dismiss();
+								gotoDlnaVideoPlay2();
+							}
+						}
+					}
+				});
+				alert = builder.create();
+				Window window = alert.getWindow();
+				WindowManager.LayoutParams lp = window.getAttributes();
+				lp.alpha = 0.6f;
+				window.setAttributes(lp);
+				alert.show();
+				
+			}
+		}
+		// else {
+		// AlertDialog alertDialog = new
+		// AlertDialog.Builder(mContext).setMessage(
+		// "正在搜索设备 ...").create();
+		// Window window = alertDialog.getWindow();
+		// WindowManager.LayoutParams lp = window.getAttributes();
+		// lp.alpha = 0.6f;
+		// window.setAttributes(lp);
+		// alertDialog.show();
+		// }
+	}
+	
+	private void gotoDlnaVideoPlay2() {
+		Intent intent = new Intent(mContext, DlnaVideoPlay.class);
+		intent.putExtra("prod_url", mUri.toString());
+		intent.putExtra("title", mTitle);
+
+		try {
+			mContext.startActivity(intent);
+		} catch (ActivityNotFoundException ex) {
+			Log.e(TAG, "Call DlnaVideoPlay failed", ex);
+		}
+	}
+	@Override
+	public int GetCurrentVideoLayout() {
+		return mVideoLayout;
+	}
+
+	@Override
+	public void setContinueVideoPath(String Title, String path,boolean PlayContinue){
+		// TODO Auto-generated method stub
+		CONTINUEMODE = true;
+		String mPath = null;
+		long saveTime = getCurrentPosition();
+		if (mLayoutBG != null){
+			if(Title != null && Title.length() >0){
+				TextView mTextView1 = (TextView) mLayoutBG.findViewById(R.id.mediacontroller_file_name);
+				mTextView1.setText(Title);
+			}
+			mLayoutBG.setVisibility(View.VISIBLE);
+		}
+//		setVideoPath(path);
+		if( app.getURLPath() != null &&  app.getURLPath().length() >0)
+			mPath = app.getURLPath();
+		else 
+			mPath = path;
+		setVideoPath(mPath);
+		if(PlayContinue)
+			seekTo(saveTime);
+	}
+	
+	@Override
+	public void OnComplete() {
+		((Activity) mContext).finish();
+		
+	}
+
 }

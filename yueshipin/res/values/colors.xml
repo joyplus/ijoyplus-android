@@ -15,4 +15,6 @@
 
     <color name="orange">#FFF48B00</color>
     <color name="darkorange">#FF824600</color>
+    <color name="yellow">#FBBB37</color>
+    <color name="listbg">#C57627</color>
 </resources>

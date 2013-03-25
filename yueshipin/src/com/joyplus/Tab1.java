@@ -2,7 +2,9 @@ package com.joyplus;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -54,9 +56,7 @@ public class Tab1 extends Activity implements
 		UmengUpdateAgent.setUpdateOnlyWifi(false);
 		UmengUpdateAgent.setOnDownloadListener(null);
 		UmengUpdateAgent.update(this);
-//		Parse.initialize(this, "Your Application Id", "Your Client Key");
 		Parse.initialize(this, "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB", "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl");
-		
 		
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
@@ -174,9 +174,12 @@ public class Tab1 extends Activity implements
 				Tab1Adapter.notifyDataSetChanged();
 			}
 			return;
-
+			
 		} else
+		{
 			NotifyDataAnalysisFinished();
+		}
+		
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 			Tab1ListData m_Tab1ListData = new Tab1ListData();
 			m_Tab1ListData.Pic_ID = m_ReturnTops.tops[i].id;
@@ -246,7 +249,6 @@ public class Tab1 extends Activity implements
 			if (m_ReturnTops.tops.length > 0)
 				app.SaveServiceData("tops" + Integer.toString(isLastisNext),
 						json.toString());
-
 			// 创建数据源对象
 			GetVideoMovies();
 			aq.id(R.id.ProgressText).gone();
@@ -351,10 +353,11 @@ public class Tab1 extends Activity implements
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
+//		cb.header("User-Agent",
+//				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+//		cb.header("app_key", Constant.APPKEY);
+//		cb.header("user_id", app.UserID);
 
 		aq.id(R.id.ProgressText).visible();
 		aq.progress(R.id.progress).ajax(cb);

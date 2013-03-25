@@ -4,29 +4,68 @@
 
 package io.vov.vitamio.widget;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+
+import com.androidquery.AQuery;
+import com.joyplus.App;
+import com.joyplus.BuildConfig;
+import com.joyplus.Constant;
 import com.joyplus.R;
+import com.joyplus.StatisticsUtils;
+import com.joyplus.Adapters.CurrentPlayData;
+import com.joyplus.Adapters.Tab3Page1ListData;
+import com.joyplus.R.color;
+import com.joyplus.Service.Return.ReturnProgramView;
 
 import io.vov.utils.Log;
 import io.vov.utils.StringUtils;
+import android.R.integer;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.AudioManager;
+import android.net.http.AndroidHttpClient;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.VoicemailContract;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.URLUtil;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-
 
 /**
  * A view containing controls for a MediaPlayer. Typically contains the buttons
@@ -57,30 +96,91 @@ import android.widget.TextView;
  * Functions like show() and hide() have no effect when MediaController is
  * created in an xml layout.
  */
-public class MediaController extends FrameLayout {
+public class MediaController extends FrameLayout  {
+	private final String TAG = "App";
+	private App app;
 	private MediaPlayerControl mPlayer;
+	private ReturnProgramView m_ReturnProgramView = null;
 	private Context mContext;
 	private PopupWindow mWindow;
+//	private PopupWindow mWindowBottomRight;
+//	private PopupWindow mWindowTopRight;
+	private ListView lv_group;
+	private RadioButton lv_radio0;
+	private RadioButton lv_radio1;
+	private RadioButton lv_radio2;
+	private GroupAdapter groupAdapter;
+	private ArrayList dataStruct;
 	private int mAnimStyle;
 	private View mAnchor;
 	private View mRoot;
-	private ProgressBar mProgress;
+	private View mViewBottomRight;
+	private View mViewTopRight;
+	private View mimageView33;
+	private SeekBar mSeekBar;
 	private TextView mEndTime, mCurrentTime;
 	private TextView mFileName;
 	private OutlineTextView mInfoView;
 	private String mTitle;
+	private String mSubName;
 	private long mDuration;
 	private boolean mShowing;
+	private boolean mTopRightShowing = false;
+	private boolean mBottomRightShowing = false;
 	private boolean mDragging;
 	private boolean mInstantSeeking = true;
 	private static final int sDefaultTimeout = 3000;
 	private static final int FADE_OUT = 1;
 	private static final int SHOW_PROGRESS = 2;
+	private static final int SHOW_TOPRIGHT = 3;
+	private static final int SHOW_BOTTOMRIGHT = 4;
+	private static final int SHOW_PRODDATA = 5;
 	private boolean mFromXml = false;
 	private ImageButton mPauseButton;
-
+	private ImageButton mDlnaButton;
+	private ImageButton mReturnButton;
+	private ImageButton mReduceButton;
+	private ImageButton mPreButton;
+	private ImageButton mNextButton;
+	private ImageButton mQualityButton;
+	private ImageButton mSelectButton;
+	private TextView mTextView1;
+	private TextView mTextView2;
+	private TextView mTextViewDownloadRate;
+	
+	private RelativeLayout mTopBlockLayout;//播放器顶部模块
+	private RelativeLayout mBottomBlockLayout;//播放器底部模块
+	
 	private AudioManager mAM;
+	
+	private CurrentPlayData mCurrentPlayData;
+	
+	private int CurrentCategory = 0;
 
+	private int CurrentIndex = 0;
+
+	private int CurrentSource = 0;
+	private int CurrentQuality = 0;
+	private int ShowQuality = 0;
+	private boolean mIsPausedByHuman = false;
+	
+//	private boolean DLNAMODE = false;
+
+	public int getCurrentIndex() {
+		return CurrentIndex;
+	}
+	
+	public int getCurrentCategory() {
+		return CurrentCategory;
+	}
+	
+	public boolean ismIsPausedByHuman() {
+		return mIsPausedByHuman;
+	}
+	
+	public void setApp(App app){
+		this.app = app;
+	}
 	public MediaController(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mRoot = this;
@@ -93,6 +193,30 @@ public class MediaController extends FrameLayout {
 		if (!mFromXml && initController(context))
 			initFloatingWindow();
 	}
+
+//	private void initPopWindows() {
+//		LayoutInflater mLayoutInflater = (LayoutInflater) mContext
+//				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//		mViewTopRight = mLayoutInflater.inflate(R.layout.mediacontroller_top,
+//				null);
+//		mWindowTopRight = new PopupWindow(mViewTopRight, 194,
+//				LayoutParams.WRAP_CONTENT);
+//		lv_group = (ListView) mViewTopRight.findViewById(R.id.listView1);
+//		// 加载数据
+//		dataStruct = new ArrayList<String>();
+//
+//		groupAdapter = new GroupAdapter(mContext, dataStruct);
+//		lv_group.setAdapter(groupAdapter);
+//
+//		mViewTopRight.setVisibility(View.GONE);
+//
+//		mViewBottomRight = mLayoutInflater.inflate(R.layout.mediacontroller2,
+//				null);
+//		mWindowBottomRight = new PopupWindow(mViewBottomRight, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//
+//		mViewBottomRight.setVisibility(View.GONE);
+//
+//	}
 
 	private boolean initController(Context context) {
 		mContext = context;
@@ -108,17 +232,21 @@ public class MediaController extends FrameLayout {
 
 	private void initFloatingWindow() {
 		mWindow = new PopupWindow(mContext);
-		mWindow.setFocusable(false);
+//		mWindow.setFocusable(false);
+		mWindow.setFocusable(true);
 		mWindow.setBackgroundDrawable(null);
 		mWindow.setOutsideTouchable(true);
 		mAnimStyle = android.R.style.Animation;
+		
+		
 	}
 
 	/**
 	 * Set the view that acts as the anchor for the control view. This can for
 	 * example be a VideoView, or your Activity's main view.
 	 * 
-	 * @param view The view to which to anchor the controller when it is visible.
+	 * @param view
+	 *            The view to which to anchor the controller when it is visible.
 	 */
 	public void setAnchorView(View view) {
 		mAnchor = view;
@@ -127,7 +255,10 @@ public class MediaController extends FrameLayout {
 			mRoot = makeControllerView();
 			mWindow.setContentView(mRoot);
 			mWindow.setWidth(android.view.ViewGroup.LayoutParams.MATCH_PARENT);
-			mWindow.setHeight(android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+			mWindow.setHeight(android.view.ViewGroup.LayoutParams.MATCH_PARENT);
+			
+//			initPopWindows();
+
 		}
 		initControllerView(mRoot);
 	}
@@ -139,33 +270,308 @@ public class MediaController extends FrameLayout {
 	 * @return The controller view.
 	 */
 	protected View makeControllerView() {
-		return ((LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.mediacontroller, this);
+		return ((LayoutInflater) mContext
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
+				R.layout.mediacontroller, this);
 	}
 
 	private void initControllerView(View v) {
-		mPauseButton = (ImageButton) v.findViewById(R.id.mediacontroller_play_pause);
+		mPauseButton = (ImageButton) v
+				.findViewById(R.id.mediacontroller_play_pause);
+		mDlnaButton = (ImageButton) v.findViewById(R.id.mediacontroller_dlna);
+		mReturnButton = (ImageButton) v.findViewById(R.id.imageButton1);
+		mReduceButton = (ImageButton) v.findViewById(R.id.imageButton2);
+		mPreButton = (ImageButton) v.findViewById(R.id.imageButton3);
+		mNextButton = (ImageButton) v.findViewById(R.id.imageButton4);
+		mQualityButton = (ImageButton) v.findViewById(R.id.imageButton5);
+		mSelectButton = (ImageButton) v.findViewById(R.id.imageButton6);
+
+		mTextView1 = (TextView) v.findViewById(R.id.textView1);
+		mTextView2 = (TextView) v.findViewById(R.id.textView2);
+		mTextViewDownloadRate = (TextView) v.findViewById(R.id.textViewDownloadRate);
+		mimageView33 =  v.findViewById(R.id.imageView33);
+		mViewTopRight = v.findViewById(R.id.relativeLayoutTopRight);
+		mViewBottomRight = v.findViewById(R.id.relativeLayoutBottomRight);
+		
+		mTopBlockLayout = (RelativeLayout) v.findViewById(R.id.relativeLayout1);
+		mBottomBlockLayout = (RelativeLayout) v.findViewById(R.id.relativeLayoutBottom);
+		
+		lv_group = (ListView) v.findViewById(R.id.listView1);
+		// 加载数据
+		dataStruct = new ArrayList<String>();
+
+//		dataStruct.add("第一�?);
+//		dataStruct.add("第二�?);
+//		dataStruct.add("第三�?);
+//		dataStruct.add("第四�?);
+		groupAdapter = new GroupAdapter(mContext, dataStruct);
+//		lv_group.setItemsCanFocus(false);  
+		lv_group.setAdapter(groupAdapter);
+
+		if (lv_group != null){
+			lv_group.setOnItemClickListener(new OnItemClickListener() {
+		 			@Override
+		 			public void onItemClick(AdapterView<?> parent, View view,
+		 					int position, long id) {
+		 					
+		 					OnClickSelect(position);
+		 			}
+		 		});
+			lv_group.setOnScrollListener(new OnScrollListener() {
+				@Override
+				public void onScrollStateChanged(AbsListView view, int scrollState) {
+					switch (scrollState) {
+					// 当滚动时
+					case OnScrollListener.SCROLL_STATE_IDLE:
+						show(sDefaultTimeout);
+						break;
+					}
+				}
+
+				@Override
+				public void onScroll(AbsListView view, int firstVisibleItem,
+						int visibleItemCount, int totalItemCount) {
+
+				}
+			});
+		}
+		RadioGroup radioGroup = (RadioGroup) v.findViewById(R.id.radioGroup1);
+		if (radioGroup != null) {
+			lv_radio0 = (RadioButton)v.findViewById(R.id.radio0);
+			lv_radio1 = (RadioButton)v.findViewById(R.id.radio1);
+			lv_radio2 = (RadioButton)v.findViewById(R.id.radio2);
+//			CurrentQuality = 1;
+//			lv_radio1.setChecked(true);
+			radioGroup.setOnCheckedChangeListener(mRadioGroupListener);
+			if (m_ReturnProgramView != null) {
+				mHandler.removeMessages(FADE_OUT);
+				mHandler.sendEmptyMessageDelayed(SHOW_PRODDATA, 100);
+			}
+		}
+		
 		if (mPauseButton != null) {
 			mPauseButton.requestFocus();
 			mPauseButton.setOnClickListener(mPauseListener);
 		}
+		if (mDlnaButton != null){
+//			mDlnaButton.setVisibility(View.INVISIBLE);
+			mDlnaButton.setOnClickListener(mDlnaListener);
+		}
 
-		mProgress = (ProgressBar) v.findViewById(R.id.mediacontroller_seekbar);
-		if (mProgress != null) {
-			if (mProgress instanceof SeekBar) {
-				SeekBar seeker = (SeekBar) mProgress;
-				seeker.setOnSeekBarChangeListener(mSeekListener);
-				seeker.setThumbOffset(1);
-			}
-			mProgress.setMax(1000);
+		if (mReturnButton != null)
+			mReturnButton.setOnClickListener(mReturnListener);
+		if (mReduceButton != null)
+			mReduceButton.setOnClickListener(mReduceListener);
+		if (mPreButton != null)
+			mPreButton.setOnClickListener(mPreListener);
+		if (mNextButton != null)
+			mNextButton.setOnClickListener(mNextListener);
+		if (mQualityButton != null)
+			mQualityButton.setOnClickListener(mQualityListener);
+		if (mSelectButton != null)
+			mSelectButton.setOnClickListener(mSelectListener);
+
+		mSeekBar = (SeekBar) v.findViewById(R.id.mediacontroller_seekbar);
+		if (mSeekBar != null) {
+			mSeekBar.setOnSeekBarChangeListener(mSeekListener);
+			mSeekBar.setThumbOffset(1);
+			mSeekBar.setMax(1000);
 		}
 
 		mEndTime = (TextView) v.findViewById(R.id.mediacontroller_time_total);
-		mCurrentTime = (TextView) v.findViewById(R.id.mediacontroller_time_current);
+		mCurrentTime = (TextView) v
+				.findViewById(R.id.mediacontroller_time_current);
 		mFileName = (TextView) v.findViewById(R.id.mediacontroller_file_name);
 		if (mFileName != null)
 			mFileName.setText(mTitle);
+
+	}
+	public void OnClickSelect(int index) {
+		mPlayer.pause();
+		
+	
+		CurrentIndex = index;
+		
+		groupAdapter.notifyDataSetChanged();
+		lv_group.invalidate();
+				
+		String PROD_SOURCE = null;
+		String title = null;
+
+		switch (CurrentCategory) {
+		case 0:
+			break;
+		case 1:
+			if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
+				for (int i = 0; i < m_ReturnProgramView.tv.episodes[index].down_urls.length; i++) {
+					CurrentSource = i;
+					
+					for (int j = 0; j < Constant.video_index.length; j++) {
+						if (PROD_SOURCE == null &&m_ReturnProgramView.tv.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							title = "第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集";
+							mFileName.setText(title);
+							PROD_SOURCE =  GetSource(index,i);
+							
+							//yangzhg
+							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
+									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
+									m_ReturnProgramView.tv.episodes[CurrentIndex].name, 2);
+							break;
+						}
+					}			
+				}
+			}
+			break;
+		case 2:
+			if (m_ReturnProgramView.show.episodes[index].down_urls != null) {
+				for (int i = 0; i < m_ReturnProgramView.show.episodes[index].down_urls.length; i++) {
+					CurrentSource = i;
+					
+					for (int j = 0; j < Constant.video_index.length; j++) {
+						if (PROD_SOURCE == null &&m_ReturnProgramView.show.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							title = m_ReturnProgramView.show.episodes[index].name;
+							mFileName.setText(title);
+							PROD_SOURCE =  GetSource(index,i);
+							
+							//yangzhg
+							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
+									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
+									m_ReturnProgramView.tv.episodes[CurrentIndex].name, 3);
+							break;
+						}
+					}			
+				}
+
+			}
+			break;
+		}
+		
+		ShowQuality();
+		
+		if (PROD_SOURCE != null )
+			mPlayer.setContinueVideoPath(title,PROD_SOURCE,false);
+	}
+	private String GetSource(int proi_index, int sourceIndex){
+	 String PROD_SOURCE = null;
+	 switch (CurrentCategory) {
+	case 0:
+		break;
+	case 1:
+		for (int k = 0; k < m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
+			CurrentQuality = k;
+			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls[k];
+			if (CurrentURLS != null && CurrentURLS.url != null && app.CheckUrlIsValidFromServer(CurrentURLS.url.trim(),"1")) {
+					for (int i = 0; i < Constant.quality_index.length; i++) {
+						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
+							PROD_SOURCE = CurrentURLS.url.trim();
+							break;
+						}
+					}
+			}
+			if (PROD_SOURCE != null )
+				break;
+		}
+		break;
+	case 2:
+		for (int k = 0; k < m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
+			CurrentQuality = k;
+			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls[k];
+			if (CurrentURLS != null && CurrentURLS.url != null && app.CheckUrlIsValidFromServer(CurrentURLS.url.trim(),"1")) {
+					for (int i = 0; i < Constant.quality_index.length; i++) {
+						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
+							PROD_SOURCE = CurrentURLS.url.trim();
+							break;
+						}
+					}
+			}
+			if (PROD_SOURCE != null )
+				break;
+		}
+	break;
+
+	}
+	
+	return PROD_SOURCE;
+	 
+ }
+
+	public void ShowCurrentPlayData(CurrentPlayData mCurrentPlayData) {
+		CurrentCategory = mCurrentPlayData.CurrentCategory;
+		CurrentIndex = mCurrentPlayData.CurrentIndex;
+		CurrentSource = mCurrentPlayData.CurrentSource;
+		CurrentQuality = mCurrentPlayData.CurrentQuality;
+		ShowQuality = mCurrentPlayData.ShowQuality;
+
 	}
 
+	public void SelectQuality(int index) {
+		mPlayer.pause();
+
+		ShowQuality = index;
+		String PROD_SOURCE = null;
+
+		ReturnProgramView.DOWN_URLS.URLS CurrentURLS = null;
+		switch (CurrentCategory) {
+		case 0:
+			for (int k = 0; k < m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; k++) {
+				if(m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type.equalsIgnoreCase(Constant.quality_index[index])){
+					CurrentURLS = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[k];
+					break;
+				}
+			}
+			
+			break;
+		case 1:
+			for (int k = 0; k < m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; k++) {
+				if(m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type.equalsIgnoreCase(Constant.quality_index[index])){
+					CurrentURLS = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[k];
+					break;
+				}
+			}
+			break;
+		case 2:
+			for (int k = 0; k < m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; k++) {
+				if(m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type.equalsIgnoreCase(Constant.quality_index[index])){
+					CurrentURLS = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[k];
+					break;
+				}
+			}
+			
+			break;
+
+		}
+		
+		if (CurrentURLS != null && CurrentURLS.url != null)  {
+					PROD_SOURCE = CurrentURLS.url.trim();
+					app.CheckUrlIsValidFromServer(PROD_SOURCE,"1");
+		}
+		if (PROD_SOURCE != null)
+			mPlayer.setContinueVideoPath(null,PROD_SOURCE,true);
+	}
+//	public void SetMediaPlayerControlBGGone() {
+//		if (mAnchor != null) {
+//			mAnchor.setBackgroundResource(0);
+//			mTextView1.setVisibility(View.GONE);
+//			mTextView2.setVisibility(View.GONE);
+//		}
+//	}
+
+//	public void showDLNAButtom(boolean isShow){
+//		if(mDlnaButton != null){
+//			if(isShow){
+//				mHandler.removeMessages(FADE_OUT);
+//				mHandler.sendEmptyMessageDelayed(SHOW_DLNABUTTOM, 500);
+//			}else{
+//				mHandler.removeMessages(FADE_OUT);
+//				mHandler.sendEmptyMessageDelayed(HIDE_DLNABUTTOM, 500);
+//			}
+//
+//		}
+//	}
+	public void setDownloadRate(int rate){
+		if(mTextViewDownloadRate != null)
+			mTextViewDownloadRate.setText(Integer.toString(rate)+"kb/s");
+	}
 	public void setMediaPlayer(MediaPlayerControl player) {
 		mPlayer = player;
 		updatePausePlay();
@@ -174,7 +580,8 @@ public class MediaController extends FrameLayout {
 	/**
 	 * Control the action when the seekbar dragged by user
 	 * 
-	 * @param seekWhenDragging True the media will seek periodically
+	 * @param seekWhenDragging
+	 *            True the media will seek periodically
 	 */
 	public void setInstantSeeking(boolean seekWhenDragging) {
 		mInstantSeeking = seekWhenDragging;
@@ -190,11 +597,122 @@ public class MediaController extends FrameLayout {
 	 * @param name
 	 */
 	public void setFileName(String name) {
-		mTitle = name;
-		if (mFileName != null)
-			mFileName.setText(mTitle);
+		this.mTitle = name;
+//		if (mFileName != null)
+//			mFileName.setText(mTitle);
 	}
+	public void DisableButtom(){
+		mNextButton.setVisibility(View.INVISIBLE);
+		mTextViewDownloadRate.setVisibility(View.INVISIBLE);
+		mimageView33.setVisibility(View.INVISIBLE);
+		mQualityButton.setVisibility(View.INVISIBLE);
+		mSelectButton.setVisibility(View.INVISIBLE);
+	}
+	public void setSubName(String name) {
+		this.mSubName = name;
+	}
+	private void ShowQuality(){
+		
+		lv_radio0.setVisibility(View.INVISIBLE);
+		lv_radio1.setVisibility(View.INVISIBLE);
+		lv_radio2.setVisibility(View.INVISIBLE);
 
+		switch (CurrentCategory) {
+		case 0:
+			for(int i = 0; i<m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls.length;i++){
+				if(m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("mp4"))
+					lv_radio1.setVisibility(View.VISIBLE);
+				
+				if(m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("flv"))
+					lv_radio0.setVisibility(View.VISIBLE);
+				
+				if(m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("hd2"))
+					lv_radio2.setVisibility(View.VISIBLE);
+			}
+			break;
+		case 1:
+			for(int i = 0; i<m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls.length;i++){
+				if(m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("mp4"))
+					lv_radio1.setVisibility(View.VISIBLE);
+				
+				if(m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("flv"))
+					lv_radio0.setVisibility(View.VISIBLE);
+				
+				if(m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("hd2"))
+					lv_radio2.setVisibility(View.VISIBLE);
+			}
+			break;
+		case 2:
+			for(int i = 0; i<m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls.length;i++){
+				if(m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("mp4"))
+					lv_radio1.setVisibility(View.VISIBLE);
+				
+				if(m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("flv"))
+					lv_radio0.setVisibility(View.VISIBLE);
+				
+				if(m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("hd2"))
+					lv_radio2.setVisibility(View.VISIBLE);
+			}
+			break;
+
+		}
+	}
+	public void setProd_Data(ReturnProgramView m_ReturnProgramView) {
+		this.m_ReturnProgramView = m_ReturnProgramView;
+		if (this.m_ReturnProgramView != null) {
+			if (m_ReturnProgramView.movie != null) {
+				CurrentCategory = 0;
+				if(mNextButton != null)
+					mNextButton.setVisibility(View.INVISIBLE);
+				if(mSelectButton != null)
+					mSelectButton.setVisibility(View.INVISIBLE);
+			} else if (m_ReturnProgramView.tv != null) {
+				CurrentCategory = 1;
+				if (mSubName != null) {
+					this.mSubName = mSubName.replace("第", "");
+					this.mSubName = mSubName.replace("集", "").trim();
+				}
+//				mFileName.setText(mTitle+"第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集");
+				if (dataStruct != null) {
+					for (int i = 0; i < m_ReturnProgramView.tv.episodes.length; i++) {
+//						if(mSubName.equalsIgnoreCase(m_ReturnProgramView.tv.episodes[i].name))
+						dataStruct.add("第" + Integer.toString(i+1) + "集");
+						String str = m_ReturnProgramView.tv.episodes[i].name;
+					}
+					groupAdapter.notifyDataSetChanged();
+				}
+			} else if (m_ReturnProgramView.show != null) {
+				CurrentCategory = 2;
+//				mFileName.setText(mTitle +"-"+m_ReturnProgramView.show.episodes[CurrentIndex].name);
+				if (dataStruct != null) {
+					for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
+//						if(mSubName.equalsIgnoreCase(m_ReturnProgramView.show.episodes[i].name))
+						dataStruct
+								.add(m_ReturnProgramView.show.episodes[i].name);
+					}
+
+					groupAdapter.notifyDataSetChanged();
+				}
+			}
+			ShowQuality();
+		}
+		//ShowQuality
+		if(Constant.player_quality_index[ShowQuality].equalsIgnoreCase("flv") ||
+				Constant.player_quality_index[ShowQuality].equalsIgnoreCase("3gp"))
+			lv_radio0.setChecked(true);
+		else 	if(Constant.player_quality_index[ShowQuality].equalsIgnoreCase("mp4") )
+			lv_radio1.setChecked(true);
+		else 	if(Constant.player_quality_index[ShowQuality].equalsIgnoreCase("hd2") )
+			lv_radio2.setChecked(true);
+//		if (CurrentQuality == 3) {
+////			if (lv_radio2.getVisibility() == View.VISIBLE)
+////				lv_radio2.setChecked(true);
+////			else if (lv_radio1.getVisibility() == View.VISIBLE)
+//				lv_radio0.setChecked(true);
+////			else if (lv_radio0.getVisibility() == View.VISIBLE)
+////				lv_radio0.setChecked(true);
+//		}
+	}
 	/**
 	 * Set the View to hold some information when interact with the
 	 * MediaController
@@ -219,13 +737,14 @@ public class MediaController extends FrameLayout {
 	 * </p>
 	 * 
 	 * <p>
-	 * If the controller is showing, calling this method will take effect only the
-	 * next time the controller is shown.
+	 * If the controller is showing, calling this method will take effect only
+	 * the next time the controller is shown.
 	 * </p>
 	 * 
-	 * @param animationStyle animation style to use when the controller appears
-	 * and disappears. Set to -1 for the default animation, 0 for no animation, or
-	 * a resource identifier for an explicit animation.
+	 * @param animationStyle
+	 *            animation style to use when the controller appears and
+	 *            disappears. Set to -1 for the default animation, 0 for no
+	 *            animation, or a resource identifier for an explicit animation.
 	 * 
 	 */
 	public void setAnimationStyle(int animationStyle) {
@@ -236,8 +755,9 @@ public class MediaController extends FrameLayout {
 	 * Show the controller on screen. It will go away automatically after
 	 * 'timeout' milliseconds of inactivity.
 	 * 
-	 * @param timeout The timeout in milliseconds. Use 0 to show the controller
-	 * until hide() is called.
+	 * @param timeout
+	 *            The timeout in milliseconds. Use 0 to show the controller
+	 *            until hide() is called.
 	 */
 	public void show(int timeout) {
 		if (!mShowing && mAnchor != null && mAnchor.getWindowToken() != null) {
@@ -251,10 +771,14 @@ public class MediaController extends FrameLayout {
 				int[] location = new int[2];
 
 				mAnchor.getLocationOnScreen(location);
-				Rect anchorRect = new Rect(location[0], location[1], location[0] + mAnchor.getWidth(), location[1] + mAnchor.getHeight());
+				Rect anchorRect = new Rect(location[0], location[1],
+						location[0] + mAnchor.getWidth(), location[1]
+								+ mAnchor.getHeight());
 
 				mWindow.setAnimationStyle(mAnimStyle);
-				mWindow.showAtLocation(mAnchor, Gravity.NO_GRAVITY, anchorRect.left, anchorRect.bottom);
+				mWindow.showAtLocation(mAnchor, Gravity.NO_GRAVITY,
+						anchorRect.left, anchorRect.bottom);
+				// mWindow.showAtLocation(mAnchor, Gravity.NO_GRAVITY, 0, 0);
 			}
 			mShowing = true;
 			if (mShownListener != null)
@@ -265,7 +789,8 @@ public class MediaController extends FrameLayout {
 
 		if (timeout != 0) {
 			mHandler.removeMessages(FADE_OUT);
-			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT), timeout);
+			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+					timeout);
 		}
 	}
 
@@ -273,6 +798,31 @@ public class MediaController extends FrameLayout {
 		return mShowing;
 	}
 
+	public void hideNow() {
+//		hide();
+//		if (mAnchor == null)
+//			return;
+//
+//		if (mShowing) {
+//			try {
+//				if (mFromXml)
+//					setVisibility(View.GONE);
+//				else
+//					mWindow.dismiss();
+//				if (mViewBottomRight.getVisibility() == View.VISIBLE)
+//					mViewBottomRight.setVisibility(View.GONE);
+//
+//				if (mViewTopRight.getVisibility() == View.VISIBLE)
+//					mViewTopRight.setVisibility(View.GONE);
+//			} catch (IllegalArgumentException ex) {
+//				Log.d("MediaController already removed");
+//			}
+//			mShowing = false;
+//			if (mHiddenListener != null)
+//				mHiddenListener.onHidden();
+//		}
+	}
+	
 	public void hide() {
 		if (mAnchor == null)
 			return;
@@ -284,6 +834,11 @@ public class MediaController extends FrameLayout {
 					setVisibility(View.GONE);
 				else
 					mWindow.dismiss();
+				if (mViewBottomRight.getVisibility() == View.VISIBLE)
+					mViewBottomRight.setVisibility(View.GONE);
+
+				if (mViewTopRight.getVisibility() == View.VISIBLE)
+					mViewTopRight.setVisibility(View.GONE);
 			} catch (IllegalArgumentException ex) {
 				Log.d("MediaController already removed");
 			}
@@ -329,7 +884,14 @@ public class MediaController extends FrameLayout {
 					updatePausePlay();
 				}
 				break;
+			case SHOW_TOPRIGHT:
+				updateTopRight();
+				break;
+			case SHOW_BOTTOMRIGHT:
+				updateBottomRight();
+				break;
 			}
+			
 		}
 	};
 
@@ -339,13 +901,13 @@ public class MediaController extends FrameLayout {
 
 		long position = mPlayer.getCurrentPosition();
 		long duration = mPlayer.getDuration();
-		if (mProgress != null) {
+		if (mSeekBar != null) {
 			if (duration > 0) {
 				long pos = 1000L * position / duration;
-				mProgress.setProgress((int) pos);
+				mSeekBar.setProgress((int) pos);
 			}
-			int percent = mPlayer.getBufferPercentage();
-			mProgress.setSecondaryProgress(percent * 10);
+//			int percent = mPlayer.getBufferPercentage();
+//			mSeekBar.setSecondaryProgress(percent * 10);
 		}
 
 		mDuration = duration;
@@ -360,7 +922,16 @@ public class MediaController extends FrameLayout {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		show(sDefaultTimeout);
+//		show(sDefaultTimeout);
+		if(mShowing) {
+			
+			float locationY =  event.getY();
+			if(locationY >= mTopBlockLayout.getHeight() 
+					&& locationY <= ((float)getHeight()) - mBottomBlockLayout.getHeight()) {
+				
+				hide();
+			}
+		}
 		return true;
 	}
 
@@ -373,7 +944,9 @@ public class MediaController extends FrameLayout {
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		int keyCode = event.getKeyCode();
-		if (event.getRepeatCount() == 0 && (keyCode == KeyEvent.KEYCODE_HEADSETHOOK || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || keyCode == KeyEvent.KEYCODE_SPACE)) {
+		if (event.getRepeatCount() == 0
+				&& (keyCode == KeyEvent.KEYCODE_HEADSETHOOK
+						|| keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || keyCode == KeyEvent.KEYCODE_SPACE)) {
 			doPauseResume();
 			show(sDefaultTimeout);
 			if (mPauseButton != null)
@@ -385,7 +958,8 @@ public class MediaController extends FrameLayout {
 				updatePausePlay();
 			}
 			return true;
-		} else if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU) {
+		} else if (keyCode == KeyEvent.KEYCODE_BACK
+				|| keyCode == KeyEvent.KEYCODE_MENU) {
 			hide();
 			return true;
 		} else {
@@ -396,33 +970,202 @@ public class MediaController extends FrameLayout {
 
 	private View.OnClickListener mPauseListener = new View.OnClickListener() {
 		@Override
-    public void onClick(View v) {
+		public void onClick(View v) {
 			doPauseResume();
 			show(sDefaultTimeout);
 		}
 	};
 
+	private View.OnClickListener mDlnaListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (mPlayer.isPlaying()) {
+				mPlayer.pause();
+				updatePausePlay();
+			}
+//			DLNAMODE = true;
+			mPlayer.gotoDlnaVideoPlay();
+			// doPauseResume();
+			// show(sDefaultTimeout);
+		}
+	};
+
+	private View.OnClickListener mReturnListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+//			if(DLNAMODE)
+//				DLNAMODE = false;
+//			else
+				mPlayer.OnComplete();
+		}
+	};
+	private View.OnClickListener mReduceListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			int mLayout = mPlayer.GetCurrentVideoLayout();
+			if(mLayout == VideoView.VIDEO_LAYOUT_SCALE){
+				mLayout = VideoView.VIDEO_LAYOUT_ZOOM;
+				mReduceButton.setBackgroundResource(R.drawable.player_full);
+			}
+			else {
+				mLayout = VideoView.VIDEO_LAYOUT_SCALE;
+				mReduceButton.setBackgroundResource(R.drawable.player_reduce);
+			}
+			mPlayer.setVideoLayout(mLayout, 0);
+			
+		}
+	};
+	private View.OnClickListener mPreListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (mPlayer.canSeekBackward()) {
+				long current = mPlayer.getCurrentPosition();
+				if (current >= 30000)// 30s
+					mPlayer.seekTo(current - 30000);
+			}
+		}
+	};
+	private View.OnClickListener mNextListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			 switch (CurrentCategory) {
+				case 0:
+					break;
+				case 1:
+					
+					OnClickSelect(++CurrentIndex);
+					break;
+				case 2:
+					
+					OnClickSelect(++CurrentIndex);
+				break;
+
+				}
+		}
+	};
+	private RadioGroup.OnCheckedChangeListener mRadioGroupListener = new RadioGroup.OnCheckedChangeListener() {
+		@Override
+		public void onCheckedChanged(RadioGroup group, int checkedId) {
+			// TODO Auto-generated method stub
+			switch (checkedId) {
+
+			case R.id.radio0:
+				if(ShowQuality != 0){
+					SelectQuality(0);
+				}
+				break;
+			case R.id.radio1:
+				if(ShowQuality != 1){
+					SelectQuality(1);
+				}
+				break;
+			case R.id.radio2:
+				if(ShowQuality != 2){
+					SelectQuality(2);
+				}
+				break;
+			default:
+				break;
+
+			}
+		}
+	};
+	private View.OnClickListener mQualityListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			mHandler.removeMessages(FADE_OUT);
+			mHandler.sendEmptyMessageDelayed(SHOW_BOTTOMRIGHT, 500);
+		
+		}
+	};
+	private View.OnClickListener mSelectListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			mHandler.removeMessages(FADE_OUT);
+			mHandler.sendEmptyMessageDelayed(SHOW_TOPRIGHT, 500);
+			
+		}
+	};
+
+	private void updateBottomRight(){
+		if (mViewBottomRight.getVisibility() == View.VISIBLE) 
+			mViewBottomRight.setVisibility(View.GONE);
+		else 
+			mViewBottomRight.setVisibility(View.VISIBLE);
+		mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+				sDefaultTimeout);
+//		if (mRoot.getVisibility() == View.VISIBLE) {
+//			mHandler.removeMessages(FADE_OUT);
+//			
+//
+//			if (!mBottomRightShowing) {
+//				mBottomRightShowing = true;
+//				mWindowBottomRight.showAtLocation(mAnchor, Gravity.RIGHT
+//						| Gravity.BOTTOM, 28, 82);
+////				mWindowBottomRight.showAtLocation(mRoot.findViewById(R.id.imageButton5), Gravity.RIGHT
+////						| Gravity.BOTTOM, 0, 0);
+//
+//			}
+//			if (mViewBottomRight.getVisibility() == View.VISIBLE)
+//				mViewBottomRight.setVisibility(View.GONE);
+//			else
+//				mViewBottomRight.setVisibility(View.VISIBLE);
+//			
+//			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+//					sDefaultTimeout);
+//		}
+	}
+	private void updateTopRight(){
+		if (mViewTopRight.getVisibility() == View.VISIBLE) 
+			mViewTopRight.setVisibility(View.GONE);
+		else 
+			mViewTopRight.setVisibility(View.VISIBLE);
+		mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+				sDefaultTimeout);
+//		if (mRoot.getVisibility() == View.VISIBLE) {
+//			mHandler.removeMessages(FADE_OUT);
+//			
+//			if (!mTopRightShowing) {
+//				mTopRightShowing = true;
+//				 mWindowTopRight.showAtLocation(mAnchor, Gravity.RIGHT|Gravity.TOP, 25, 70);
+////				mWindowTopRight.showAtLocation(mRoot.findViewById(R.id.imageButton6), Gravity.RIGHT
+////						| Gravity.TOP, 0, 0);
+//			}
+//			if (mViewTopRight.getVisibility() == View.VISIBLE)
+//				mViewTopRight.setVisibility(View.GONE);
+//			else
+//				mViewTopRight.setVisibility(View.VISIBLE);
+//			
+//			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
+//					sDefaultTimeout);
+//		}
+	}
 	private void updatePausePlay() {
 		if (mRoot == null || mPauseButton == null)
 			return;
 
-		if (mPlayer.isPlaying())
-			mPauseButton.setImageResource(R.drawable.mediacontroller_pause_button);
+		if (mPlayer != null && mPlayer.isPlaying())
+			mPauseButton.setBackgroundResource(R.drawable.player_pause);
 		else
-			mPauseButton.setImageResource(R.drawable.mediacontroller_play_button);
+			mPauseButton.setBackgroundResource(R.drawable.player_play);
 	}
 
 	private void doPauseResume() {
-		if (mPlayer.isPlaying())
+		if (mPlayer.isPlaying()) {
+			mIsPausedByHuman = true;
 			mPlayer.pause();
-		else
+		}else {
+			mIsPausedByHuman = false;
 			mPlayer.start();
+		}
 		updatePausePlay();
 	}
+	
+	
 
 	private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
 		@Override
-    public void onStartTrackingTouch(SeekBar bar) {
+		public void onStartTrackingTouch(SeekBar bar) {
 			mDragging = true;
 			show(3600000);
 			mHandler.removeMessages(SHOW_PROGRESS);
@@ -435,7 +1178,8 @@ public class MediaController extends FrameLayout {
 		}
 
 		@Override
-    public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
+		public void onProgressChanged(SeekBar bar, int progress,
+				boolean fromuser) {
 			if (!fromuser)
 				return;
 
@@ -450,7 +1194,7 @@ public class MediaController extends FrameLayout {
 		}
 
 		@Override
-    public void onStopTrackingTouch(SeekBar bar) {
+		public void onStopTrackingTouch(SeekBar bar) {
 			if (!mInstantSeeking)
 				mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
 			if (mInfoView != null) {
@@ -462,6 +1206,9 @@ public class MediaController extends FrameLayout {
 			mAM.setStreamMute(AudioManager.STREAM_MUSIC, false);
 			mDragging = false;
 			mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
+//			mSeekBar.setMax( duration);
+//			mSeekBar.setProgress(position);
+//			mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
 		}
 	};
 
@@ -469,10 +1216,201 @@ public class MediaController extends FrameLayout {
 	public void setEnabled(boolean enabled) {
 		if (mPauseButton != null)
 			mPauseButton.setEnabled(enabled);
-		if (mProgress != null)
-			mProgress.setEnabled(enabled);
+		if (mSeekBar != null)
+			mSeekBar.setEnabled(enabled);
 		disableUnsupportedButtons();
 		super.setEnabled(enabled);
+	}
+
+	static class ViewHolder {
+		TextView groupItem;
+	}
+
+	public class GroupAdapter extends BaseAdapter {
+
+		private Context context;
+
+		private List<String> list;
+
+		public GroupAdapter(Context context, List<String> list) {
+
+			this.context = context;
+			this.list = list;
+
+		}
+
+		@Override
+		public int getCount() {
+			return list.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+
+			return list.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup viewGroup) {
+
+			ViewHolder holder;
+			if (convertView == null) {
+				convertView = LayoutInflater.from(context).inflate(
+						R.layout.player_detail_list, null);
+				holder = new ViewHolder();
+
+				holder.groupItem = (TextView) convertView
+						.findViewById(R.id.txt_video_caption);
+
+				convertView.setTag(holder);
+
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+			if (CurrentIndex == position) {
+
+				holder.groupItem.setTextColor(Color.YELLOW);
+			} else {
+				holder.groupItem.setTextColor(Color.WHITE);
+			}
+
+			holder.groupItem.setText(list.get(position));
+
+			return convertView;
+		}
+
+		/**
+		 * 检查urlLink文本是否正常
+		 * @param urlLink
+		 * @return
+		 */
+		private boolean CheckUrl(String urlLink) {
+			
+			//url本身不正�?直接返回
+			   if (urlLink == null || urlLink.length() <= 0) {     
+				   
+				    return false;                   
+				  }   else {
+					  
+					  if(!URLUtil.isValidUrl(urlLink)) {
+						  
+						  return false;
+					  }
+				  }
+			   
+			   return true;
+		}
+		
+		/**
+		 * 启动一个异步任务，把网络相关放在此任务�?		 * 重定向新的链接，直到拿到资源URL
+		 * 
+		 * 注意：因为网络或者服务器原因，重定向时间有可能比较长
+		 * 因此需要较长时间等�?		 * @param url
+		 * @return 字符�?		 */
+		private String newATask(String url) {
+			
+			AsyncTask<String,Void,String> aynAsyncTask = new AsyncTask<String, Void, String>(){
+
+				@Override
+				protected String doInBackground(String... params) {
+					// TODO Auto-generated method stub
+					
+					List<String> list = new ArrayList<String>();
+					String dstUrl = null;
+					try {
+						simulateFirfoxRequest(Constant.USER_AGENT_IOS,params[0] ,list);//使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
+						
+						dstUrl = list.get(list.size() - 1);
+						if(BuildConfig.DEBUG) Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
+						list.clear();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						if(BuildConfig.DEBUG) Log.i(TAG, "TimeOut!!!!!! : " + e);
+						e.printStackTrace();
+					}
+					
+					return dstUrl;
+				}
+				
+			}.execute(url);
+			try {
+				String redirectUrl = aynAsyncTask.get();//从异步任务中获取结果
+				
+				return redirectUrl;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return null;
+		}
+		
+		/**
+		 * 模拟火狐浏览器给服务器发送不同请求，有火狐本身请求，IOS请求，Android请求
+		 * @param userAgent firfox ios android
+		 * @param srcUrl 原始地址【可能可以播放，可能需要跳转�?		 * @param list 存储播放地址
+		 */
+		private void simulateFirfoxRequest(String userAgent,String srcUrl , List<String> list) {
+			//模拟火狐ios发用请求  使用userAgent
+			AndroidHttpClient mAndroidHttpClient = AndroidHttpClient.newInstance(userAgent);
+			
+			HttpParams httpParams =  mAndroidHttpClient.getParams();
+			//连接时间最�?秒，可以更改
+			HttpConnectionParams.setConnectionTimeout(httpParams, 3000 * 1);
+					
+			try {
+				URL url = new URL(srcUrl);
+				HttpGet mHttpGet = new HttpGet(url.toURI());
+				HttpResponse response = mAndroidHttpClient.execute(mHttpGet);
+				
+				//限定连接时间
+				
+				StatusLine statusLine = response.getStatusLine();
+				int status = statusLine.getStatusCode();
+				
+				if(BuildConfig.DEBUG) Log.i(TAG, "HTTP STATUS : " + status);
+				
+				//如果拿到资源直接返回url  如果没有拿到资源，并且要进行跳转,那就使用递归跳转
+				if(status != HttpStatus.SC_OK) {
+					if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK   start");
+					
+					if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK start");
+					if(status == HttpStatus.SC_MOVED_PERMANENTLY ||//网址被永久移�?							status == HttpStatus.SC_MOVED_TEMPORARILY ||//网址暂时性移�?							status ==HttpStatus.SC_SEE_OTHER ||//重新定位资源
+							status == HttpStatus.SC_TEMPORARY_REDIRECT) {//暂时定向
+						
+						Header header = response.getFirstHeader("Location");//拿到重新定位后的header
+						String location = header.getValue();//从header重新取出信息
+						list.add(location);
+						
+						mAndroidHttpClient.close();//关闭此次连接
+						
+						if(BuildConfig.DEBUG) Log.i(TAG, "Location: " + location);
+						//进行下一次递归
+						simulateFirfoxRequest(userAgent,location , list);
+					} else {
+						//如果地址真的不存在，那就往里面加NULL字符�?						list.add("NULL");
+					}
+					
+				} else {
+					list.add(srcUrl);
+					mAndroidHttpClient.close();
+				}
+				
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK" + e);
+				mAndroidHttpClient.close();
+				e.printStackTrace();
+			}
+			
+		}
+
 	}
 
 	public interface MediaPlayerControl {
@@ -495,6 +1433,16 @@ public class MediaController extends FrameLayout {
 		boolean canSeekBackward();
 
 		boolean canSeekForward();
-	}
 
+		void gotoDlnaVideoPlay();
+
+		void OnComplete();
+
+		void setVideoLayout(int layout, float aspectRatio);
+
+		int GetCurrentVideoLayout();
+		
+		 void setContinueVideoPath(String Title, String path,boolean PlayContinue);
+
+	}
 }

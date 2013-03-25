@@ -104,7 +104,7 @@
         android:text="android上最好的音乐软件"
         android:textColor="#777777"
         android:textSize="12dp" >
-    </TextView>
+    </TextView>
     -->
 
     <ImageView

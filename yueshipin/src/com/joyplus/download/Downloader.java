@@ -7,11 +7,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.joyplus.App;
+//import com.joyplus.App;
 import com.joyplus.Constant;
 
 import android.content.Context;
 import android.content.Intent;
+//import android.media.audiofx.BassBoost.Settings;
 import android.util.Log;
 
 public class Downloader {
@@ -20,7 +21,6 @@ public class Downloader {
 	private String prod_id;//视频id
 	private String my_index ;//视频二级id
 	private int compeleteSize;//下载了多少
-	private int threadcount = 1;// 线程数
 	private int fileSize;// 所要下载的文件的大小
 	private String urlposter;//下载文件的图片
 	private String my_name;//下载文件的名字
@@ -32,7 +32,6 @@ public class Downloader {
 	private static final int PAUSE = 3;
 	private static final int STOP = 4;
 	private int state = INIT;
-	private boolean flag = false;
 
 	public Downloader(int compeleteSize,int fileSize,String prod_id,String my_index,String urlstr,String urlposter,
 			String my_name,String download_state,
@@ -63,10 +62,9 @@ public class Downloader {
 	 		infos.add(info);
 			// 保存infos中的数据到数据库
 			Dao.getInstance(context).saveInfos(infos);
-			// 创建一个LoadInfo对象记载下载器的具体信息
 			return info;
 		} else {
-			// 得到数据库中已有的urlstr的下载器的具体信息,取出数据有问题
+			// 得到数据库中已有的urlstr的下载器的具体信息
 			infos = Dao.getInstance(context).getInfos(prod_id,my_index);
 			Log.v("TAG", "not isFirst size=" + infos.size());
 			int size = 0;
@@ -113,16 +111,29 @@ public class Downloader {
 		if (infos != null) {
 			if (state == DOWNLOADING)//设置flag变量,设置线程数量为1
 				return;
-//			state = DOWNLOADING;
 			for (DownloadInfo info : infos) {
 				if(Dao.getInstance(context).isHasInforsDownloading("downloading"))
 				{
 					state = DOWNLOADING;
-					info.setState("downloading");
-					Dao.getInstance(context).updataInfoState(info.getState(), info.getProdId(), info.getIndex());
+					info.setDownload_state("downloading");
+					Dao.getInstance(context).updataInfoState(info.getDownload_state(), info.getProd_id(), info.getMy_index());
 						new MyThread(info.getCompeleteSize(), info.getFileSize(),
-								info.getProdId(), info.getIndex(), info.getUrl(),
+								info.getProd_id(), info.getMy_index(), info.getUrl(),
 								context).start();
+				}
+				else
+				{
+					DownloadInfo tempInfo = Dao.getInstance(context).getOneStateInfo("downloading");
+					if(tempInfo.getProd_id().equalsIgnoreCase(info.getProd_id())
+							&&tempInfo.getMy_index().equalsIgnoreCase(info.getMy_index()))
+					{
+						state = DOWNLOADING;
+						info.setDownload_state("downloading");
+						Dao.getInstance(context).updataInfoState(info.getDownload_state(), info.getProd_id(), info.getMy_index());
+							new MyThread(info.getCompeleteSize(), info.getFileSize(),
+									info.getProd_id(), info.getMy_index(), info.getUrl(),
+									context).start();
+					}
 				}
 			}
 		}
@@ -173,6 +184,12 @@ public class Downloader {
 				while ((length = inputstream.read(buffer)) != -1) {
 					randomAccessFile.write(buffer, 0, length);
 					compeleteSize += length;
+					if(compeleteSize<fileSize/1000)
+					{
+						Intent intent = new Intent();
+						intent.setAction("UpdateProgressUI");
+						context.sendBroadcast(intent);
+					}
 					if(((long)compeleteSize*100/fileSize-percent) > 0.5)
 					{
 						percent = (long)compeleteSize*100/fileSize;
@@ -186,7 +203,7 @@ public class Downloader {
 					
 					if(compeleteSize == fileSize)
 					{
-						Dao.getInstance(context).updataInfoState("stop", prod_id, my_index);
+						Dao.getInstance(context).updataInfoState("pause", prod_id, my_index);
 						state = STOP;
 						randomAccessFile.close();
 						Intent i = new Intent();
@@ -194,7 +211,7 @@ public class Downloader {
 						context.sendBroadcast(i);
 					}
 					if (state == PAUSE) {
-						//Dao.getInstance(context).updataInfoState("stop",prod_id,my_index);
+						Dao.getInstance(context).updataInfoState("pause",prod_id,my_index);
 						return;
 					}
 					Log.i("Downloader:compeleteSize",Integer.toString(compeleteSize));
@@ -202,11 +219,11 @@ public class Downloader {
 				}
 			} catch (Exception e) {
 				state = STOP;
-				Dao.getInstance(context).updataInfoState("stop", prod_id, my_index);
+				Dao.getInstance(context).updataInfoState("pause", prod_id, my_index);
 				e.printStackTrace();
 			}finally{
 				state = STOP;
-				Dao.getInstance(context).updataInfoState("stop", prod_id, my_index);
+				Dao.getInstance(context).updataInfoState("pause", prod_id, my_index);
 			}
 		}
 	}

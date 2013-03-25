@@ -46,7 +46,6 @@ public class Sina_Share extends Activity {
 		tv_count = (TextView)findViewById(R.id.count);
 		mEditText = (MultiAutoCompleteTextView)findViewById(R.id.multiAutoCompleteTextView1);
 		mEditText.addTextChangedListener(mTextWatcher);
-		//(TextWatcher) aq.id(R.id.multiAutoCompleteTextView1).dataChanged();
 		setLeftCount();
 		
 	}
