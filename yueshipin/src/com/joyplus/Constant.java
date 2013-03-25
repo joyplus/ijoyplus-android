@@ -107,5 +107,7 @@ IOS: ijoyplusios001bj
 	 */
 	public static final String[] quality_index = { "flv","mp4",
 		"hd2","3gp"};
+	public static final String[] player_quality_index = { "mp4",
+		"hd2","3gp","flv"};
 
 }

@@ -6,4 +6,5 @@ public class CurrentPlayData {
 	public int CurrentIndex = 0;
 	public int CurrentSource = 0;
 	public int CurrentQuality = 0;
+	public int ShowQuality = 0;
 }
