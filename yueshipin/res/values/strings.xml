@@ -53,11 +53,14 @@
     
      <string name="init_decoders">正在进行第一次解压解码包...</string>
      <string name="VideoView_error_title">Cannot play video</string>
-    <string name="VideoView_error_text_invalid_progressive_playback">Sorry, this video is not valid for streaming to
-		this device.</string>
+      <string name=" addressnotwork">播放的地址失效！</string>
+    <string name="VideoView_error_text_invalid_progressive_playback">播放的地址失效！</string>
     <string name="VideoView_error_text_unknown">Sorry, this video cannot be played.</string>
     <string name="VideoView_error_button">OK</string>
     <string name="mediacontroller_play_pause">Play/Pause</string>
     
-
+	<string name="pull_to_refresh_pull_label">下拉刷新</string>
+    <string name="pull_to_refresh_release_label">松开后刷新</string>
+    <string name="pull_to_refresh_refreshing_label">刷新...</string>
+    <string name="pull_to_refresh_tap_label">Tap to refresh...</string>
 </resources>

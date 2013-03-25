@@ -9,6 +9,10 @@ import org.json.JSONObject;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.NotificationType;
 import com.umeng.fb.UMFeedbackService;
+import com.umeng.xp.common.ExchangeConstants;
+import com.umeng.xp.controller.ExchangeDataService;
+import com.umeng.xp.controller.XpListenersCenter.NTipsChangedListener;
+import com.umeng.xp.view.ExchangeViewManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,6 +26,9 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ScrollView;
+
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -31,6 +38,7 @@ import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
 import com.joyplus.weibo.net.WeiboDialogListener;
 import com.joyplus.weibo.net.WeiboException;
+import com.joyplus.widget.InnerListView;
 
 public class Setting extends Activity {
 	private App app;
@@ -38,6 +46,9 @@ public class Setting extends Activity {
 	private String uid = null;
 	private String token = null;
 	private String expires_in = null;
+	
+	//应用推荐
+	public static ExchangeDataService preloadDataService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +58,31 @@ public class Setting extends Activity {
 		aq = new AQuery(this);
 		UMFeedbackService.enableNewReplyNotification(this,
 				NotificationType.AlertDialog);
+		//appRecommend();
+		ViewGroup fatherLayout = (ViewGroup)findViewById(R.id.ad);
+		InnerListView listView = (InnerListView) this.findViewById(R.id.list);
+		listView.setMaxHeight(400);
+		ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView1);
+		listView.setParentScrollView(scrollView);
+		
+		//赋值preloadDataService,添加newTips 回调
+	    preloadDataService = new ExchangeDataService();
+	    preloadDataService.preloadData(Setting.this, new NTipsChangedListener() {
+	        @Override
+	        public void onChanged(int flag) {
+	           // TextView view = (TextView) root.findViewById(R.id.umeng_example_xp_container_tips);
+	            if(flag == -1){
+	                //没有new广告
+	            }else if(flag > 1){
+	                //第一页new广告数量
+	            }else if(flag == 0){
+	                //第一页全部为new 广告
+	            }
+	        };
+	    }, ExchangeConstants.type_container);
+	    ExchangeDataService exchangeDataService = preloadDataService != null ?preloadDataService : new ExchangeDataService("");
+	    ExchangeViewManager exchangeViewManager = new ExchangeViewManager(this,new ExchangeDataService());
+		exchangeViewManager.addView(fatherLayout, listView);
 	}
 
 	@Override
@@ -241,9 +277,7 @@ public class Setting extends Activity {
 			params.put("device_type", "Android");
 
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
+			cb.SetHeader(app.getHeaders());
 
 			cb.params(params).url(url).type(JSONObject.class)
 					.weakHandler(this, "CallServiceResult");
@@ -302,11 +336,7 @@ public class Setting extends Activity {
 			params.put("pre_user_id", app.UserID);
 			// save to local
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
-
-			cb.header("user_id", app.UserID);
+			cb.SetHeader(app.getHeaders());
 			cb.params(params).url(m_PostURL).type(JSONObject.class)
 					.weakHandler(this, "IsHasBindWeiboResult");
 			aq.ajax(cb);	
@@ -323,6 +353,10 @@ public class Setting extends Activity {
 						{
 							//app.DeleteServiceData("UserInfo");
 							app.UserID = json.getString("user_id");
+							Map<String, String> headers = app.getHeaders();
+							headers.remove("user_id");
+							headers.put("user_id", app.UserID);
+							app.setHeaders(headers);
 							
 							//将这个UserID保存在本地
 							//app.SaveServiceData("UserInfo", json.toString());
@@ -398,11 +432,7 @@ public class Setting extends Activity {
 
 			// save to local
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
-
-			cb.header("user_id", app.UserID);
+			cb.SetHeader(app.getHeaders());
 			cb.params(params).url(m_PostURL).type(JSONObject.class)
 					.weakHandler(this, "AccountBindAccountResult");
 			aq.ajax(cb);
@@ -421,9 +451,7 @@ public class Setting extends Activity {
 					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 					cb.url(url2).type(JSONObject.class)
 							.weakHandler(this, "AccountBindAccountResult3");
-					cb.header("User-Agent",
-							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-					cb.header("app_key", Constant.APPKEY);
+					cb.SetHeader(app.getHeaders());
 					aq.ajax(cb);
 				}
 			} catch (JSONException e) {

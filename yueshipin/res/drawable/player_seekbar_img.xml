@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+	<item android:id="@+android:id/SecondaryProgress"
+		android:drawable="@drawable/player_time_jindu" />
+
+	<item android:id="@+android:id/progress" android:drawable="@drawable/player_time_jindu_x" />
+	
+
+</layer-list>

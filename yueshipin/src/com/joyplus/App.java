@@ -9,14 +9,30 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.http.AndroidHttpClient;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -24,16 +40,24 @@ import android.view.Gravity;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
+import com.joyplus.Adapters.CurrentPlayData;
+import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.download.Downloader;
 import com.joyplus.weibo.net.Weibo;
 import com.joyplus.weibo.net.WeiboDialogListener;
+import com.parse.Parse;
 
 @SuppressLint("DefaultLocale")
 public class App extends Application {
 	private final String TAG = "App";
+	private static final String NOT_VALID_LINK = "NULL";
+	private static final String FENGXING = "1";
 
 	private static App instance;
 	public String UserID;
@@ -47,6 +71,35 @@ public class App extends Application {
 	public static Map<String, Downloader> downloaders = new HashMap<String, Downloader>();
 	// 固定存放下载的音乐的路径：SD卡目录下
 	public boolean ThreadStartFlag = false;
+	public boolean use2G3G = false;
+	private String mURLPath;
+	private Map<String, String> headers;
+	private CurrentPlayData mCurrentPlayData;
+	private ReturnProgramView m_ReturnProgramView = null;
+
+	public ReturnProgramView get_ReturnProgramView() {
+		return m_ReturnProgramView;
+	}
+
+	public void set_ReturnProgramView(ReturnProgramView m_ReturnProgramView) {
+		this.m_ReturnProgramView = m_ReturnProgramView;
+	}
+
+	public CurrentPlayData getCurrentPlayData() {
+		return mCurrentPlayData;
+	}
+
+	public void setCurrentPlayData(CurrentPlayData mCurrentPlayData) {
+		this.mCurrentPlayData = mCurrentPlayData;
+	}
+
+	public Map<String, String> getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = headers;
+	}
 
 	@Override
 	public void onCreate() {
@@ -60,6 +113,8 @@ public class App extends Application {
 		if (!destDir.exists()) {
 			destDir.mkdirs();
 		}
+
+		Parse.initialize(this, Constant.Parse_AppId, Constant.Parse_ClientKey);
 
 		instance = this;
 	}
@@ -128,12 +183,78 @@ public class App extends Application {
 		this.WeiboDialogListener = WeiboDialogListener;
 	}
 
-	
+	public String getURLPath() {
+		return mURLPath;
+	}
+
+	/**
+	 * 只是简单文本判断
+	 * 
+	 * @param Url
+	 * @return
+	 */
 	public boolean IfSupportFormat(String Url) {
-		/*
-		 * URLUtil里面可以检测网址是否有效
-		 */
+		// URLUtil里面可以检测网址格式是否有效
+
 		return URLUtil.isNetworkUrl(Url);
+
+	}
+
+	/**
+	 * id 对应播放源 letv 0、fengxing 1、qiyi 2、youku 3、sinahd 4、 sohu 5、56 6、qq 7、pptv
+	 * 8、m1905 9.
+	 * 
+	 * @param url
+	 * @param id
+	 * @return
+	 */
+	public boolean CheckUrlIsValidFromServer(String url, String id) {
+
+		if (CheckUrl(url)) {
+
+			mURLPath = newATask(url, id);
+
+			if (CheckUrl(mURLPath)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/*
+	 * checkUserSelect 检测当前用户用的网络,如果为wifi返回true 如果不是wifi,用户选择了确定使用2G3G返回true
+	 */
+	public void checkUserSelect(Context context) {
+		ConnectivityManager connectivityManager = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if(connectivityManager!=null)
+		{
+			NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+			if (activeNetInfo != null
+					&& activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+				use2G3G = true;
+			}else
+			{
+				AlertDialog.Builder builder = new AlertDialog.Builder(context);
+				builder.setTitle("温馨提醒")
+						.setMessage("播放视频会消耗大量流量，您确定要在非WiFi环境下播放吗？")
+						.setPositiveButton("确定",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										use2G3G = true;
+									}
+								}).setNegativeButton("取消", null).create();
+				builder.show();
+			}
+		}
+		else
+		{
+			Toast.makeText(context, "哎呀,你的网络好像有问题",Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	public boolean isNetworkAvailable() {
@@ -155,6 +276,29 @@ public class App extends Application {
 		}
 		return false;
 	}
+
+	// //获取路径
+	// public String getpath() {
+	// Dev_MountInfo dev = Dev_MountInfo.getInstance();
+	//
+	// PackageManager pm = getPackageManager();
+	//
+	// ApplicationInfo appInfo = null;
+	// try {
+	// appInfo = pm.getApplicationInfo(getPackageName(), 0);
+	// } catch (NameNotFoundException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// String path = "";
+	// if ((appInfo.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE) != 0) {
+	//
+	// path = dev.getExternalInfo().getPath();
+	// } else {
+	// path = dev.getInternalInfo().getPath();
+	// }
+	// return path;
+	// }
 
 	public boolean IfIncludeM3U(String Url) {
 		for (int i = 0; i < Constant.video_dont_support_extensions.length; i++) {
@@ -230,4 +374,183 @@ public class App extends Application {
 		m_toast.show();
 	}
 
+	/**
+	 * 检查urlLink文本是否正常
+	 * 
+	 * @param urlLink
+	 * @return
+	 */
+	private boolean CheckUrl(String urlLink) {
+
+		// url本身不正常 直接返回
+		if (urlLink == null || urlLink.length() <= 0) {
+
+			return false;
+		} else {
+
+			if (!URLUtil.isValidUrl(urlLink)) {
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * id 对应播放源 letv 0、fengxing 1、qiyi 2、youku 3、sinahd 4、 sohu 5、56 6、qq 7、pptv
+	 * 8、m1905 9. 启动一个异步任务，把网络相关放在此任务中 重定向新的链接，直到拿到资源URL
+	 * 
+	 * 注意：因为网络或者服务器原因，重定向时间有可能比较长 因此需要较长时间等待
+	 * 
+	 * @param url
+	 * @param id
+	 * @return 字符串
+	 */
+	private String newATask(String url, String sourceId) {
+
+		AsyncTask<String, Void, String> aynAsyncTask = new AsyncTask<String, Void, String>() {
+
+			@Override
+			protected String doInBackground(String... params) {
+				// TODO Auto-generated method stub
+
+				List<String> list = new ArrayList<String>();
+				String dstUrl = params[0];
+				if (BuildConfig.DEBUG)
+					Log.i(TAG, "newATask--->>params : " + params[0] + params[1]);
+				try {
+					simulateFirfoxRequest(Constant.USER_AGENT_IOS, params, list);// 使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
+
+					dstUrl = list.get(list.size() - 1);
+					if (BuildConfig.DEBUG)
+						Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
+					list.clear();
+
+					if (!dstUrl.equals(NOT_VALID_LINK)) {
+						return dstUrl;
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					if (BuildConfig.DEBUG)
+						Log.i(TAG, "TimeOut!!!!!! : " + e);
+					e.printStackTrace();
+				}
+
+				return NOT_VALID_LINK;// 如果TimeOut或者不能够拿到真正地址，那就把最原始链接返回
+			}
+
+		}.execute(new String[] { url, "" + sourceId });
+
+		try {
+			String redirectUrl = aynAsyncTask.get();// 从异步任务中获取结果
+
+			return redirectUrl;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return NOT_VALID_LINK;
+	}
+
+	/**
+	 * 模拟火狐浏览器给服务器发送不同请求，有火狐本身请求，IOS请求，Android请求
+	 * 
+	 * @param userAgent
+	 *            firfox ios android
+	 * @param params包括srcUrl
+	 *            原始地址【可能可以播放，可能需要跳转】和 sourceID 例："1"
+	 * @param list
+	 *            存储播放地址
+	 */
+	private void simulateFirfoxRequest(String userAgent, String[] params,
+			List<String> list) {
+		if (params == null || params.length < 2) {
+
+			if (BuildConfig.DEBUG)
+				Log.i(TAG, "Params Wrong");
+			list.add(NOT_VALID_LINK);
+			return;
+		}
+
+		String srcUrl = params[0];// 源地址
+		String sourceId = params[1];// 资源来源id
+
+		// 模拟火狐ios发用请求 使用userAgent
+		AndroidHttpClient mAndroidHttpClient = AndroidHttpClient
+				.newInstance(userAgent);
+
+		HttpParams httpParams = mAndroidHttpClient.getParams();
+		// 连接时间最长5秒，可以更改
+		HttpConnectionParams.setConnectionTimeout(httpParams, 5000 * 1);
+
+		try {
+			URL url = new URL(srcUrl);
+			HttpGet mHttpGet = new HttpGet(url.toURI());
+			HttpResponse response = mAndroidHttpClient.execute(mHttpGet);
+
+			// 限定连接时间
+
+			StatusLine statusLine = response.getStatusLine();
+			int status = statusLine.getStatusCode();
+
+			if (BuildConfig.DEBUG)
+				Log.i(TAG, "HTTP STATUS : " + status);
+
+			// 如果资源来源为风行，那就对url进行重定向 如果不是就只是简单判断
+			// 风行资源id 为 1
+			// 如果拿到资源直接返回url 如果没有拿到资源，并且要进行跳转,那就使用递归跳转
+			if (status != HttpStatus.SC_OK) {
+				if (BuildConfig.DEBUG)
+					Log.i(TAG, "NOT OK   start");
+
+				// if(sourceId != null && sourceId.equals(FENGXING)) {
+
+				if (BuildConfig.DEBUG)
+					Log.i(TAG, "NOT OK start");
+				if (status == HttpStatus.SC_MOVED_PERMANENTLY || // 网址被永久移除
+						status == HttpStatus.SC_MOVED_TEMPORARILY || // 网址暂时性移除
+						status == HttpStatus.SC_SEE_OTHER || // 重新定位资源
+						status == HttpStatus.SC_TEMPORARY_REDIRECT) {// 暂时定向
+
+					Header header = response.getFirstHeader("Location");// 拿到重新定位后的header
+					String location = header.getValue();// 从header重新取出信息
+					list.add(location);
+
+					mAndroidHttpClient.close();// 关闭此次连接
+
+					if (BuildConfig.DEBUG)
+						Log.i(TAG, "Location: " + location);
+					// 进行下一次递归
+					simulateFirfoxRequest(userAgent, new String[] { location,
+							FENGXING }, list);
+				} else {
+
+					// 如果地址真的不存在，那就往里面加NULL字符串
+					mAndroidHttpClient.close();
+					list.add(NOT_VALID_LINK);
+				}
+				// } else {
+				//
+				// //如果地址真的不存在，那就往里面加NULL字符串
+				// mAndroidHttpClient.close();
+				// list.add(NOT_VALID_LINK);
+				// }
+			} else {
+				// 正确的话直接返回，不进行下面的步骤
+				mAndroidHttpClient.close();
+				list.add(srcUrl);
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			if (BuildConfig.DEBUG)
+				Log.i(TAG, "NOT OK" + e);
+			// 如果地址真的不存在，那就往里面加NULL字符串
+			mAndroidHttpClient.close();
+			list.add(params[0]);
+			e.printStackTrace();
+		}
+	}
 }

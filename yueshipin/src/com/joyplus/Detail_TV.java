@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -26,6 +28,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -56,7 +59,9 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Detail_Movie.EComparatorIndex;
+import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
@@ -102,18 +107,23 @@ public class Detail_TV extends Activity {
 	private ScrollView mScrollView;
 	private int isLastisNext = 2;
 	private int mLastY = 0;
+	// 标示当前有多少个按钮被点击了
+	private ArrayList download_indexs = new ArrayList();
 
 	// added by yyc,in order to flag the playing tv's index btn
 	Drawable focuse = null;
 	Drawable normal = null;
 	Drawable press = null;
-	Drawable download_none = null;
+	// Drawable download_none = null;
+	Drawable download_normal = null;
 	Drawable download_been = null;
 	private PopupWindow downloadpopup = null;
 	ViewGroup popupview;
 
 	private int current_index = -1; // yy
 	private static final String MY_SETTING = "myTvSetting";
+
+	private CurrentPlayData mCurrentPlayData;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -126,12 +136,17 @@ public class Detail_TV extends Activity {
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
 
-		aq.id(R.id.program_name).text(prod_name);
+		if (prod_name != null)
+			aq.id(R.id.program_name).text(prod_name);
 
 		// modify by yyc
 		focuse = this.getResources().getDrawable(R.drawable.play_focuse);
 		normal = this.getResources().getDrawable(R.drawable.play_normal);
 		press = this.getResources().getDrawable(R.drawable.play_press);
+		download_been = this.getResources()
+				.getDrawable(R.drawable.downloaded_2);
+		download_normal = this.getResources().getDrawable(
+				R.drawable.undownload_tv);
 		mScrollView = (ScrollView) findViewById(R.id.scrollView1);
 		mScrollView.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -167,9 +182,11 @@ public class Detail_TV extends Activity {
 		aq.id(R.id.textView13).gone();
 		aq.id(R.id.scrollView1).gone();
 
+		mCurrentPlayData = new CurrentPlayData();
+		mCurrentPlayData.prod_id = prod_id;
 		InitTVButtom();
 		if (prod_id != null)
-			GetServiceData();
+			CheckSaveData();
 	}
 
 	public void InitTVButtom() {
@@ -275,10 +292,7 @@ public class Detail_TV extends Activity {
 
 			// save to local
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
-			cb.header("user_id", app.UserID);
+			cb.SetHeader(app.getHeaders());
 
 			cb.params(params).url(m_PostURL).type(JSONObject.class)
 					.weakHandler(this, "AccountBindAccountResult");
@@ -302,10 +316,7 @@ public class Detail_TV extends Activity {
 					cb.url(url2).type(JSONObject.class)
 							.weakHandler(this, "AccountBindAccountResult3");
 
-					cb.header("User-Agent",
-							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-					cb.header("app_key", Constant.APPKEY);
-					// cb.header("user_id", app.UserID);
+					cb.SetHeader(app.getHeaders());
 
 					aq.ajax(cb);
 				}
@@ -409,8 +420,11 @@ public class Detail_TV extends Activity {
 		int j = 0;
 		if (m_ReturnProgramView.tv != null) {
 			aq.id(R.id.program_name).text(m_ReturnProgramView.tv.name);
-			aq.id(R.id.imageView3).image(m_ReturnProgramView.tv.poster, true,
-					true);
+			if(m_ReturnProgramView.tv.poster!=null)
+			{
+				aq.id(R.id.imageView3).image(m_ReturnProgramView.tv.poster.trim(), true,
+						true);
+			}
 			aq.id(R.id.textView5).text(m_ReturnProgramView.tv.stars);
 			aq.id(R.id.textView6).text(m_ReturnProgramView.tv.area);
 			aq.id(R.id.textView7).text(m_ReturnProgramView.tv.directors);
@@ -441,9 +455,19 @@ public class Detail_TV extends Activity {
 				// sort the tv's playStateIndex by yyc
 				Arrays.sort(m_ReturnProgramView.tv.episodes, new EComparator());
 
-				if (m_ReturnProgramView.tv.episodes.length > 15) {
+				int m = 15 * (page_num + 1);
+				if ((m_ReturnProgramView.tv.episodes.length > 15)
+						&& (m_ReturnProgramView.tv.episodes.length - m > 15)) {
+					aq.id(R.id.textView9).visible();
+
+				} else if ((m_ReturnProgramView.tv.episodes.length > 15)
+						&& (m_ReturnProgramView.tv.episodes.length - m <= 15)) {
+					aq.id(R.id.textView9)
+							.text(String.format("后%s集 >",
+									m_ReturnProgramView.tv.episodes.length - m));
 					aq.id(R.id.textView9).visible();
 				}
+
 				for (i = 0; i < m_ReturnProgramView.tv.episodes.length
 						&& i < 15; i++) {
 					m_j = Integer.toString(i + 4);// m_ReturnProgramView.tv.episodes[i].name;
@@ -469,8 +493,7 @@ public class Detail_TV extends Activity {
 					}
 					if (m_ReturnProgramView.tv.episodes[i].down_urls != null
 							&& m_ReturnProgramView.tv.episodes[i].down_urls[0].urls.length > 0
-							&& m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url != null
-							&& app.IfSupportFormat(m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url)) {
+							&& m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url != null) {
 
 						tv_source = m_ReturnProgramView.tv.episodes[i].down_urls[0].urls[0].url;
 					}
@@ -489,7 +512,7 @@ public class Detail_TV extends Activity {
 								.findViewById(getResources().getIdentifier(
 										"tv_button" + m_j, "id",
 										getPackageName()));
-						m_button.setVisibility(View.GONE);
+						m_button.setVisibility(View.INVISIBLE);
 						aq.id(R.id.textView9).gone();
 					}
 				}
@@ -551,6 +574,9 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.imageView_comment).gone();
 					aq.id(R.id.Layout_comment).gone();
 				}
+			} else {
+				aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
+				aq.id(R.id.button20).clickable(false);
 			}
 		}
 	}
@@ -565,14 +591,18 @@ public class Detail_TV extends Activity {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
-			aq.id(R.id.none_net).visible();
+			if (app.GetServiceData(prod_id) == null) {
+				aq.id(R.id.none_net).visible();
+			}
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
-
+			if (m_ReturnProgramView != null && prod_id != null) {
+				app.SaveServiceData(prod_id, json.toString());// 根据id保存住
+			}
 			// 创建数据源对象
 			InitData();
 			aq.id(R.id.ProgressText).gone();
@@ -593,6 +623,43 @@ public class Detail_TV extends Activity {
 
 	}
 
+	private void CheckSaveData() {
+		String SaveData = null;
+		ObjectMapper mapper = new ObjectMapper();
+		SaveData = app.GetServiceData(prod_id);
+		if (SaveData == null) {
+			GetServiceData();
+		} else {
+			try {
+				m_ReturnProgramView = mapper.readValue(SaveData,
+						ReturnProgramView.class);
+				// 创建数据源对象
+				// 创建数据源对象
+				InitData();
+				aq.id(R.id.ProgressText).gone();
+				aq.id(R.id.scrollView1).visible();
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						GetServiceData();
+					}
+				}, 2000);
+
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+
 	// InitListData
 	public void GetServiceData() {
 		String url = Constant.BASE_URL + "program/view?prod_id=" + prod_id;
@@ -600,13 +667,13 @@ public class Detail_TV extends Activity {
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
-
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+		cb.SetHeader(app.getHeaders());
+		if (app.GetServiceData(prod_id) == null) {
+			aq.id(R.id.ProgressText).visible();
+			aq.progress(R.id.progress).ajax(cb);
+		} else {
+			aq.ajax(cb);
+		}
 
 	}
 
@@ -623,7 +690,7 @@ public class Detail_TV extends Activity {
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
 					app.MyToast(this, "收藏成功!");
 				} else
-					app.MyToast(this, "收藏失败!");
+					app.MyToast(this, "已收藏!");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -646,10 +713,7 @@ public class Detail_TV extends Activity {
 		params.put("prod_id", prod_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallServiceFavorityResult");
@@ -668,8 +732,12 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button3).text(
 							"顶(" + Integer.toString(m_SupportNum) + ")");
 					app.MyToast(this, "顶成功!");
-				} else
-					app.MyToast(this, "顶失败!");
+				} else{
+					m_SupportNum++;
+				    aq.id(R.id.button3).text(
+						"顶(" + Integer.toString(m_SupportNum) + ")");
+					app.MyToast(this, "顶成功!");
+				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -692,10 +760,7 @@ public class Detail_TV extends Activity {
 		params.put("prod_id", prod_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallServiceResultSupportNum");
@@ -711,10 +776,7 @@ public class Detail_TV extends Activity {
 		params.put("prod_id", prod_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		// cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallServiceResultReportProblem");
@@ -729,27 +791,33 @@ public class Detail_TV extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		// write current_index to myTvSetting file
-		SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
-				Context.MODE_PRIVATE);
-		myPreference.edit().putString(prod_id, Integer.toString(current_index))
-				.commit();
 
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			SaveToServer(1, PROD_SOURCE, 1);
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
-			// GetVideoSource(0,PROD_SOURCE);
+		app.checkUserSelect(Detail_TV.this);
+		if (app.use2G3G) {
+			// write current_index to myTvSetting file
+			current_index = 0;
 
-		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-			SaveToServer(2, PROD_URI, 1);
+			// 电视剧type为2 ，sbuname 为当前集数
+			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
+					"1", 2);
+			SharedPreferences myPreference = this.getSharedPreferences(
+					MY_SETTING, Context.MODE_PRIVATE);
+			myPreference.edit()
+					.putString(prod_id, Integer.toString(current_index))
+					.commit();
 
-			Intent intent = new Intent();
-			intent.setAction("android.intent.action.VIEW");
-			Uri content_url = Uri.parse(PROD_URI);
-			intent.setData(content_url);
-			startActivity(intent);
+			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				mCurrentPlayData.CurrentIndex = 0;
+				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+				SaveToServer(2, PROD_URI, 1);
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.VIEW");
+				Uri content_url = Uri.parse(PROD_URI);
+				intent.setData(content_url);
+				startActivity(intent);
+			}
 		}
-
 	}
 
 	// OnClickNext15
@@ -758,6 +826,15 @@ public class Detail_TV extends Activity {
 		int j = 0;
 		int i = 0;
 		page_num++;
+		int m = 15 * (page_num + 1);
+
+		if ((m_ReturnProgramView.tv.episodes.length - m > 0)
+				&& (m_ReturnProgramView.tv.episodes.length - m <= 15)) {
+			aq.id(R.id.textView9).text(
+					String.format("后%s集 >",
+							m_ReturnProgramView.tv.episodes.length - m));
+			aq.id(R.id.textView9).visible();
+		}
 		if ((page_num + 1) * 15 >= m_ReturnProgramView.tv.episodes.length) {
 			aq.id(R.id.textView9).gone();
 		}
@@ -795,11 +872,10 @@ public class Detail_TV extends Activity {
 					Button m_button = (Button) this.findViewById(getResources()
 							.getIdentifier("tv_button" + m_j, "id",
 									getPackageName()));
-					m_button.setVisibility(View.GONE);
+					m_button.setVisibility(View.INVISIBLE);
 					aq.id(R.id.textView9).gone();
 				}
 			}
-
 		}
 	}
 
@@ -816,8 +892,19 @@ public class Detail_TV extends Activity {
 
 		}
 		if (page_num * 15 < m_ReturnProgramView.tv.episodes.length) {
+			aq.id(R.id.textView9).text("后15集 >");
 			aq.id(R.id.textView9).visible();
 		}
+		int m = 15 * page_num;
+
+		if ((m_ReturnProgramView.tv.episodes.length - m > 0)
+				&& (m_ReturnProgramView.tv.episodes.length - m <= 15)) {
+			aq.id(R.id.textView9).text(
+					String.format("后%s集 >",
+							m_ReturnProgramView.tv.episodes.length - m));
+			aq.id(R.id.textView9).visible();
+		}
+
 		page_num--;
 		if (m_ReturnProgramView.tv.episodes != null && page_num >= 0) {
 			for (i = 15 * page_num; i < m_ReturnProgramView.tv.episodes.length
@@ -854,10 +941,9 @@ public class Detail_TV extends Activity {
 					Button m_button = (Button) this.findViewById(getResources()
 							.getIdentifier("tv_button" + m_j, "id",
 									getPackageName()));
-					m_button.setVisibility(View.GONE);
+					m_button.setVisibility(View.INVISIBLE);
 				}
 			}
-
 		}
 	}
 
@@ -865,74 +951,82 @@ public class Detail_TV extends Activity {
 
 		int index = Integer.parseInt(v.getTag().toString());
 
-		current_index = index;
-		SetPlayBtnFlag(current_index);
+		app.checkUserSelect(Detail_TV.this);
+		if (app.use2G3G) {
+			current_index = index;
 
-		// write current_index to myTvSetting file
-		SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
-				Context.MODE_PRIVATE);
-		myPreference.edit().putString(prod_id, Integer.toString(current_index))
-				.commit();
+			// 电视剧type为2 ，sbuname 为当前集数
+			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
+					(index + 1) + "", 2);
 
-		if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
-				.equalsIgnoreCase("1")) {
-			app.MyToast(this, "暂无播放链接!");
-			return;
-		}
-		videoSourceSort(index);
-		if (m_ReturnProgramView.tv.episodes != null
-				&& m_ReturnProgramView.tv.episodes[index].video_urls != null
-				&& m_ReturnProgramView.tv.episodes[index].video_urls.length > 0)
-			PROD_URI = m_ReturnProgramView.tv.episodes[index].video_urls[0].url;
-		PROD_SOURCE = null;
-		if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
-			for (int i = 0; i < m_ReturnProgramView.tv.episodes[index].down_urls.length; i++) {
-				for (int k = 0; k < m_ReturnProgramView.tv.episodes[index].down_urls[i].urls.length; k++) {
-					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[index].down_urls[i].urls[k];
-					if (urls != null) {
-						if (urls.url != null && app.IfSupportFormat(urls.url)) {
-							if (PROD_SOURCE == null
-									&& !app.IfIncludeM3U(urls.url))
-								PROD_SOURCE = urls.url.trim();
-							if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("mp4"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("flv"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("hd2"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("3gp"))
-								PROD_SOURCE = urls.url.trim();
+			SetPlayBtnFlag(current_index);
+
+			// write current_index to myTvSetting file
+			SharedPreferences myPreference = this.getSharedPreferences(
+					MY_SETTING, Context.MODE_PRIVATE);
+			myPreference.edit()
+					.putString(prod_id, Integer.toString(current_index))
+					.commit();
+
+			if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
+					.equalsIgnoreCase("1")) {
+				app.MyToast(this, "暂无播放链接!");
+				return;
+			}
+			videoSourceSort(index);
+			if (m_ReturnProgramView.tv.episodes != null
+					&& m_ReturnProgramView.tv.episodes[index].video_urls != null
+					&& m_ReturnProgramView.tv.episodes[index].video_urls.length > 0)
+				PROD_URI = m_ReturnProgramView.tv.episodes[index].video_urls[0].url;
+			PROD_SOURCE = null;
+			if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
+				for (int i = 0; i < m_ReturnProgramView.tv.episodes[index].down_urls.length; i++) {
+					for (int k = 0; k < m_ReturnProgramView.tv.episodes[index].down_urls[i].urls.length; k++) {
+						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[index].down_urls[i].urls[k];
+						if (urls != null) {
+							if (urls.url != null
+									&& app.IfSupportFormat(urls.url)) {
+								if (PROD_SOURCE == null
+										&& !app.IfIncludeM3U(urls.url))
+									PROD_SOURCE = urls.url.trim();
+								if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"mp4"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"flv"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"hd2"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"3gp"))
+									PROD_SOURCE = urls.url.trim();
+							}
+							if (PROD_SOURCE != null)
+								break;
 						}
 						if (PROD_SOURCE != null)
 							break;
 					}
-					if (PROD_SOURCE != null)
-						break;
 				}
 			}
+
+			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				mCurrentPlayData.CurrentIndex = index;
+				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+				SaveToServer(2, PROD_URI, index + 1);
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.VIEW");
+				Uri content_url = Uri.parse(PROD_URI);
+				intent.setData(content_url);
+				startActivity(intent);
+			}
 		}
-
-		// URL str = isConnect(PROD_SOURCE);
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-
-			SaveToServer(1, PROD_SOURCE, index + 1);
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
-			// GetVideoSource(index,PROD_SOURCE);
-
-		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-			SaveToServer(2, PROD_URI, index + 1);
-
-			Intent intent = new Intent();
-			intent.setAction("android.intent.action.VIEW");
-			Uri content_url = Uri.parse(PROD_URI);
-			intent.setData(content_url);
-			startActivity(intent);
-		}
-
 	}
 
 	public void videoSourceSort(int source_index) {
@@ -994,46 +1088,10 @@ public class Detail_TV extends Activity {
 		}
 	}
 
-	/**
-	 * 功能：检测当前URL是否可连接或是否有效, 描述：最多连接网络 5 次, 如果 5 次都不成功，视为该地址不可用
-	 * 
-	 * @param urlStr
-	 *            指定URL网络地址
-	 * @return URL
-	 */
-	public synchronized URL isConnect(String urlStr) {
-		int state = -1;
-		int counts = 0;
-		URL url = null;
-		HttpURLConnection con;
-		if (urlStr == null || urlStr.length() <= 0) {
-			return null;
-		}
-		while (counts < 5) {
-			try {
-				url = new URL(urlStr);
-				con = (HttpURLConnection) url.openConnection();
-				state = con.getResponseCode();
-				System.out.println(counts + "= " + state);
-				if (state == 200) {
-					System.out.println("URL可用！");
-				}
-				break;
-			} catch (Exception ex) {
-				counts++;
-				System.out.println("URL不可用，连接第 " + counts + " 次");
-				urlStr = null;
-				continue;
-			}
-		}
-		return url;
-	}
-
 	//
 	public void CallVideoPlayActivity() {
 
 		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-
 			GetVideoSource(0, PROD_SOURCE);
 
 		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
@@ -1078,6 +1136,7 @@ public class Detail_TV extends Activity {
 						RelativeLayout.TRUE);
 
 				TextView valueTime = new TextView(this);
+				valueTime.setTextColor(color.grey);
 				valueTime.setText(m_ReturnProgramView.comments[i].create_date
 						.replaceAll(" 00:00:00", ""));
 				subLayout.addView(valueTime, params2);
@@ -1090,6 +1149,7 @@ public class Detail_TV extends Activity {
 				linearLayout.addView(subLayout, params3);
 
 				TextView valueContent = new TextView(this);
+				valueContent.setTextColor(color.grey);
 				valueContent.setText(m_ReturnProgramView.comments[i].content);
 				linearLayout.addView(valueContent);
 
@@ -1121,10 +1181,7 @@ public class Detail_TV extends Activity {
 		cb.url(url).type(JSONObject.class)
 				.weakHandler(this, "MoreCommentsResult");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		aq.id(R.id.ProgressText).visible();
 		aq.progress(R.id.progress).ajax(cb);
@@ -1220,19 +1277,31 @@ public class Detail_TV extends Activity {
 	}
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
+		app.IfSupportFormat(m_uri);
+		mCurrentPlayData.CurrentCategory = 1;
+
+		app.setCurrentPlayData(mCurrentPlayData);
 
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
-		intent.putExtra("path", m_uri);
-		intent.putExtra("title", title);
-
+		Bundle bundle = new Bundle();
+		bundle.putString("path", m_uri);
+		bundle.putString("title", title);
+		bundle.putString("prod_id", prod_id);
+		bundle.putString("prod_subname", "第"
+				+ m_ReturnProgramView.tv.episodes[current_index].name + "集");
+		bundle.putString("prod_type", "2");
+		bundle.putLong("current_time", 0);
+		intent.putExtras(bundle);
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "VideoPlayerActivity fail", ex);
 		}
-
 	}
 
+	/*
+	 * 保存网页播放地址,不需要保存时间
+	 */
 	private void SaveToServer(int play_type, String SourceUrl, int episodesNum) {
 
 		String url = Constant.BASE_URL + "program/play";
@@ -1263,10 +1332,7 @@ public class Detail_TV extends Activity {
 		// 视频url
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallProgramPlayResult");
@@ -1276,16 +1342,9 @@ public class Detail_TV extends Activity {
 
 	public void CallProgramPlayResult(String url, JSONObject json,
 			AjaxStatus status) {
-		// if (json != null) {
-		// app.MyToast(this, json.toString());
-		// // // try {
-		// // // if
-		// (json.getString("res_code").trim().equalsIgnoreCase("00000"))
-		// // // {
-		// // //
-		// // // }
-		// // // }
-		// }
+		/*
+		 * 保存播放记录的回调函数
+		 */
 	}
 
 	private void GetVideoSource(final int episodeNum, String url) {
@@ -1309,9 +1368,9 @@ public class Detail_TV extends Activity {
 																					// string
 																					// 视频名字
 							params.put("prod_subname",
-									m_ReturnProgramView.tv.episodes.length);// required
-																			// string
-																			// 视频的集数
+									Integer.toString(episodeNum));// required
+																	// string
+																	// 视频的集数
 							params.put("prod_type", 2);// required int 视频类别
 														// 1：电影，2：电视剧，3：综艺，4：视频
 							params.put("playback_time", 0);// _time required int
@@ -1325,10 +1384,7 @@ public class Detail_TV extends Activity {
 															// 视频url
 
 							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-							cb.header("User-Agent",
-									"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-							cb.header("app_key", Constant.APPKEY);
-							cb.header("user_id", app.UserID);
+							cb.SetHeader(app.getHeaders());
 
 							cb.params(params).url(urlsave);
 							aq.ajax(cb);
@@ -1488,23 +1544,21 @@ public class Detail_TV extends Activity {
 				}
 				InitDownloadData(popupview);
 				break;
-			// case R.id.download_btn_close:
-			// downloadpopup.dismiss();
-			// break;
 			}
 		}
 	};
 
 	void switchPageOfDownloadIndex(int index) {
+		// 获取当前电视剧有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
+		data = Dao.getInstance(Detail_TV.this).getInfosOfProd_id(prod_id);
 		String m_j = null;
 		int i = 0;
-		int j = 0;
 		for (i = 0; i < 15; i++) {
 			m_j = Integer.toString(i + 4);
 			Button m_button = (Button) popupview.findViewById(getResources()
 					.getIdentifier("download_button" + m_j, "id",
 							getPackageName()));
-			m_button.setVisibility(View.GONE);
+			m_button.setVisibility(View.INVISIBLE);
 		}
 		for (i = 0; (i + index * 15 + current_download_pagenum * 60) < m_ReturnProgramView.tv.episodes.length
 				&& i < 15; i++) {
@@ -1516,6 +1570,24 @@ public class Detail_TV extends Activity {
 					+ current_download_pagenum * 60);
 			m_button.setTag(m_j + "");
 			m_button.setText(m_j);
+			m_button.setBackgroundDrawable(download_normal);// 显示之前将背景设置为正常背景色
+			m_button.setTextColor(Color.BLACK);// 设置颜色和文字的位置
+			m_button.setGravity(Gravity.CENTER);
+			m_button.setEnabled(true);
+			for (int m = 0; m < data.size(); m++) {
+				if (data.get(m).getMy_index().equalsIgnoreCase(m_j)) { // 设置已缓存背景
+					m_button.setBackgroundDrawable(download_been);
+					m_button.setEnabled(false);
+					m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
+					m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+				}
+			}
+			if (download_indexs.contains(m_j)) {
+				m_button.setBackgroundDrawable(download_been);
+				m_button.setEnabled(false);
+				m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
+				m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+			}
 			m_button.setVisibility(View.VISIBLE);
 		}
 	}
@@ -1533,7 +1605,6 @@ public class Detail_TV extends Activity {
 						if (DOWNLOAD_SOURCE == null && urls.file != null
 								&& app.IfSupportFormat(urls.url)
 								&& urls.file.trim().equalsIgnoreCase("mp4"))
-							// DOWNLOAD_SOURCE = urls.url.trim();
 							DOWNLOAD_SOURCE = urls.url;
 						if (DOWNLOAD_SOURCE != null)
 							break;
@@ -1545,33 +1616,36 @@ public class Detail_TV extends Activity {
 		}
 		if (DOWNLOAD_SOURCE == null)
 			return;
+		app.checkUserSelect(Detail_TV.this);
+		if (app.use2G3G) {
+			if (DOWNLOAD_SOURCE != null) {
+				String urlstr = DOWNLOAD_SOURCE;
+				String localfile = Constant.PATH_VIDEO + prod_id + "_"
+						+ (index + 1) + ".mp4";
+				String my_name = m_ReturnProgramView.tv.name;
+				String download_state = "wait";
+				DownloadTask downloadTask = new DownloadTask(v, this,
+						Detail_TV.this, prod_id, Integer.toString(index + 1),
+						urlstr, localfile);
+				downloadTask.execute(prod_id, Integer.toString(index + 1),
+						urlstr, m_ReturnProgramView.tv.poster, my_name,
+						download_state);
+				Toast.makeText(Detail_TV.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
+						.show();
+				// 将按钮的背景色改成已缓存
+				v.setBackgroundDrawable(download_been);
+				v.setEnabled(false);
+				((Button) v).setTextColor(Color.WHITE);// 设置颜色和文字的位置
+				((Button) v)
+						.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+				if (!download_indexs.contains(index)) {
+					download_indexs.add(index);
+				}
 
-		if (DOWNLOAD_SOURCE != null) {
-			// download_index = index + 1 + "_tv";
-			String urlstr = DOWNLOAD_SOURCE;
-			// String localfile = Constant.PATH_VIDEO + prod_id + "_"
-			// + (index + 1) + ".mp4";
-			String localfile = Constant.PATH_VIDEO + prod_id + "_"
-					+ (index + 1) + ".mp4";
-			String my_name = m_ReturnProgramView.tv.name;
-			String download_state = "wait";
-			DownloadTask downloadTask = new DownloadTask(v, this,
-					Detail_TV.this, prod_id, Integer.toString(index + 1),
-					urlstr, localfile);
-			downloadTask.execute(prod_id, Integer.toString(index + 1), urlstr,
-					m_ReturnProgramView.tv.poster, my_name, download_state);
-			// DownloadTask downloadTask = new DownloadTask(v, this,
-			// Detail_TV.this, prod_id, download_index,
-			// urlstr, localfile);
-			// downloadTask.execute(prod_id, Integer.toString(index + 1),
-			// urlstr,
-			// m_ReturnProgramView.tv.poster, my_name, download_state);
-
-			Toast.makeText(Detail_TV.this, "视频已加入下载队列", Toast.LENGTH_SHORT)
-					.show();
-		} else {
-			Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
-					.show();
+			} else {
+				Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
+						.show();
+			}
 		}
 	}
 
@@ -1582,13 +1656,14 @@ public class Detail_TV extends Activity {
 		int j = 0;
 		int k = 0;
 		int total = m_ReturnProgramView.tv.episodes.length;
+		// 获取当前电视剧有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
 		data = Dao.getInstance(Detail_TV.this).getInfosOfProd_id(prod_id);
 		for (int m = 0; m < 4; m++) {
 			m_j = Integer.toString(m + 1);// m_ReturnProgramView.tv.episodes[i].name;
 			Button m_button = (Button) menuView.findViewById(getResources()
 					.getIdentifier("download_btn_page" + m_j, "id",
 							getPackageName()));
-			m_button.setVisibility(View.GONE);
+			m_button.setVisibility(View.INVISIBLE);
 		}
 		for (k = 0; (k < 4)
 				&& (k < (total - (current_download_pagenum) * 60) / 15); k++) {
@@ -1621,28 +1696,31 @@ public class Detail_TV extends Activity {
 		}
 
 		for (i = 0; i < m_ReturnProgramView.tv.episodes.length && i < 15; i++) {
-			m_j = Integer.toString(i + 4);// m_ReturnProgramView.tv.episodes[i].name;
-			String str = m_ReturnProgramView.tv.episodes[i].name;
+			m_j = Integer.toString(i + 4);
 			Button m_button = (Button) menuView.findViewById(getResources()
 					.getIdentifier("download_button" + m_j, "id",
 							getPackageName()));
 			m_j = Integer.toString(i + 1 + current_download_pagenum * 60);// 特别加上的
-			// m_button.setTag(i + "");
 			m_button.setTag(i + 1 + current_download_pagenum * 60 + "");
 			m_button.setText(m_j);
-			// lost one tv
-			if (m_ReturnProgramView.tv.episodes[i].down_urls == null)
-
-			{
+			m_button.setBackgroundDrawable(download_normal);// 显示之前将背景设置为正常背景色
+			m_button.setTextColor(Color.BLACK);// 设置颜色和文字的位置
+			m_button.setGravity(Gravity.CENTER);
+			m_button.setEnabled(true);
+			if (download_indexs.contains(m_j)) {
+				m_button.setBackgroundDrawable(download_been);
 				m_button.setEnabled(false);
-			} else {
-				m_button.setEnabled(true);
+				m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
+				m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 			}
-			/*
-			 * for(i = 0 ;i<data.size();i++) {
-			 * if(data.get(i).getIndex().equalsIgnoreCase(m_j)) { //设置已缓存背景
-			 * //m_button.setBackgroundDrawable(d); m_button.setText("已缓存"); } }
-			 */
+			for (int m = 0; m < data.size(); m++) {
+				if (data.get(m).getMy_index().equalsIgnoreCase(m_j)) { // 设置已缓存背景
+					m_button.setBackgroundDrawable(download_been);
+					m_button.setEnabled(false);
+					m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
+					m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+				}
+			}
 			m_button.setVisibility(View.VISIBLE);
 		}
 		if (i < 15) {
@@ -1651,9 +1729,16 @@ public class Detail_TV extends Activity {
 				Button m_button = (Button) menuView.findViewById(getResources()
 						.getIdentifier("download_button" + m_j, "id",
 								getPackageName()));
-				m_button.setVisibility(View.GONE);
+				m_button.setVisibility(View.INVISIBLE);
 				aq.id(R.id.textView9).gone();
 			}
 		}
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 }

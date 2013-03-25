@@ -17,12 +17,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,11 +52,15 @@ import com.androidquery.callback.AjaxStatus;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Detail_TV.EComparatorIndex;
+import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.download.Dao;
+import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.weibo.net.AccessToken;
 import com.joyplus.weibo.net.DialogError;
@@ -86,12 +93,15 @@ public class Detail_Show extends Activity {
 	private String token = null;
 	private String expires_in = null;
 
+	public List<DownloadInfo> data;
 	private Drawable download_focuse = null;
 	private Drawable download_normal = null;
 	private Drawable download_press = null;
-	// String[] download_names = new String[]{};
 	List download_names = new ArrayList();
-	private int cur_pos = 0;
+	private ArrayList download_indexs = new ArrayList();
+	private int current_index = -1; // yy
+	boolean pageShow = true;
+	private CurrentPlayData mCurrentPlayData;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +113,9 @@ public class Detail_Show extends Activity {
 		Intent intent = getIntent();
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
-		aq.id(R.id.program_name).text(prod_name);
+		
+		if(prod_name != null)
+			aq.id(R.id.program_name).text(prod_name);
 
 		aq.id(R.id.scrollView1).gone();
 		mScrollView = (ScrollView) findViewById(R.id.scrollView1);
@@ -122,15 +134,19 @@ public class Detail_Show extends Activity {
 				return false;
 			}
 		});
+		
+		download_normal = this.getResources().getDrawable(R.drawable.undownload);
+		download_press = this.getResources().getDrawable(R.drawable.download);
+		download_focuse = this.getResources().getDrawable(R.drawable.download2);
 
+		mCurrentPlayData = new CurrentPlayData();
+		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
-			GetServiceData();
-
+			CheckSaveData();
 	}
 
 	public void OnClickTab1TopLeft(View v) {
 		finish();
-
 	}
 
 	public void OnClickTab1TopRight(View v) {
@@ -225,10 +241,7 @@ public class Detail_Show extends Activity {
 
 			// save to local
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
-			cb.header("user_id", app.UserID);
+			cb.SetHeader(app.getHeaders());
 
 			cb.params(params).url(m_PostURL).type(JSONObject.class)
 					.weakHandler(this, "AccountBindAccountResult");
@@ -252,10 +265,7 @@ public class Detail_Show extends Activity {
 					cb.url(url2).type(JSONObject.class)
 							.weakHandler(this, "AccountBindAccountResult3");
 
-					cb.header("User-Agent",
-							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-					cb.header("app_key", Constant.APPKEY);
-					// cb.header("user_id", app.UserID);
+					cb.SetHeader(app.getHeaders());
 
 					aq.ajax(cb);
 				}
@@ -341,8 +351,11 @@ public class Detail_Show extends Activity {
 		int j = 0;
 		if (m_ReturnProgramView.show != null) {
 			aq.id(R.id.program_name).text(m_ReturnProgramView.show.name);
-			aq.id(R.id.imageView3).image(m_ReturnProgramView.show.poster, true,
-					true);
+			if(m_ReturnProgramView.show.poster!=null)
+			{
+				aq.id(R.id.imageView3).image(m_ReturnProgramView.show.poster.trim(), true,
+						true);
+			}
 			aq.id(R.id.textView5).text(m_ReturnProgramView.show.publish_date);
 			aq.id(R.id.textView6).text(m_ReturnProgramView.show.area);
 			if (m_ReturnProgramView.show.stars.trim().length() > 0)
@@ -372,7 +385,7 @@ public class Detail_Show extends Activity {
 									getPackageName()));
 					m_j = Integer.toString(i + 1);
 					m_button.setTag(i + "");
-					m_button.setText(m_ReturnProgramView.show.episodes[i].name);
+					m_button.setText(" "+m_ReturnProgramView.show.episodes[i].name);
 					m_button.setVisibility(View.VISIBLE);
 				}
 				if (i < 4) {
@@ -447,13 +460,20 @@ public class Detail_Show extends Activity {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
-			aq.id(R.id.none_net).visible();
+			if(app.GetServiceData(prod_id) == null)
+			{
+				aq.id(R.id.none_net).visible();
+			}
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
+			if(m_ReturnProgramView != null&&prod_id!=null)
+			{
+				app.SaveServiceData(prod_id, json.toString());//根据id保存住
+			}
 			// 创建数据源对象
 			InitData();
 			aq.id(R.id.ProgressText).gone();
@@ -471,7 +491,43 @@ public class Detail_Show extends Activity {
 		}
 
 	}
+	
+	private void CheckSaveData() {
+		String SaveData = null;
+		ObjectMapper mapper = new ObjectMapper();
+		SaveData = app.GetServiceData(prod_id);
+		if (SaveData == null) {
+			GetServiceData();
+		} else {
+			try {
+				m_ReturnProgramView = mapper.readValue(SaveData, ReturnProgramView.class);
+				// 创建数据源对象
+				// 创建数据源对象
+				InitData();
+				aq.id(R.id.ProgressText).gone();
+				aq.id(R.id.scrollView1).visible();
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						GetServiceData();
+					}
+				}, 2000);
 
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+	
 	// InitListData
 	public void GetServiceData() {
 		String url = Constant.BASE_URL + "program/view?prod_id=" + prod_id;
@@ -479,13 +535,16 @@ public class Detail_Show extends Activity {
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
-
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+		cb.SetHeader(app.getHeaders());
+		if(app.GetServiceData(prod_id) == null)
+		{
+			aq.id(R.id.ProgressText).visible();
+			aq.progress(R.id.progress).ajax(cb);
+		}
+		else
+		{
+			aq.ajax(cb);
+		}
 
 	}
 
@@ -501,7 +560,7 @@ public class Detail_Show extends Activity {
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
 					app.MyToast(this, "收藏成功!");
 				} else
-					app.MyToast(this, "收藏失败!");
+					app.MyToast(this, "已收藏!");
 				// Toast.makeText(Detail_Show.this,json.getString("res_code"),Toast.LENGTH_LONG).show();
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -525,10 +584,7 @@ public class Detail_Show extends Activity {
 		params.put("prod_id", prod_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallServiceFavorityResult");
@@ -546,8 +602,13 @@ public class Detail_Show extends Activity {
 					aq.id(R.id.button3).text(
 							"顶(" + Integer.toString(m_SupportNum) + ")");
 					app.MyToast(this, "顶成功!");
-				} else
-					app.MyToast(this, "顶失败!");
+				} 
+				else{
+					m_SupportNum++;
+					aq.id(R.id.button3).text(
+							"顶(" + Integer.toString(m_SupportNum) + ")");
+					app.MyToast(this, "顶成功!");
+					}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -568,10 +629,7 @@ public class Detail_Show extends Activity {
 		params.put("prod_id", prod_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallServiceResultSupportNum");
@@ -587,10 +645,7 @@ public class Detail_Show extends Activity {
 		params.put("prod_id", prod_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		// cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallServiceResultReportProblem");
@@ -605,37 +660,42 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
+		
+		app.checkUserSelect(Detail_Show.this);
+		if(app.use2G3G)
+		{
+			
+			//综艺type为3 ，sbuname 为当前集数
+			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name,
+					m_ReturnProgramView.show.episodes[0].name , 3);
+			
+			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				current_index = 0;
+				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
 
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-			SaveToServer(1, PROD_SOURCE, 1);
+			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
-			// GetVideoSource(0,PROD_SOURCE);
+				SaveToServer(2, PROD_URI, 1);
 
-		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-
-			SaveToServer(2, PROD_URI, 1);
-
-			Intent intent = new Intent();
-			intent.setAction("android.intent.action.VIEW");
-			Uri content_url = Uri.parse(PROD_URI);
-			intent.setData(content_url);
-			startActivity(intent);
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.VIEW");
+				Uri content_url = Uri.parse(PROD_URI);
+				intent.setData(content_url);
+				startActivity(intent);
+			}
 		}
-
 	}
-
+	
 	// OnClickNext4
 	public void OnClickNext4(View v) {
 		String m_j = null;
 		int j = 0;
 		int i = 0;
-
+		page_num++;
 		if (page_num * 4 >= m_ReturnProgramView.show.episodes.length) {
+			page_num--;
 			return;
 		}
-
-		page_num++;
 		if (m_ReturnProgramView.show.episodes != null) {
 			for (i = 4 * page_num; i < m_ReturnProgramView.show.episodes.length
 					&& i < 4 * (page_num + 1); i++, j++) {
@@ -645,7 +705,7 @@ public class Detail_Show extends Activity {
 						.getIdentifier("show_button" + m_j, "id",
 								getPackageName()));
 				m_button.setTag(i + "");
-				m_button.setText(m_ReturnProgramView.show.episodes[i].name);
+				m_button.setText(" "+m_ReturnProgramView.show.episodes[i].name);
 				m_button.setVisibility(View.VISIBLE);
 			}
 			if (j < 4) {
@@ -680,7 +740,7 @@ public class Detail_Show extends Activity {
 								getPackageName()));
 				m_j = Integer.toString(i + 1);
 				m_button.setTag(i + "");
-				m_button.setText(m_ReturnProgramView.show.episodes[i].name);
+				m_button.setText(" "+m_ReturnProgramView.show.episodes[i].name);
 				m_button.setVisibility(View.VISIBLE);
 			}
 			if (j < 4) {
@@ -698,18 +758,20 @@ public class Detail_Show extends Activity {
 
 	public void OnClickShowPlay(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
-
+		current_index = index;
 		if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
 				.equalsIgnoreCase("1")) {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		videoSourceSort(index);
+		
+		//videoSourceSort(index);
 		if (m_ReturnProgramView.show.episodes != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls[0].url != null)
 			PROD_URI = m_ReturnProgramView.show.episodes[index].video_urls[0].url;
 		PROD_SOURCE = null;
+//		videoSourceSort(index);
 		if (m_ReturnProgramView.show.episodes[index].down_urls != null) {
 			for (int i = 0; i < m_ReturnProgramView.show.episodes[index].down_urls.length; i++) {
 				for (int k = 0; k < m_ReturnProgramView.show.episodes[index].down_urls[i].urls.length; k++) {
@@ -740,23 +802,27 @@ public class Detail_Show extends Activity {
 				}
 			}
 		}
+		app.checkUserSelect(Detail_Show.this);
+		if(app.use2G3G)
+		{
+			
+			//综艺type为3 ，sbuname 为当前集数
+			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name,
+					m_ReturnProgramView.show.episodes[current_index].name, 3);
+			
+			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
+			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
-		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				SaveToServer(2, PROD_URI, index + 1);
 
-			SaveToServer(1, PROD_SOURCE, index + 1);
-			CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
-			// GetVideoSource(index, PROD_SOURCE);
-		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-
-			SaveToServer(2, PROD_URI, index + 1);
-
-			Intent intent = new Intent();
-			intent.setAction("android.intent.action.VIEW");
-			Uri content_url = Uri.parse(PROD_URI);
-			intent.setData(content_url);
-			startActivity(intent);
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.VIEW");
+				Uri content_url = Uri.parse(PROD_URI);
+				intent.setData(content_url);
+				startActivity(intent);
+			}
 		}
-
 	}
 	
 	public void videoSourceSort(int source_index)
@@ -829,20 +895,26 @@ public class Detail_Show extends Activity {
 	}
 		
 	public void CallVideoPlayActivity(String m_uri, String title) {
-
-		// Intent intent = new Intent(this, MovieActivity.class);
-		// intent.putExtra("prod_url", m_uri);
-		// intent.putExtra("prod_id", prod_id);
+		app.IfSupportFormat(m_uri);
+		mCurrentPlayData.CurrentCategory = 2;
+		mCurrentPlayData.CurrentIndex = current_index;
+		app.setCurrentPlayData(mCurrentPlayData);
+		
 		Intent intent = new Intent(this, VideoPlayerActivity.class);
-		intent.putExtra("path", m_uri);
-		intent.putExtra("title", title);
+		Bundle bundle = new Bundle();
+		bundle.putString("path", m_uri);
+		bundle.putString("title", title);
+		bundle.putString("prod_id", prod_id);
+		bundle.putString("prod_subname", m_ReturnProgramView.show.episodes[current_index].name);
+		bundle.putString("prod_type", "3");
+		bundle.putLong("current_time", 0);
+		intent.putExtras(bundle);
 
 		try {
 			startActivity(intent);
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "VideoPlayerActivity fail", ex);
 		}
-
 	}
 
 	public void ShowComments() {
@@ -876,6 +948,7 @@ public class Detail_Show extends Activity {
 						RelativeLayout.TRUE);
 
 				TextView valueTime = new TextView(this);
+				valueTime.setTextColor(color.grey);
 				valueTime.setText(m_ReturnProgramView.comments[i].create_date
 						.replaceAll(" 00:00:00", ""));
 				subLayout.addView(valueTime, params2);
@@ -888,6 +961,7 @@ public class Detail_Show extends Activity {
 				linearLayout.addView(subLayout, params3);
 
 				TextView valueContent = new TextView(this);
+				valueContent.setTextColor(color.grey);
 				valueContent.setText(m_ReturnProgramView.comments[i].content);
 				linearLayout.addView(valueContent);
 
@@ -919,10 +993,7 @@ public class Detail_Show extends Activity {
 		cb.url(url).type(JSONObject.class)
 				.weakHandler(this, "MoreCommentsResult");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		aq.id(R.id.ProgressText).visible();
 		aq.progress(R.id.progress).ajax(cb);
@@ -1043,10 +1114,7 @@ public class Detail_Show extends Activity {
 		params.put("video_url", SourceUrl);// required
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallProgramPlayResult");
@@ -1056,16 +1124,7 @@ public class Detail_Show extends Activity {
 
 	public void CallProgramPlayResult(String url, JSONObject json,
 			AjaxStatus status) {
-		// if (json != null) {
-		// app.MyToast(this, json.toString());
-		// // // try {
-		// // // if
-		// (json.getString("res_code").trim().equalsIgnoreCase("00000"))
-		// // // {
-		// // //
-		// // // }
-		// // // }
-		// }
+	
 	}
 
 	private void GetVideoSource(final int episodeNum, String url) {
@@ -1106,10 +1165,7 @@ public class Detail_Show extends Activity {
 															// 视频url
 
 							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-							cb.header("User-Agent",
-									"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-							cb.header("app_key", Constant.APPKEY);
-							cb.header("user_id", app.UserID);
+							cb.SetHeader(app.getHeaders());
 
 							cb.params(params).url(urlsave);
 							aq.ajax(cb);
@@ -1146,18 +1202,16 @@ public class Detail_Show extends Activity {
 					}
 
 				});
-
 	}
-
+	
 	public void OnClickCacheDown(View v) {
 		GotoDownloadPage();
+		pageShow = false;
 	}
 
 	private void GotoDownloadPage() {
 		// TODO Auto-generated method stub
-
 		setContentView(R.layout.download_show);
-
 		download_focuse = this.getResources().getDrawable(
 				R.drawable.download_show2);
 		download_normal = this.getResources().getDrawable(
@@ -1172,12 +1226,20 @@ public class Detail_Show extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				setContentView(R.layout.detail_show);
-				GetServiceData();
+//				GetServiceData();
+				if (prod_id != null)
+					CheckSaveData();
 			}
 		});
-		for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
-			download_names.add(m_ReturnProgramView.show.episodes[i].name);
+		aq.id(R.id.textView2).text(m_ReturnProgramView.show.name);
+		if(download_names.size()==0)//如果当前的download_names不为空说明不是第一次进入
+		{
+			for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
+				download_names.add(m_ReturnProgramView.show.episodes[i].name);
+			}
 		}
+		//获取当前综艺有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
+		data = Dao.getInstance(Detail_Show.this).getInfosOfProd_id(prod_id);
 		ListView list = (ListView) findViewById(R.id.listViewDownload);
 		list.requestFocusFromTouch();
 		MyAdapter adapter = new MyAdapter(Detail_Show.this);
@@ -1205,42 +1267,45 @@ public class Detail_Show extends Activity {
 						}
 					}
 				}
-
-				if (DOWNLOAD_SOURCE != null) {
-					String urlstr = DOWNLOAD_SOURCE;
-					download_index = (position + 1)+"_show";
-//					String localfile = Constant.PATH_VIDEO + prod_id + "_"
-//							+ (position + 1) + ".mp4";
-					String localfile = Constant.PATH_VIDEO + prod_id + "_"
-							+ download_index + ".mp4";
-					//String my_name = m_ReturnProgramView.show.name;
-					String my_name = m_ReturnProgramView.show.episodes[position].name;
-					String download_state = "wait";
-//					DownloadTask downloadTask = new DownloadTask(arg1,
-//							Detail_Show.this, Detail_Show.this, prod_id,
-//							Integer.toString(position + 1), urlstr, localfile);
-//					downloadTask.execute(prod_id,
-//							Integer.toString(position + 1), urlstr,
-//							m_ReturnProgramView.show.poster, my_name,
-//							download_state);
-					DownloadTask downloadTask = new DownloadTask(arg1,
-							Detail_Show.this, Detail_Show.this, prod_id,
-							download_index, urlstr, localfile);
-					downloadTask.execute(prod_id,
-							download_index, urlstr,
-							m_ReturnProgramView.show.poster, my_name,
-							download_state);
-					Toast.makeText(Detail_Show.this, "视频已加入下载队列",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					Toast.makeText(Detail_Show.this, "该视频不支持下载",
-							Toast.LENGTH_SHORT).show();
+				app.checkUserSelect(Detail_Show.this);
+				if(app.use2G3G)
+				{
+					if (DOWNLOAD_SOURCE != null) {
+						String urlstr = DOWNLOAD_SOURCE;
+						download_index = (position + 1)+"_show";
+						String localfile = Constant.PATH_VIDEO + prod_id + "_"
+								+ download_index + ".mp4";
+						String my_name = m_ReturnProgramView.show.episodes[position].name;
+						String download_state = "wait";
+						DownloadTask downloadTask = new DownloadTask(arg1,
+								Detail_Show.this, Detail_Show.this, prod_id,
+								download_index, urlstr, localfile);
+						downloadTask.execute(prod_id,
+								download_index, urlstr,
+								m_ReturnProgramView.show.poster, my_name,
+								download_state);
+						Toast.makeText(Detail_Show.this, "视频已加入下载队列",
+								Toast.LENGTH_SHORT).show();
+						if(download_indexs.contains(position))
+						{
+							
+						}
+						else
+						{
+							download_indexs.add(position);
+						}
+						//获取当前综艺有多少集在数据库里,根据电视剧的my_index显示不一样的下载按钮
+						data = Dao.getInstance(Detail_Show.this).getInfosOfProd_id(prod_id);
+					} else {
+						Toast.makeText(Detail_Show.this, "该视频不支持下载",
+								Toast.LENGTH_SHORT).show();
+					}
 				}
 			}
 		}
 		});
 	}
-
+	
 	private class MyAdapter extends BaseAdapter {
 		private LayoutInflater inflater;
 
@@ -1269,17 +1334,70 @@ public class Detail_Show extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			String downloadStr = null;
 			convertView = inflater.inflate(R.layout.download_show_item, null,
 					false);
 			TextView textview = (TextView) convertView
 					.findViewById(R.id.text_name);
-			textview.setText((CharSequence) download_names.get(position));
-//			if (position == cur_pos) {// 如果当前的行就是ListView中选中的一行，就更改显示样式
-//				textview.setBackgroundDrawable(download_focuse);
-//				textview.setTextColor(Color.WHITE);
-//				textview.setText(" " + download_names.get(position));
+			textview.setText("  "+(CharSequence) download_names.get(position));//加两个空格是为了让字体显示时不至于太靠左边
+			for(int i = 0;i<data.size();i++)
+			{
+				if(data.get(i).getMy_name().equalsIgnoreCase((String) download_names.get(position)))
+				{
+					textview.setTextColor(Color.WHITE);
+					textview.setBackgroundDrawable(download_focuse);//设置为已缓存
+					textview.setText("  "+(CharSequence) download_names.get(position));//加两个空格是为了让字体显示时不至于太靠左边
+				}
+			}
+			if(download_indexs.contains(position))
+			{
+				textview.setTextColor(Color.WHITE);
+				textview.setBackgroundDrawable(download_focuse);//设置为已缓存
+				textview.setText("  "+(CharSequence) download_names.get(position));//加两个空格是为了让字体显示时不至于太靠左边
+			}
+			if (m_ReturnProgramView.show.episodes[position].down_urls != null) {
+				for (int k = 0; k < m_ReturnProgramView.show.episodes[position].down_urls[0].urls.length; k++) {
+					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[position].down_urls[0].urls[k];
+					if (urls != null) {
+						if (downloadStr == null && urls.file != null
+								&& app.IfSupportFormat(urls.url)
+								&& urls.file.trim().equalsIgnoreCase("mp4"))
+							downloadStr = urls.url.trim();
+					}
+				}
+			}
+			if(downloadStr == null)
+			{
+				textview.setTextColor(Color.rgb(204, 204, 204));//设置为不可用
+			}
+//			if(m_ReturnProgramView.show.episodes[position].down_urls == null)
+//			{
+//				textview.setTextColor(Color.rgb(204, 204, 204));//设置为不可用
 //			}
 			return convertView;
 		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		if(keyCode == KeyEvent.KEYCODE_BACK)
+		{
+			if(pageShow)
+			{
+				finish();
+				return super.onKeyDown(keyCode, event);
+			}
+			else
+			{
+				pageShow = true;
+				setContentView(R.layout.detail_show);
+				//调用时有问题
+				if (prod_id != null)
+					CheckSaveData();
+				return true;
+			}
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

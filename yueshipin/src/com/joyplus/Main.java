@@ -1,6 +1,7 @@
 package com.joyplus;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -8,14 +9,18 @@ import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.TabActivity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.RadioGroup;
@@ -24,11 +29,14 @@ import android.widget.TabHost;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.joyplus.Dlna.DlnaSelectDevice;
+import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
 
 @SuppressWarnings("deprecation")
 public class Main extends TabActivity {
+	private String TAG = "Main";
 
 	private App app;
 	private AQuery aq;
@@ -38,6 +46,7 @@ public class Main extends TabActivity {
 	private TabHost mTabHost;
 
 	private Intent mTab1, mTab2, mTab3;
+	private Map<String, String> headers;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,11 +55,83 @@ public class Main extends TabActivity {
 		setContentView(R.layout.main);
 		app = (App) getApplicationContext();
 		aq = new AQuery(this);
-//		ReadLocalAppKey();
+		
+		headers = new HashMap<String, String>();
+		headers.put("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+		PackageInfo pInfo;
+		try {
+			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			headers.put("version", pInfo.versionName);
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		headers.put("app_key", Constant.APPKEY);
+		headers.put("client","android");
+		app.setHeaders(headers);
+			
+		Intent intent = new Intent(Main.this, DlnaSelectDevice.class);
+		startService(intent);
+		
+		PushService.subscribe(this, "", Main.class);
+		PushService.setDefaultPushCallback(this, Main.class);
+		if(!Constant.TestEnv)
+			ReadLocalAppKey();
+
 		CheckLogin();
 		setupIntent();
+		
+		
 	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		try {
+			/*{"alert":"真爱趁现在","prod_id":"977732","prod_type":"2","badge":"Increment"}  */
+			JSONObject json = new JSONObject(intent.getExtras().getString(
+					"com.parse.Data"));
+			String Prod_ID = json.getString("prod_id").trim();
+			String Prod_Type = json.getString("prod_type").trim();
+			int Type = Integer.parseInt(Prod_Type);
+			// 1：电影，2：电视剧，3：综艺，4：视频
+			switch (Type) {
+			case 1:
+				intent.setClass(this, Detail_Movie.class);
+				intent.putExtra("prod_id", Prod_ID);
+				try {
+					startActivity(intent);
+				} catch (ActivityNotFoundException ex) {
+					Log.e(TAG, "Call Detail_Movie failed", ex);
+				}
+				break;
+			case 2:
+				intent.setClass(this, Detail_TV.class);
+				intent.putExtra("prod_id", Prod_ID);
+				try {
+					startActivity(intent);
+				} catch (ActivityNotFoundException ex) {
+					Log.e(TAG, "Call Detail_TV failed", ex);
+				}
+				break;
+			case 3:
+				intent.setClass(this, Detail_Show.class);
+				intent.putExtra("prod_id", Prod_ID);
+				try {
+					startActivity(intent);
+				} catch (ActivityNotFoundException ex) {
+					Log.e(TAG, "Call Detail_Show failed", ex);
+				}
+				break;
+			}
 
+		} catch (JSONException e) {
+			Log.d(TAG, "JSONException: " + e.getMessage());
+		}
+		super.onNewIntent(intent);
+
+	}
 	private TabHost.TabSpec buildTabSpec(String tag, String resLabel,
 			int resIcon, final Intent content) {
 		return mTabHost.newTabSpec(tag)
@@ -104,6 +185,9 @@ public class Main extends TabActivity {
 	protected void onDestroy() {
 		if (aq != null)
 			aq.dismiss();
+		Intent i  = new Intent();
+		i.setClass(this, DlnaSelectDevice.class);
+		stopService(i);
 		super.onDestroy();
 	}
 
@@ -161,14 +245,17 @@ public class Main extends TabActivity {
 	 * 添加之后关于在线的操作不成功
 	 */
 	
-//	public void ReadLocalAppKey() {
-//		// online 获取APPKEY
-//		MobclickAgent.updateOnlineConfig(this);
-//		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
-//		if (OnLine_Appkey != null) {
-//			Constant.APPKEY = OnLine_Appkey;
-//		}
-//	}
+	public void ReadLocalAppKey() {
+		// online 获取APPKEY
+		MobclickAgent.updateOnlineConfig(this);
+		String OnLine_Appkey = MobclickAgent.getConfigParams(this, "APPKEY");
+		if (OnLine_Appkey != null && OnLine_Appkey.length() >0) {
+			Constant.APPKEY = OnLine_Appkey;
+			headers.remove("app_key");
+			headers.put("app_key", OnLine_Appkey);
+			app.setHeaders(headers);
+		}
+	}
 	public boolean CheckLogin() {
 		String UserInfo = null;
 		UserInfo = app.GetServiceData("UserInfo");
@@ -202,6 +289,7 @@ public class Main extends TabActivity {
 			try {
 				json = new JSONObject(UserInfo);
 				app.UserID = json.getString("user_id").trim();
+				headers.put("user_id", app.UserID);
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -217,6 +305,8 @@ public class Main extends TabActivity {
 			app.SaveServiceData("UserInfo", json.toString());
 			try {
 				app.UserID = json.getString("user_id").trim();
+				headers.put("user_id", app.UserID);
+				app.setHeaders(headers);
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

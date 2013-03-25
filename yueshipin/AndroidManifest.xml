@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.joyplus"
     android:versionCode="8"
-    android:versionName="0.9.8alpha" >
+    android:versionName="0.9.9alpha" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="8"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.CAMERA" />
@@ -28,6 +28,7 @@
     <uses-permission android:name="android.permission.INTERNET" >
     </uses-permission>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name="com.joyplus.App"
@@ -37,6 +38,7 @@
         <activity
             android:name=".Main"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar"
             android:uiOptions="splitActionBarWhenNarrow" >
@@ -179,15 +181,13 @@
         <activity
             android:name="com.joyplus.Video_Cache"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-
         <activity
             android:name="com.joyplus.Video_Cache_Detail"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-
         <activity
             android:name="com.joyplus.weibo.net.WeiboDialog2"
             android:screenOrientation="portrait"
@@ -203,13 +203,10 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-         <activity
+        <activity
             android:name=".Video.VideoPlayerActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Video.InitActivity"
@@ -217,6 +214,16 @@
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".Dlna.DlnaVideoPlay"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+
+        <service
+            android:name=".Dlna.DlnaSelectDevice"
+            android:exported="true" >
+        </service>
 
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"
@@ -231,8 +238,13 @@
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
-
-        <meta-data
+         <service android:name="com.parse.PushService" />
+        <service
+            android:name="com.umeng.common.net.DownloadingService"
+            android:exported="true"
+            android:process=":DownloadingService" >
+        </service>
+		<meta-data
             android:name="UMENG_APPKEY"
             android:value="50937e6c5270151fc8000003" >
         </meta-data>
@@ -240,4 +252,5 @@
             android:name="UMENG_CHANNEL"
             android:value="a002001" />
     </application>
+
 </manifest>

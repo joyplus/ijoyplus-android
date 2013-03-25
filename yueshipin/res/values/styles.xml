@@ -4,9 +4,9 @@
 
     <style name="radioButton">
         <item name="android:layout_width">100dp</item>
-                                                <item name="android:layout_height">fill_parent</item>
-                                                <item name="android:layout_weight">1.0</item>
-                                                <item name="android:padding">10dp</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_weight">1.0</item>
+        <item name="android:padding">10dp</item>
         <item name="android:gravity">center</item>
         <item name="android:button">@null</item>
     </style>
@@ -63,15 +63,16 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
-	
+
     <style name="mytheme" parent="@android:style/Theme.Light">
-		<item name="android:windowNoTitle"> true </item>
-	</style>
-	<style name="PopupAnimation" parent="android:Animation">
-		<item name="android:windowEnterAnimation">@anim/popup_enter</item>
-		<item name="android:windowExitAnimation">@anim/popup_exit</item>
-	</style>
-	
+        <item name="android:windowNoTitle"> true </item>
+    </style>
+
+    <style name="PopupAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/popup_exit</item>
+    </style>
+
     <style name="MediaController_SeekBar">
         <item name="android:minHeight">16dip</item>
         <item name="android:maxHeight">16dip</item>
@@ -84,7 +85,7 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
     </style>
-	
+
     <color name="darker_transparent">#C1000000</color>
 
 </resources>

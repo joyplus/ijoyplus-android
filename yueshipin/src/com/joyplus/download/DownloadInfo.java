@@ -27,6 +27,38 @@ public class DownloadInfo {
 	public DownloadInfo() {
 	
 	}
+	
+	public int getCompeleteSize() {
+		return compeleteSize;
+	}
+
+	public void setCompeleteSize(int compeleteSize) {
+		this.compeleteSize = compeleteSize;
+	}
+
+	public int getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(int fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public String getProd_id() {
+		return prod_id;
+	}
+
+	public void setProd_id(String prod_id) {
+		this.prod_id = prod_id;
+	}
+
+	public String getMy_index() {
+		return my_index;
+	}
+
+	public void setMy_index(String my_index) {
+		this.my_index = my_index;
+	}
 
 	public String getUrl() {
 		return url;
@@ -36,61 +68,30 @@ public class DownloadInfo {
 		this.url = url;
 	}
 
-	public int getCompeleteSize() {
-		return compeleteSize;
-	}
-
-	public void setCompeleteSize(int compeleteSize) {
-		this.compeleteSize = compeleteSize;
-	}
-	
-	public int getFileSize() {
-		return fileSize;
-	}
-
-	public void setFileSize(int fileSize) {
-		this.fileSize = fileSize;
-	}
-	public String getProdId()
-	{
-		return prod_id;
-	}
-	public void setProdId(String prod_id)
-	{
-		this.prod_id = prod_id;
-	}
-	public String getIndex()
-	{
-		return my_index;
-	}
-	public void setIndex(String my_index)
-	{
-		this.my_index = my_index;
-	}
-	public String getPoster()
-	{
+	public String getUrlposter() {
 		return urlposter;
 	}
-	public void setPoster(String urlposter)
-	{
+
+	public void setUrlposter(String urlposter) {
 		this.urlposter = urlposter;
 	}
-	public String getName()
-	{
+
+	public String getMy_name() {
 		return my_name;
 	}
-	public void setName(String name)
-	{
-		this.my_name = name;
+
+	public void setMy_name(String my_name) {
+		this.my_name = my_name;
 	}
-	public String getState()
-	{
+
+	public String getDownload_state() {
 		return download_state;
 	}
-	public void setState(String state)
-	{
-		this.download_state = state;
+
+	public void setDownload_state(String download_state) {
+		this.download_state = download_state;
 	}
+	
 	
 	@Override
 	public String toString() {

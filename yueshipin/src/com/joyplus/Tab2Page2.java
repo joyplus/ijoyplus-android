@@ -9,13 +9,16 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AbsListView.OnScrollListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -26,6 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab2Page2ListAdapter;
 import com.joyplus.Adapters.Tab2Page2ListData;
 import com.joyplus.Service.Return.ReturnTops;
+import com.joyplus.widget.MyListView;
+import com.joyplus.widget.MyListView.OnRefreshListener;
 
 public class Tab2Page2 extends Activity implements
 		android.widget.AdapterView.OnItemClickListener {
@@ -36,7 +41,8 @@ public class Tab2Page2 extends Activity implements
 
 	private int Fromepage;
 	private ArrayList dataStruct;
-	private ListView ItemsListView;
+	// private ListView ItemsListView;
+	private MyListView ItemsListView;
 	private Tab2Page2ListAdapter Tab2Page2Adapter;
 
 	@Override
@@ -47,10 +53,38 @@ public class Tab2Page2 extends Activity implements
 		aq = new AQuery(this);
 
 		// 获取listview对象
-		ItemsListView = (ListView) findViewById(R.id.listView1);
+		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
+		ItemsListView.setonRefreshListener(new OnRefreshListener() {
+			public void onRefresh() {
+				
+				new GetDataTask().execute();
+				
+				GetServiceData();
+		}});
 		CheckSaveData();
+	}
+
+	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
+
+		@Override
+		protected String[] doInBackground(Void... params) {
+			// Simulates a background job.
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				;
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String[] result) {
+			ItemsListView.onRefreshComplete();
+//			Tab2Page2Adapter.notifyDataSetChanged();
+			super.onPostExecute(result);
+		}
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -149,7 +183,7 @@ public class Tab2Page2 extends Activity implements
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -243,7 +277,7 @@ public class Tab2Page2 extends Activity implements
 						// execute the task
 						GetServiceData();
 					}
-				}, 150000);
+				}, 2000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
@@ -266,13 +300,17 @@ public class Tab2Page2 extends Activity implements
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
-
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+		cb.SetHeader(app.getHeaders());
+		if(app.GetServiceData("movie_tops")==null)
+		{
+			aq.id(R.id.ProgressText).visible();
+			aq.progress(R.id.progress).ajax(cb);
+		}
+		else
+		{
+			aq.ajax(cb);
+		}
+		
 
 	}
 }

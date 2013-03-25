@@ -114,7 +114,6 @@ public class Search extends Activity implements
 
 	public void OnClickFinished(View v) {
 		finish();
-
 	}
 
 	@Override
@@ -164,7 +163,10 @@ public class Search extends Activity implements
 					m_SearchListData.Is_Ready_Have = true;
 				} else
 					m_SearchListData.Is_Ready_Have = false;
-				m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url;
+				if(m_ReturnSearch.results[i].prod_pic_url!=null)
+				{
+					m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url;
+				}
 				m_SearchListData.Pic_name = m_ReturnSearch.results[i].prod_name;
 				m_SearchListData.prod_type = m_ReturnSearch.results[i].prod_type;
 				if (Integer.valueOf(m_ReturnSearch.results[i].prod_type) == 3) {
@@ -179,7 +181,6 @@ public class Search extends Activity implements
 				m_SearchListData.Text_Area = m_ReturnSearch.results[i].area;
 				m_SearchListData.Text_Ding = m_ReturnSearch.results[i].support_num;
 				m_SearchListData.Text_Score = m_ReturnSearch.results[i].score;
-
 				dataStruct.add(m_SearchListData);
 			}
 		}
@@ -230,9 +231,10 @@ public class Search extends Activity implements
 
 			aq.id(R.id.editText1).getTextView().setCursorVisible(true);
 			if (topic_id != null) {
-				aq.id(R.id.Tab1TopRightImage).background(R.drawable.tab3_p3_c2_top_right);
+//				aq.id(R.id.Tab1TopRightImage).background(R.drawable.tab3_p3_c2_top_right);
+				aq.id(R.id.Tab1TopRightImage).gone();
 				aq.id(R.id.editText1).gone();
-//				aq.id(R.id.Tab1TopRightImage2).visible();
+				aq.id(R.id.Tab1TopRightImage2).visible();
 				aq.id(R.id.imageView1).visible();
 			}
 		} catch (JsonParseException e) {
@@ -245,7 +247,6 @@ public class Search extends Activity implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	// 数据更新
@@ -355,10 +356,7 @@ public class Search extends Activity implements
 			params.put("type", 1);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "InitListData");
@@ -380,10 +378,7 @@ public class Search extends Activity implements
 		params.put("prod_id", prod_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "AddVideoResult");

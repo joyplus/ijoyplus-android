@@ -17,14 +17,12 @@ public class Logo extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+//		MobclickAgent.setDebugMode(true);
+		MobclickAgent.onError(this);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);// 不显示标题
 		setContentView(R.layout.logo);// 显示welcom.xml
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN); // 设置全屏显示
-		UmengUpdateAgent.setUpdateOnlyWifi(false);
-		UmengUpdateAgent.setOnDownloadListener(null);
-		UmengUpdateAgent.update(this);
 		final Intent intent = new Intent(Logo.this, Main.class);// AndroidMainScreen为主界面
 		Timer timer = new Timer();
 		TimerTask task = new TimerTask() {

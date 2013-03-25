@@ -163,6 +163,7 @@
                     android:layout_below="@+id/button2"
                     android:layout_marginLeft="129dp"
                     android:layout_marginTop="14dp"
+                    android:textColor="@color/grey"
                     android:text="主持/嘉宾：" />
 
                 <TextView
@@ -173,6 +174,7 @@
                     android:layout_below="@+id/textView1"
                     android:layout_marginLeft="129dp"
                     android:layout_marginTop="5dp"
+                    android:textColor="@color/grey"
                     android:text="首    播：" />
 
                 <TextView
@@ -183,6 +185,7 @@
                     android:layout_below="@+id/textView2"
                     android:layout_marginLeft="129dp"
                     android:layout_marginTop="5dp"
+                    android:textColor="@color/grey"
                     android:text="地    区：" />
 
                 <TextView
@@ -193,6 +196,7 @@
                     android:layout_marginTop="14dp"
                     android:layout_toRightOf="@+id/textView1"
                     android:ellipsize="end"
+                    android:textColor="@color/grey"
                     android:singleLine="true" />
 
                 <TextView
@@ -203,6 +207,7 @@
                     android:layout_alignBottom="@+id/textView2"
                     android:layout_toRightOf="@+id/textView2"
                     android:ellipsize="end"
+                    android:textColor="@color/grey"
                     android:singleLine="true" />
 
                 <TextView
@@ -213,6 +218,7 @@
                     android:layout_alignBottom="@+id/textView4"
                     android:layout_toRightOf="@+id/textView4"
                     android:ellipsize="end"
+                    android:textColor="@color/grey"
                     android:singleLine="true" />
             </RelativeLayout>
 
@@ -349,7 +355,8 @@
                             android:ellipsize="end"
                             android:onClick="OnClickShowPlay"
                             android:singleLine="true"
-                            android:text="加载中..." />
+                            android:text="加载中..." 
+                            android:gravity="center_vertical"/>
 
                         <Button
                             android:id="@+id/show_button1"
@@ -361,7 +368,8 @@
                             android:ellipsize="end"
                             android:onClick="OnClickShowPlay"
                             android:singleLine="true"
-                            android:text="加载中..." />
+                            android:text="加载中..."
+                            android:gravity="center_vertical" />
 
                         <Button
                             android:id="@+id/show_button2"
@@ -373,7 +381,8 @@
                             android:ellipsize="end"
                             android:onClick="OnClickShowPlay"
                             android:singleLine="true"
-                            android:text="加载中..." />
+                            android:text="加载中..." 
+                            android:gravity="center_vertical"/>
 
                         <Button
                             android:id="@+id/show_button3"
@@ -385,7 +394,8 @@
                             android:ellipsize="end"
                             android:onClick="OnClickShowPlay"
                             android:singleLine="true"
-                            android:text="加载中..." />
+                            android:text="加载中..." 
+                            android:gravity="center_vertical"/>
                     </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
