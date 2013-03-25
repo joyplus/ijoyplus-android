@@ -59,6 +59,7 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
@@ -147,6 +148,8 @@ public class MediaController extends FrameLayout  {
 	private TextView mTextView2;
 	private TextView mTextViewDownloadRate;
 	
+	private RelativeLayout mTopBlockLayout;//播放器顶部模块
+	private RelativeLayout mBottomBlockLayout;//播放器底部模块
 
 	private AudioManager mAM;
 	
@@ -284,6 +287,9 @@ public class MediaController extends FrameLayout  {
 		mimageView33 =  v.findViewById(R.id.imageView33);
 		mViewTopRight = v.findViewById(R.id.relativeLayoutTopRight);
 		mViewBottomRight = v.findViewById(R.id.relativeLayoutBottomRight);
+		
+		mTopBlockLayout = (RelativeLayout) v.findViewById(R.id.relativeLayout1);
+		mBottomBlockLayout = (RelativeLayout) v.findViewById(R.id.relativeLayoutBottom);
 		
 		lv_group = (ListView) v.findViewById(R.id.listView1);
 		// 加载数据
@@ -919,8 +925,15 @@ public class MediaController extends FrameLayout  {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 //		show(sDefaultTimeout);
-//		if(mShowing) 
-//			hide();
+		if(mShowing) {
+			
+			float locationY =  event.getY();
+			if(locationY >= mTopBlockLayout.getHeight() 
+					&& locationY <= ((float)getHeight()) - mBottomBlockLayout.getHeight()) {
+				
+				hide();
+			}
+		}
 		return true;
 	}
 
