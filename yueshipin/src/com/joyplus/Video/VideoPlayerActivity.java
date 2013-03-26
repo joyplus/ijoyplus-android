@@ -285,7 +285,7 @@ public class VideoPlayerActivity extends Activity implements
 					play_current_time + "");
 		}
 		else
-		{
+		{	
 			playhistory = new PlayHistory(playProdId, playProdSubName,//这个历史播放记录变量总是要初始化
 					play_current_time + "");
 		}

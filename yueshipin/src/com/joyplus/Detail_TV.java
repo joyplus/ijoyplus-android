@@ -67,6 +67,7 @@ import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
+import com.joyplus.Video.PlayHistory;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadInfo;
@@ -807,7 +808,15 @@ public class Detail_TV extends Activity {
 		if (app.use2G3G) {
 			// write current_index to myTvSetting file
 			current_index = 0;
-
+			PlayHistory tempData = Dao.getInstance(Detail_TV.this).queryPlayHistory(new PlayHistory(prod_id,"0","0"));
+//			if(tempData == null)
+//			{
+//				
+//			}
+//			else
+//			{
+//				current_index = "";
+//			}
 			// 电视剧type为2 ，sbuname 为当前集数
 			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
 					"1", 2);
