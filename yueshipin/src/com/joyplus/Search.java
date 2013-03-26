@@ -49,6 +49,10 @@ public class Search extends Activity implements
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private SearchListAdapter SearchAdapter;
+	
+	private static String SEARCH  = "查询";
+	private static String SEARCH_LIST  = "查询结果";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,7 +60,7 @@ public class Search extends Activity implements
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
-
+		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		Intent intent = getIntent();
@@ -126,12 +130,15 @@ public class Search extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, SEARCH);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, SEARCH_LIST);
+		MobclickAgent.onEventEnd(mContext, SEARCH);
 		MobclickAgent.onPause(this);
 	}
 
@@ -252,6 +259,7 @@ public class Search extends Activity implements
 	// 数据更新
 	public void NotifyDataAnalysisFinished() {
 		if (dataStruct != null && ItemsListView != null) {
+			MobclickAgent.onEventBegin(mContext, SEARCH_LIST);
 			SearchListAdapter listviewdetailadapter = getAdapter();
 			ItemsListView.setAdapter(listviewdetailadapter);
 		} else {

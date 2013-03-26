@@ -124,14 +124,15 @@ public class Detail_TV extends Activity {
 	private static final String MY_SETTING = "myTvSetting";
 
 	private CurrentPlayData mCurrentPlayData;
-
+	private static String TV_DETAIL = "电视剧详情";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.detail_tv);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-
+        mContext = this;
 		Intent intent = getIntent();
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
@@ -384,12 +385,14 @@ public class Detail_TV extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, TV_DETAIL);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, TV_DETAIL);
 		MobclickAgent.onPause(this);
 	}
 

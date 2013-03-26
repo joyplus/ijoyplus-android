@@ -49,13 +49,16 @@ public class Setting extends Activity {
 	
 	//应用推荐
 	public static ExchangeDataService preloadDataService;
-
+	private static String SETTING  = "设置";
+	private static String RECOMMAND_APP  = "精品推荐";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setting);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		UMFeedbackService.enableNewReplyNotification(this,
 				NotificationType.AlertDialog);
 		//appRecommend();
@@ -83,6 +86,7 @@ public class Setting extends Activity {
 	    ExchangeDataService exchangeDataService = preloadDataService != null ?preloadDataService : new ExchangeDataService("");
 	    ExchangeViewManager exchangeViewManager = new ExchangeViewManager(this,new ExchangeDataService());
 		exchangeViewManager.addView(fatherLayout, listView);
+		MobclickAgent.onEventBegin(mContext, RECOMMAND_APP);
 	}
 
 	@Override
@@ -102,12 +106,16 @@ public class Setting extends Activity {
 			aq.id(R.id.checkBox1).getCheckBox().setChecked(true);
 		else
 			aq.id(R.id.checkBox1).getCheckBox().setChecked(false);
+		
+		MobclickAgent.onEventBegin(mContext, SETTING);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, RECOMMAND_APP);
+		MobclickAgent.onEventEnd(mContext, SETTING);
 		MobclickAgent.onPause(this);
 	}
 

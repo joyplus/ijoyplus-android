@@ -102,14 +102,15 @@ public class Detail_Show extends Activity {
 	private int current_index = -1; // yy
 	boolean pageShow = true;
 	private CurrentPlayData mCurrentPlayData;
-
+	private static String SHOW_DETAIL = "综艺详情";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.detail_show);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-
+        mContext = this;
 		Intent intent = getIntent();
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
@@ -331,12 +332,14 @@ public class Detail_Show extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, SHOW_DETAIL);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, SHOW_DETAIL);
 		MobclickAgent.onPause(this);
 	}
 
