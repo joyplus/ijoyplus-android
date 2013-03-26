@@ -420,5 +420,13 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
+	<LinearLayout 
+	    android:id="@+id/new_guider_3"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:background="@drawable/new_guider_3"
+	    android:onClick="OnClickNewGuider_3"
+	    android:visibility="gone">
+	    
+	</LinearLayout>
 </RelativeLayout>

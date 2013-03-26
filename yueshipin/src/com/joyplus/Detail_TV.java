@@ -187,8 +187,19 @@ public class Detail_TV extends Activity {
 		InitTVButtom();
 		if (prod_id != null)
 			CheckSaveData();
+//		是否显示新手引导
+		if(app.GetServiceData("new_guider_3")==null)
+		{
+			aq.id(R.id.new_guider_3).visible();
+		}
 	}
-
+	
+	public void OnClickNewGuider_3(View v)
+	{
+		aq.id(R.id.new_guider_3).gone();
+		app.SaveServiceData("new_guider_3", "new_guider_3");
+	}
+	
 	public void InitTVButtom() {
 		String m_j = null;
 		for (int i = 0; i < 15; i++) {

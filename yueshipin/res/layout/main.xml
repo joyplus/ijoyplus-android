@@ -63,4 +63,21 @@
         </FrameLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/new_guider_1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/new_guider_1"
+        android:onClick="OnClickNewGuider_1"
+        android:visibility="invisible" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/new_guider_2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/new_guider_2"
+        android:onClick="OnClickNewGuider_2"
+        android:visibility="invisible" />
+
 </TabHost>

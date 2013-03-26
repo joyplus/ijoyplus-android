@@ -135,8 +135,19 @@ public class Detail_Movie extends Activity {
 		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
 			CheckSaveData();
+//		是否显示新手引导
+		if(app.GetServiceData("new_guider_3")==null)
+		{
+			aq.id(R.id.new_guider_3).visible();
+		}
 	}
-
+	
+	public void OnClickNewGuider_3(View v)
+	{
+		aq.id(R.id.new_guider_3).gone();
+		app.SaveServiceData("new_guider_3", "new_guider_3");
+	}
+	
 	public void OnClickTab1TopLeft(View v) {
 		finish();
 	}
