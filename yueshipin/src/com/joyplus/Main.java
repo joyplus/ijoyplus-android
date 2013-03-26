@@ -1,7 +1,6 @@
 package com.joyplus;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -28,7 +27,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TabHost;
@@ -38,7 +36,6 @@ import com.androidquery.callback.AjaxStatus;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.update.UmengUpdateAgent;
 
 @SuppressWarnings("deprecation")
 public class Main extends TabActivity {
@@ -93,18 +90,13 @@ public class Main extends TabActivity {
 		if(app.GetServiceData("mianzeshengming")==null)
 		{
 			mianzeDialog = new MianZeDialog(Main.this);
-			Window dialogWindow = mianzeDialog.getWindow();        
-			WindowManager.LayoutParams lp = dialogWindow.getAttributes();        
-			dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
-			lp.x = 100; // 新位置X坐标        
-			lp.y = 100; // 新位置Y坐标        
-			lp.width = 300; // 宽度        
-			lp.height = 300; // 高度        
-			lp.alpha = 0.7f; // 透明度            
-			dialogWindow.setAttributes(lp);
+			mianzeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			mianzeDialog.setCanceledOnTouchOutside(false);
+
 			mianzeDialog.show();
 		}
 	}
+	
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -232,10 +224,7 @@ public class Main extends TabActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(app.GetServiceData("new_guider_1")==null)
-		{
-			aq.id(R.id.new_guider_1).visible();
-		}
+		
 	}
 
 	@Override
@@ -399,9 +388,9 @@ public class Main extends TabActivity {
 		}
 		return super.dispatchKeyEvent(event);
 	}
-	/*
-	 * 免责声明对话框
-	 */
+	
+	// 免责声明对话框
+	 
 	public class MianZeDialog extends Dialog {
 
 		public MianZeDialog(Context context) {
@@ -413,6 +402,11 @@ public class Main extends TabActivity {
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.mianze_dialog);
 			
+			Window mWindow = getWindow();  
+            WindowManager.LayoutParams lp = mWindow.getAttributes();  
+            lp.dimAmount =0f;
+            mWindow.setAttributes(lp); 
+            
 			Button buttonYes = (Button) findViewById(R.id.btnyes);
 			buttonYes.setOnClickListener(new Button.OnClickListener() {
 				@Override
@@ -421,6 +415,10 @@ public class Main extends TabActivity {
 					dismiss();
 					//将内容保存在sharedPreference
 					app.SaveServiceData("mianzeshengming", "mianzeshengming");
+					if(app.GetServiceData("new_guider_1")==null)
+					{
+						aq.id(R.id.new_guider_1).visible();
+					}
 				}
 			});
 		}

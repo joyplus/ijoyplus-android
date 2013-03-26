@@ -4,9 +4,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.androidquery.AQuery;
+import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +26,8 @@ public class Tab3 extends TabActivity {
 	private String TAB3_PAGE3 = "TAB3_PAGE3";
 	private TabHost mTabHost;
 	private Intent mTab1, mTab2, mTab3;
-
+	private static String PERSONAL  = "个人主页";
+	Context mContext;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,6 +35,7 @@ public class Tab3 extends TabActivity {
 		setContentView(R.layout.tab3);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		prepareIntent();
 		setupIntent();
 		CheckLogin();
@@ -98,12 +102,13 @@ public class Tab3 extends TabActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-
+        MobclickAgent.onEventBegin(mContext, PERSONAL);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, PERSONAL);
 	}
 
 	public void OnClickTab1TopLeft(View v) {

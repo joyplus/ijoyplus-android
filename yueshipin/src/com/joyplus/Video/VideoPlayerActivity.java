@@ -102,7 +102,10 @@ public class VideoPlayerActivity extends Activity implements
 //	private int CurrentSource = 0;
 //	private int CurrentQuality = 0;
 
-
+	private static String MOVIE_PLAY  = "电影播放";
+	private static String TV_PLAY  = "电视剧播放";
+	private static String SHOW_PLAY  = "综艺播放";
+	Context mContext;
 	/*
 	 * playHistoryData
 	 */
@@ -135,6 +138,7 @@ public class VideoPlayerActivity extends Activity implements
 			return;
 		
 		setContentView(R.layout.videoview);
+		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		
@@ -313,6 +317,9 @@ public class VideoPlayerActivity extends Activity implements
 	@Override
 	protected void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
+        MobclickAgent.onEventEnd(mContext, TV_PLAY);
+        MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		MobclickAgent.onPause(this);
 		if (mVideoView != null) {
 			/*
@@ -379,7 +386,9 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void OnClickReturn(View v) {
-
+        MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
+        MobclickAgent.onEventEnd(mContext, TV_PLAY);
+        MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		finish();
 
 	}
@@ -509,6 +518,9 @@ public class VideoPlayerActivity extends Activity implements
 
 	@Override
 	public void onCompletion(MediaPlayer player) {
+		MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
+        MobclickAgent.onEventEnd(mContext, TV_PLAY);
+        MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		finish();
 	}
 
@@ -593,6 +605,7 @@ public class VideoPlayerActivity extends Activity implements
 											mCurrentPlayData.CurrentQuality = ki;
 											mCurrentPlayData.ShowQuality = qi;
 											PROD_SOURCE = urls.url.trim();
+											MobclickAgent.onEventBegin(mContext, MOVIE_PLAY);
 										}
 										if (PROD_SOURCE != null)
 											break;
@@ -626,6 +639,7 @@ public class VideoPlayerActivity extends Activity implements
 										mCurrentPlayData.CurrentSource = i;
 										mCurrentPlayData.CurrentQuality = ki;
 										PROD_SOURCE = urls.url.trim();
+										MobclickAgent.onEventBegin(mContext, TV_PLAY);
 									}
 									if (PROD_SOURCE != null)
 										break;
@@ -658,6 +672,7 @@ public class VideoPlayerActivity extends Activity implements
 										mCurrentPlayData.CurrentSource = i;
 										mCurrentPlayData.CurrentQuality = ki;
 										PROD_SOURCE = urls.url.trim();
+										MobclickAgent.onEventBegin(mContext, SHOW_PLAY);
 									}
 									if (PROD_SOURCE != null)
 										break;

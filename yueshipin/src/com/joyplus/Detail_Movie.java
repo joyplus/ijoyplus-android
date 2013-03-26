@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -97,7 +98,8 @@ public class Detail_Movie extends Activity {
 	/**
 	 * 利用消息处理机制适时更新APP里的数据
 	 */
-
+	private static String MOVIE_DETAIL = "电影详情";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -106,7 +108,7 @@ public class Detail_Movie extends Activity {
 		Intent intent = getIntent();
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
-
+        mContext = this;
 		aq = new AQuery(this);
 		aq.id(R.id.scrollView1).gone();
 		if (prod_name != null)
@@ -135,18 +137,10 @@ public class Detail_Movie extends Activity {
 		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
 			CheckSaveData();
-//		是否显示新手引导
-		if(app.GetServiceData("new_guider_3")==null)
-		{
-			aq.id(R.id.new_guider_3).visible();
-		}
+
 	}
 	
-	public void OnClickNewGuider_3(View v)
-	{
-		aq.id(R.id.new_guider_3).gone();
-		app.SaveServiceData("new_guider_3", "new_guider_3");
-	}
+	
 	
 	public void OnClickTab1TopLeft(View v) {
 		finish();
@@ -331,12 +325,14 @@ public class Detail_Movie extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, MOVIE_DETAIL);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd (mContext, MOVIE_DETAIL);
 		MobclickAgent.onPause(this);
 	}
 

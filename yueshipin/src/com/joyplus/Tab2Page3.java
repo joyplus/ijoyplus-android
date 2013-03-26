@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,12 +44,14 @@ public class Tab2Page3 extends Activity implements
 	private MyListView ItemsListView;
 	private Tab2Page3ListAdapter Tab2Page3Adapter;
 	private int isLastisNext = 1;
-
+	private static String OPULAR_SHOW_TOP_LIST = "综艺悦榜";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab2page3);
 		app = (App) getApplication();
+		mContext = this;
 		aq = new AQuery(this);
 		dataStruct = new ArrayList();//happy
 		// 获取listview对象
@@ -132,12 +135,14 @@ public class Tab2Page3 extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, OPULAR_SHOW_TOP_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, OPULAR_SHOW_TOP_LIST);
 		MobclickAgent.onPause(this);
 	}
 

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,14 +44,15 @@ public class Tab3Page3_Create2 extends Activity {
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private BangDanListAdapter BangDanAdapter;
-
+	private static String CREATE_LIST_STEP2  = "创建悦单2";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab3page3_create2);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-
+        mContext = this;
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 
 		Intent intent = getIntent();
@@ -127,12 +129,14 @@ public class Tab3Page3_Create2 extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, CREATE_LIST_STEP2);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, CREATE_LIST_STEP2);
 		MobclickAgent.onPause(this);
 	}
 
