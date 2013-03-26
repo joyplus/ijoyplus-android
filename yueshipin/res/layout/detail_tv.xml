@@ -149,8 +149,8 @@
                     android:layout_below="@+id/button2"
                     android:layout_marginLeft="129dp"
                     android:layout_marginTop="14dp"
-                    android:textColor="@color/grey"
-                    android:text="导演：" />
+                    android:text="导演："
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView2"
@@ -159,8 +159,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/textView1"
                     android:layout_marginLeft="129dp"
-                    android:textColor="@color/grey"
-                    android:text="主演：" />
+                    android:text="主演："
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -169,8 +169,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/textView2"
                     android:layout_marginLeft="129dp"
-                    android:textColor="@color/grey"
-                    android:text="上映：" />
+                    android:text="上映："
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView4"
@@ -179,8 +179,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/textView3"
                     android:layout_marginLeft="129dp"
-                    android:textColor="@color/grey"
-                    android:text="地区：" />
+                    android:text="地区："
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView7"
@@ -190,8 +190,8 @@
                     android:layout_marginTop="14dp"
                     android:layout_toRightOf="@+id/textView1"
                     android:ellipsize="end"
-                    android:textColor="@color/grey"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView5"
@@ -201,8 +201,8 @@
                     android:layout_alignBottom="@+id/textView2"
                     android:layout_toRightOf="@+id/textView2"
                     android:ellipsize="end"
-                    android:textColor="@color/grey"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView8"
@@ -212,8 +212,8 @@
                     android:layout_alignBottom="@+id/textView3"
                     android:layout_alignLeft="@+id/textView6"
                     android:ellipsize="end"
-                    android:textColor="@color/grey"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView6"
@@ -223,8 +223,8 @@
                     android:layout_alignBottom="@+id/textView4"
                     android:layout_toRightOf="@+id/textView4"
                     android:ellipsize="end"
-                    android:textColor="@color/grey"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/grey" />
             </RelativeLayout>
 
             <LinearLayout
@@ -318,7 +318,8 @@
                         android:layout_marginTop="11dp" >
 
                         <!-- 按钮不是15的整数时,不往左靠第一个TableRow多余的 -->
-                        <TableRow
+
+                        <TableRow
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content" >
 
@@ -481,10 +482,10 @@
                         android:layout_alignParentLeft="true"
                         android:layout_gravity="left"
                         android:layout_marginLeft="5dp"
-                        android:textSize="15dp"
                         android:clickable="true"
                         android:onClick="OnClickPre15"
                         android:text="@string/ tv_string1"
+                        android:textSize="15dp"
                         android:visibility="gone" />
 
                     <TextView
@@ -494,10 +495,10 @@
                         android:layout_alignParentRight="true"
                         android:layout_gravity="right"
                         android:layout_marginRight="5dp"
-                        android:textSize="15dp"
                         android:clickable="true"
                         android:onClick="OnClickNext15"
-                        android:text="@string/ tv_string2" />
+                        android:text="@string/ tv_string2"
+                        android:textSize="15dp" />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -566,5 +567,14 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/new_guider_3"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/new_guider_3"
+        android:onClick="OnClickNewGuider_3"
+        android:visibility="gone" >
+    </LinearLayout>
 
 </RelativeLayout>

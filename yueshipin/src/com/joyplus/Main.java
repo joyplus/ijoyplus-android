@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.TabActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -21,8 +22,13 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TabHost;
@@ -47,6 +53,7 @@ public class Main extends TabActivity {
 
 	private Intent mTab1, mTab2, mTab3;
 	private Map<String, String> headers;
+	private MianZeDialog mianzeDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +90,20 @@ public class Main extends TabActivity {
 		CheckLogin();
 		setupIntent();
 		
-		
+		if(app.GetServiceData("mianzeshengming")==null)
+		{
+			mianzeDialog = new MianZeDialog(Main.this);
+			Window dialogWindow = mianzeDialog.getWindow();        
+			WindowManager.LayoutParams lp = dialogWindow.getAttributes();        
+			dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
+			lp.x = 100; // 新位置X坐标        
+			lp.y = 100; // 新位置Y坐标        
+			lp.width = 300; // 宽度        
+			lp.height = 300; // 高度        
+			lp.alpha = 0.7f; // 透明度            
+			dialogWindow.setAttributes(lp);
+			mianzeDialog.show();
+		}
 	}
 	
 	@Override
@@ -132,6 +152,19 @@ public class Main extends TabActivity {
 		super.onNewIntent(intent);
 
 	}
+	//新手引导
+	public void OnClickNewGuider_1(View v)
+	{
+		aq.id(R.id.new_guider_1).gone();
+		app.SaveServiceData("new_guider_1","new_guider_1");
+	}
+	
+	// 新手引导
+	public void OnClickNewGuider_2(View v) {
+		aq.id(R.id.new_guider_2).gone();
+		app.SaveServiceData("new_guider_2", "new_guider_2");
+	}
+	
 	private TabHost.TabSpec buildTabSpec(String tag, String resLabel,
 			int resIcon, final Intent content) {
 		return mTabHost.newTabSpec(tag)
@@ -168,6 +201,11 @@ public class Main extends TabActivity {
 					break;
 				case R.id.radio1:
 					mTabHost.setCurrentTabByTag(TAB_2);
+					//添加是否显示第二个
+					if(app.GetServiceData("new_guider_2")==null)
+					{
+						aq.id(R.id.new_guider_2).visible();
+					}
 					break;
 				case R.id.radio2:
 					mTabHost.setCurrentTabByTag(TAB_3);
@@ -194,6 +232,10 @@ public class Main extends TabActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		if(app.GetServiceData("new_guider_1")==null)
+		{
+			aq.id(R.id.new_guider_1).visible();
+		}
 	}
 
 	@Override
@@ -272,7 +314,7 @@ public class Main extends TabActivity {
 
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("uiid", macAddress);
-				params.put("device_type", "Android");
+				params.put("device_type", "android-mobile");
 
 				AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 				cb.header("User-Agent",
@@ -357,5 +399,30 @@ public class Main extends TabActivity {
 		}
 		return super.dispatchKeyEvent(event);
 	}
+	/*
+	 * 免责声明对话框
+	 */
+	public class MianZeDialog extends Dialog {
 
+		public MianZeDialog(Context context) {
+			super(context);
+			// TODO Auto-generated constructor stub
+		}
+
+		protected void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			setContentView(R.layout.mianze_dialog);
+			
+			Button buttonYes = (Button) findViewById(R.id.btnyes);
+			buttonYes.setOnClickListener(new Button.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					dismiss();
+					//将内容保存在sharedPreference
+					app.SaveServiceData("mianzeshengming", "mianzeshengming");
+				}
+			});
+		}
+	}
 }

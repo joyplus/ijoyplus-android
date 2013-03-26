@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.joyplus"
-    android:versionCode="8"
-    android:versionName="0.9.9alpha" >
+    android:versionCode="9"
+    android:versionName="0.9.10alpha" >
 
     <uses-sdk
         android:minSdkVersion="8"
