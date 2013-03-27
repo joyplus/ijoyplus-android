@@ -219,7 +219,9 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-
+       <activity android:name=".MainTopRightDialog"  
+           android:theme="@style/MyDialogStyleTop">
+       </activity>
         <service
             android:name=".Dlna.DlnaSelectDevice"
             android:exported="true" >

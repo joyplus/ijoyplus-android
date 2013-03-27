@@ -109,5 +109,6 @@ IOS: ijoyplusios001bj
 		"hd2","3gp"};
 	public static final String[] player_quality_index = { "mp4",
 		"hd2","3gp","flv"};
-
+	// APP_ID 替换为你的应用从官方网站申请到的合法appId
+    public static final String APP_ID = "wxc8ea1cbc355fe2d0";
 }
