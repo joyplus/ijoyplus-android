@@ -20,10 +20,8 @@ public class DBHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("create table download_info(_id integer PRIMARY KEY AUTOINCREMENT,  "
 				+ "compeleteSize integer, fileSize integer, prod_id char, my_index char, url char,urlposter char,my_name char,download_state char)");
-		db.execSQL("create table play_history(_id integer PRIMARY KEY AUTOINCREMENT,  "
-				+ "prod_id char, my_index char,play_time char)");
 		db.execSQL("create table video_cache(_id integer PRIMARY KEY AUTOINCREMENT,  "
-				+ "prod_id char, prod_value char,prod_type char,create_date TimeStamp default datetime('now', 'localtime'),prod_subname char,last_playtime)");
+				+ "prod_id char, prod_value char,prod_type char,create_date time,prod_subname char,last_playtime)");
 	}
 
 	@Override

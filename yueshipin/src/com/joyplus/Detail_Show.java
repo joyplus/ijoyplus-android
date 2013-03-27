@@ -526,7 +526,7 @@ public class Detail_Show extends Activity {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
 //		SaveData = app.GetServiceData(prod_id);
-		cacheInfoTemp = cacheManager.getVideoCache(prod_id, "");
+		cacheInfoTemp = cacheManager.getVideoCache(prod_id);
 		if(cacheInfoTemp!=null)
 		{
 			SaveData = cacheInfoTemp.getProd_value();

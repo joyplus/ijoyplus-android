@@ -18,10 +18,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.App;
 import com.joyplus.Constant;
+import com.joyplus.Detail_Movie;
 import com.joyplus.R;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Service.Return.ReturnProgramView;
+import com.joyplus.cache.videoCacheInfo;
+import com.joyplus.cache.videoCacheManager;
 import com.joyplus.download.Dao;
 import com.umeng.analytics.MobclickAgent;
 
@@ -99,10 +102,6 @@ public class VideoPlayerActivity extends Activity implements
 	private long mStartRX = 0;
 	private long mStartTX = 0;
 	private CurrentPlayData mCurrentPlayData;
-//	private int CurrentCategory = 0;
-//	private int CurrentIndex = 0;
-//	private int CurrentSource = 0;
-//	private int CurrentQuality = 0;
 
 	private static String MOVIE_PLAY  = "电影播放";
 	private static String TV_PLAY  = "电视剧播放";
@@ -111,7 +110,10 @@ public class VideoPlayerActivity extends Activity implements
 	/*
 	 * playHistoryData
 	 */
-	private PlayHistory playhistory = null;
+	videoCacheInfo cacheInfo;
+	videoCacheInfo cacheInfoTemp;
+	videoCacheManager cacheManager;
+	
 	private String playProdId = null;// 视频id
 	private String playProdName = null;// 视频名字
 	private String playProdSubName = null;// 视频的集数
@@ -143,6 +145,9 @@ public class VideoPlayerActivity extends Activity implements
 		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		
+		cacheManager = new videoCacheManager(VideoPlayerActivity.this);
+		cacheInfo = new videoCacheInfo();
 		
 		InitPlayData();
 		// 每次播放时及时把播放的flag清除为0
@@ -176,16 +181,6 @@ public class VideoPlayerActivity extends Activity implements
 		} else {
 			mHandler.postDelayed(mRunnable, 1000);
 		}
-
-		// mPath =
-		// "http://122.228.96.172/20/40/95/letv-uts/1340994301-AVC-249889-AAC-31999-5431055-192873082-4b45f1fd5362d980a1dae9c44b2b1c6b-1340994301.mp4?crypt=3eb0ad42aa7f2e559&b=2000&gn=860&nc=1&bf=22&p2p=1&video_type=mp4&check=0&tm=1354698000&key=78cc2270a7e5dfe3187c1608c99e65c0&lgn=letv&proxy=1945014819&cipi=1034815956&tag=mobile&np=1&vtype=mp4&ptype=s1&level=350&t=1354601822&cid=&vid=&sign=mb&dname=mobile";
-		// mPath =
-		// "http://122.228.96.172/20/40/95/letv-uts/1340994301-AVC-249889-AAC-31999-5431055-192873082-4b45f1fd5362d980a1dae9c44b2b1c6b-1340994301.mp4?crypt=3eb0ad42aa7f2e559&b=2000&gn=860&nc=1&bf=22&p2p=1&video_type=mp4&check=0&tm=1354698000&key=78cc2270a7e5dfe3187c1608c99e65c0&lgn=letv&proxy=1945014819&cipi=1034815956&tag=mobile&np=1&vtype=mp4&ptype=s1&level=350&t=1354601822&cid=&vid=&sign=mb&dname=mobile";
-		// mPath =
-		// "http://117.27.153.51:80/83B516E8091FC8ADAF9C1BB64758CC84ABE0A231/playlist.m3u8";
-		// mPath = "http://api.joyplus.tv/joyplus-service/video/t.mp4";
-		// mTitle = "x3";
-
 		mMediaController = new MediaController(this);
 
 		if (mTitle != null && mTitle.length() > 0) {
@@ -240,16 +235,6 @@ public class VideoPlayerActivity extends Activity implements
 		}else {
 			mCurrentPlayData = app.getCurrentPlayData();
 			
-//			if(app.get_ReturnProgramView() != null){
-//				m_ReturnProgramView = app.get_ReturnProgramView();
-//				mPath = GetRedirectURL();
-//				
-//				if (mMediaController != null){
-//					app.setCurrentPlayData(mCurrentPlayData);
-//				}
-//				if(mPath != null && mPath.length() >0)
-//					mVideoView.setVideoPath(app.getURLPath());
-//			} else {
 				if (playProdId != null)
 					GetServiceData();
 //			}
@@ -285,34 +270,13 @@ public class VideoPlayerActivity extends Activity implements
 		playProdSubName = bundle.getString("prod_subname");
 		playProdType = Integer.parseInt(bundle.getString("prod_type"));
 		play_current_time = bundle.getLong("current_time");
-		if(playProdSubName==null)//电影的话没有参数传过来
-		{
-			playhistory = new PlayHistory(playProdId, "movie",//这个历史播放记录变量总是要初始化
-					play_current_time + "");
-		}
-		else
-		{	
-			playhistory = new PlayHistory(playProdId, playProdSubName,//这个历史播放记录变量总是要初始化
-					play_current_time + "");
-		}
 		
-		if(play_current_time < 1)
+		//播放记录
+		cacheInfo = cacheManager.getVideoCache(playProdId);
+		if(cacheInfo!=null&&cacheInfo.getLast_playtime()!=null&&cacheInfo.getLast_playtime().length()>0)
 		{
-			if(Dao.getInstance(VideoPlayerActivity.this)
-					.queryPlayHistory(playhistory) == null)
-			{
-				Dao.getInstance(VideoPlayerActivity.this)
-						.addPlayHistory(playhistory);
-			}
-			else
-			{
-				playhistory = Dao.getInstance(VideoPlayerActivity.this)
-						.queryPlayHistory(playhistory);
-				play_current_time = Long.parseLong(playhistory.getPlay_time());
-			}
-			
+			play_current_time = Long.parseLong(cacheInfo.getLast_playtime());
 		}
-//		if( playProdType == 1)
 			aq.id(R.id.imageButton6).gone();
 	}
 
@@ -335,8 +299,12 @@ public class VideoPlayerActivity extends Activity implements
 			if(current_time >0)
 			{
 				// 保存播放记录在本地
-				playhistory.setPlay_time(current_time+"");
-				Dao.getInstance(VideoPlayerActivity.this).updatePlayHistory(playhistory);
+				cacheInfo = cacheManager.getVideoCache(playProdId);
+				if(cacheInfo!=null)
+				{
+					cacheInfo.setLast_playtime(current_time+"");
+					cacheManager.saveVideoCache(cacheInfo);
+				}
 				play_current_time = current_time;
 			}	 
 			mVideoView.pause();
@@ -355,7 +323,6 @@ public class VideoPlayerActivity extends Activity implements
 			if (play_current_time > 0)//当用户点击home键以后要回来就得调用这个
 				mVideoView.seekTo(play_current_time);
 		}
-
 	}
 
 	@Override

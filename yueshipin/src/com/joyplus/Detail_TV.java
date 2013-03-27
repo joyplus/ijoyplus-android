@@ -67,7 +67,6 @@ import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
-import com.joyplus.Video.PlayHistory;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.cache.videoCacheInfo;
 import com.joyplus.cache.videoCacheManager;
@@ -658,7 +657,7 @@ public class Detail_TV extends Activity {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
 //		SaveData = app.GetServiceData(prod_id);
-		cacheInfoTemp = cacheManager.getVideoCache(prod_id, "");
+		cacheInfoTemp = cacheManager.getVideoCache(prod_id);
 		if(cacheInfoTemp!=null)
 		{
 			SaveData = cacheInfoTemp.getProd_value();
@@ -832,16 +831,6 @@ public class Detail_TV extends Activity {
 		if (app.use2G3G) {
 			// write current_index to myTvSetting file
 			current_index = 0;
-			PlayHistory tempData = Dao.getInstance(Detail_TV.this).queryPlayHistory(new PlayHistory(prod_id,"0","0"));
-//			if(tempData == null)
-//			{
-//				
-//			}
-//			else
-//			{
-//				current_index = "";
-//			}
-			// 电视剧type为2 ，sbuname 为当前集数
 			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
 					"1", 2);
 			SharedPreferences myPreference = this.getSharedPreferences(
@@ -994,7 +983,11 @@ public class Detail_TV extends Activity {
 	public void OnClickTVPlay(View v) {
 
 		int index = Integer.parseInt(v.getTag().toString());
-
+		if(cacheInfo!=null)
+		{
+			cacheInfo.setProd_subname(v.getTag().toString());
+			cacheManager.saveVideoCache(cacheInfo);
+		}
 		app.checkUserSelect(Detail_TV.this);
 		if (app.use2G3G) {
 			current_index = index;

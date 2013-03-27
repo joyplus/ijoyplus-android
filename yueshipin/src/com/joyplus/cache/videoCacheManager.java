@@ -19,12 +19,11 @@ public class videoCacheManager {
 		{
 			Dao_Cache.getInstance(context).delete();
 		}
-		if (Dao_Cache.getInstance(context).isHasInfors(info.getProd_id(),
-				info.getProd_subname())) 
+		if(Dao_Cache.getInstance(context).isHasInfors(info.getProd_id()))
 		{
 			Dao_Cache.getInstance(context).InsertOneInfo(info);
-		} 
-		else 
+		}
+		else
 		{
 			Dao_Cache.getInstance(context).updateOneInfo(info);
 		}
@@ -32,7 +31,7 @@ public class videoCacheManager {
 	/*
 	 * 从数据库中取出缓存数据
 	 */
-	public videoCacheInfo getVideoCache(String prod_id, String my_index) {
-		return Dao_Cache.getInstance(context).getOneInfo(prod_id, my_index);
+	public videoCacheInfo getVideoCache(String prod_id) {
+		return Dao_Cache.getInstance(context).getOneInfo(prod_id);
 	}
 }

@@ -44,7 +44,6 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Adapters.Tab3Page1ListData;
 import com.joyplus.Service.Return.ReturnTops;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
-import com.joyplus.Video.PlayHistory;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.download.Dao;
 import com.umeng.analytics.MobclickAgent;
@@ -341,14 +340,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 						}
 						// 删除数据
 						DeleteHistory(m_Tab3Page1ListData.Pro_ID);
-						if (Dao.getInstance(Tab3Page1.this).queryPlayHistory(
-								new PlayHistory(m_Tab3Page1ListData.Pro_ID,
-										m_Tab3Page1ListData.Pro_name1, 0 + "")) != null) {
-							Dao.getInstance(Tab3Page1.this).delPlayHistory(
-									new PlayHistory(m_Tab3Page1ListData.Pro_ID,
-											m_Tab3Page1ListData.Pro_name1,
-											0 + ""));
-						}
+						//删除缓存中的数据
 					}
 				}).setNegativeButton("取消", null).create();
 		builder.show();
