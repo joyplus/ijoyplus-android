@@ -250,6 +250,7 @@ public class MainTopRightDialog extends Activity {
 
 
 	public void OnClickFriendsCircle(View v) {
+		api.openWXApp();
 		String url = "http://www.joyplus.tv";// 收到分享的好友点击信息会跳转到这个地址去
 		WXWebpageObject localWXWebpageObject = new WXWebpageObject();
 		localWXWebpageObject.webpageUrl = url;
