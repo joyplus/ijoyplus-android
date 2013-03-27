@@ -23,10 +23,12 @@ import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXTextObject;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
 import com.tencent.mm.sdk.platformtools.Util;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.xp.view.aq;
 import com.yixia.zi.utils.Log;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -47,8 +49,10 @@ public class MainTopRightDialog extends Activity {
 	private String token = null;
 	private String expires_in = null;
 	private Bitmap bitmap;
-	private static final int THUMB_SIZE = 150;
-
+	private static String ue_wechat_friend_share = "微信好友分享";
+	private static String ue_wechat_social_share = "微信朋友圈分享";
+	
+    private Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,7 +60,7 @@ public class MainTopRightDialog extends Activity {
 		setContentView(R.layout.main_top_right_dialog);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-
+        mContext = this;
 		api = WXAPIFactory.createWXAPI(this, Constant.APP_ID, false);
 		api.registerApp(Constant.APP_ID);
 
@@ -240,6 +244,7 @@ public class MainTopRightDialog extends Activity {
 		localReq.message = localWXMediaMessage;
 		localReq.scene = SendMessageToWX.Req.WXSceneSession;
 		api.sendReq(localReq);
+		MobclickAgent.onEvent(mContext, ue_wechat_friend_share);
 		finish();
 	}
 
@@ -259,6 +264,7 @@ public class MainTopRightDialog extends Activity {
 		localReq.message = localWXMediaMessage;
 		localReq.scene = SendMessageToWX.Req.WXSceneTimeline;
 		api.sendReq(localReq);
+		MobclickAgent.onEvent(mContext, ue_wechat_social_share);
 		finish();
 	}
 
