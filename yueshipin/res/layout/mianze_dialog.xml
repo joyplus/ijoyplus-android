@@ -27,10 +27,19 @@
                     android:background="#ffffff"
                     android:text="@string/mianze_words" />
             </ScrollView>
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:paddingLeft="20dp"
+                          android:paddingRight="20dp">
 		<Button
                 android:id="@+id/btnyes"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/yes_btn"
+                android:text="接受"
+                android:textSize="20sp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:background="@drawable/black_shape"
                  />
+		</LinearLayout>
 </LinearLayout>

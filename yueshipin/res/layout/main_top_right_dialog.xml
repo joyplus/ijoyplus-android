@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"       
+   >
+   
+   <RelativeLayout
+       android:layout_width="fill_parent"
+       android:layout_height="fill_parent"  
+       android:layout_marginTop="46dp"
+       
+             >
+        
+    	<LinearLayout
+    	    android:id="@+id/main_dialog_layout"
+	      	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_alignParentRight="true"
+        	android:layout_alignParentTop="true"
+        	android:orientation="vertical"
+        	android:background="@drawable/title_function_bg" >
+        	<LinearLayout
+    		    android:layout_width="match_parent"
+    		    android:layout_height="wrap_content" >
+        	     <TextView android:layout_width="match_parent"
+        	          android:layout_height="30dp"
+        	          android:gravity="center_horizontal|center_vertical"
+        	          android:textSize="15sp"
+        	          android:textColor="@android:color/white"
+        	          android:text="分享到："/>
+            </LinearLayout>
+    		<LinearLayout
+    		    android:layout_width="match_parent"
+    		    android:layout_height="wrap_content" 
+    		    android:paddingLeft="9dp"
+    		    android:paddingRight="9dp"
+    		    android:paddingTop="5dp">
+
+    			<Button
+    			       android:id="@+id/bt1"
+    			       android:layout_width="match_parent"
+    			       android:layout_height="wrap_content"
+    			       android:background="@drawable/shape"
+    			       android:onClick="OnClickSinaWeiBo"
+    			       android:text="新浪微博"/>
+    		</LinearLayout>
+    		<LinearLayout
+    		    android:layout_width="match_parent"
+    		    android:layout_height="wrap_content"
+    		    android:paddingLeft="9dp"
+    		    android:paddingRight="9dp"
+    		    android:paddingTop="5dp" >
+
+    			<Button
+    			       android:id="@+id/bt2"
+    			       android:layout_width="match_parent"
+    			       android:layout_height="wrap_content"
+    			       android:background="@drawable/shape"
+    			       android:onClick="OnClickWeixinFriends"
+    			       android:text="微信好友"/> 		    
+    		</LinearLayout>
+    		<LinearLayout
+    		    android:layout_width="match_parent"
+    		    android:layout_height="wrap_content"
+    		    android:paddingLeft="9dp"
+    		    android:paddingRight="9dp" 
+    		    android:paddingTop="5dp">
+
+    			<Button
+    			       android:id="@+id/bt3"
+    			       android:layout_width="match_parent"
+    			       android:layout_height="wrap_content"
+    			       android:background="@drawable/shape"
+    			       android:onClick="OnClickFriendsCircle"
+    			       android:text="微信朋友圈"/> 		    
+    		</LinearLayout>
+    		
+           <LinearLayout
+    		    android:layout_width="match_parent"
+    		    android:layout_height="wrap_content" 
+    		    android:paddingLeft="9dp"
+    		    android:paddingRight="9dp"
+    		    android:paddingTop="5dp"
+    		    android:paddingBottom="8dp">
+
+    			<Button
+    			       android:id="@+id/bt4"
+    			       android:layout_width="match_parent"
+    			       android:layout_height="wrap_content"
+    			       android:background="@drawable/black_shape"
+    			       android:textColor="#DDDDDD"
+    			       android:onClick="Cancel"
+    			       android:text="取消"/> 		    
+    		</LinearLayout>
+       </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>
