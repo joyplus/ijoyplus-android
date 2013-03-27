@@ -250,7 +250,7 @@
         </meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="a002001" />
+            android:value="j001" />
     </application>
 
 </manifest>

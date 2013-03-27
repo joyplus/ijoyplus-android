@@ -326,7 +326,24 @@ public class Dao {
 			}
 		}
 	}
-
+	
+	/*
+	 * 更新某一条记录
+	 */
+	public synchronized void updataInfos(DownloadInfo info) {
+		SQLiteDatabase database = getConnection();
+		try {
+			String sql = "update download_info set fileSize=? where prod_id=? and my_index=?";
+			Object[] bindArgs = { info.getFileSize(), info.getProd_id(), info.getMy_index() };
+			database.execSQL(sql, bindArgs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+		}
+	}
 	/*
 	 * 更新某一条下载记录的状态
 	 */

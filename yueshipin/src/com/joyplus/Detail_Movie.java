@@ -52,8 +52,10 @@ import com.joyplus.Service.Return.ReturnTops;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.cache.videoCacheInfo;
+import com.joyplus.cache.videoCacheManager;
 import com.joyplus.download.Dao;
-import com.joyplus.download.Dao_Cache;
+
 import com.joyplus.download.DownLoadAdapter;
 import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
@@ -95,6 +97,9 @@ public class Detail_Movie extends Activity {
 	private CurrentPlayData mCurrentPlayData;
 //	private int current_time = 0;
 //	private int total_time = 0;
+	videoCacheInfo cacheInfo;
+	videoCacheInfo cacheInfoTemp;
+	videoCacheManager cacheManager;
 
 	/**
 	 * 利用消息处理机制适时更新APP里的数据
@@ -131,9 +136,8 @@ public class Detail_Movie extends Activity {
 				return false;
 			}
 		});
-		// 添加下载按钮的暂无下载的效果图
-//		downloaddisable = this.getResources().getDrawable(
-//				R.drawable.tab2_video_8);
+		cacheManager = new videoCacheManager(Detail_Movie.this);
+		cacheInfo = new videoCacheInfo();
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
@@ -520,13 +524,6 @@ public class Detail_Movie extends Activity {
 						new EComparatorIndex());
 			}
 		}
-		// for(int i = 0;i<Constant.video_index.length;i++)
-		// {
-		// for(int j = 0;j<Constant.quality_index.length;i++)
-		// {
-		//
-		// }
-		// }
 	}
 
 	// 将片源排序
@@ -551,7 +548,7 @@ public class Detail_Movie extends Activity {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
-			if(app.GetServiceData(prod_id) == null)
+			if(cacheInfoTemp == null)
 			{
 				aq.id(R.id.none_net).visible();
 			}
@@ -563,16 +560,14 @@ public class Detail_Movie extends Activity {
 					ReturnProgramView.class);
 			if(m_ReturnProgramView != null&&prod_id!=null)
 			{
-				app.SaveServiceData(prod_id, json.toString());//根据id保存住
-//				VideoCache videoCache = new VidoeCache();
-//				videoCache.setProdId(prod_id);
-//				videoCache.setProdValue(json.toString());
-//				CacheManager.putInCache(videoCache);
-//				
-//				CacheKey cacheKey;
-//				cacheKey.setProdId();
-//				cahceKey.setIndex();
-//				CacheManager.loadFromCahce(cacheKey);
+//				app.SaveServiceData(prod_id, json.toString());//根据id保存住
+				cacheInfo.setProd_id(prod_id);
+				cacheInfo.setProd_type("1");
+				cacheInfo.setProd_value(json.toString());
+				cacheInfo.setProd_subname("");
+				cacheInfo.setLast_playtime("");
+				cacheInfo.setCreate_date("");
+				cacheManager.saveVideoCache(cacheInfo);
 			}
 			// 创建数据源对象
 			InitData();
@@ -594,7 +589,12 @@ public class Detail_Movie extends Activity {
 	private void CheckSaveData() {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
-		SaveData = app.GetServiceData(prod_id);
+		cacheInfoTemp = cacheManager.getVideoCache(prod_id, "");
+		if(cacheInfoTemp!=null)
+		{
+			SaveData = cacheInfoTemp.getProd_value();
+		}
+//		SaveData = app.GetServiceData(prod_id);
 		if (SaveData == null) {
 			GetServiceData();
 		} else {
@@ -639,7 +639,7 @@ public class Detail_Movie extends Activity {
 //				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
 //		cb.header("app_key", Constant.APPKEY);
 //		cb.header("user_id", app.UserID);
-		if(app.GetServiceData(prod_id) == null)
+		if(cacheInfoTemp == null)
 		{
 			aq.id(R.id.ProgressText).visible();
 			aq.progress(R.id.progress).ajax(cb);

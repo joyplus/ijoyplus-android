@@ -59,6 +59,8 @@ import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.cache.videoCacheInfo;
+import com.joyplus.cache.videoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
@@ -104,6 +106,10 @@ public class Detail_Show extends Activity {
 	private CurrentPlayData mCurrentPlayData;
 	private static String SHOW_DETAIL = "综艺详情";
 	Context mContext;
+	videoCacheInfo cacheInfo;
+	videoCacheInfo cacheInfoTemp;
+	videoCacheManager cacheManager;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -135,6 +141,9 @@ public class Detail_Show extends Activity {
 				return false;
 			}
 		});
+		
+		cacheManager = new videoCacheManager(Detail_Show.this);
+		cacheInfo = new videoCacheInfo();
 		
 		download_normal = this.getResources().getDrawable(R.drawable.undownload);
 		download_press = this.getResources().getDrawable(R.drawable.download);
@@ -474,7 +483,7 @@ public class Detail_Show extends Activity {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
-			if(app.GetServiceData(prod_id) == null)
+			if(cacheInfoTemp == null)
 			{
 				aq.id(R.id.none_net).visible();
 			}
@@ -486,7 +495,14 @@ public class Detail_Show extends Activity {
 					ReturnProgramView.class);
 			if(m_ReturnProgramView != null&&prod_id!=null)
 			{
-				app.SaveServiceData(prod_id, json.toString());//根据id保存住
+//				app.SaveServiceData(prod_id, json.toString());//根据id保存住
+				cacheInfo.setProd_id(prod_id);
+				cacheInfo.setProd_type("3");
+				cacheInfo.setProd_value(json.toString());
+				cacheInfo.setProd_subname("");
+				cacheInfo.setLast_playtime("");
+				cacheInfo.setCreate_date("");
+				cacheManager.saveVideoCache(cacheInfo);
 			}
 			// 创建数据源对象
 			InitData();
@@ -509,7 +525,12 @@ public class Detail_Show extends Activity {
 	private void CheckSaveData() {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
-		SaveData = app.GetServiceData(prod_id);
+//		SaveData = app.GetServiceData(prod_id);
+		cacheInfoTemp = cacheManager.getVideoCache(prod_id, "");
+		if(cacheInfoTemp!=null)
+		{
+			SaveData = cacheInfoTemp.getProd_value();
+		}
 		if (SaveData == null) {
 			GetServiceData();
 		} else {
@@ -550,7 +571,7 @@ public class Detail_Show extends Activity {
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
 		cb.SetHeader(app.getHeaders());
-		if(app.GetServiceData(prod_id) == null)
+		if(cacheInfoTemp == null)
 		{
 			aq.id(R.id.ProgressText).visible();
 			aq.progress(R.id.progress).ajax(cb);

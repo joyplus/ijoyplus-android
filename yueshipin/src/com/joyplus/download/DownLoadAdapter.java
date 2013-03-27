@@ -79,7 +79,15 @@ public class DownLoadAdapter extends BaseAdapter{
 			DownloadInfo info = data.get(position);
 			long completesize = info.getCompeleteSize();
 			long filesize = info.getFileSize();
-			long percent =completesize*MAX/filesize;
+			long percent = 0;
+			if(filesize == 0)
+			{
+				
+			}
+			else
+			{
+				percent =completesize*MAX/filesize;
+			}
 			String posterurl = info.getUrlposter();
 			holder.resourceDownloadName.setText(info.getMy_name());
 			if(info.getMy_index().contains("movie"))
@@ -97,7 +105,15 @@ public class DownLoadAdapter extends BaseAdapter{
 					holder.resouceDownloadState.setText("暂停下载");
 				}
 				holder.resourceDownProgress.setMax(MAX);
-				holder.resourceDownProgress.setSecondaryProgress((int) (completesize*MAX/filesize));
+				if(filesize!=0)
+				{
+					holder.resourceDownProgress.setSecondaryProgress((int) (completesize*MAX/filesize));
+				}
+				else
+				{
+					holder.resourceDownProgress.setSecondaryProgress(0);
+				}
+				
 				holder.resourcePercentDown.setText((percent)+"%");
 				if(info.getCompeleteSize()==info.getFileSize())
 				{

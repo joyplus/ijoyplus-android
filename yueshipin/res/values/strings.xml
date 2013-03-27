@@ -8,6 +8,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="tishi">提示</string>
     <string name="shifoutuichu">是否退出程序</string>
+    <string name="shifoutuichubofang">确定要退出播放吗？</string>
     <string name="queding">确定</string>
     <string name="quxiao">取消</string>
     <string name="settingexitsinaweibo">是否确认解除绑定？</string>

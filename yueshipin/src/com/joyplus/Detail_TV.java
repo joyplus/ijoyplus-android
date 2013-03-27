@@ -69,6 +69,8 @@ import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
 import com.joyplus.Video.PlayHistory;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.cache.videoCacheInfo;
+import com.joyplus.cache.videoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
@@ -127,6 +129,10 @@ public class Detail_TV extends Activity {
 	private CurrentPlayData mCurrentPlayData;
 	private static String TV_DETAIL = "电视剧详情";
 	Context mContext;
+	videoCacheInfo cacheInfo;
+	videoCacheInfo cacheInfoTemp;
+	videoCacheManager cacheManager;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -179,7 +185,10 @@ public class Detail_TV extends Activity {
 				current_index = Integer.parseInt(temp);
 			}
 		}
-
+		
+		cacheManager = new videoCacheManager(Detail_TV.this);
+		cacheInfo = new videoCacheInfo();
+		
 		aq.id(R.id.textView9).gone();
 		aq.id(R.id.textView13).gone();
 		aq.id(R.id.scrollView1).gone();
@@ -606,7 +615,7 @@ public class Detail_TV extends Activity {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
-			if (app.GetServiceData(prod_id) == null) {
+			if (cacheInfoTemp == null) {
 				aq.id(R.id.none_net).visible();
 			}
 			return;
@@ -616,7 +625,14 @@ public class Detail_TV extends Activity {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
 			if (m_ReturnProgramView != null && prod_id != null) {
-				app.SaveServiceData(prod_id, json.toString());// 根据id保存住
+//				app.SaveServiceData(prod_id, json.toString());// 根据id保存住
+				cacheInfo.setProd_id(prod_id);
+				cacheInfo.setProd_type("2");
+				cacheInfo.setProd_value(json.toString());
+				cacheInfo.setProd_subname("");
+				cacheInfo.setLast_playtime("");
+				cacheInfo.setCreate_date("");
+				cacheManager.saveVideoCache(cacheInfo);
 			}
 			// 创建数据源对象
 			InitData();
@@ -641,7 +657,12 @@ public class Detail_TV extends Activity {
 	private void CheckSaveData() {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
-		SaveData = app.GetServiceData(prod_id);
+//		SaveData = app.GetServiceData(prod_id);
+		cacheInfoTemp = cacheManager.getVideoCache(prod_id, "");
+		if(cacheInfoTemp!=null)
+		{
+			SaveData = cacheInfoTemp.getProd_value();
+		}
 		if (SaveData == null) {
 			GetServiceData();
 		} else {
@@ -683,7 +704,7 @@ public class Detail_TV extends Activity {
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
 		cb.SetHeader(app.getHeaders());
-		if (app.GetServiceData(prod_id) == null) {
+		if (cacheInfoTemp == null) {
 			aq.id(R.id.ProgressText).visible();
 			aq.progress(R.id.progress).ajax(cb);
 		} else {
@@ -1647,6 +1668,11 @@ public class Detail_TV extends Activity {
 						+ (index + 1) + ".mp4";
 				String my_name = m_ReturnProgramView.tv.name;
 				String download_state = "wait";
+//				if(Dao.getInstance(Detail_TV.this).isHasInfors(prod_id, Integer.toString(index)))
+//				{
+//					DownloadInfo info = new DownloadInfo(0,0,prod_id,Integer.toString(index+1),urlstr,m_ReturnProgramView.tv.poster,my_name,download_state);
+//					Dao.getInstance(Detail_TV.this).InsertOneInfo(info);
+//				}
 				DownloadTask downloadTask = new DownloadTask(v, this,
 						Detail_TV.this, prod_id, Integer.toString(index + 1),
 						urlstr, localfile);
