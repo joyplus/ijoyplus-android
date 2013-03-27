@@ -79,14 +79,14 @@ public class Dao_Cache {
 			
 			if(info.getProd_type().equalsIgnoreCase("1"))
 			{
-				sql = "update video_cache set prod_value=? and prod_subname=? and last_playtime=? where prod_id=?";
+				sql = "update video_cache set last_playtime=? where prod_id=?";
 				Object[] bindArgs = {info.getLast_playtime(),info.getProd_id()};
 				database.execSQL(sql, bindArgs);
 			}
 			else
 			{
-				sql = "update video_cache set prod_value=? and prod_subname=? and last_playtime=? where prod_id=? and prod_subname=?";
-				Object[] bindArgs = { info.getProd_id(), info.getProd_subname()};
+				sql = "update video_cache set prod_subname=? and last_playtime=? where prod_id=? and prod_subname=?";
+				Object[] bindArgs = {info.getProd_subname(),info.getLast_playtime(),info.getProd_id()};
 				database.execSQL(sql, bindArgs);
 			}
 		} catch (Exception e) {
