@@ -30,8 +30,10 @@ import io.vov.vitamio.MediaPlayer.OnCompletionListener;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
@@ -289,7 +291,7 @@ public class VideoPlayerActivity extends Activity implements
 					play_current_time + "");
 		}
 		else
-		{
+		{	
 			playhistory = new PlayHistory(playProdId, playProdSubName,//这个历史播放记录变量总是要初始化
 					play_current_time + "");
 		}
@@ -756,4 +758,40 @@ public class VideoPlayerActivity extends Activity implements
 		 * 保存历史播放记录的回调函数 prod_id index 播放时间
 		 */
 	}
+	
+	//返回键
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+			if (event.getAction() == KeyEvent.ACTION_DOWN
+					&& event.getRepeatCount() == 0) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle(getResources().getString(R.string.tishi));
+				builder.setMessage(
+						getResources().getString(R.string.shifoutuichubofang))
+						.setPositiveButton(
+								getResources().getString(R.string.queding),
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										finish();
+									}
+								})
+						.setNegativeButton(
+								getResources().getString(R.string.quxiao),
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+									}
+								});
+				builder.show();
+				return true;
+			}
+		}
+		return super.dispatchKeyEvent(event);
+	}
+	
+	
 }

@@ -326,7 +326,24 @@ public class Dao {
 			}
 		}
 	}
-
+	
+	/*
+	 * 更新某一条记录
+	 */
+	public synchronized void updataInfos(DownloadInfo info) {
+		SQLiteDatabase database = getConnection();
+		try {
+			String sql = "update download_info set fileSize=? where prod_id=? and my_index=?";
+			Object[] bindArgs = { info.getFileSize(), info.getProd_id(), info.getMy_index() };
+			database.execSQL(sql, bindArgs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+		}
+	}
 	/*
 	 * 更新某一条下载记录的状态
 	 */
@@ -363,6 +380,8 @@ public class Dao {
 		}
 	}
 	
+	
+	
 	/*
 	 * 添加本地播放记录
 	 */
@@ -388,8 +407,8 @@ public class Dao {
 	{
 		SQLiteDatabase database = getConnection();
 		try {
-			database.delete("play_history", "prod_id=? and my_index=?",
-					new String[] { playhistory.getProd_id(), playhistory.getMy_index()});
+			database.delete("play_history", "prod_id=?",
+					new String[] { playhistory.getProd_id()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -425,8 +444,8 @@ public class Dao {
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
-			String sql = "select prod_id,my_index,play_time from play_history where prod_id=? and my_index=?";
-			cursor = database.rawQuery(sql, new String[] { playhistory.getProd_id(),playhistory.getMy_index() });
+			String sql = "select prod_id,my_index,play_time from play_history where prod_id=?";
+			cursor = database.rawQuery(sql, new String[] { playhistory.getProd_id()});
 			while (cursor.moveToNext()) {
 				tempPlayHistory = new PlayHistory(cursor.getString(0), cursor.getString(1),
 						cursor.getString(2));

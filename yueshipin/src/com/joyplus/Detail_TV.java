@@ -23,10 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -70,7 +67,10 @@ import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
+import com.joyplus.Video.PlayHistory;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.cache.videoCacheInfo;
+import com.joyplus.cache.videoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
@@ -80,7 +80,6 @@ import com.joyplus.weibo.net.Weibo;
 import com.joyplus.weibo.net.WeiboDialogListener;
 import com.joyplus.weibo.net.WeiboException;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.xp.view.aq;
 
 public class Detail_TV extends Activity {
 	private AQuery aq;
@@ -130,7 +129,10 @@ public class Detail_TV extends Activity {
 	private CurrentPlayData mCurrentPlayData;
 	private static String TV_DETAIL = "电视剧详情";
 	Context mContext;
-	private Bitmap bitmap;
+	videoCacheInfo cacheInfo;
+	videoCacheInfo cacheInfoTemp;
+	videoCacheManager cacheManager;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -183,7 +185,10 @@ public class Detail_TV extends Activity {
 				current_index = Integer.parseInt(temp);
 			}
 		}
-
+		
+		cacheManager = new videoCacheManager(Detail_TV.this);
+		cacheInfo = new videoCacheInfo();
+		
 		aq.id(R.id.textView9).gone();
 		aq.id(R.id.textView13).gone();
 		aq.id(R.id.scrollView1).gone();
@@ -196,7 +201,7 @@ public class Detail_TV extends Activity {
 //		是否显示新手引导
 		if(app.GetServiceData("new_guider_3")==null)
 		{
-			aq.id(R.id.new_guider_3).visible(); 
+			aq.id(R.id.new_guider_3).visible();
 		}
 	}
 	
@@ -221,190 +226,162 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickTab1TopRight(View v) {
-		Intent intent = new Intent(Detail_TV.this, MainTopRightDialog.class);
-		intent.putExtra("prod_name", aq.id(R.id.program_name).getText()
-				.toString());
-		ImageView imageView3 = (ImageView)findViewById(R.id.imageView3);
-
-		Drawable drawable = imageView3.getDrawable();
-		if(drawable == null){
-			drawable = getResources().getDrawable(R.drawable.detail_picture_bg);
+		if (app.GetServiceData("Sina_Access_Token") != null) {
+			Intent i = new Intent(this, Sina_Share.class);
+			i.putExtra("prod_name", aq.id(R.id.program_name).getText()
+					.toString());
+			startActivity(i);
+		} else {
+			GotoSinaWeibo();
 		}
-		bitmap = drawableToBitmap(drawable);
-		intent.putExtra("bitmapImage", bitmap);
-		startActivity(intent);
-//		if (app.GetServiceData("Sina_Access_Token") != null) {
-//			Intent i = new Intent(this, Sina_Share.class);
-//			i.putExtra("prod_name", aq.id(R.id.program_name).getText()
-//					.toString());
-//			startActivity(i);
-//		} else {
-//			GotoSinaWeibo();
-//		}
 	}
-	public static Bitmap drawableToBitmap(Drawable drawable) {
-		// 取 drawable 的长宽
-		int w = drawable.getIntrinsicWidth();
-		int h = drawable.getIntrinsicHeight();
 
-		// 取 drawable 的颜色格式
-		Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
-				: Bitmap.Config.RGB_565;
-		// 建立对应 bitmap
-		Bitmap bitmap = Bitmap.createBitmap(w, h, config);
-		// 建立对应 bitmap 的画布
-		Canvas canvas = new Canvas(bitmap);
-		drawable.setBounds(0, 0, w, h);
-		// 把 drawable 内容画到画布中
-		drawable.draw(canvas);
-		return bitmap;
+	public void GotoSinaWeibo() {
+		Weibo weibo = Weibo.getInstance();
+		weibo.setupConsumerConfig(Constant.SINA_CONSUMER_KEY,
+				Constant.SINA_CONSUMER_SECRET);
+		weibo.setRedirectUrl("https://api.weibo.com/oauth2/default.html");
+		weibo.authorize(this, new AuthDialogListener());
+
 	}
-//	public void GotoSinaWeibo() {
-//		Weibo weibo = Weibo.getInstance();
-//		weibo.setupConsumerConfig(Constant.SINA_CONSUMER_KEY,
-//				Constant.SINA_CONSUMER_SECRET);
-//		weibo.setRedirectUrl("https://api.weibo.com/oauth2/default.html");
-//		weibo.authorize(this, new AuthDialogListener());
-//
-//	}
 
 	// 第三方新浪登录
-//	class AuthDialogListener implements WeiboDialogListener {
-//
-//		@Override
-//		public void onComplete(Bundle values) {
-//			uid = values.getString("uid");
-//			token = values.getString("access_token");
-//			expires_in = values.getString("expires_in");
-//			System.out.println("expires_in=====>" + expires_in);
-//			AccessToken accessToken = new AccessToken(token,
-//					Constant.SINA_CONSUMER_SECRET);
-//			accessToken.setExpiresIn(expires_in);
-//			Weibo.getInstance().setAccessToken(accessToken);
-//			// save access_token
-//			app.SaveServiceData("Sina_Access_Token", token);
-//			app.SaveServiceData("Sina_Access_UID", uid);
-//			UploadSinaHeadAndScreen_nameUrl(token, uid);
-//			app.MyToast(getApplicationContext(), "新浪微博已绑定");
-//		}
-//
-//		@Override
-//		public void onError(DialogError e) {
-//			app.MyToast(getApplicationContext(),
-//					"Auth error : " + e.getMessage());
-//		}
-//
-//		@Override
-//		public void onCancel() {
-//			app.MyToast(getApplicationContext(), "Auth cancel");
-//		}
-//
-//		@Override
-//		public void onWeiboException(WeiboException e) {
-//			app.MyToast(getApplicationContext(),
-//					"Auth exception : " + e.getMessage());
-//		}
-//
-//	}
+	class AuthDialogListener implements WeiboDialogListener {
 
-//	public boolean UploadSinaHeadAndScreen_nameUrl(String access_token,
-//			String uid) {
-//		String m_GetURL = "https://api.weibo.com/2/users/show.json?access_token="
-//				+ access_token + "&uid=" + uid;
-//
-//		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-//		cb.url(m_GetURL).type(JSONObject.class)
-//				.weakHandler(this, "UploadSinaHeadAndScreen_nameUrlResult");
-//
-//		cb.header("User-Agent",
-//				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-//		aq.ajax(cb);
-//		return false;
-//	}
+		@Override
+		public void onComplete(Bundle values) {
+			uid = values.getString("uid");
+			token = values.getString("access_token");
+			expires_in = values.getString("expires_in");
+			System.out.println("expires_in=====>" + expires_in);
+			AccessToken accessToken = new AccessToken(token,
+					Constant.SINA_CONSUMER_SECRET);
+			accessToken.setExpiresIn(expires_in);
+			Weibo.getInstance().setAccessToken(accessToken);
+			// save access_token
+			app.SaveServiceData("Sina_Access_Token", token);
+			app.SaveServiceData("Sina_Access_UID", uid);
+			UploadSinaHeadAndScreen_nameUrl(token, uid);
+			app.MyToast(getApplicationContext(), "新浪微博已绑定");
+		}
 
-//	public void UploadSinaHeadAndScreen_nameUrlResult(String url,
-//			JSONObject json, AjaxStatus status) {
-//		String head_url = json.optString("avatar_large");
-//		String screen_name = json.optString("screen_name");
-//		if (head_url != null && screen_name != null) {
-//			String m_PostURL = Constant.BASE_URL + "account/bindAccount";
-//
-//			Map<String, Object> params = new HashMap<String, Object>();
-//			params.put("source_id", uid);
-//			params.put("source_type", "1");
-//			params.put("pic_url", head_url);
-//			params.put("nickname", screen_name);
-//
-//			// save to local
-//			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-//			cb.SetHeader(app.getHeaders());
-//
-//			cb.params(params).url(m_PostURL).type(JSONObject.class)
-//					.weakHandler(this, "AccountBindAccountResult");
-//
-//			aq.ajax(cb);
-//		}
-//
-//	}
-//
-//	public void AccountBindAccountResult(String url, JSONObject json,
-//			AjaxStatus status) {
-//		if (json != null) {
-//			try {
-//				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
-//
-//					// reload the userinfo
-//					String url2 = Constant.BASE_URL + "user/view?userid="
-//							+ app.UserID;
-//
-//					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-//					cb.url(url2).type(JSONObject.class)
-//							.weakHandler(this, "AccountBindAccountResult3");
-//
-//					cb.SetHeader(app.getHeaders());
-//
-//					aq.ajax(cb);
-//				}
-//				// else
-//				// app.MyToast(this, "更新头像失败!");
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//
-//		} else {
-//
-//			// ajax error, show error code
-//			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
-//				app.MyToast(this,
-//						getResources().getString(R.string.networknotwork));
-//		}
-//	}
-//
-//	public void AccountBindAccountResult3(String url, JSONObject json,
-//			AjaxStatus status) {
-//
-//		if (json != null) {
-//			try {
-//				if (json.getString("nickname").trim().length() > 0) {
-//					app.SaveServiceData("UserInfo", json.toString());
-//					app.MyToast(getApplicationContext(), "新浪微博已绑定");
-//					Intent i = new Intent(this, Sina_Share.class);
-//					i.putExtra("prod_name", aq.id(R.id.program_name).getText()
-//							.toString());
-//					startActivity(i);
-//				}
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			}
-//
-//		} else {
-//
-//			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
-//				app.MyToast(this,
-//						getResources().getString(R.string.networknotwork));
-//		}
-//	}
+		@Override
+		public void onError(DialogError e) {
+			app.MyToast(getApplicationContext(),
+					"Auth error : " + e.getMessage());
+		}
+
+		@Override
+		public void onCancel() {
+			app.MyToast(getApplicationContext(), "Auth cancel");
+		}
+
+		@Override
+		public void onWeiboException(WeiboException e) {
+			app.MyToast(getApplicationContext(),
+					"Auth exception : " + e.getMessage());
+		}
+
+	}
+
+	public boolean UploadSinaHeadAndScreen_nameUrl(String access_token,
+			String uid) {
+		String m_GetURL = "https://api.weibo.com/2/users/show.json?access_token="
+				+ access_token + "&uid=" + uid;
+
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.url(m_GetURL).type(JSONObject.class)
+				.weakHandler(this, "UploadSinaHeadAndScreen_nameUrlResult");
+
+		cb.header("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+		aq.ajax(cb);
+		return false;
+	}
+
+	public void UploadSinaHeadAndScreen_nameUrlResult(String url,
+			JSONObject json, AjaxStatus status) {
+		String head_url = json.optString("avatar_large");
+		String screen_name = json.optString("screen_name");
+		if (head_url != null && screen_name != null) {
+			String m_PostURL = Constant.BASE_URL + "account/bindAccount";
+
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("source_id", uid);
+			params.put("source_type", "1");
+			params.put("pic_url", head_url);
+			params.put("nickname", screen_name);
+
+			// save to local
+			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+			cb.SetHeader(app.getHeaders());
+
+			cb.params(params).url(m_PostURL).type(JSONObject.class)
+					.weakHandler(this, "AccountBindAccountResult");
+
+			aq.ajax(cb);
+		}
+
+	}
+
+	public void AccountBindAccountResult(String url, JSONObject json,
+			AjaxStatus status) {
+		if (json != null) {
+			try {
+				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
+
+					// reload the userinfo
+					String url2 = Constant.BASE_URL + "user/view?userid="
+							+ app.UserID;
+
+					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+					cb.url(url2).type(JSONObject.class)
+							.weakHandler(this, "AccountBindAccountResult3");
+
+					cb.SetHeader(app.getHeaders());
+
+					aq.ajax(cb);
+				}
+				// else
+				// app.MyToast(this, "更新头像失败!");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} else {
+
+			// ajax error, show error code
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(this,
+						getResources().getString(R.string.networknotwork));
+		}
+	}
+
+	public void AccountBindAccountResult3(String url, JSONObject json,
+			AjaxStatus status) {
+
+		if (json != null) {
+			try {
+				if (json.getString("nickname").trim().length() > 0) {
+					app.SaveServiceData("UserInfo", json.toString());
+					app.MyToast(getApplicationContext(), "新浪微博已绑定");
+					Intent i = new Intent(this, Sina_Share.class);
+					i.putExtra("prod_name", aq.id(R.id.program_name).getText()
+							.toString());
+					startActivity(i);
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+		} else {
+
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(this,
+						getResources().getString(R.string.networknotwork));
+		}
+	}
 
 	public void OnClickContent(View v) {
 		if (m_ReturnProgramView.tv != null) {
@@ -421,11 +398,6 @@ public class Detail_TV extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		if(bitmap != null && !bitmap.isRecycled()){   
-	        bitmap.recycle();   
-	        bitmap = null;   
-	      } 
-		System.gc();
 		if (aq != null)
 			aq.dismiss();
 		super.onDestroy();
@@ -643,7 +615,7 @@ public class Detail_TV extends Activity {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
-			if (app.GetServiceData(prod_id) == null) {
+			if (cacheInfoTemp == null) {
 				aq.id(R.id.none_net).visible();
 			}
 			return;
@@ -653,7 +625,14 @@ public class Detail_TV extends Activity {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
 			if (m_ReturnProgramView != null && prod_id != null) {
-				app.SaveServiceData(prod_id, json.toString());// 根据id保存住
+//				app.SaveServiceData(prod_id, json.toString());// 根据id保存住
+				cacheInfo.setProd_id(prod_id);
+				cacheInfo.setProd_type("2");
+				cacheInfo.setProd_value(json.toString());
+				cacheInfo.setProd_subname("");
+				cacheInfo.setLast_playtime("");
+				cacheInfo.setCreate_date("");
+				cacheManager.saveVideoCache(cacheInfo);
 			}
 			// 创建数据源对象
 			InitData();
@@ -678,7 +657,12 @@ public class Detail_TV extends Activity {
 	private void CheckSaveData() {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
-		SaveData = app.GetServiceData(prod_id);
+//		SaveData = app.GetServiceData(prod_id);
+		cacheInfoTemp = cacheManager.getVideoCache(prod_id, "");
+		if(cacheInfoTemp!=null)
+		{
+			SaveData = cacheInfoTemp.getProd_value();
+		}
 		if (SaveData == null) {
 			GetServiceData();
 		} else {
@@ -720,7 +704,7 @@ public class Detail_TV extends Activity {
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
 		cb.SetHeader(app.getHeaders());
-		if (app.GetServiceData(prod_id) == null) {
+		if (cacheInfoTemp == null) {
 			aq.id(R.id.ProgressText).visible();
 			aq.progress(R.id.progress).ajax(cb);
 		} else {
@@ -848,7 +832,15 @@ public class Detail_TV extends Activity {
 		if (app.use2G3G) {
 			// write current_index to myTvSetting file
 			current_index = 0;
-
+			PlayHistory tempData = Dao.getInstance(Detail_TV.this).queryPlayHistory(new PlayHistory(prod_id,"0","0"));
+//			if(tempData == null)
+//			{
+//				
+//			}
+//			else
+//			{
+//				current_index = "";
+//			}
 			// 电视剧type为2 ，sbuname 为当前集数
 			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
 					"1", 2);
@@ -1676,6 +1668,11 @@ public class Detail_TV extends Activity {
 						+ (index + 1) + ".mp4";
 				String my_name = m_ReturnProgramView.tv.name;
 				String download_state = "wait";
+//				if(Dao.getInstance(Detail_TV.this).isHasInfors(prod_id, Integer.toString(index)))
+//				{
+//					DownloadInfo info = new DownloadInfo(0,0,prod_id,Integer.toString(index+1),urlstr,m_ReturnProgramView.tv.poster,my_name,download_state);
+//					Dao.getInstance(Detail_TV.this).InsertOneInfo(info);
+//				}
 				DownloadTask downloadTask = new DownloadTask(v, this,
 						Detail_TV.this, prod_id, Integer.toString(index + 1),
 						urlstr, localfile);

@@ -75,7 +75,11 @@ private static final int MAX = 100;
 			DownloadInfo info = data.get(position);
 			long completesize = info.getCompeleteSize();
 			long filesize = info.getFileSize();
-			long percent =completesize*MAX/filesize;
+			long percent = 0;
+			if(filesize != 0)
+			{
+				percent =completesize*MAX/filesize;
+			}
 			String posterurl = info.getUrlposter();
 			if(info.getMy_index().contains("_show"))
 			{
@@ -100,7 +104,14 @@ private static final int MAX = 100;
 				holder.resouceDownloadState.setText("暂停下载");
 			}
 			holder.resourceDownProgress.setMax(MAX);
-			holder.resourceDownProgress.setSecondaryProgress((int) (completesize*MAX/filesize));
+			if(filesize == 0)
+			{
+				holder.resourceDownProgress.setSecondaryProgress(0);
+			}
+			else
+			{
+				holder.resourceDownProgress.setSecondaryProgress((int) (completesize*MAX/filesize));
+			}
 			holder.resourcePercentDown.setText((percent)+"%");
 			if(info.getCompeleteSize()==info.getFileSize())
 			{

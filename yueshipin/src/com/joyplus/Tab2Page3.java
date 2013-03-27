@@ -43,6 +43,7 @@ public class Tab2Page3 extends Activity implements
 	private ArrayList dataStruct;
 	private MyListView ItemsListView;
 	private Tab2Page3ListAdapter Tab2Page3Adapter;
+	private int isLastisNext = 1;
 	private static String OPULAR_SHOW_TOP_LIST = "综艺悦榜";
 	Context mContext;
 	@Override
@@ -52,6 +53,7 @@ public class Tab2Page3 extends Activity implements
 		app = (App) getApplication();
 		mContext = this;
 		aq = new AQuery(this);
+		dataStruct = new ArrayList();//happy
 		// 获取listview对象
 		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
@@ -61,8 +63,31 @@ public class Tab2Page3 extends Activity implements
 				
 				new GetDataTask().execute();
 				
-				GetServiceData();
+				GetServiceData(1);
 		}});
+		//下拉加载更多
+		ItemsListView.setOnScrollListener(new OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				switch (scrollState) {
+				// 当不滚动时
+				case OnScrollListener.SCROLL_STATE_IDLE:
+					// 判断滚动到底部
+					if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
+						isLastisNext++;
+						GetServiceData(isLastisNext);
+					}
+					break;
+				}
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+
+			}
+		});
+		
 		CheckSaveData();
 	}
 
@@ -128,11 +153,37 @@ public class Tab2Page3 extends Activity implements
 
 	public void GetVideoMovies() {
 		String m_j = null;
-		dataStruct = new ArrayList();
-
-		NotifyDataAnalysisFinished();
+//		dataStruct = new ArrayList();
+//		NotifyDataAnalysisFinished();
+		
 		if (m_ReturnTops.tops == null)
 			return;
+		if(isLastisNext > 1)
+		{
+			for (int i = 0; i < m_ReturnTops.tops.length; i++) {
+
+				if (m_ReturnTops.tops[i].items != null) {
+					for (int j = 0; j < m_ReturnTops.tops[i].items.length; j++) {
+						Tab2Page3ListData m_Tab2Page3ListData = new Tab2Page3ListData();
+						m_Tab2Page3ListData.Pic_ID = m_ReturnTops.tops[i].items[j].prod_id;
+						m_Tab2Page3ListData.Pic_url = m_ReturnTops.tops[i].items[j].prod_pic_url;
+						m_Tab2Page3ListData.Pic_name = m_ReturnTops.tops[i].items[j].prod_name;
+						m_Tab2Page3ListData.Pic_list1 = m_ReturnTops.tops[i].items[j].cur_item_name;
+
+						dataStruct.add(m_Tab2Page3ListData);
+					}
+				}
+				break;
+			}
+		}
+		else
+		{
+			NotifyDataAnalysisFinished();
+		}
+		if(isLastisNext == 1)
+		{
+			dataStruct = new ArrayList();//happy
+		}
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 
 			if (m_ReturnTops.tops[i].items != null) {
@@ -172,10 +223,17 @@ public class Tab2Page3 extends Activity implements
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
-			if (m_ReturnTops.tops.length > 0)
-				app.SaveServiceData("show_tops", json.toString());
-
+			if(isLastisNext == 1)
+			{
+				m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
+				if (m_ReturnTops.tops.length > 0)
+					app.SaveServiceData("show_tops", json.toString());
+			}
+			else if(isLastisNext>1)
+			{
+				m_ReturnTops = null;
+				m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
+			}
 			// 创建数据源对象
 			GetVideoMovies();
 
@@ -246,7 +304,7 @@ public class Tab2Page3 extends Activity implements
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("show_tops");
 		if (SaveData == null) {
-			GetServiceData();
+			GetServiceData(1);
 		} else {
 			try {
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
@@ -256,7 +314,7 @@ public class Tab2Page3 extends Activity implements
 					@Override
 					public void run() {
 						// execute the task
-						GetServiceData();
+						GetServiceData(1);
 					}
 				}, 2000);
 
@@ -275,8 +333,9 @@ public class Tab2Page3 extends Activity implements
 	}
 
 	// InitListData
-	public void GetServiceData() {
-		String url = Constant.BASE_URL + "show_tops";
+	public void GetServiceData(int index) {
+		String url = Constant.BASE_URL + "show_tops"+ "?page_num="
+				+ Integer.toString(index) + "&page_size=10";
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");

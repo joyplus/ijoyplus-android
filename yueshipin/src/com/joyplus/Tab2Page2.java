@@ -60,9 +60,9 @@ public class Tab2Page2 extends Activity implements
 		ItemsListView.setOnItemClickListener(this);
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
-				
+
 				new GetDataTask().execute();
-				
+
 				GetServiceData();
 		}});
 		CheckSaveData();
@@ -314,7 +314,7 @@ public class Tab2Page2 extends Activity implements
 		{
 			aq.ajax(cb);
 		}
-		
+
 
 	}
 }
