@@ -53,6 +53,7 @@ import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.download.Dao;
+import com.joyplus.download.Dao_Cache;
 import com.joyplus.download.DownLoadAdapter;
 import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
@@ -563,6 +564,15 @@ public class Detail_Movie extends Activity {
 			if(m_ReturnProgramView != null&&prod_id!=null)
 			{
 				app.SaveServiceData(prod_id, json.toString());//根据id保存住
+//				VideoCache videoCache = new VidoeCache();
+//				videoCache.setProdId(prod_id);
+//				videoCache.setProdValue(json.toString());
+//				CacheManager.putInCache(videoCache);
+//				
+//				CacheKey cacheKey;
+//				cacheKey.setProdId();
+//				cahceKey.setIndex();
+//				CacheManager.loadFromCahce(cacheKey);
 			}
 			// 创建数据源对象
 			InitData();
