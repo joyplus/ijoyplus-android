@@ -11,20 +11,28 @@ import org.json.JSONObject;
 
 import android.R.color;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
-
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -47,12 +55,19 @@ public class Search extends Activity implements
 	private String topic_id_ready_have = null;
 
 	private ArrayList dataStruct;
-	private ListView ItemsListView;
+	private ListView ItemsListView, listHistory;
 	private SearchListAdapter SearchAdapter;
+	private AppAdapter adapter;
 	
-	private static String SEARCH  = "查询";
-	private static String SEARCH_LIST  = "查询结果";
+	private static String SEARCH = "查询";
+	private static String SEARCH_LIST = "查询结果";
 	Context mContext;
+
+	private SharedPreferences sharedPreferences = null;
+	private SharedPreferences.Editor editor = null;
+
+	final ArrayList<HashMap<String, Object>> users = new ArrayList<HashMap<String, Object>>();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,6 +75,9 @@ public class Search extends Activity implements
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
+
+		listHistory = (ListView) findViewById(R.id.listView2);
+		
 		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
@@ -67,12 +85,41 @@ public class Search extends Activity implements
 		topic_id = intent.getStringExtra("topic_id");
 		type = intent.getStringExtra("type");
 		topic_id_ready_have = intent.getStringExtra("topic_id_ready_have");
-		if (app.isNetworkAvailable()==false) {
+		if (app.isNetworkAvailable() == false) {
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
 		}
-	}
+		aq.id(R.id.removehistory).visible();
+		aq.id(R.id.listView2).visible();
+		
+
+		showHistory();
+		listHistory.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				String content = (String)users.get(arg2).get("content");		
+				Log.i("ssssssssssaaaaaaa", content);
+			}
+		});
+		}
+
 	
+	private void showHistory() {
+		sharedPreferences = getSharedPreferences("test", MODE_WORLD_READABLE);
+		editor = sharedPreferences.edit();
+		String values = String.valueOf(sharedPreferences.getAll().values());
+		values = values.replaceAll("\\[", "");
+		values = values.replaceAll("\\]", "");
+		String[] st = values.split(",");
+
+		adapter = new AppAdapter(this, st);
+		listHistory.setAdapter(adapter);
+//		listHistory.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,st));
+		
+	}
+
 	public void OnClickAdd(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
 		SearchListData m_SearchListData = (SearchListData) ItemsListView
@@ -87,12 +134,21 @@ public class Search extends Activity implements
 	}
 
 	public void OnClickSearch(View v) {
-		String search_word =null;
-		if(aq.id(R.id.editText1).getText()!=null)
-		{
+		aq.id(R.id.removehistory).gone();
+		aq.id(R.id.listView2).gone();
+
+		sharedPreferences = getSharedPreferences("test", MODE_WORLD_READABLE);
+		editor = sharedPreferences.edit();
+
+		String search_word = null;
+		if (aq.id(R.id.editText1).getText() != null) {
 			search_word = aq.id(R.id.editText1).getText().toString().trim();
 		}
 		if (search_word.length() > 0) {
+
+			editor.putString(search_word, search_word);
+			editor.commit();
+
 			// clear
 			if (dataStruct != null && dataStruct.size() > 0) {
 				dataStruct.clear();
@@ -105,6 +161,7 @@ public class Search extends Activity implements
 			aq.id(R.id.editText1).getTextView().setCursorVisible(false);// 失去光标
 			imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 			GetServiceData(search_word);
+
 		} else {
 			app.MyToast(this, "请输入你要搜索的内容.");
 		}
@@ -147,6 +204,30 @@ public class Search extends Activity implements
 		super.onStart();
 	}
 
+	public void OnClickremoveHistory(View v) {
+		Dialog dialog = new AlertDialog.Builder(this).
+				setMessage("确定清除历史记录？").setPositiveButton("确定", new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						sharedPreferences = getSharedPreferences("test", MODE_WORLD_READABLE);
+						editor = sharedPreferences.edit();
+						editor.clear();
+						editor.commit();
+						showHistory();
+						dialog.dismiss();
+					}
+				}).setNegativeButton("取消", new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						
+					}
+				}).create();
+		dialog.show();
+	}
+
 	public void GetVideoMovies() {
 		dataStruct = new ArrayList();
 		NotifyDataAnalysisFinished();
@@ -170,8 +251,7 @@ public class Search extends Activity implements
 					m_SearchListData.Is_Ready_Have = true;
 				} else
 					m_SearchListData.Is_Ready_Have = false;
-				if(m_ReturnSearch.results[i].prod_pic_url!=null)
-				{
+				if (m_ReturnSearch.results[i].prod_pic_url != null) {
 					m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url;
 				}
 				m_SearchListData.Pic_name = m_ReturnSearch.results[i].prod_name;
@@ -213,15 +293,12 @@ public class Search extends Activity implements
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		aq.id(R.id.ProgressText).gone();
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
-			if(app.isNetworkAvailable())
-			{
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+			if (app.isNetworkAvailable()) {
 				aq.id(R.id.editText1).getTextView().setCursorVisible(true);
 				aq.id(R.id.listView1).gone();
 				aq.id(R.id.textViewNoResult).visible();
-			}
-			else
-			{
+			} else {
 				app.MyToast(aq.getContext(),
 						getResources().getString(R.string.networknotwork));
 				aq.id(R.id.editText1).getTextView().setCursorVisible(true);
@@ -238,7 +315,7 @@ public class Search extends Activity implements
 
 			aq.id(R.id.editText1).getTextView().setCursorVisible(true);
 			if (topic_id != null) {
-//				aq.id(R.id.Tab1TopRightImage).background(R.drawable.tab3_p3_c2_top_right);
+				// aq.id(R.id.Tab1TopRightImage).background(R.drawable.tab3_p3_c2_top_right);
 				aq.id(R.id.Tab1TopRightImage).gone();
 				aq.id(R.id.editText1).gone();
 				aq.id(R.id.Tab1TopRightImage2).visible();
@@ -291,6 +368,8 @@ public class Search extends Activity implements
 		}
 		return SearchAdapter;
 	}
+	
+	
 
 	// listview的点击事件接口函数
 	@Override
@@ -354,8 +433,8 @@ public class Search extends Activity implements
 		/*
 		 * 搜索关键字如果有空格不会返回结果
 		 */
-		String url = Constant.BASE_URL + "search?keyword=" + URLEncoder.encode(search_word)
-				+ "&page_num=1&page_size=50";
+		String url = Constant.BASE_URL + "search?keyword="
+				+ URLEncoder.encode(search_word) + "&page_num=1&page_size=50";
 
 		Map<String, Object> params = new HashMap<String, Object>();
 		if (type != null && type.equalsIgnoreCase("tv")) {
@@ -405,5 +484,45 @@ public class Search extends Activity implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	class AppAdapter extends BaseAdapter {
+		Context context;
+		String[] array;
+
+		AppAdapter(Context context, String[] array) {
+			this.context = context;
+			this.array = array;
+
+		}
+
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return array.length;
+		}
+
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return array[position];
+		}
+
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			// TODO Auto-generated method stub
+
+			TextView tv = new TextView(getApplicationContext());
+			tv.setText(array[position]);
+			tv.setTextColor(Color.BLACK);
+			tv.setTextSize(20);
+			tv.setClickable(true);
+			
+			
+			return tv;
+		}
+
 	}
 }
