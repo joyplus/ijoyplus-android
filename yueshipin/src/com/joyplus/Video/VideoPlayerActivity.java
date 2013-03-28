@@ -26,6 +26,8 @@ import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.cache.videoCacheInfo;
 import com.joyplus.cache.videoCacheManager;
 import com.joyplus.download.Dao;
+import com.joyplus.playrecord.playRecordInfo;
+import com.joyplus.playrecord.playRecordManager;
 import com.umeng.analytics.MobclickAgent;
 
 import io.vov.vitamio.MediaPlayer;
@@ -103,9 +105,9 @@ public class VideoPlayerActivity extends Activity implements
 	private long mStartTX = 0;
 	private CurrentPlayData mCurrentPlayData;
 
-	private static String MOVIE_PLAY  = "电影播放";
-	private static String TV_PLAY  = "电视剧播放";
-	private static String SHOW_PLAY  = "综艺播放";
+	private static String MOVIE_PLAY = "电影播放";
+	private static String TV_PLAY = "电视剧播放";
+	private static String SHOW_PLAY = "综艺播放";
 	Context mContext;
 	/*
 	 * playHistoryData
@@ -113,7 +115,10 @@ public class VideoPlayerActivity extends Activity implements
 	videoCacheInfo cacheInfo;
 	videoCacheInfo cacheInfoTemp;
 	videoCacheManager cacheManager;
-	
+	playRecordInfo playrecordinfo;
+	playRecordManager playrecordmanager;
+	private String tvsubname = null;
+
 	private String playProdId = null;// 视频id
 	private String playProdName = null;// 视频名字
 	private String playProdSubName = null;// 视频的集数
@@ -140,14 +145,16 @@ public class VideoPlayerActivity extends Activity implements
 
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
-		
+
 		setContentView(R.layout.videoview);
 		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
-		
+
 		cacheManager = new videoCacheManager(VideoPlayerActivity.this);
 		cacheInfo = new videoCacheInfo();
+		playrecordmanager = new playRecordManager(VideoPlayerActivity.this);
+		playrecordinfo = new playRecordInfo();
 		
 		InitPlayData();
 		// 每次播放时及时把播放的flag清除为0
@@ -177,7 +184,8 @@ public class VideoPlayerActivity extends Activity implements
 		mStartTX = TrafficStats.getTotalTxBytes();
 		if (mStartRX == TrafficStats.UNSUPPORTED
 				|| mStartTX == TrafficStats.UNSUPPORTED) {
-			aq.id(R.id.textViewRate).text("Your device does not support traffic stat monitoring.");
+			aq.id(R.id.textViewRate).text(
+					"Your device does not support traffic stat monitoring.");
 		} else {
 			mHandler.postDelayed(mRunnable, 1000);
 		}
@@ -186,7 +194,8 @@ public class VideoPlayerActivity extends Activity implements
 		if (mTitle != null && mTitle.length() > 0) {
 			aq.id(R.id.textView1).text("正在载入 ...");
 			if (playProdSubName != null && playProdSubName.length() > 0) {
-				aq.id(R.id.mediacontroller_file_name).text(mTitle + playProdSubName);
+				aq.id(R.id.mediacontroller_file_name).text(
+						mTitle + playProdSubName);
 				mVideoView.setTitle(mTitle + playProdSubName);
 				mMediaController.setFileName(playProdSubName);
 				mMediaController.setSubName(playProdSubName);
@@ -199,19 +208,19 @@ public class VideoPlayerActivity extends Activity implements
 		}
 		mVideoView.setApp(app);
 		mMediaController.setApp(app);
-	
-//		mVideoView.setVideoPath(mPath);
+
+		// mVideoView.setVideoPath(mPath);
 		//
 		mVideoView.setOnCompletionListener(this);
 
 		// mVideoView.setBackgroundColor(color.black);
 
 		// 设置显示名称
-		if (play_current_time > 0){
-			aq.id(R.id.textView2).text("上次播放到 "+stringForTime(play_current_time));
+		if (play_current_time > 0) {
+			aq.id(R.id.textView2).text(
+					"上次播放到 " + stringForTime(play_current_time));
 			mVideoView.JumpTo(play_current_time);
-		}
-		else {
+		} else {
 			aq.id(R.id.textView2).invisible();
 		}
 
@@ -226,18 +235,18 @@ public class VideoPlayerActivity extends Activity implements
 		i.setClass(this, DlnaSelectDevice.class);
 		bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 		checkBind = true;
-		
-		if(!URLUtil.isNetworkUrl(mPath)){
+
+		if (!URLUtil.isNetworkUrl(mPath)) {
 			aq.id(R.id.textViewRate).gone();
-			
+
 			mVideoView.setVideoPath(mPath);
-			
-		}else {
+
+		} else {
 			mCurrentPlayData = app.getCurrentPlayData();
-			
-				if (playProdId != null)
-					GetServiceData();
-//			}
+
+			if (playProdId != null)
+				GetServiceData();
+			// }
 		}
 
 	}
@@ -256,7 +265,6 @@ public class VideoPlayerActivity extends Activity implements
 		}
 	}
 
-	
 	public void InitPlayData() {
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
@@ -269,23 +277,38 @@ public class VideoPlayerActivity extends Activity implements
 		playProdId = bundle.getString("prod_id");
 		playProdSubName = bundle.getString("prod_subname");
 		playProdType = Integer.parseInt(bundle.getString("prod_type"));
-		play_current_time = bundle.getLong("current_time");
-		
-		//播放记录
-		cacheInfo = cacheManager.getVideoCache(playProdId);
-		if(cacheInfo!=null&&cacheInfo.getLast_playtime()!=null&&cacheInfo.getLast_playtime().length()>0)
+		if(playProdType == 2||playProdType == 131)
 		{
-			play_current_time = Long.parseLong(cacheInfo.getLast_playtime());
+			tvsubname = playProdSubName;
+			playProdSubName = "第"+playProdSubName+"集";
+			playrecordmanager.deletePlayRecord(playProdId);
 		}
-			aq.id(R.id.imageButton6).gone();
+		else if(playProdType == 3)//综艺
+		{
+			tvsubname = playProdSubName;
+			playrecordmanager.deletePlayRecord(playProdId);
+		}
+		
+		play_current_time = bundle.getLong("current_time");
+
+		if (playProdType == 1) {
+			// 播放记录
+			cacheInfo = cacheManager.getVideoCache(playProdId);
+			if (cacheInfo != null && cacheInfo.getLast_playtime() != null
+					&& cacheInfo.getLast_playtime().length() > 0) {
+				play_current_time = Long
+						.parseLong(cacheInfo.getLast_playtime());
+			}
+		}
+		aq.id(R.id.imageButton6).gone();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
-        MobclickAgent.onEventEnd(mContext, TV_PLAY);
-        MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
+		MobclickAgent.onEventEnd(mContext, TV_PLAY);
+		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		MobclickAgent.onPause(this);
 		if (mVideoView != null) {
 			/*
@@ -293,20 +316,29 @@ public class VideoPlayerActivity extends Activity implements
 			 */
 			current_time = mVideoView.getCurrentPosition();
 			long total_time = mVideoView.getDuration();
-			if(URLUtil.isNetworkUrl(mPath))
+			if (URLUtil.isNetworkUrl(mPath))
 				SaveToServer(current_time, total_time);
 			
-			if(current_time >0)
-			{
-				// 保存播放记录在本地
-				cacheInfo = cacheManager.getVideoCache(playProdId);
-				if(cacheInfo!=null)
+			if (current_time > 0) {
+				
+				if(playProdType!=1)
 				{
-					cacheInfo.setLast_playtime(current_time+"");
-					cacheManager.saveVideoCache(cacheInfo);
+					playrecordinfo.setProd_id(playProdId);
+					playrecordinfo.setProd_subname(tvsubname);
+					playrecordinfo.setLast_playtime(current_time+"");
+					playrecordmanager.savePlayRecord(playrecordinfo);
+				}
+				else
+				{
+					// 保存播放记录在本地
+					cacheInfo = cacheManager.getVideoCache(playProdId);
+					if (cacheInfo != null) {
+						cacheInfo.setLast_playtime(current_time + "");
+						cacheManager.saveVideoCache(cacheInfo);
+					}
 				}
 				play_current_time = current_time;
-			}	 
+			}
 			mVideoView.pause();
 		}
 	}
@@ -320,7 +352,7 @@ public class VideoPlayerActivity extends Activity implements
 			 * 取得播放时间,设置播放时间,进行播放
 			 */
 			mVideoView.resume();
-			if (play_current_time > 0)//当用户点击home键以后要回来就得调用这个
+			if (play_current_time > 0)// 当用户点击home键以后要回来就得调用这个
 				mVideoView.seekTo(play_current_time);
 		}
 	}
@@ -355,9 +387,9 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void OnClickReturn(View v) {
-        MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
-        MobclickAgent.onEventEnd(mContext, TV_PLAY);
-        MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
+		MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
+		MobclickAgent.onEventEnd(mContext, TV_PLAY);
+		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		finish();
 
 	}
@@ -488,8 +520,8 @@ public class VideoPlayerActivity extends Activity implements
 	@Override
 	public void onCompletion(MediaPlayer player) {
 		MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
-        MobclickAgent.onEventEnd(mContext, TV_PLAY);
-        MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
+		MobclickAgent.onEventEnd(mContext, TV_PLAY);
+		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		finish();
 	}
 
@@ -517,18 +549,18 @@ public class VideoPlayerActivity extends Activity implements
 		try {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
-			if(m_ReturnProgramView == null)
+			if (m_ReturnProgramView == null)
 				finish();
 			mPath = GetRedirectURL();
-			
-			if (mMediaController != null){
-				
+
+			if (mMediaController != null) {
+
 				app.setCurrentPlayData(mCurrentPlayData);
 				app.set_ReturnProgramView(m_ReturnProgramView);
-//				mMediaController.ShowCurrentPlayData(mCurrentPlayData);
-//				mMediaController.setProd_Data(m_ReturnProgramView);
+				// mMediaController.ShowCurrentPlayData(mCurrentPlayData);
+				// mMediaController.setProd_Data(m_ReturnProgramView);
 			}
-			if(mPath != null && mPath.length() >0)
+			if (mPath != null && mPath.length() > 0)
 				mVideoView.setVideoPath(app.getURLPath());
 
 			// 创建数据源对象
@@ -554,7 +586,7 @@ public class VideoPlayerActivity extends Activity implements
 			if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
 				for (int i = 0; i < m_ReturnProgramView.movie.episodes[0].down_urls.length; i++) {
 					for (int k = 0; k < m_ReturnProgramView.movie.episodes[0].down_urls[i].urls.length; k++) {
-						  
+
 						for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
 							if (PROD_SOURCE == null)
 								for (int ki = 0; ki < m_ReturnProgramView.movie.episodes[0].down_urls[i].urls.length; ki++) {
@@ -564,6 +596,7 @@ public class VideoPlayerActivity extends Activity implements
 										/*
 										 * #define GAO_QING @"mp4" #define
 										 * BIAO_QING @"flv" #define CHAO_QING
+										 * 
 										 * @"hd2" #define LIU_CHANG @"3gp"
 										 */
 										if (urls != null
@@ -574,7 +607,8 @@ public class VideoPlayerActivity extends Activity implements
 											mCurrentPlayData.CurrentQuality = ki;
 											mCurrentPlayData.ShowQuality = qi;
 											PROD_SOURCE = urls.url.trim();
-											MobclickAgent.onEventBegin(mContext, MOVIE_PLAY);
+											MobclickAgent.onEventBegin(
+													mContext, MOVIE_PLAY);
 										}
 										if (PROD_SOURCE != null)
 											break;
@@ -608,7 +642,8 @@ public class VideoPlayerActivity extends Activity implements
 										mCurrentPlayData.CurrentSource = i;
 										mCurrentPlayData.CurrentQuality = ki;
 										PROD_SOURCE = urls.url.trim();
-										MobclickAgent.onEventBegin(mContext, TV_PLAY);
+										MobclickAgent.onEventBegin(mContext,
+												TV_PLAY);
 									}
 									if (PROD_SOURCE != null)
 										break;
@@ -626,7 +661,6 @@ public class VideoPlayerActivity extends Activity implements
 			if (m_ReturnProgramView.show.episodes[0].down_urls != null) {
 				for (int i = 0; i < m_ReturnProgramView.show.episodes[0].down_urls.length; i++) {
 
-
 					for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
 						if (PROD_SOURCE == null)
 							for (int ki = 0; ki < m_ReturnProgramView.show.episodes[0].down_urls[i].urls.length; ki++) {
@@ -641,7 +675,8 @@ public class VideoPlayerActivity extends Activity implements
 										mCurrentPlayData.CurrentSource = i;
 										mCurrentPlayData.CurrentQuality = ki;
 										PROD_SOURCE = urls.url.trim();
-										MobclickAgent.onEventBegin(mContext, SHOW_PLAY);
+										MobclickAgent.onEventBegin(mContext,
+												SHOW_PLAY);
 									}
 									if (PROD_SOURCE != null)
 										break;
@@ -659,6 +694,7 @@ public class VideoPlayerActivity extends Activity implements
 
 		return PROD_SOURCE;
 	}
+
 	private final Runnable mRunnable = new Runnable() {
 		long beginTimeMillis, timeTakenMillis, timeLeftMillis, rxByteslast,
 				m_bitrate;
@@ -677,7 +713,7 @@ public class VideoPlayerActivity extends Activity implements
 			m_bitrate = (rxBytes - rxByteslast) * 8 * 1000 / timeTakenMillis;
 			rxByteslast = rxBytes;
 
-			RX.setText(Long.toString(m_bitrate/8000)+"kb/s");
+			RX.setText(Long.toString(m_bitrate / 8000) + "kb/s");
 
 			// Fun_downloadrate();
 			mHandler.postDelayed(mRunnable, 1000);
@@ -694,9 +730,10 @@ public class VideoPlayerActivity extends Activity implements
 											// 视频id
 		params.put("prod_name", playProdName);// required
 												// string 视频名字
-		params.put("prod_subname", Integer.toString(mCurrentPlayData.CurrentIndex+1));// required
-													// string
-													// 视频的集数
+		params.put("prod_subname",
+				Integer.toString(mCurrentPlayData.CurrentIndex + 1));// required
+		// string
+		// 视频的集数
 		params.put("prod_type", playProdType);// required int 视频类别
 												// 1：电影，2：电视剧，3：综艺，4：视频
 		params.put("playback_time", playback_time);// _time required int
@@ -725,8 +762,8 @@ public class VideoPlayerActivity extends Activity implements
 		 * 保存历史播放记录的回调函数 prod_id index 播放时间
 		 */
 	}
-	
-	//返回键
+
+	// 返回键
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
@@ -759,6 +796,5 @@ public class VideoPlayerActivity extends Activity implements
 		}
 		return super.dispatchKeyEvent(event);
 	}
-	
-	
+
 }

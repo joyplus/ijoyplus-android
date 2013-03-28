@@ -34,4 +34,5 @@ public class videoCacheManager {
 	public videoCacheInfo getVideoCache(String prod_id) {
 		return Dao_Cache.getInstance(context).getOneInfo(prod_id);
 	}
+
 }

@@ -67,6 +67,8 @@ import com.joyplus.cache.videoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
+import com.joyplus.playrecord.playRecordInfo;
+import com.joyplus.playrecord.playRecordManager;
 import com.joyplus.weibo.net.AccessToken;
 import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
@@ -113,6 +115,10 @@ public class Detail_Show extends Activity {
 	videoCacheInfo cacheInfo;
 	videoCacheInfo cacheInfoTemp;
 	videoCacheManager cacheManager;
+	//播放记录
+	playRecordInfo playrecordinfo;
+	playRecordManager playrecordmanager;
+	long current_time = 0;
 	
 	private Bitmap bitmap;
 	@Override
@@ -153,6 +159,8 @@ public class Detail_Show extends Activity {
 		
 		cacheManager = new videoCacheManager(Detail_Show.this);
 		cacheInfo = new videoCacheInfo();
+		playrecordmanager = new playRecordManager(Detail_Show.this);
+		playrecordinfo = new playRecordInfo();
 		
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
@@ -746,6 +754,14 @@ public class Detail_Show extends Activity {
 		if(app.use2G3G)
 		{
 			
+//			if(playrecordmanager.getPlayRecord(prod_id)!=null)
+//			{
+//				
+//			}
+//			else
+//			{
+//				
+//			}
 			//综艺type为3 ，sbuname 为当前集数
 			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name,
 					m_ReturnProgramView.show.episodes[0].name , 3);
@@ -891,6 +907,13 @@ public class Detail_Show extends Activity {
 			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name,
 					m_ReturnProgramView.show.episodes[current_index].name, 3);
 			
+			playrecordinfo = playrecordmanager.getPlayRecord(prod_id, m_ReturnProgramView.show.episodes[current_index].name);
+			current_time = 0;
+			if(playrecordinfo!=null&&playrecordinfo.getLast_playtime()!=null&&playrecordinfo.getLast_playtime().length()>0)
+			{
+				current_time = Long.parseLong(playrecordinfo.getLast_playtime());
+			}
+			
 			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
 			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
@@ -988,7 +1011,7 @@ public class Detail_Show extends Activity {
 		bundle.putString("prod_id", prod_id);
 		bundle.putString("prod_subname", m_ReturnProgramView.show.episodes[current_index].name);
 		bundle.putString("prod_type", "3");
-		bundle.putLong("current_time", 0);
+		bundle.putLong("current_time", current_time);
 		intent.putExtras(bundle);
 
 		try {

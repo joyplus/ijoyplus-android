@@ -76,6 +76,8 @@ import com.joyplus.cache.videoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
+import com.joyplus.playrecord.playRecordInfo;
+import com.joyplus.playrecord.playRecordManager;
 import com.joyplus.weibo.net.AccessToken;
 import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
@@ -134,6 +136,10 @@ public class Detail_TV extends Activity {
 	videoCacheInfo cacheInfo;
 	videoCacheInfo cacheInfoTemp;
 	videoCacheManager cacheManager;
+	//播放记录
+	playRecordInfo playrecordinfo;
+	playRecordManager playrecordmanager;
+	long current_time = 0;
 	private Bitmap bitmap;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +196,8 @@ public class Detail_TV extends Activity {
 		
 		cacheManager = new videoCacheManager(Detail_TV.this);
 		cacheInfo = new videoCacheInfo();
+		playrecordmanager = new playRecordManager(Detail_TV.this);
+		playrecordinfo = new playRecordInfo();
 		
 		aq.id(R.id.textView9).gone();
 		aq.id(R.id.textView13).gone();
@@ -661,7 +669,6 @@ public class Detail_TV extends Activity {
 			m_ReturnProgramView = mapper.readValue(json.toString(),
 					ReturnProgramView.class);
 			if (m_ReturnProgramView != null && prod_id != null) {
-//				app.SaveServiceData(prod_id, json.toString());// 根据id保存住
 				cacheInfo.setProd_id(prod_id);
 				cacheInfo.setProd_type("2");
 				cacheInfo.setProd_value(json.toString());
@@ -673,7 +680,6 @@ public class Detail_TV extends Activity {
 			// 创建数据源对象
 			InitData();
 			aq.id(R.id.ProgressText).gone();
-
 			aq.id(R.id.scrollView1).visible();
 			TV_String = json.toString();
 
@@ -866,27 +872,111 @@ public class Detail_TV extends Activity {
 
 		app.checkUserSelect(Detail_TV.this);
 		if (app.use2G3G) {
-			// write current_index to myTvSetting file
-			current_index = 0;
-			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
-					"1", 2);
-			SharedPreferences myPreference = this.getSharedPreferences(
-					MY_SETTING, Context.MODE_PRIVATE);
-			myPreference.edit()
-					.putString(prod_id, Integer.toString(current_index))
-					.commit();
+			
+			if(playrecordmanager.getPlayRecord(prod_id)!=null)
+			{
+				// 电视剧type为2 ，sbuname 为当前集数
+				StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
+						(current_index + 1) + "", 2);
 
-			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-				mCurrentPlayData.CurrentIndex = 0;
-				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
-			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-				SaveToServer(2, PROD_URI, 1);
-				Intent intent = new Intent();
-				intent.setAction("android.intent.action.VIEW");
-				Uri content_url = Uri.parse(PROD_URI);
-				intent.setData(content_url);
-				startActivity(intent);
+				SetPlayBtnFlag(current_index);
+
+				// write current_index to myTvSetting file
+				SharedPreferences myPreference = this.getSharedPreferences(
+						MY_SETTING, Context.MODE_PRIVATE);
+				myPreference.edit()
+						.putString(prod_id, Integer.toString(current_index))
+						.commit();
+
+				if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
+						.equalsIgnoreCase("1")) {
+					app.MyToast(this, "暂无播放链接!");
+					return;
+				}
+				videoSourceSort(current_index);
+				if (m_ReturnProgramView.tv.episodes != null
+						&& m_ReturnProgramView.tv.episodes[current_index].video_urls != null
+						&& m_ReturnProgramView.tv.episodes[current_index].video_urls.length > 0)
+					PROD_URI = m_ReturnProgramView.tv.episodes[current_index].video_urls[0].url;
+				PROD_SOURCE = null;
+				if (m_ReturnProgramView.tv.episodes[current_index].down_urls != null) {
+					for (int i = 0; i < m_ReturnProgramView.tv.episodes[current_index].down_urls.length; i++) {
+						for (int k = 0; k < m_ReturnProgramView.tv.episodes[current_index].down_urls[i].urls.length; k++) {
+							ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[current_index].down_urls[i].urls[k];
+							if (urls != null) {
+								if (urls.url != null
+										&& app.IfSupportFormat(urls.url)) {
+									if (PROD_SOURCE == null
+											&& !app.IfIncludeM3U(urls.url))
+										PROD_SOURCE = urls.url.trim();
+									if (PROD_SOURCE == null
+											&& urls.type.trim().equalsIgnoreCase(
+													"mp4"))
+										PROD_SOURCE = urls.url.trim();
+									else if (PROD_SOURCE == null
+											&& urls.type.trim().equalsIgnoreCase(
+													"flv"))
+										PROD_SOURCE = urls.url.trim();
+									else if (PROD_SOURCE == null
+											&& urls.type.trim().equalsIgnoreCase(
+													"hd2"))
+										PROD_SOURCE = urls.url.trim();
+									else if (PROD_SOURCE == null
+											&& urls.type.trim().equalsIgnoreCase(
+													"3gp"))
+										PROD_SOURCE = urls.url.trim();
+								}
+								if (PROD_SOURCE != null)
+									break;
+							}
+							if (PROD_SOURCE != null)
+								break;
+						}
+					}
+				}
+
+				if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+					mCurrentPlayData.CurrentIndex = current_index;
+					playrecordinfo = playrecordmanager.getPlayRecord(prod_id, Integer.toString(current_index+1));
+					current_time = 0;
+					if(playrecordinfo!=null&&playrecordinfo.getLast_playtime()!=null&&playrecordinfo.getLast_playtime().length()>0)
+					{
+						current_time = Long.parseLong(playrecordinfo.getLast_playtime());
+					}
+					CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+				} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+					SaveToServer(2, PROD_URI, current_index + 1);
+					Intent intent = new Intent();
+					intent.setAction("android.intent.action.VIEW");
+					Uri content_url = Uri.parse(PROD_URI);
+					intent.setData(content_url);
+					startActivity(intent);
+				}
 			}
+			else
+			{
+				// write current_index to myTvSetting file
+				current_index = 0;
+				StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
+						"1", 2);
+				SharedPreferences myPreference = this.getSharedPreferences(
+						MY_SETTING, Context.MODE_PRIVATE);
+				myPreference.edit()
+						.putString(prod_id, Integer.toString(current_index))
+						.commit();
+				if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+					mCurrentPlayData.CurrentIndex = 0;
+					CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
+				} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+					SaveToServer(2, PROD_URI, 1);
+					Intent intent = new Intent();
+					intent.setAction("android.intent.action.VIEW");
+					Uri content_url = Uri.parse(PROD_URI);
+					intent.setData(content_url);
+					startActivity(intent);
+				}
+			}
+			
 		}
 	}
 
@@ -1020,11 +1110,7 @@ public class Detail_TV extends Activity {
 	public void OnClickTVPlay(View v) {
 
 		int index = Integer.parseInt(v.getTag().toString());
-		if(cacheInfo!=null)
-		{
-			cacheInfo.setProd_subname(v.getTag().toString());
-			cacheManager.saveVideoCache(cacheInfo);
-		}
+
 		app.checkUserSelect(Detail_TV.this);
 		if (app.use2G3G) {
 			current_index = index;
@@ -1091,6 +1177,12 @@ public class Detail_TV extends Activity {
 
 			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 				mCurrentPlayData.CurrentIndex = index;
+				playrecordinfo = playrecordmanager.getPlayRecord(prod_id, Integer.toString(index+1));
+				current_time = 0;
+				if(playrecordinfo!=null&&playrecordinfo.getLast_playtime()!=null&&playrecordinfo.getLast_playtime().length()>0)
+				{
+					current_time = Long.parseLong(playrecordinfo.getLast_playtime());
+				}
 				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
 			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 				SaveToServer(2, PROD_URI, index + 1);
@@ -1361,10 +1453,9 @@ public class Detail_TV extends Activity {
 		bundle.putString("path", m_uri);
 		bundle.putString("title", title);
 		bundle.putString("prod_id", prod_id);
-		bundle.putString("prod_subname", "第"
-				+ m_ReturnProgramView.tv.episodes[current_index].name + "集");
+		bundle.putString("prod_subname", m_ReturnProgramView.tv.episodes[current_index].name);
 		bundle.putString("prod_type", "2");
-		bundle.putLong("current_time", 0);
+		bundle.putLong("current_time", current_time);
 		intent.putExtras(bundle);
 		try {
 			startActivity(intent);

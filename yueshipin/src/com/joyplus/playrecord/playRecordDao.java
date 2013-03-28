@@ -1,28 +1,23 @@
-package com.joyplus.cache;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.joyplus.download.DBHelper;
+package com.joyplus.playrecord;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import com.joyplus.download.DBHelper;
 
-public class Dao_Cache {
-
-	private static Dao_Cache dao_cache = null;
+public class playRecordDao {
+	private static playRecordDao play_record = null;
 	private Context context;
 
-	private Dao_Cache(Context context) {
+	private playRecordDao(Context context) {
 		this.context = context;
 	}
 
-	public static Dao_Cache getInstance(Context context) {
-		if (dao_cache == null) {
-			dao_cache = new Dao_Cache(context);
+	public static playRecordDao getInstance(Context context) {
+		if (play_record == null) {
+			play_record = new playRecordDao(context);
 		}
-		return dao_cache;
+		return play_record;
 	}
 
 	public SQLiteDatabase getConnection() {
@@ -35,14 +30,13 @@ public class Dao_Cache {
 	}
 	
 	/*
-	 * 增加一条详情缓存
+	 * 增加一条播放记录
 	 */
-	public synchronized void InsertOneInfo(videoCacheInfo info) {
+	public synchronized void InsertOneInfo(playRecordInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
-			String sql = "insert into video_cache(prod_id,prod_value, prod_type,prod_subname,last_playtime) values (?,?,?,?,?)";
-			Object[] bindArgs = { info.getProd_id(), info.getProd_value(),
-					info.getProd_type(),info.getProd_subname(), info.getLast_playtime() };
+			String sql = "insert into play_record(prod_id,prod_subname,last_playtime) values (?,?,?)";
+			Object[] bindArgs = {info.getProd_id(),info.getProd_subname(),info.getLast_playtime()};
 			database.execSQL(sql, bindArgs);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -53,12 +47,12 @@ public class Dao_Cache {
 		}
 	}
 	/*
-	 * 删除一条详情缓存
+	 * 删除一条播放记录
 	 */
 	public synchronized void delete(String prod_id) {
 		SQLiteDatabase database = getConnection();
 		try {
-			database.delete("video_cache", "prod_id=?",
+			database.delete("play_record", "prod_id=?",
 					new String[] { prod_id});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,23 +65,13 @@ public class Dao_Cache {
 	/*
 	 * 更新一条详情缓存
 	 */
-	public synchronized void updateOneInfo(videoCacheInfo info) {
+	public synchronized void updateOneInfo(playRecordInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
 			String sql = null;
-			
-			if(info.getProd_type().equalsIgnoreCase("1"))
-			{
-				sql = "update video_cache set last_playtime=? where prod_id=?";
-				Object[] bindArgs = {info.getLast_playtime(),info.getProd_id()};
-				database.execSQL(sql, bindArgs);
-			}
-			else
-			{
-				sql = "update video_cache set prod_subname=? and last_playtime=? where prod_id=?";
-				Object[] bindArgs = {info.getProd_subname(),info.getLast_playtime(),info.getProd_id()};
-				database.execSQL(sql, bindArgs);
-			}
+			sql = "update play_record set prod_subname=? and last_playtime=? where prod_id=? and prod_subname";
+			Object[] bindArgs = {info.getProd_subname(),info.getLast_playtime(),info.getProd_id(),info.getProd_subname()};
+			database.execSQL(sql, bindArgs);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -99,11 +83,11 @@ public class Dao_Cache {
 	/*
 	 * 更新subname
 	 */
-	public synchronized void updateOneInfoSubName(videoCacheInfo info) {
+	public synchronized void updateOneInfoSubName(playRecordInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
 			String sql = null;
-			sql = "update video_cache set prod_subname=? where prod_id=?";
+			sql = "update play_record set prod_subname=? where prod_id=?";
 			Object[] bindArgs = {info.getProd_subname(),info.getProd_id()};
 			database.execSQL(sql, bindArgs);
 			
@@ -115,15 +99,16 @@ public class Dao_Cache {
 			}
 		}
 	}
+	
 	/*
-	 * 查找某个详情缓存是否存在
+	 * 查找某个播放记录是否存在
 	 */
-	public synchronized boolean isHasInfors(String prod_id) {
+	public synchronized boolean isHasInfors(String prod_id,String subname) {
 		SQLiteDatabase database = getConnection();
 		int count = -1;
 		Cursor cursor = null;
 		try {
-			String sql = "select count(*)  from video_cache where prod_id=?";
+			String sql = "select count(*)  from play_record where prod_id=?";
 			cursor = database.rawQuery(sql, new String[] { prod_id });
 			if (cursor.moveToFirst()) {
 				count = cursor.getInt(0);
@@ -142,21 +127,20 @@ public class Dao_Cache {
 	}
 	
 	/*
-	 * 获取某一条缓存记录
+	 * 获取某一条播放记录
 	 */
-	public synchronized videoCacheInfo getOneInfo(String prod_id) {
-		videoCacheInfo info = null;
+	public synchronized playRecordInfo getOneInfo(String prod_id,String prod_subname) {
+		playRecordInfo info = null;
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
 			String sql = null;
-			sql = "select prod_id,prod_value, prod_type,create_date,prod_subname,last_playtime from video_cache where prod_id=?";
-			cursor = database.rawQuery(sql, new String[] { prod_id});
+			sql = "select prod_id,prod_subname,create_date,last_playtime from play_record where prod_id=? and prod_subname=?";
+			cursor = database.rawQuery(sql, new String[] { prod_id ,prod_subname});
 			while (cursor.moveToNext()) {
-				info = new videoCacheInfo(cursor.getString(0),
+				info = new playRecordInfo(cursor.getString(0),
 						cursor.getString(1), cursor.getString(2),
-						cursor.getString(3), cursor.getString(4),
-						cursor.getString(5));
+						cursor.getString(3));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -170,15 +154,41 @@ public class Dao_Cache {
 		}
 		return info;
 	}
-
+	
 	/*
-	 * 获取数据库中总的条数
+	 * 获取某prod_id播放记录
 	 */
+	public synchronized playRecordInfo getProdIdInfo(String prod_id) {
+		playRecordInfo info = null;
+		SQLiteDatabase database = getConnection();
+		Cursor cursor = null;
+		try {
+			String sql = null;
+			sql = "select prod_id,prod_subname,create_date,last_playtime from play_record where prod_id=?";
+			cursor = database.rawQuery(sql, new String[] { prod_id});
+			while (cursor.moveToNext()) {
+				info = new playRecordInfo(cursor.getString(0),
+						cursor.getString(1), cursor.getString(2),
+						cursor.getString(3));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+			if (null != cursor) {
+				cursor.close();
+			}
+		}
+		return info;
+	}
+	
 	public synchronized int getCount() {
 		SQLiteDatabase database = getConnection();
 		try {
 			Cursor cursor = null;
-			String sql = "select * from video_cache";
+			String sql = "select * from play_record";
 			cursor = database.rawQuery(sql, null);
 			if (cursor != null) {
 				return cursor.getCount();
@@ -199,8 +209,8 @@ public class Dao_Cache {
 	public synchronized void delete() {
 		SQLiteDatabase database = getConnection();
 		try {
-			database.delete("video_cache", "", null);
-			String sql = "delete from video_cahce where create_date < datetime('now','-7 day')";
+//			database.delete("play_record", "", null);
+			String sql = "delete from play_record where create_date < datetime('now','-7 day')";
 			database.execSQL(sql, null);
 		} catch (Exception e) {
 			e.printStackTrace();

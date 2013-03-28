@@ -603,7 +603,6 @@ public class Detail_Movie extends Activity {
 					cacheManager.saveVideoCache(cacheInfo);
 				}
 				
-				
 			}
 			// 创建数据源对象
 			InitData();
