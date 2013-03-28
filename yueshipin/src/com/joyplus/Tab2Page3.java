@@ -13,11 +13,16 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 
@@ -42,6 +47,9 @@ public class Tab2Page3 extends Activity implements
 
 	private ArrayList dataStruct;
 	private MyListView ItemsListView;
+	private TextView moreTextView;
+	// 加载进度条
+	private LinearLayout loadProgressBar;
 	private Tab2Page3ListAdapter Tab2Page3Adapter;
 	private int isLastisNext = 1;
 	private static String OPULAR_SHOW_TOP_LIST = "综艺悦榜";
@@ -66,31 +74,65 @@ public class Tab2Page3 extends Activity implements
 				GetServiceData(1);
 		}});
 		//下拉加载更多
-		ItemsListView.setOnScrollListener(new OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				switch (scrollState) {
-				// 当不滚动时
-				case OnScrollListener.SCROLL_STATE_IDLE:
-					// 判断滚动到底部
-					if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
-						isLastisNext++;
-						GetServiceData(isLastisNext);
-					}
-					break;
-				}
-			}
-
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-
-			}
-		});
-		
+//		ItemsListView.setOnScrollListener(new OnScrollListener() {
+//			@Override
+//			public void onScrollStateChanged(AbsListView view, int scrollState) {
+//				switch (scrollState) {
+//				// 当不滚动时
+//				case OnScrollListener.SCROLL_STATE_IDLE:
+//					// 判断滚动到底部
+//					if (view.getLastVisiblePosition() == (view.getCount() - 2)) {
+//						addPageMore();
+//						isLastisNext++;
+//						GetServiceData(isLastisNext);
+//					}
+//					break;
+//				}
+//			}
+//
+//			@Override
+//			public void onScroll(AbsListView view, int firstVisibleItem,
+//					int visibleItemCount, int totalItemCount) {
+//
+//			}
+//		});
+		//给listview添加更多项
+		addPageMore();
 		CheckSaveData();
 	}
-
+	
+	/**
+	 * ��ListView�����"���ظ��"
+	 */
+	private void addPageMore() {
+		View view = LayoutInflater.from(this).inflate(R.layout.list_footer,
+				null);
+		moreTextView = (TextView) view.findViewById(R.id.more_id);
+		loadProgressBar = (LinearLayout) view.findViewById(R.id.load_id);
+		moreTextView.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// ����"���ظ��"
+				moreTextView.setVisibility(View.GONE);
+				// ��ʾ�����
+				loadProgressBar.setVisibility(View.VISIBLE);
+				
+				isLastisNext++;
+				GetServiceData(isLastisNext);
+			}
+		});
+		ItemsListView.addFooterView(view);
+	}
+	
+	private void loadStop()
+	{
+		ItemsListView.onRefreshComplete();
+		// 显示加载更多
+		moreTextView.setVisibility(View.VISIBLE);
+		// 隐藏进度条
+		loadProgressBar.setVisibility(View.GONE);
+//		ItemsListView.addFooterView(null);
+	}
 	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
 
 		@Override
@@ -198,9 +240,7 @@ public class Tab2Page3 extends Activity implements
 				}
 			}
 			break;
-
 		}
-
 	}
 
 	public void OnClickImageView(View v) {
@@ -236,7 +276,7 @@ public class Tab2Page3 extends Activity implements
 			}
 			// 创建数据源对象
 			GetVideoMovies();
-
+			loadStop();
 			aq.id(R.id.ProgressText).gone();
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block

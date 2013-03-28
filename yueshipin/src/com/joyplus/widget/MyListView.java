@@ -371,6 +371,4 @@ public class MyListView extends ListView implements OnScrollListener {
 		lastUpdatedTextView.setText("最近更新:" + date);
 		super.setAdapter(adapter);
 	}
-	
-
 }

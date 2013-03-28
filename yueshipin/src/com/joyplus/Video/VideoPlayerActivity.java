@@ -147,6 +147,8 @@ public class VideoPlayerActivity extends Activity implements
 			return;
 
 		setContentView(R.layout.videoview);
+		//保持常亮
+		findViewById(R.id.layout).setKeepScreenOn(true);
 		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
@@ -630,7 +632,7 @@ public class VideoPlayerActivity extends Activity implements
 
 					for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
 						if (PROD_SOURCE == null)
-							for (int ki = 0; ki < m_ReturnProgramView.tv.episodes[0].down_urls[i].urls.length; ki++) {
+							for (int ki = 0; ki < m_ReturnProgramView.tv.episodes[0].down_urls[i].urls.length; ki++) {//原来字典里的值为0yy
 								if (m_ReturnProgramView.tv.episodes[0].down_urls[i].urls[ki].type
 										.equalsIgnoreCase(Constant.player_quality_index[qi])) {
 									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[0].down_urls[i].urls[ki];
@@ -653,6 +655,8 @@ public class VideoPlayerActivity extends Activity implements
 							break;
 					}
 				}
+//				if (PROD_SOURCE != null)
+//					break;
 			}
 
 		}

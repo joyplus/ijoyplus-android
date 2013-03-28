@@ -34,7 +34,7 @@ import com.joyplus.widget.MyListView;
 import com.joyplus.widget.MyListView.OnRefreshListener;
 
 public class Tab2Page1 extends Activity implements
-		android.widget.AdapterView.OnItemClickListener {
+		android.widget.AdapterView.OnItemClickListener{
 	private String TAG = "Tab2Page1";
 	private AQuery aq;
 	private App app;
@@ -56,6 +56,7 @@ public class Tab2Page1 extends Activity implements
 		// »ñÈ¡listview¶ÔÏó
 		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
+		
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
 
