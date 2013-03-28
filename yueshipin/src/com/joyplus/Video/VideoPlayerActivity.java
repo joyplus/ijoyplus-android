@@ -775,6 +775,9 @@ public class VideoPlayerActivity extends Activity implements
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
+										    MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
+									        MobclickAgent.onEventEnd(mContext, TV_PLAY);
+									        MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 										finish();
 									}
 								})
