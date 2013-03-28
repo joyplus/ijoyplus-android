@@ -42,6 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
+            android:paddingLeft="16dp"
             android:gravity="center"
             android:onClick="OnClickTab1TopLeft" >
 
@@ -73,6 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
+            android:paddingRight="16dp"
             android:gravity="center"
             android:onClick="OnClickTab1TopRight"
             android:orientation="horizontal" >

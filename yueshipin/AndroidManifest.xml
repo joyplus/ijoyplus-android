@@ -57,6 +57,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+             <intent-filter>  
+                <data android:scheme="http" android:host="ums.bz" android:port="80" android:path="/7J5Q4k/"/>  
+                <action android:name="android.intent.action.VIEW" />  
+                <category android:name="android.intent.category.DEFAULT" />  
+                <category android:name="android.intent.category.BROWSABLE" />  
+            </intent-filter>
         </activity>
         <activity
             android:name=".Search"

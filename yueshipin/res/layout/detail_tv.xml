@@ -44,6 +44,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
+            android:paddingLeft="16dp"
             android:onClick="OnClickTab1TopLeft" >
 
             <ImageView
@@ -75,6 +76,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
+            android:paddingRight="16dp"
             android:onClick="OnClickTab1TopRight"
             android:orientation="horizontal" >
 

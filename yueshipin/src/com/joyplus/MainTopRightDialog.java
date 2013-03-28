@@ -18,18 +18,15 @@ import com.joyplus.weibo.net.WeiboException;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
-import com.tencent.mm.sdk.openapi.WXImageObject;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
-import com.tencent.mm.sdk.openapi.WXTextObject;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
-import com.tencent.mm.sdk.platformtools.Util;
-import com.umeng.xp.view.aq;
-import com.yixia.zi.utils.Log;
-
+import com.umeng.analytics.MobclickAgent;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -47,8 +44,10 @@ public class MainTopRightDialog extends Activity {
 	private String token = null;
 	private String expires_in = null;
 	private Bitmap bitmap;
-	private static final int THUMB_SIZE = 150;
-
+	private static String ue_wechat_friend_share = "微信好友分享";
+	private static String ue_wechat_social_share = "微信朋友圈分享";
+	private String prod_id = null;
+    private Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,13 +55,14 @@ public class MainTopRightDialog extends Activity {
 		setContentView(R.layout.main_top_right_dialog);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-
+        mContext = this;
 		api = WXAPIFactory.createWXAPI(this, Constant.APP_ID, false);
 		api.registerApp(Constant.APP_ID);
 
 		Intent intent = getIntent();
 		prod_name = intent.getStringExtra("prod_name");
 		bitmap = (Bitmap) intent.getParcelableExtra("bitmapImage");
+		prod_id = intent.getStringExtra(prod_id);
 
 	}
 
@@ -224,9 +224,12 @@ public class MainTopRightDialog extends Activity {
 	}
 
 	public void OnClickWeixinFriends(View v) {
-		// Bitmap bmp = BitmapFactory.decodeResource(getResources(),
-		// R.drawable.send_img);
-		String url = "http://www.joyplus.tv";// 收到分享的好友点击信息会跳转到这个地址去
+		if(!checkWeixinInstall())
+		{
+			app.MyToast(mContext, "未安装微信");
+			return;
+		}
+		String url = "weixin.joyplus.tv/info.php?prod_id="+prod_id;// 收到分享的好友点击信息会跳转到这个地址去
 		WXWebpageObject localWXWebpageObject = new WXWebpageObject();
 		localWXWebpageObject.webpageUrl = url;
 		WXMediaMessage localWXMediaMessage = new WXMediaMessage(
@@ -240,12 +243,19 @@ public class MainTopRightDialog extends Activity {
 		localReq.message = localWXMediaMessage;
 		localReq.scene = SendMessageToWX.Req.WXSceneSession;
 		api.sendReq(localReq);
+		MobclickAgent.onEvent(mContext, ue_wechat_friend_share);
 		finish();
 	}
 
 
-	public void OnClickFriendsCircle(View v) {
-		String url = "http://www.joyplus.tv";// 收到分享的好友点击信息会跳转到这个地址去
+	public void OnClickFriendsSocial(View v) {
+		if(!checkWeixinInstall())
+		{
+			app.MyToast(mContext, "未安装微信");
+			return;
+		}
+		api.openWXApp();
+		String url = "weixin.joyplus.tv/info.php?prod_id="+prod_id;// 收到分享的好友点击信息会跳转到这个地址去
 		WXWebpageObject localWXWebpageObject = new WXWebpageObject();
 		localWXWebpageObject.webpageUrl = url;
 		WXMediaMessage localWXMediaMessage = new WXMediaMessage(
@@ -259,6 +269,7 @@ public class MainTopRightDialog extends Activity {
 		localReq.message = localWXMediaMessage;
 		localReq.scene = SendMessageToWX.Req.WXSceneTimeline;
 		api.sendReq(localReq);
+		MobclickAgent.onEvent(mContext, ue_wechat_social_share);
 		finish();
 	}
 
@@ -296,7 +307,23 @@ public class MainTopRightDialog extends Activity {
 			// j = bitmap.getHeight();
 		}
 	}
-
+	private PackageInfo packageInfo;
+	public boolean checkWeixinInstall(){
+	
+    try {
+        packageInfo = this.getPackageManager().getPackageInfo(
+                "com.tencent.mm", 0);
+    } catch (NameNotFoundException e) {
+        packageInfo = null;
+        e.printStackTrace();
+    }
+    if(packageInfo ==null){
+        return false;
+    }else{
+        return true;
+    }
+	}
+	
 	public void Cancel(View v) {
 		finish();
 	}

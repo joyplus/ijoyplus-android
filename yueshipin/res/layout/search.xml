@@ -106,10 +106,27 @@
             android:background="#F2F2F2"
             android:cacheColorHint="#F2F2F2"
             android:descendantFocusability="blocksDescendants"
-            android:divider="@drawable/tab1_divider">
+            android:divider="@drawable/tab1_divider"
+            android:visibility="gone">
         </ListView>
-
-
+        <ListView
+            android:id="@+id/listView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/tab1_divider"
+            android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
+            android:visibility="gone">
+        </ListView>
+        <Button android:id="@+id/removehistory"
+            android:text="清除历史记录"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true"
+            android:onClick="OnClickremoveHistory"
+            android:layout_below="@id/listView2"/>
         <TextView
             android:id="@+id/ProgressText"
             android:layout_width="wrap_content"

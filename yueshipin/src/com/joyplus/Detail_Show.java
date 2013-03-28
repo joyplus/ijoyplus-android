@@ -195,7 +195,11 @@ public class Detail_Show extends Activity {
 		}
 		bitmap = drawableToBitmap(drawable);
 		intent.putExtra("bitmapImage", bitmap);
-		
+		String video_prod_id = "1007955";
+		if(prod_id != null){
+			video_prod_id = prod_id;
+		}
+		intent.putExtra("prod_id", video_prod_id);
 		startActivity(intent);
 //		if (app.GetServiceData("Sina_Access_Token") != null) {
 //			Intent i = new Intent(this, Sina_Share.class);
