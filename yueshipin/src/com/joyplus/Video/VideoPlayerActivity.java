@@ -5,6 +5,8 @@
 package com.joyplus.Video;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ import com.joyplus.R;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Service.Return.ReturnProgramView;
+import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.cache.videoCacheInfo;
 import com.joyplus.cache.videoCacheManager;
 import com.joyplus.download.Dao;
@@ -586,6 +589,7 @@ public class VideoPlayerActivity extends Activity implements
 		switch (playProdType) {
 		case 1: {
 			if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
+				videoSourceSort(m_ReturnProgramView.movie.episodes[0].down_urls);
 				for (int i = 0; i < m_ReturnProgramView.movie.episodes[0].down_urls.length; i++) {
 					for (int k = 0; k < m_ReturnProgramView.movie.episodes[0].down_urls[i].urls.length; k++) {
 
@@ -628,14 +632,14 @@ public class VideoPlayerActivity extends Activity implements
 			break;
 		case 2: {
 			if (m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls != null) {
+				videoSourceSort(m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls);
 				for (int i = 0; i < m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls.length; i++) {
-
 					for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
 						if (PROD_SOURCE == null)
-							for (int ki = 0; ki < m_ReturnProgramView.tv.episodes[0].down_urls[i].urls.length; ki++) {//原来字典里的值为0yy
-								if (m_ReturnProgramView.tv.episodes[0].down_urls[i].urls[ki].type
+							for (int ki = 0; ki < m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls.length; ki++) {//原来字典里的值为0yy
+								if (m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki].type
 										.equalsIgnoreCase(Constant.player_quality_index[qi])) {
-									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[0].down_urls[i].urls[ki];
+									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki];
 
 									if (urls != null
 											&& urls.url != null
@@ -655,22 +659,21 @@ public class VideoPlayerActivity extends Activity implements
 							break;
 					}
 				}
-//				if (PROD_SOURCE != null)
-//					break;
 			}
 
 		}
 			break;
 		case 3: {
-			if (m_ReturnProgramView.show.episodes[0].down_urls != null) {
-				for (int i = 0; i < m_ReturnProgramView.show.episodes[0].down_urls.length; i++) {
+			if (m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls != null) {
+				videoSourceSort(m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls);
+				for (int i = 0; i < m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls.length; i++) {
 
 					for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
 						if (PROD_SOURCE == null)
-							for (int ki = 0; ki < m_ReturnProgramView.show.episodes[0].down_urls[i].urls.length; ki++) {
-								if (m_ReturnProgramView.show.episodes[0].down_urls[i].urls[ki].type
+							for (int ki = 0; ki < m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls.length; ki++) {
+								if (m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki].type
 										.equalsIgnoreCase(Constant.player_quality_index[qi])) {
-									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[0].down_urls[i].urls[ki];
+									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki];
 
 									if (urls != null
 											&& urls.url != null
@@ -698,7 +701,64 @@ public class VideoPlayerActivity extends Activity implements
 
 		return PROD_SOURCE;
 	}
+	//给片源赋权值
+	public void videoSourceSort(DOWN_URLS[] down_urls) {
+		if (down_urls != null) {
+			for (int j = 0; j < down_urls.length; j++) {
+				if (down_urls[j].source
+						.equalsIgnoreCase("letv")) {
+					down_urls[j].index = 0;
+				} else if (down_urls[j].source
+						.equalsIgnoreCase("fengxing")) {
+					down_urls[j].index = 1;
+				} else if (down_urls[j].source
+						.equalsIgnoreCase("qiyi")) {
+					down_urls[j].index = 2;
+				} else if (down_urls[j].source
+						.equalsIgnoreCase("youku")) {
+					down_urls[j].index = 3;
+				} else if (down_urls[j].source
+						.equalsIgnoreCase("sinahd")) {
+					down_urls[j].index = 4;
+				} else if (down_urls[j].source
+						.equalsIgnoreCase("sohu")) {
+					down_urls[j].index = 5;
+				} else if (down_urls[j].source
+						.equalsIgnoreCase("56")) {
+					down_urls[j].index = 6;
+				} else if (down_urls[j].source
+						.equalsIgnoreCase("qq")) {
+					down_urls[j].index = 7;
+				} else if (down_urls[j].source
+						.equalsIgnoreCase("pptv")) {
+					down_urls[j].index = 8;
+				} else if (down_urls[j].source
+						.equalsIgnoreCase("m1905")) {
+					down_urls[j].index = 9;
+				}
+			}
+			if (down_urls.length > 1) {
+				Arrays.sort(down_urls,new EComparatorIndex());
+			}
+		}
+	}
+	
+	// 将片源排序
+		class EComparatorIndex implements Comparator {
 
+			@Override
+			public int compare(Object first, Object second) {
+				// TODO Auto-generated method stub
+				int first_name = ((DOWN_URLS) first).index;
+				int second_name = ((DOWN_URLS) second).index;
+				if (first_name - second_name < 0) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		}
+	
 	private final Runnable mRunnable = new Runnable() {
 		long beginTimeMillis, timeTakenMillis, timeLeftMillis, rxByteslast,
 				m_bitrate;
