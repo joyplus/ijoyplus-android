@@ -78,6 +78,8 @@ IOS: ijoyplusios001bj
 	public final static int MSG_DMRCHANGED = 12;
 	
 	public final static int MSG_UPDATEDATA = 30;
+	//记录当前的集数
+	public static int select_index = -1;
 	
 	public final static String MSG_KEY_ID_TITLE = "MSG_KEY_ID_TITLE";
 	public final static String MSG_KEY_ID_STATE = "MSG_KEY_ID_STATE";

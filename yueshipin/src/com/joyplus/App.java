@@ -76,6 +76,7 @@ public class App extends Application {
 	private Map<String, String> headers;
 	private CurrentPlayData mCurrentPlayData;
 	private ReturnProgramView m_ReturnProgramView = null;
+		
 
 	public ReturnProgramView get_ReturnProgramView() {
 		return m_ReturnProgramView;

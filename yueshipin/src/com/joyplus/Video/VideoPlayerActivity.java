@@ -132,8 +132,12 @@ public class VideoPlayerActivity extends Activity implements
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
-			mMyService = ((DlnaSelectDevice.MyBinder) service).getService();
-			mVideoView.setServiceConnection(mMyService);
+			if(android.os.Build.VERSION.SDK_INT>=14)
+			{
+				mMyService = ((DlnaSelectDevice.MyBinder) service).getService();
+				mVideoView.setServiceConnection(mMyService);
+			}
+			
 		}
 
 		public void onServiceDisconnected(ComponentName name) {
@@ -155,7 +159,7 @@ public class VideoPlayerActivity extends Activity implements
 		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
-
+		Constant.select_index = -1;//保证每次进来当前没有任何集数记录
 		cacheManager = new videoCacheManager(VideoPlayerActivity.this);
 		cacheInfo = new videoCacheInfo();
 		playrecordmanager = new playRecordManager(VideoPlayerActivity.this);
@@ -236,9 +240,12 @@ public class VideoPlayerActivity extends Activity implements
 		mGestureDetector = new GestureDetector(this, new MyGestureListener());
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		Intent i = new Intent();
-		i.setClass(this, DlnaSelectDevice.class);
-		bindService(i, mServiceConnection, BIND_AUTO_CREATE);
+		if(android.os.Build.VERSION.SDK_INT>=14)
+		{
+			Intent i = new Intent();
+			i.setClass(this, DlnaSelectDevice.class);
+			bindService(i, mServiceConnection, BIND_AUTO_CREATE);
+		}
 		checkBind = true;
 
 		if (!URLUtil.isNetworkUrl(mPath)) {
@@ -329,7 +336,7 @@ public class VideoPlayerActivity extends Activity implements
 				if(playProdType!=1)
 				{
 					playrecordinfo.setProd_id(playProdId);
-					playrecordinfo.setProd_subname(tvsubname);
+					playrecordinfo.setProd_subname(tvsubname);	
 					playrecordinfo.setLast_playtime(current_time+"");
 					playrecordmanager.savePlayRecord(playrecordinfo);
 				}
@@ -371,7 +378,11 @@ public class VideoPlayerActivity extends Activity implements
 			mVideoView.stopPlayback();
 		}
 		if (checkBind)
-			unbindService(mServiceConnection);
+			if(android.os.Build.VERSION.SDK_INT>=14)
+			{
+				unbindService(mServiceConnection);
+			}
+			
 		super.onDestroy();
 
 	}
@@ -793,9 +804,18 @@ public class VideoPlayerActivity extends Activity implements
 		params.put("prod_id", playProdId);// required string
 											// 视频id
 		params.put("prod_name", playProdName);// required
-												// string 视频名字
-		params.put("prod_subname",
+											// string 视频名字
+		if(Constant.select_index>-1)
+		{
+			params.put("prod_subname",
+				Integer.toString(Constant.select_index + 1));// required
+		}
+		else
+		{
+			params.put("prod_subname",
 				Integer.toString(mCurrentPlayData.CurrentIndex + 1));// required
+		}
+		
 		// string
 		// 视频的集数
 		params.put("prod_type", playProdType);// required int 视频类别
