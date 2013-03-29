@@ -8,21 +8,15 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 
@@ -47,92 +41,28 @@ public class Tab2Page3 extends Activity implements
 
 	private ArrayList dataStruct;
 	private MyListView ItemsListView;
-	private TextView moreTextView;
-	// 加载进度条
-	private LinearLayout loadProgressBar;
 	private Tab2Page3ListAdapter Tab2Page3Adapter;
-	private int isLastisNext = 1;
-	private static String OPULAR_SHOW_TOP_LIST = "综艺悦榜";
-	Context mContext;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab2page3);
 		app = (App) getApplication();
-		mContext = this;
 		aq = new AQuery(this);
-		dataStruct = new ArrayList();//happy
 		// 获取listview对象
 		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
-				
+
 				new GetDataTask().execute();
-				
-				GetServiceData(1);
+
+				GetServiceData();
 		}});
-		//下拉加载更多
-//		ItemsListView.setOnScrollListener(new OnScrollListener() {
-//			@Override
-//			public void onScrollStateChanged(AbsListView view, int scrollState) {
-//				switch (scrollState) {
-//				// 当不滚动时
-//				case OnScrollListener.SCROLL_STATE_IDLE:
-//					// 判断滚动到底部
-//					if (view.getLastVisiblePosition() == (view.getCount() - 2)) {
-//						addPageMore();
-//						isLastisNext++;
-//						GetServiceData(isLastisNext);
-//					}
-//					break;
-//				}
-//			}
-//
-//			@Override
-//			public void onScroll(AbsListView view, int firstVisibleItem,
-//					int visibleItemCount, int totalItemCount) {
-//
-//			}
-//		});
-		//给listview添加更多项
-		addPageMore();
 		CheckSaveData();
 	}
-	
-	/**
-	 * ��ListView�����"���ظ��"
-	 */
-	private void addPageMore() {
-		View view = LayoutInflater.from(this).inflate(R.layout.list_footer,
-				null);
-		moreTextView = (TextView) view.findViewById(R.id.more_id);
-		loadProgressBar = (LinearLayout) view.findViewById(R.id.load_id);
-		moreTextView.setOnClickListener(new Button.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// ����"���ظ��"
-				moreTextView.setVisibility(View.GONE);
-				// ��ʾ�����
-				loadProgressBar.setVisibility(View.VISIBLE);
-				
-				isLastisNext++;
-				GetServiceData(isLastisNext);
-			}
-		});
-		ItemsListView.addFooterView(view);
-	}
-	
-	private void loadStop()
-	{
-		ItemsListView.onRefreshComplete();
-		// 显示加载更多
-		moreTextView.setVisibility(View.VISIBLE);
-		// 隐藏进度条
-		loadProgressBar.setVisibility(View.GONE);
-//		ItemsListView.addFooterView(null);
-	}
+
 	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
 
 		@Override
@@ -148,7 +78,7 @@ public class Tab2Page3 extends Activity implements
 
 		@Override
 		protected void onPostExecute(String[] result) {
-			
+
 			ItemsListView.onRefreshComplete();
 //			Tab2Page3Adapter.notifyDataSetChanged();
 			super.onPostExecute(result);
@@ -177,14 +107,12 @@ public class Tab2Page3 extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
-		MobclickAgent.onEventBegin(mContext, OPULAR_SHOW_TOP_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		MobclickAgent.onEventEnd(mContext, OPULAR_SHOW_TOP_LIST);
 		MobclickAgent.onPause(this);
 	}
 
@@ -195,37 +123,11 @@ public class Tab2Page3 extends Activity implements
 
 	public void GetVideoMovies() {
 		String m_j = null;
-//		dataStruct = new ArrayList();
-//		NotifyDataAnalysisFinished();
-		
+		dataStruct = new ArrayList();
+
+		NotifyDataAnalysisFinished();
 		if (m_ReturnTops.tops == null)
 			return;
-		if(isLastisNext > 1)
-		{
-			for (int i = 0; i < m_ReturnTops.tops.length; i++) {
-
-				if (m_ReturnTops.tops[i].items != null) {
-					for (int j = 0; j < m_ReturnTops.tops[i].items.length; j++) {
-						Tab2Page3ListData m_Tab2Page3ListData = new Tab2Page3ListData();
-						m_Tab2Page3ListData.Pic_ID = m_ReturnTops.tops[i].items[j].prod_id;
-						m_Tab2Page3ListData.Pic_url = m_ReturnTops.tops[i].items[j].prod_pic_url;
-						m_Tab2Page3ListData.Pic_name = m_ReturnTops.tops[i].items[j].prod_name;
-						m_Tab2Page3ListData.Pic_list1 = m_ReturnTops.tops[i].items[j].cur_item_name;
-
-						dataStruct.add(m_Tab2Page3ListData);
-					}
-				}
-				break;
-			}
-		}
-		else
-		{
-			NotifyDataAnalysisFinished();
-		}
-		if(isLastisNext == 1)
-		{
-			dataStruct = new ArrayList();//happy
-		}
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 
 			if (m_ReturnTops.tops[i].items != null) {
@@ -240,7 +142,9 @@ public class Tab2Page3 extends Activity implements
 				}
 			}
 			break;
+
 		}
+
 	}
 
 	public void OnClickImageView(View v) {
@@ -263,20 +167,13 @@ public class Tab2Page3 extends Activity implements
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			if(isLastisNext == 1)
-			{
-				m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
-				if (m_ReturnTops.tops.length > 0)
-					app.SaveServiceData("show_tops", json.toString());
-			}
-			else if(isLastisNext>1)
-			{
-				m_ReturnTops = null;
-				m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
-			}
+			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
+			if (m_ReturnTops.tops.length > 0)
+				app.SaveServiceData("show_tops", json.toString());
+
 			// 创建数据源对象
 			GetVideoMovies();
-			loadStop();
+
 			aq.id(R.id.ProgressText).gone();
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -344,7 +241,7 @@ public class Tab2Page3 extends Activity implements
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("show_tops");
 		if (SaveData == null) {
-			GetServiceData(1);
+			GetServiceData();
 		} else {
 			try {
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
@@ -354,7 +251,7 @@ public class Tab2Page3 extends Activity implements
 					@Override
 					public void run() {
 						// execute the task
-						GetServiceData(1);
+						GetServiceData();
 					}
 				}, 2000);
 
@@ -373,9 +270,8 @@ public class Tab2Page3 extends Activity implements
 	}
 
 	// InitListData
-	public void GetServiceData(int index) {
-		String url = Constant.BASE_URL + "show_tops"+ "?page_num="
-				+ Integer.toString(index) + "&page_size=10";
+	public void GetServiceData() {
+		String url = Constant.BASE_URL + "show_tops";
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
@@ -390,6 +286,6 @@ public class Tab2Page3 extends Activity implements
 		{
 			aq.ajax(cb);
 		}
-		
+
 	}
 }

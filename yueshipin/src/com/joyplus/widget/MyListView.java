@@ -40,6 +40,8 @@ public class MyListView extends ListView implements OnScrollListener {
 	private LayoutInflater inflater;
 
 	private LinearLayout headView;
+	private LinearLayout footView;//yyc
+	private TextView drag_download_more;//yyc
 
 	private TextView tipsTextview;
 	private TextView lastUpdatedTextView;
@@ -78,11 +80,11 @@ public class MyListView extends ListView implements OnScrollListener {
 	}
 
 	private void init(Context context) {
-		//setCacheColorHint(context.getResources().getColor(R.color.transparent));
+		setCacheColorHint(context.getResources().getColor(R.color.transparent));
 		inflater = LayoutInflater.from(context);
 
 		headView = (LinearLayout) inflater.inflate(R.layout.head, null);
-
+//		footView = (LinearLa)
 		arrowImageView = (ImageView) headView
 				.findViewById(R.id.head_arrowImageView);
 		arrowImageView.setMinimumWidth(70);
@@ -130,6 +132,14 @@ public class MyListView extends ListView implements OnScrollListener {
 	}
 
 	public void onScrollStateChanged(AbsListView arg0, int arg1) {
+		//自己添加的代码
+		switch(arg1)
+		{
+			case OnScrollListener.SCROLL_STATE_IDLE:
+				Log.i("yanyuchuang.test","yanyuchuang.test");
+				// 添加一个角部的东西
+		}
+		
 	}
 
 	public boolean onTouchEvent(MotionEvent event) {
@@ -160,7 +170,7 @@ public class MyListView extends ListView implements OnScrollListener {
 						state = REFRESHING;
 						changeHeaderViewByState();
 						onRefresh();
-
+						
 //						Log.v(TAG, "由松开刷新状态，到done状态");
 					}
 				}
