@@ -21,6 +21,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -56,17 +59,14 @@ public class Search extends Activity implements
 
 	private ArrayList dataStruct;
 	private ListView ItemsListView, listHistory;
+	private EditText searchtext;
 	private SearchListAdapter SearchAdapter;
-	private AppAdapter adapter;
 	
 	private static String SEARCH = "查询";
 	private static String SEARCH_LIST = "查询结果";
 	Context mContext;
 
-	private SharedPreferences sharedPreferences = null;
-	private SharedPreferences.Editor editor = null;
-
-	final ArrayList<HashMap<String, Object>> users = new ArrayList<HashMap<String, Object>>();
+	private String[] st = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,8 @@ public class Search extends Activity implements
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
-
+		searchtext = (EditText)findViewById(R.id.editText1);
+		
 		listHistory = (ListView) findViewById(R.id.listView2);
 		
 		mContext = this;
@@ -89,35 +90,36 @@ public class Search extends Activity implements
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
 		}
-		aq.id(R.id.removehistory).visible();
-		aq.id(R.id.listView2).visible();
+		searchtext.addTextChangedListener(mTextWatcher);
 		
-
+		
 		showHistory();
 		listHistory.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				String content = (String)users.get(arg2).get("content");		
-				Log.i("ssssssssssaaaaaaa", content);
+				String content = st[arg2].trim();
+				doSearch(content);
 			}
 		});
 		}
 
 	
 	private void showHistory() {
-		sharedPreferences = getSharedPreferences("test", MODE_WORLD_READABLE);
-		editor = sharedPreferences.edit();
-		String values = String.valueOf(sharedPreferences.getAll().values());
-		values = values.replaceAll("\\[", "");
-		values = values.replaceAll("\\]", "");
-		String[] st = values.split(",");
+		aq.id(R.id.listView1).gone();
+		aq.id(R.id.textViewNoResult).gone();
+		aq.id(R.id.removehistory).visible();
+		aq.id(R.id.listView2).visible();
 
-		adapter = new AppAdapter(this, st);
-		listHistory.setAdapter(adapter);
-//		listHistory.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,st));
+		String content = app.GetSearchData();
+		content = content.replaceAll("\\[", "");
+		content = content.replaceAll("\\]", "");
+		st = content.split(",");
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.search_record, st);
 		
+		listHistory.setAdapter(adapter);
+
 	}
 
 	public void OnClickAdd(View v) {
@@ -134,39 +136,38 @@ public class Search extends Activity implements
 	}
 
 	public void OnClickSearch(View v) {
-		aq.id(R.id.removehistory).gone();
-		aq.id(R.id.listView2).gone();
-
-		sharedPreferences = getSharedPreferences("test", MODE_WORLD_READABLE);
-		editor = sharedPreferences.edit();
-
 		String search_word = null;
 		if (aq.id(R.id.editText1).getText() != null) {
 			search_word = aq.id(R.id.editText1).getText().toString().trim();
 		}
 		if (search_word.length() > 0) {
-
-			editor.putString(search_word, search_word);
-			editor.commit();
-
-			// clear
-			if (dataStruct != null && dataStruct.size() > 0) {
-				dataStruct.clear();
-				SearchAdapter.notifyDataSetChanged();
-				ItemsListView.invalidate();
-			}
-			aq.id(R.id.textViewNoResult).gone();
-			InputMethodManager imm = (InputMethodManager) this
-					.getSystemService(Context.INPUT_METHOD_SERVICE);
-			aq.id(R.id.editText1).getTextView().setCursorVisible(false);// 失去光标
-			imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-			GetServiceData(search_word);
-
+			doSearch(search_word);
 		} else {
 			app.MyToast(this, "请输入你要搜索的内容.");
 		}
 	}
 
+	public void doSearch(String search_word){
+		aq.id(R.id.removehistory).gone();
+		aq.id(R.id.listView2).gone();
+		 //保存搜索记录到SharedPreferce
+		app.SaveSearchData(search_word, search_word);
+
+
+		// clear
+		if (dataStruct != null && dataStruct.size() > 0) {
+			dataStruct.clear();
+			SearchAdapter.notifyDataSetChanged();
+			ItemsListView.invalidate();
+		}
+		aq.id(R.id.textViewNoResult).gone();
+		InputMethodManager imm = (InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		aq.id(R.id.editText1).getTextView().setCursorVisible(false);// 失去光标
+		
+		imm.hideSoftInputFromWindow(searchtext.getWindowToken(), 0);
+		GetServiceData(search_word);
+	}
 	public void OnClickTab1TopRight(View v) {
 		Intent i = new Intent(this, Setting.class);
 		startActivity(i);
@@ -210,10 +211,7 @@ public class Search extends Activity implements
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						sharedPreferences = getSharedPreferences("test", MODE_WORLD_READABLE);
-						editor = sharedPreferences.edit();
-						editor.clear();
-						editor.commit();
+						app.DeleteSearchData();
 						showHistory();
 						dialog.dismiss();
 					}
@@ -485,44 +483,29 @@ public class Search extends Activity implements
 			e.printStackTrace();
 		}
 	}
-
-	class AppAdapter extends BaseAdapter {
-		Context context;
-		String[] array;
-
-		AppAdapter(Context context, String[] array) {
-			this.context = context;
-			this.array = array;
-
-		}
-
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return array.length;
-		}
-
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return array[position];
-		}
-
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-
-			TextView tv = new TextView(getApplicationContext());
-			tv.setText(array[position]);
-			tv.setTextColor(Color.BLACK);
-			tv.setTextSize(20);
-			tv.setClickable(true);
-			
-			
-			return tv;
-		}
-
+  private  TextWatcher mTextWatcher = new TextWatcher() {
+	
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		// TODO Auto-generated method stub
+		
 	}
+	
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count,
+			int after) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void afterTextChanged(Editable s) {
+		String value = searchtext.getText().toString().trim();
+		if(value == null || value.length() <=0 ){
+			showHistory();
+		}
+		
+	}
+};
+	
 }

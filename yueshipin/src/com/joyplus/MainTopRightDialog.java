@@ -62,7 +62,7 @@ public class MainTopRightDialog extends Activity {
 		Intent intent = getIntent();
 		prod_name = intent.getStringExtra("prod_name");
 		bitmap = (Bitmap) intent.getParcelableExtra("bitmapImage");
-		prod_id = intent.getStringExtra(prod_id);
+		prod_id = intent.getStringExtra("prod_id");
 
 	}
 
