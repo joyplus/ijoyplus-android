@@ -24,6 +24,8 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "prod_id char, prod_value char,prod_type char,create_date TimeStamp NOT NULL DEFAULT (datetime('now','localtime')),prod_subname char,last_playtime)");
 		db.execSQL("create table play_record(_id integer PRIMARY KEY AUTOINCREMENT,  "
 				+ "prod_id char,prod_subname char,create_date TimeStamp NOT NULL DEFAULT (datetime('now','localtime')),last_playtime)");
+		db.execSQL("create table search_record(_id integer PRIMARY KEY AUTOINCREMENT,  "
+				+ "search_word char,create_date TimeStamp NOT NULL DEFAULT (datetime('now','localtime')))");
 	}
 
 	@Override
