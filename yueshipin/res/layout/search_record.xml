@@ -6,4 +6,5 @@
     android:layout_height="30dp"
     android:textColor="@color/black"
     android:layout_gravity="left"
-    android:textSize="20sp"/>
+    android:textSize="20sp"
+    android:paddingLeft="20dp"/>

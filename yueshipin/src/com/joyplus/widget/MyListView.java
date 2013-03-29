@@ -84,7 +84,10 @@ public class MyListView extends ListView implements OnScrollListener {
 		inflater = LayoutInflater.from(context);
 
 		headView = (LinearLayout) inflater.inflate(R.layout.head, null);
-//		footView = (LinearLa)
+		
+		footView = (LinearLayout) inflater.inflate(R.layout.foot,null);//yyc
+		drag_download_more = (TextView) footView.findViewById(R.id.drag_download_more);//yyc
+		
 		arrowImageView = (ImageView) headView
 				.findViewById(R.id.head_arrowImageView);
 		arrowImageView.setMinimumWidth(70);
@@ -96,6 +99,8 @@ public class MyListView extends ListView implements OnScrollListener {
 				.findViewById(R.id.head_lastUpdatedTextView);
 
 		measureView(headView);
+//		measureView(footView);//yyc
+		
 		headContentHeight = headView.getMeasuredHeight();
 		headContentWidth = headView.getMeasuredWidth();
 
@@ -106,6 +111,7 @@ public class MyListView extends ListView implements OnScrollListener {
 				+ headContentHeight);
 
 		addHeaderView(headView, null, false);
+		addFooterView(footView, null, false);//yyc
 		setOnScrollListener(this);
 
 		animation = new RotateAnimation(0, -180,
@@ -136,8 +142,8 @@ public class MyListView extends ListView implements OnScrollListener {
 		switch(arg1)
 		{
 			case OnScrollListener.SCROLL_STATE_IDLE:
-				Log.i("yanyuchuang.test","yanyuchuang.test");
-				// 添加一个角部的东西
+
+				// 添加一个脚部的东西
 		}
 		
 	}
