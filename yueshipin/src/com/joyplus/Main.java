@@ -75,9 +75,12 @@ public class Main extends TabActivity {
 		headers.put("app_key", Constant.APPKEY);
 		headers.put("client","android");
 		app.setHeaders(headers);
-			
-		Intent intent = new Intent(Main.this, DlnaSelectDevice.class);
-		startService(intent);
+		if(android.os.Build.VERSION.SDK_INT>=14)
+		{
+			Intent intent = new Intent(Main.this, DlnaSelectDevice.class);
+			startService(intent);
+		}
+		
 		
 		PushService.subscribe(this, "", Main.class);
 		PushService.setDefaultPushCallback(this, Main.class);
@@ -215,9 +218,13 @@ public class Main extends TabActivity {
 	protected void onDestroy() {
 		if (aq != null)
 			aq.dismiss();
-		Intent i  = new Intent();
-		i.setClass(this, DlnaSelectDevice.class);
-		stopService(i);
+		if(android.os.Build.VERSION.SDK_INT>=14)
+		{
+			Intent i  = new Intent();
+			i.setClass(this, DlnaSelectDevice.class);
+			stopService(i);
+		}
+		
 		super.onDestroy();
 	}
 

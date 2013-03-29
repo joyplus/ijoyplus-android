@@ -757,15 +757,6 @@ public class Detail_Show extends Activity {
 		app.checkUserSelect(Detail_Show.this);
 		if(app.use2G3G)
 		{
-			
-//			if(playrecordmanager.getPlayRecord(prod_id)!=null)
-//			{
-//				
-//			}
-//			else
-//			{
-//				
-//			}
 			//综艺type为3 ，sbuname 为当前集数
 			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name,
 					m_ReturnProgramView.show.episodes[0].name , 3);
@@ -865,14 +856,11 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		
-		//videoSourceSort(index);
 		if (m_ReturnProgramView.show.episodes != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls[0].url != null)
 			PROD_URI = m_ReturnProgramView.show.episodes[index].video_urls[0].url;
 		PROD_SOURCE = null;
-//		videoSourceSort(index);
 		if (m_ReturnProgramView.show.episodes[index].down_urls != null) {
 			for (int i = 0; i < m_ReturnProgramView.show.episodes[index].down_urls.length; i++) {
 				for (int k = 0; k < m_ReturnProgramView.show.episodes[index].down_urls[i].urls.length; k++) {

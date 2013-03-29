@@ -77,6 +77,7 @@ public class App extends Application {
 	private CurrentPlayData mCurrentPlayData;
 	private ReturnProgramView m_ReturnProgramView = null;
     private int number = 0;
+	
 	public ReturnProgramView get_ReturnProgramView() {
 		return m_ReturnProgramView;
 	}

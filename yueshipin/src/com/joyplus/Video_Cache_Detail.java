@@ -185,7 +185,7 @@ public class Video_Cache_Detail extends Activity {
 					} else {
 						bundle.putString("prod_type", "2");
 						bundle.putString("prod_subname",
-								"第" + info.getMy_index() + "集"); // yu
+								info.getMy_index()); // yu
 					}
 					intent.putExtras(bundle);
 					try {

@@ -194,30 +194,6 @@ public class MediaController extends FrameLayout  {
 			initFloatingWindow();
 	}
 
-//	private void initPopWindows() {
-//		LayoutInflater mLayoutInflater = (LayoutInflater) mContext
-//				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		mViewTopRight = mLayoutInflater.inflate(R.layout.mediacontroller_top,
-//				null);
-//		mWindowTopRight = new PopupWindow(mViewTopRight, 194,
-//				LayoutParams.WRAP_CONTENT);
-//		lv_group = (ListView) mViewTopRight.findViewById(R.id.listView1);
-//		// 加载数据
-//		dataStruct = new ArrayList<String>();
-//
-//		groupAdapter = new GroupAdapter(mContext, dataStruct);
-//		lv_group.setAdapter(groupAdapter);
-//
-//		mViewTopRight.setVisibility(View.GONE);
-//
-//		mViewBottomRight = mLayoutInflater.inflate(R.layout.mediacontroller2,
-//				null);
-//		mWindowBottomRight = new PopupWindow(mViewBottomRight, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//
-//		mViewBottomRight.setVisibility(View.GONE);
-//
-//	}
-
 	private boolean initController(Context context) {
 		mContext = context;
 		mAM = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
@@ -391,7 +367,7 @@ public class MediaController extends FrameLayout  {
 		
 	
 		CurrentIndex = index;
-		
+		Constant.select_index = index;
 		groupAdapter.notifyDataSetChanged();
 		lv_group.invalidate();
 				

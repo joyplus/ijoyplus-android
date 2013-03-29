@@ -438,7 +438,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		bundle.putString("title", title);
 		bundle.putString("prod_id", prod_id);
 		if(!tempPlayHistoryData.Pro_name1.equalsIgnoreCase("EMPTY")){
-			bundle.putString("prod_subname", "第"+tempPlayHistoryData.Pro_name1+"集");
+			bundle.putString("prod_subname",tempPlayHistoryData.Pro_name1);
 		}
 		bundle.putString("prod_type",
 				Integer.toString(tempPlayHistoryData.Pro_type));
@@ -593,7 +593,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					if ((m_Tab3Page1ListData.Pro_time > 0)
 							&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
 						holder.textView03
-								.setText(m_Tab3Page1ListData.Pro_name1);
+								.setText("第"+m_Tab3Page1ListData.Pro_name1+"期");
 						holder.textView04
 								.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
 					} else {
@@ -616,7 +616,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				((Button) view.findViewById(R.id.button1))
 				.setBackgroundResource(R.drawable.tab3_page1_replay_icon_see);
 			}
-//						.setBackgroundResource(R.drawable.tab3_page1_replay_icon_see);
 				
 			return view;
 		}
