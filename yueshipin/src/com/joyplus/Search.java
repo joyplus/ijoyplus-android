@@ -5,6 +5,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,6 +111,8 @@ public class Search extends Activity implements
 	private void showHistory() {
 		aq.id(R.id.listView1).gone();
 		aq.id(R.id.textViewNoResult).gone();
+		aq.id(R.id.ProgressText).gone();
+		aq.id(R.id.progress).gone();
 		aq.id(R.id.removehistory).visible();
 		aq.id(R.id.listView2).visible();
 
@@ -116,12 +120,22 @@ public class Search extends Activity implements
 		content = content.replaceAll("\\[", "");
 		content = content.replaceAll("\\]", "");
 		st = content.split(",");
+		st = checkarray(st);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.search_record, st);
 		
 		listHistory.setAdapter(adapter);
 
 	}
 
+	public String[] checkarray(String[] st){
+		Set<String> set = new TreeSet<String>();
+        for (int i = 0; i < st.length; i++)
+        {
+        	set.add(st[i].trim()); 
+        }
+        return (String[])set.toArray(new String[0]);
+	}
+	
 	public void OnClickAdd(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
 		SearchListData m_SearchListData = (SearchListData) ItemsListView
@@ -164,7 +178,6 @@ public class Search extends Activity implements
 		InputMethodManager imm = (InputMethodManager) this
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
 		aq.id(R.id.editText1).getTextView().setCursorVisible(false);// 失去光标
-		
 		imm.hideSoftInputFromWindow(searchtext.getWindowToken(), 0);
 		GetServiceData(search_word);
 	}
@@ -291,6 +304,8 @@ public class Search extends Activity implements
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		aq.id(R.id.ProgressText).gone();
+		aq.id(R.id.listView2).gone();
+		aq.id(R.id.removehistory).gone();
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			if (app.isNetworkAvailable()) {
 				aq.id(R.id.editText1).getTextView().setCursorVisible(true);

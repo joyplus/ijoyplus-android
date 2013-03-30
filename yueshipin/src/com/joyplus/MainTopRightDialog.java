@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 public class MainTopRightDialog extends Activity {
 	private AQuery aq;
@@ -48,6 +49,7 @@ public class MainTopRightDialog extends Activity {
 	private static String ue_wechat_social_share = "微信朋友圈分享";
 	private String prod_id = null;
     private Context mContext;
+    private static final int TIMELINE_SUPPORTED_VERSION = 0x21020001;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -252,6 +254,11 @@ public class MainTopRightDialog extends Activity {
 		if(!checkWeixinInstall())
 		{
 			app.MyToast(mContext, "未安装微信");
+			return;
+		}
+		int wxSdkVersion = api.getWXAppSupportAPI();
+		if (wxSdkVersion < TIMELINE_SUPPORTED_VERSION) {
+			app.MyToast(mContext, "微信版本为： " + Integer.toHexString(wxSdkVersion) + "\n该版本不支持分享到朋友圈");
 			return;
 		}
 		api.openWXApp();

@@ -4,6 +4,11 @@
 
 package com.joyplus.Video;
 
+import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.MediaPlayer.OnCompletionListener;
+import io.vov.vitamio.widget.MediaController;
+import io.vov.vitamio.widget.VideoView;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -12,31 +17,6 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.joyplus.App;
-import com.joyplus.Constant;
-import com.joyplus.Detail_Movie;
-import com.joyplus.R;
-import com.joyplus.Adapters.CurrentPlayData;
-import com.joyplus.Dlna.DlnaSelectDevice;
-import com.joyplus.Service.Return.ReturnProgramView;
-import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
-import com.joyplus.cache.videoCacheInfo;
-import com.joyplus.cache.videoCacheManager;
-import com.joyplus.download.Dao;
-import com.joyplus.playrecord.playRecordInfo;
-import com.joyplus.playrecord.playRecordManager;
-import com.umeng.analytics.MobclickAgent;
-
-import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.MediaPlayer.OnCompletionListener;
-import io.vov.vitamio.widget.MediaController;
-import io.vov.vitamio.widget.VideoView;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -48,17 +28,13 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.TrafficStats;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -66,9 +42,26 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joyplus.App;
+import com.joyplus.Constant;
+import com.joyplus.R;
+import com.joyplus.Adapters.CurrentPlayData;
+import com.joyplus.Dlna.DlnaSelectDevice;
+import com.joyplus.Service.Return.ReturnProgramView;
+import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
+import com.joyplus.cache.videoCacheInfo;
+import com.joyplus.cache.videoCacheManager;
+import com.joyplus.playrecord.playRecordInfo;
+import com.joyplus.playrecord.playRecordManager;
+import com.umeng.analytics.MobclickAgent;
 
 public class VideoPlayerActivity extends Activity implements
 		OnCompletionListener {
@@ -377,15 +370,15 @@ public class VideoPlayerActivity extends Activity implements
 		if (mVideoView != null) {
 			mVideoView.stopPlayback();
 		}
-		if (checkBind)
-			if(android.os.Build.VERSION.SDK_INT>=14)
-			{
+		
+		if (checkBind){
+			if(android.os.Build.VERSION.SDK_INT>=14){
 				unbindService(mServiceConnection);
 			}
-			
+		}			
 		super.onDestroy();
-
 	}
+	
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
