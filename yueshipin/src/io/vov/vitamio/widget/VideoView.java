@@ -325,6 +325,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				if(URLUtil.isNetworkUrl(mUri.toString())){
 					mMediaController.ShowCurrentPlayData(app.getCurrentPlayData());
 					mMediaController.setProd_Data(app.get_ReturnProgramView());
+					mMediaController.setVideoSource();
 				}
 				
 			}
@@ -729,6 +730,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			mCurrentState = STATE_PLAYING;
 		}
 		mTargetState = STATE_PLAYING;
+		
 	}
 
 	@Override
