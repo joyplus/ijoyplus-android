@@ -15,12 +15,18 @@ import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
 import com.joyplus.weibo.net.WeiboDialogListener;
 import com.joyplus.weibo.net.WeiboException;
+import com.tencent.mm.sdk.openapi.BaseReq;
+import com.tencent.mm.sdk.openapi.BaseResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
+import com.tencent.mm.sdk.openapi.WXTextObject;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
 import com.umeng.analytics.MobclickAgent;
+import com.yixia.zi.utils.Log;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -35,7 +41,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
-public class MainTopRightDialog extends Activity {
+public class MainTopRightDialog extends Activity  {
 	private AQuery aq;
 	private App app;
 	private IWXAPI api;
@@ -58,8 +64,8 @@ public class MainTopRightDialog extends Activity {
 		app = (App) getApplication();
 		aq = new AQuery(this);
         mContext = this;
-		api = WXAPIFactory.createWXAPI(this, Constant.APP_ID, false);
-		api.registerApp(Constant.APP_ID);
+		api = WXAPIFactory.createWXAPI(this, Constant.APP_ID,false);
+		
 
 		Intent intent = getIntent();
 		prod_name = intent.getStringExtra("prod_name");
@@ -209,8 +215,7 @@ public class MainTopRightDialog extends Activity {
 					app.SaveServiceData("UserInfo", json.toString());
 					app.MyToast(getApplicationContext(), "新浪微博已绑定");
 					Intent i = new Intent(this, Sina_Share.class);
-					i.putExtra("prod_name", aq.id(R.id.program_name).getText()
-							.toString());
+					i.putExtra("prod_name", prod_name);
 					startActivity(i);
 				}
 			} catch (JSONException e) {
@@ -231,6 +236,29 @@ public class MainTopRightDialog extends Activity {
 			app.MyToast(mContext, "未安装微信");
 			return;
 		}
+		api.registerApp(Constant.APP_ID);
+		String text = "微信分享微信分享微信分享微信分享微信分享微信分享";
+
+		// 初始化一个WXTextObject对象
+		WXTextObject textObj = new WXTextObject();
+		textObj.text = text;
+
+		// 用WXTextObject对象初始化一个WXMediaMessage对象
+		WXMediaMessage msg = new WXMediaMessage();
+		msg.mediaObject = textObj;
+		// 发送文本类型的消息时，title字段不起作用
+		// msg.title = "Will be ignored";
+		msg.description = text;
+
+		// 构造一个Req
+		SendMessageToWX.Req req = new SendMessageToWX.Req();
+		req.transaction = buildTransaction("text"); // transaction字段用于唯一标识一个请求
+		req.message = msg;
+		req.scene = SendMessageToWX.Req.WXSceneSession;
+		// 调用api接口发送数据到微信
+		api.sendReq(req);
+		finish();
+		/*
 		String url = "weixin.joyplus.tv/info.php?prod_id="+prod_id;// 收到分享的好友点击信息会跳转到这个地址去
 		WXWebpageObject localWXWebpageObject = new WXWebpageObject();
 		localWXWebpageObject.webpageUrl = url;
@@ -247,8 +275,12 @@ public class MainTopRightDialog extends Activity {
 		api.sendReq(localReq);
 		MobclickAgent.onEvent(mContext, ue_wechat_friend_share);
 		finish();
+		*/
 	}
-
+	private String buildTransaction(final String type) {
+		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
+	}
+	
 
 	public void OnClickFriendsSocial(View v) {
 		if(!checkWeixinInstall())
@@ -340,4 +372,5 @@ public class MainTopRightDialog extends Activity {
 		finish();
 		return true;
 	}
+
 }
