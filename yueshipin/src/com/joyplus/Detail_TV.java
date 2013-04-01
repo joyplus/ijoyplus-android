@@ -876,14 +876,34 @@ public class Detail_TV extends Activity {
 		app.checkUserSelect(Detail_TV.this);
 		if (app.use2G3G) {
 			// 电视剧type为2 ，sbuname 为当前集数
-			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
-					(current_index + 1) + "", 2);
-			
 			if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
 					.equalsIgnoreCase("1")) {
 				app.MyToast(this, "暂无播放链接!");
 				return;
 			}
+			
+			playrecordinfo = playrecordmanager.getPlayRecord(prod_id);
+			current_time = 0;
+			if (playrecordinfo != null
+					&& playrecordinfo.getLast_playtime() != null
+					&& playrecordinfo.getLast_playtime().length() > 0) {
+				current_time = Long.parseLong(playrecordinfo
+						.getLast_playtime());
+				current_index = Integer.parseInt(playrecordinfo.getProd_subname())-1;
+			}
+			else
+			{
+				current_index = 0;
+			}
+			
+			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
+					(current_index + 1) + "", 2);
+			SharedPreferences myPreference = this.getSharedPreferences(
+					MY_SETTING, Context.MODE_PRIVATE);
+			myPreference.edit()
+					.putString(prod_id, Integer.toString(current_index))
+					.commit();
+			SetPlayBtnFlag(current_index);
 			videoSourceSort(current_index);
 			if (m_ReturnProgramView.tv.episodes != null
 					&& m_ReturnProgramView.tv.episodes[current_index].video_urls != null
@@ -925,25 +945,6 @@ public class Detail_TV extends Activity {
 					}
 				}
 			}
-			// write current_index to myTvSetting file
-			current_index = 0;
-			playrecordinfo = playrecordmanager.getPlayRecord(prod_id);
-			current_time = 0;
-			if (playrecordinfo != null
-					&& playrecordinfo.getLast_playtime() != null
-					&& playrecordinfo.getLast_playtime().length() > 0) {
-				current_time = Long.parseLong(playrecordinfo
-						.getLast_playtime());
-				current_index = Integer.parseInt(playrecordinfo.getProd_subname())-1;
-			}
-			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
-					"1", 2);
-			SharedPreferences myPreference = this.getSharedPreferences(
-					MY_SETTING, Context.MODE_PRIVATE);
-			myPreference.edit()
-					.putString(prod_id, Integer.toString(current_index))
-					.commit();
-			SetPlayBtnFlag(current_index);
 			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 				mCurrentPlayData.CurrentIndex = 0;
 				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);

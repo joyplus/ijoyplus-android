@@ -377,4 +377,21 @@ public class Dao {
 			}
 		}
 	}
+	
+	/*
+	 * 删除某个非电影的所有记录
+	 */
+	public synchronized void delete(String prod_id) {
+		SQLiteDatabase database = getConnection();
+		try {
+			database.delete("download_info", "prod_id=?",
+					new String[] { prod_id});
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+		}
+	}
 }

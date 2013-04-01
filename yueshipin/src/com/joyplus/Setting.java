@@ -33,6 +33,7 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
+import com.bodong.dianju.sdk.DianJuPlatform;
 import com.joyplus.weibo.net.AccessToken;
 import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
@@ -87,6 +88,7 @@ public class Setting extends Activity {
 	    ExchangeViewManager exchangeViewManager = new ExchangeViewManager(this,new ExchangeDataService());
 		exchangeViewManager.addView(fatherLayout, listView);
 		MobclickAgent.onEventBegin(mContext, RECOMMAND_APP);
+		aq.id(R.id.button7).gone();
 	}
 
 	@Override
@@ -131,7 +133,13 @@ public class Setting extends Activity {
 		finish();
 
 	}
-
+	
+	//打开应用推荐
+	public void OnClickRecommend(View v)
+	{
+		DianJuPlatform.openOfferWall(Setting.this);//可以打开广告墙
+	}
+	
 	public void OnClickMianZhe(View v) {
 		Intent intent = new Intent(this, Z_About_mianzhe.class);
 		try {

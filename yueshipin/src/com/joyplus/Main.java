@@ -33,6 +33,7 @@ import android.widget.TabHost;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.bodong.dianju.sdk.DianJuPlatform;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
@@ -56,6 +57,8 @@ public class Main extends TabActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//91互推平台
+		DianJuPlatform.init(this);
 		setContentView(R.layout.main);
 		app = (App) getApplicationContext();
 		aq = new AQuery(this);
@@ -216,6 +219,10 @@ public class Main extends TabActivity {
 
 	@Override
 	protected void onDestroy() {
+		
+		//需要在退出程序时调用平台的destroy方法关闭SDK
+		DianJuPlatform.destroy(this);
+		
 		if (aq != null)
 			aq.dismiss();
 		if(android.os.Build.VERSION.SDK_INT>=14)

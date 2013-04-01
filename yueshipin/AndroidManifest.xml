@@ -28,7 +28,7 @@
     <uses-permission android:name="android.permission.INTERNET" >
     </uses-permission>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name="com.joyplus.App"
@@ -57,11 +57,17 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-             <intent-filter>  
-                <data android:scheme="http" android:host="ums.bz" android:port="80" android:path="/7J5Q4k/"/>  
-                <action android:name="android.intent.action.VIEW" />  
-                <category android:name="android.intent.category.DEFAULT" />  
-                <category android:name="android.intent.category.BROWSABLE" />  
+            <intent-filter>
+                <data
+                    android:host="ums.bz"
+                    android:path="/7J5Q4k/"
+                    android:port="80"
+                    android:scheme="http" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
         <activity
@@ -225,9 +231,11 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-       <activity android:name=".MainTopRightDialog"  
-           android:theme="@style/MyDialogStyleTop">
-       </activity>
+        <activity
+            android:name=".MainTopRightDialog"
+            android:theme="@style/MyDialogStyleTop" >
+        </activity>
+
         <service
             android:name=".Dlna.DlnaSelectDevice"
             android:exported="true" >
@@ -246,19 +254,47 @@
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
-         <service android:name="com.parse.PushService" />
+        <service android:name="com.parse.PushService" />
         <service
             android:name="com.umeng.common.net.DownloadingService"
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
-		<meta-data
+
+        <meta-data
             android:name="UMENG_APPKEY"
             android:value="50937e6c5270151fc8000003" >
         </meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="j001" />
+        <!-- www.tt.91.com -->
+        <meta-data
+            android:name="dianju-app-id"
+            android:value="317" />
+        <meta-data
+            android:name="dianju-app-key"
+            android:value="b80b64352940a7ec0c9f7082ab81d53e" />
+        <!-- 配置Receiver(必须) -->
+        <receiver android:name="com.bodong.dianju.sdk.receiver.AppStateReceiver" >
+            <intent-filter>
+                <action android:name="com.bodong.dianju.sdk.action.STATE_CHANGE" />
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        <!-- 配置全屏Activity(不需要全屏广告，则可不用配置) -->
+        <activity
+            android:name="com.bodong.dianju.sdk.DianJuFullscreen"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:theme="@android:style/Theme.Dialog" />
+        <!-- 配置广告墙Activity(不需要广告墙，则可不用配置) -->
+        <activity
+            android:name="com.bodong.dianju.sdk.DianJuActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden" />
     </application>
 
 </manifest>
