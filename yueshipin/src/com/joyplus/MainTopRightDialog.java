@@ -15,12 +15,18 @@ import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
 import com.joyplus.weibo.net.WeiboDialogListener;
 import com.joyplus.weibo.net.WeiboException;
+import com.tencent.mm.sdk.openapi.BaseReq;
+import com.tencent.mm.sdk.openapi.BaseResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
+import com.tencent.mm.sdk.openapi.WXTextObject;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
 import com.umeng.analytics.MobclickAgent;
+import com.yixia.zi.utils.Log;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -33,8 +39,9 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
-public class MainTopRightDialog extends Activity {
+public class MainTopRightDialog extends Activity  {
 	private AQuery aq;
 	private App app;
 	private IWXAPI api;
@@ -48,6 +55,7 @@ public class MainTopRightDialog extends Activity {
 	private static String ue_wechat_social_share = "微信朋友圈分享";
 	private String prod_id = null;
     private Context mContext;
+    private static final int TIMELINE_SUPPORTED_VERSION = 0x21020001;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,7 +64,7 @@ public class MainTopRightDialog extends Activity {
 		app = (App) getApplication();
 		aq = new AQuery(this);
         mContext = this;
-		api = WXAPIFactory.createWXAPI(this, Constant.APP_ID, false);
+		api = WXAPIFactory.createWXAPI(this, Constant.APP_ID,false);
 		api.registerApp(Constant.APP_ID);
 
 		Intent intent = getIntent();
@@ -207,8 +215,7 @@ public class MainTopRightDialog extends Activity {
 					app.SaveServiceData("UserInfo", json.toString());
 					app.MyToast(getApplicationContext(), "新浪微博已绑定");
 					Intent i = new Intent(this, Sina_Share.class);
-					i.putExtra("prod_name", aq.id(R.id.program_name).getText()
-							.toString());
+					i.putExtra("prod_name", prod_name);
 					startActivity(i);
 				}
 			} catch (JSONException e) {
@@ -239,19 +246,28 @@ public class MainTopRightDialog extends Activity {
 				+ ">，推荐给大家哦！更多精彩尽在悦视频，欢迎下载：http://ums.bz/REGLDb/，快来和我一起看吧！";
 		localWXMediaMessage.thumbData = getBitmapBytes(bitmap, false);
 		SendMessageToWX.Req localReq = new SendMessageToWX.Req();
-		localReq.transaction = System.currentTimeMillis() + "";
+		localReq.transaction = buildTransaction("");
 		localReq.message = localWXMediaMessage;
 		localReq.scene = SendMessageToWX.Req.WXSceneSession;
 		api.sendReq(localReq);
 		MobclickAgent.onEvent(mContext, ue_wechat_friend_share);
 		finish();
+		
 	}
-
+	private String buildTransaction(final String type) {
+		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
+	}
+	
 
 	public void OnClickFriendsSocial(View v) {
 		if(!checkWeixinInstall())
 		{
 			app.MyToast(mContext, "未安装微信");
+			return;
+		}
+		int wxSdkVersion = api.getWXAppSupportAPI();
+		if (wxSdkVersion < TIMELINE_SUPPORTED_VERSION) {
+			app.MyToast(mContext, "微信版本为： " + Integer.toHexString(wxSdkVersion) + "\n该版本不支持分享到朋友圈");
 			return;
 		}
 		api.openWXApp();
@@ -265,7 +281,7 @@ public class MainTopRightDialog extends Activity {
 						+ ">，推荐给大家哦！更多精彩尽在悦视频，欢迎下载：http://ums.bz/REGLDb/，快来和我一起看吧！";
 		localWXMediaMessage.thumbData = getBitmapBytes(bitmap, false);
 		SendMessageToWX.Req localReq = new SendMessageToWX.Req();
-		localReq.transaction = System.currentTimeMillis() + "";
+		localReq.transaction = buildTransaction("");
 		localReq.message = localWXMediaMessage;
 		localReq.scene = SendMessageToWX.Req.WXSceneTimeline;
 		api.sendReq(localReq);
@@ -333,4 +349,5 @@ public class MainTopRightDialog extends Activity {
 		finish();
 		return true;
 	}
+
 }
