@@ -4,19 +4,19 @@ package com.joyplus.playrecord;
  * @author yyc
  *
  */
-public class playRecordInfo {
+public class PlayRecordInfo {
 	
 	private String prod_id;
 	private String prod_subname;
 	private String create_date;
 	private String last_playtime;
 	
-	public playRecordInfo()
+	public PlayRecordInfo()
 	{
 		
 	}
 	
-	public playRecordInfo(String prod_id, String prod_subname,
+	public PlayRecordInfo(String prod_id, String prod_subname,
 			String create_date, String last_playtime) {
 		super();
 		this.prod_id = prod_id;

@@ -37,7 +37,7 @@ public class Dao_Cache {
 	/*
 	 * 增加一条详情缓存
 	 */
-	public synchronized void InsertOneInfo(videoCacheInfo info) {
+	public synchronized void InsertOneInfo(VideoCacheInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
 			String sql = "insert into video_cache(prod_id,prod_value, prod_type,prod_subname,last_playtime) values (?,?,?,?,?)";
@@ -71,7 +71,7 @@ public class Dao_Cache {
 	/*
 	 * 更新一条详情缓存
 	 */
-	public synchronized void updateOneInfo(videoCacheInfo info) {
+	public synchronized void updateOneInfo(VideoCacheInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
 			String sql = null;
@@ -99,7 +99,7 @@ public class Dao_Cache {
 	/*
 	 * 更新subname
 	 */
-	public synchronized void updateOneInfoSubName(videoCacheInfo info) {
+	public synchronized void updateOneInfoSubName(VideoCacheInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
 			String sql = null;
@@ -144,8 +144,8 @@ public class Dao_Cache {
 	/*
 	 * 获取某一条缓存记录
 	 */
-	public synchronized videoCacheInfo getOneInfo(String prod_id) {
-		videoCacheInfo info = null;
+	public synchronized VideoCacheInfo getOneInfo(String prod_id) {
+		VideoCacheInfo info = null;
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
@@ -153,7 +153,7 @@ public class Dao_Cache {
 			sql = "select prod_id,prod_value, prod_type,create_date,prod_subname,last_playtime from video_cache where prod_id=?";
 			cursor = database.rawQuery(sql, new String[] { prod_id});
 			while (cursor.moveToNext()) {
-				info = new videoCacheInfo(cursor.getString(0),
+				info = new VideoCacheInfo(cursor.getString(0),
 						cursor.getString(1), cursor.getString(2),
 						cursor.getString(3), cursor.getString(4),
 						cursor.getString(5));

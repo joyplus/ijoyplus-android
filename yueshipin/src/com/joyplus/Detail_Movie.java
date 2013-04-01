@@ -47,8 +47,8 @@ import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Video.VideoPlayerActivity;
-import com.joyplus.cache.videoCacheInfo;
-import com.joyplus.cache.videoCacheManager;
+import com.joyplus.cache.VideoCacheInfo;
+import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadTask;
 import com.umeng.analytics.MobclickAgent;
@@ -82,9 +82,9 @@ public class Detail_Movie extends Activity {
 	
 	private CurrentPlayData mCurrentPlayData;
 	
-	videoCacheInfo cacheInfo;
-	videoCacheInfo cacheInfoTemp;
-	videoCacheManager cacheManager;
+	VideoCacheInfo cacheInfo;
+	VideoCacheInfo cacheInfoTemp;
+	VideoCacheManager cacheManager;
 	/**
 	 * 利用消息处理机制适时更新APP里的数据
 	 */
@@ -123,8 +123,8 @@ public class Detail_Movie extends Activity {
 		// 添加下载按钮的暂无下载的效果图
 //		downloaddisable = this.getResources().getDrawable(
 //				R.drawable.tab2_video_8);
-		cacheManager = new videoCacheManager(Detail_Movie.this);
-		cacheInfo = new videoCacheInfo();
+		cacheManager = new VideoCacheManager(Detail_Movie.this);
+		cacheInfo = new VideoCacheInfo();
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)

@@ -5,17 +5,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.joyplus.download.DBHelper;
 
-public class playRecordDao {
-	private static playRecordDao play_record = null;
+public class PlayRecordDao {
+	private static PlayRecordDao play_record = null;
 	private Context context;
 
-	private playRecordDao(Context context) {
+	private PlayRecordDao(Context context) {
 		this.context = context;
 	}
 
-	public static playRecordDao getInstance(Context context) {
+	public static PlayRecordDao getInstance(Context context) {
 		if (play_record == null) {
-			play_record = new playRecordDao(context);
+			play_record = new PlayRecordDao(context);
 		}
 		return play_record;
 	}
@@ -32,7 +32,7 @@ public class playRecordDao {
 	/*
 	 * 增加一条播放记录
 	 */
-	public synchronized void InsertOneInfo(playRecordInfo info) {
+	public synchronized void InsertOneInfo(PlayRecordInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
 			String sql = "insert into play_record(prod_id,prod_subname,last_playtime) values (?,?,?)";
@@ -65,7 +65,7 @@ public class playRecordDao {
 	/*
 	 * 更新一条详情缓存
 	 */
-	public synchronized void updateOneInfo(playRecordInfo info) {
+	public synchronized void updateOneInfo(PlayRecordInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
 			String sql = null;
@@ -83,7 +83,7 @@ public class playRecordDao {
 	/*
 	 * 更新subname
 	 */
-	public synchronized void updateOneInfoSubName(playRecordInfo info) {
+	public synchronized void updateOneInfoSubName(PlayRecordInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
 			String sql = null;
@@ -129,8 +129,8 @@ public class playRecordDao {
 	/*
 	 * 获取某一条播放记录
 	 */
-	public synchronized playRecordInfo getOneInfo(String prod_id,String prod_subname) {
-		playRecordInfo info = null;
+	public synchronized PlayRecordInfo getOneInfo(String prod_id,String prod_subname) {
+		PlayRecordInfo info = null;
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
@@ -138,7 +138,7 @@ public class playRecordDao {
 			sql = "select prod_id,prod_subname,create_date,last_playtime from play_record where prod_id=? and prod_subname=?";
 			cursor = database.rawQuery(sql, new String[] { prod_id ,prod_subname});
 			while (cursor.moveToNext()) {
-				info = new playRecordInfo(cursor.getString(0),
+				info = new PlayRecordInfo(cursor.getString(0),
 						cursor.getString(1), cursor.getString(2),
 						cursor.getString(3));
 			}
@@ -158,8 +158,8 @@ public class playRecordDao {
 	/*
 	 * 获取某prod_id播放记录
 	 */
-	public synchronized playRecordInfo getProdIdInfo(String prod_id) {
-		playRecordInfo info = null;
+	public synchronized PlayRecordInfo getProdIdInfo(String prod_id) {
+		PlayRecordInfo info = null;
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
@@ -167,7 +167,7 @@ public class playRecordDao {
 			sql = "select prod_id,prod_subname,create_date,last_playtime from play_record where prod_id=?";
 			cursor = database.rawQuery(sql, new String[] { prod_id});
 			while (cursor.moveToNext()) {
-				info = new playRecordInfo(cursor.getString(0),
+				info = new PlayRecordInfo(cursor.getString(0),
 						cursor.getString(1), cursor.getString(2),
 						cursor.getString(3));
 			}

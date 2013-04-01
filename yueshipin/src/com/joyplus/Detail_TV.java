@@ -71,13 +71,13 @@ import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
 import com.joyplus.Video.VideoPlayerActivity;
-import com.joyplus.cache.videoCacheInfo;
-import com.joyplus.cache.videoCacheManager;
+import com.joyplus.cache.VideoCacheInfo;
+import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
-import com.joyplus.playrecord.playRecordInfo;
-import com.joyplus.playrecord.playRecordManager;
+import com.joyplus.playrecord.PlayRecordInfo;
+import com.joyplus.playrecord.PlayRecordManager;
 import com.joyplus.weibo.net.AccessToken;
 import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
@@ -133,12 +133,12 @@ public class Detail_TV extends Activity {
 	private CurrentPlayData mCurrentPlayData;
 	private static String TV_DETAIL = "电视剧详情";
 	Context mContext;
-	videoCacheInfo cacheInfo;
-	videoCacheInfo cacheInfoTemp;
-	videoCacheManager cacheManager;
+	VideoCacheInfo cacheInfo;
+	VideoCacheInfo cacheInfoTemp;
+	VideoCacheManager cacheManager;
 	// 播放记录
-	playRecordInfo playrecordinfo;
-	playRecordManager playrecordmanager;
+	PlayRecordInfo playrecordinfo;
+	PlayRecordManager playrecordmanager;
 	long current_time = 0;
 	private Bitmap bitmap;
 
@@ -195,10 +195,10 @@ public class Detail_TV extends Activity {
 			}
 		}
 
-		cacheManager = new videoCacheManager(Detail_TV.this);
-		cacheInfo = new videoCacheInfo();
-		playrecordmanager = new playRecordManager(Detail_TV.this);
-		playrecordinfo = new playRecordInfo();
+		cacheManager = new VideoCacheManager(Detail_TV.this);
+		cacheInfo = new VideoCacheInfo();
+		playrecordmanager = new PlayRecordManager(Detail_TV.this);
+		playrecordinfo = new PlayRecordInfo();
 
 		aq.id(R.id.textView9).gone();
 		aq.id(R.id.textView13).gone();

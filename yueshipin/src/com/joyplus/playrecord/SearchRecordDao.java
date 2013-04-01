@@ -8,17 +8,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.joyplus.download.DBHelper;
 
-public class searchRecordDao {
-	private static searchRecordDao search_record = null;
+public class SearchRecordDao {
+	private static SearchRecordDao search_record = null;
 	private Context context;
 
-	private searchRecordDao(Context context) {
+	private SearchRecordDao(Context context) {
 		this.context = context;
 	}
 
-	public static searchRecordDao getInstance(Context context) {
+	public static SearchRecordDao getInstance(Context context) {
 		if (search_record == null) {
-			search_record = new searchRecordDao(context);
+			search_record = new SearchRecordDao(context);
 		}
 		return search_record;
 	}

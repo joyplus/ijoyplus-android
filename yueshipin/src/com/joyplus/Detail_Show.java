@@ -62,13 +62,13 @@ import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Video.VideoPlayerActivity;
-import com.joyplus.cache.videoCacheInfo;
-import com.joyplus.cache.videoCacheManager;
+import com.joyplus.cache.VideoCacheInfo;
+import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
-import com.joyplus.playrecord.playRecordInfo;
-import com.joyplus.playrecord.playRecordManager;
+import com.joyplus.playrecord.PlayRecordInfo;
+import com.joyplus.playrecord.PlayRecordManager;
 import com.joyplus.weibo.net.AccessToken;
 import com.joyplus.weibo.net.DialogError;
 import com.joyplus.weibo.net.Weibo;
@@ -112,12 +112,12 @@ public class Detail_Show extends Activity {
 	private static String SHOW_DETAIL = "综艺详情";
 	Context mContext;
 	
-	videoCacheInfo cacheInfo;
-	videoCacheInfo cacheInfoTemp;
-	videoCacheManager cacheManager;
+	VideoCacheInfo cacheInfo;
+	VideoCacheInfo cacheInfoTemp;
+	VideoCacheManager cacheManager;
 	//播放记录
-	playRecordInfo playrecordinfo;
-	playRecordManager playrecordmanager;
+	PlayRecordInfo playrecordinfo;
+	PlayRecordManager playrecordmanager;
 	long current_time = 0;
 	
 	private Bitmap bitmap;
@@ -157,10 +157,10 @@ public class Detail_Show extends Activity {
 		download_press = this.getResources().getDrawable(R.drawable.download);
 		download_focuse = this.getResources().getDrawable(R.drawable.download2);
 		
-		cacheManager = new videoCacheManager(Detail_Show.this);
-		cacheInfo = new videoCacheInfo();
-		playrecordmanager = new playRecordManager(Detail_Show.this);
-		playrecordinfo = new playRecordInfo();
+		cacheManager = new VideoCacheManager(Detail_Show.this);
+		cacheInfo = new VideoCacheInfo();
+		playrecordmanager = new PlayRecordManager(Detail_Show.this);
+		playrecordinfo = new PlayRecordInfo();
 		
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;

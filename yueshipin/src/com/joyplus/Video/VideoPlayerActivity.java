@@ -57,10 +57,10 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
-import com.joyplus.cache.videoCacheInfo;
-import com.joyplus.cache.videoCacheManager;
-import com.joyplus.playrecord.playRecordInfo;
-import com.joyplus.playrecord.playRecordManager;
+import com.joyplus.cache.VideoCacheInfo;
+import com.joyplus.cache.VideoCacheManager;
+import com.joyplus.playrecord.PlayRecordInfo;
+import com.joyplus.playrecord.PlayRecordManager;
 import com.umeng.analytics.MobclickAgent;
 
 public class VideoPlayerActivity extends Activity implements
@@ -108,11 +108,11 @@ public class VideoPlayerActivity extends Activity implements
 	/*
 	 * playHistoryData
 	 */
-	videoCacheInfo cacheInfo;
-	videoCacheInfo cacheInfoTemp;
-	videoCacheManager cacheManager;
-	playRecordInfo playrecordinfo;
-	playRecordManager playrecordmanager;
+	VideoCacheInfo cacheInfo;
+	VideoCacheInfo cacheInfoTemp;
+	VideoCacheManager cacheManager;
+	PlayRecordInfo playrecordinfo;
+	PlayRecordManager playrecordmanager;
 	private String tvsubname = null;
 
 	private String playProdId = null;// 视频id
@@ -153,10 +153,10 @@ public class VideoPlayerActivity extends Activity implements
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		Constant.select_index = -1;//保证每次进来当前没有任何集数记录
-		cacheManager = new videoCacheManager(VideoPlayerActivity.this);
-		cacheInfo = new videoCacheInfo();
-		playrecordmanager = new playRecordManager(VideoPlayerActivity.this);
-		playrecordinfo = new playRecordInfo();
+		cacheManager = new VideoCacheManager(VideoPlayerActivity.this);
+		cacheInfo = new VideoCacheInfo();
+		playrecordmanager = new PlayRecordManager(VideoPlayerActivity.this);
+		playrecordinfo = new PlayRecordInfo();
 		
 		InitPlayData();
 		// 每次播放时及时把播放的flag清除为0

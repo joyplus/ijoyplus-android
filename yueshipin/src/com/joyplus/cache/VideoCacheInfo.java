@@ -4,7 +4,7 @@ package com.joyplus.cache;
  * @author yyc
  * 
  */
-public class videoCacheInfo {
+public class VideoCacheInfo {
 	private String prod_id = null;
 	private String prod_value = null;
 	private String prod_type = null;
@@ -12,12 +12,12 @@ public class videoCacheInfo {
 	private String prod_subname = null;
 	private String last_playtime = null;
 	
-	public videoCacheInfo()
+	public VideoCacheInfo()
 	{
 		//
 	}
 	
-	public videoCacheInfo(String prod_id, String prod_value, String prod_type,
+	public VideoCacheInfo(String prod_id, String prod_value, String prod_type,
 			String create_date, String prod_subname, String last_playtime) {
 		super();
 		this.prod_id = prod_id;
