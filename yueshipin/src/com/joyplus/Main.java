@@ -83,6 +83,7 @@ public class Main extends TabActivity {
 		
 		
 		PushService.subscribe(this, "", Main.class);
+		PushService.subscribe(this, "CHANNEL_ANDROID", Main.class);
 		PushService.setDefaultPushCallback(this, Main.class);
 		if(!Constant.TestEnv)
 			ReadLocalAppKey();
@@ -95,7 +96,6 @@ public class Main extends TabActivity {
 			mianzeDialog = new MianZeDialog(Main.this);
 			mianzeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 			mianzeDialog.setCanceledOnTouchOutside(false);
-
 			mianzeDialog.show();
 		}
 	}

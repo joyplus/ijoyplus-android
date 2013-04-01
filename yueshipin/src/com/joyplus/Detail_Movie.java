@@ -167,7 +167,7 @@ public class Detail_Movie extends Activity {
 	}
 	public static Bitmap drawableToBitmap(Drawable drawable) {
 		// 取 drawable 的长宽
-		int w = drawable.getIntrinsicWidth();
+		int w = drawable.getIntrinsicWidth(); 
 		int h = drawable.getIntrinsicHeight();
 
 		// 取 drawable 的颜色格式

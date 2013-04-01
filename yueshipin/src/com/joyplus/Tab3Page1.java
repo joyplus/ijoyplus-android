@@ -138,7 +138,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		tempPlayHistoryData = m_Tab3Page1ListData;
 		if ((m_Tab3Page1ListData.Pro_time) > 0
 				&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
-			current_play_time = m_Tab3Page1ListData.Pro_time;
+			current_play_time = m_Tab3Page1ListData.Pro_time*1000;
 		}
 		if (m_Tab3Page1ListData != null) {
 			app.checkUserSelect(Tab3Page1.this.getParent());// 创建对话框必须在看见的最低层的Activity
@@ -560,7 +560,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				if ((m_Tab3Page1ListData.Pro_time > 0)
 						&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
 					holder.textView03
-							.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
+							.setText(stringForTime(m_Tab3Page1ListData.Pro_time*1000));
 					holder.textView04.setText("");
 				}
 
@@ -576,7 +576,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 							&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
 						holder.textView03.setText("第"+m_Tab3Page1ListData.Pro_name1+"集");
 						holder.textView04
-								.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
+								.setText(stringForTime(m_Tab3Page1ListData.Pro_time*1000));
 					} else {
 						holder.textView03.setText("第"+m_Tab3Page1ListData.Pro_name1+"集");
 						holder.textView04.setText("");
@@ -595,7 +595,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 						holder.textView03
 								.setText("第"+m_Tab3Page1ListData.Pro_name1+"期");
 						holder.textView04
-								.setText(stringForTime(m_Tab3Page1ListData.Pro_time));
+								.setText(stringForTime(m_Tab3Page1ListData.Pro_time*1000));
 					} else {
 						holder.textView03.setText("");
 						holder.textView04.setText("");

@@ -329,7 +329,7 @@ public class VideoPlayerActivity extends Activity implements
 			current_time = mVideoView.getCurrentPosition();
 			long total_time = mVideoView.getDuration();
 			if (URLUtil.isNetworkUrl(mPath))
-				SaveToServer(current_time, total_time);
+				SaveToServer(current_time/1000, total_time);
 			
 			if (current_time > 0) {
 				
