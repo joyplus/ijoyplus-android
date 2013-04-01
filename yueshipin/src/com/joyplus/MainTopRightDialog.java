@@ -65,7 +65,7 @@ public class MainTopRightDialog extends Activity  {
 		aq = new AQuery(this);
         mContext = this;
 		api = WXAPIFactory.createWXAPI(this, Constant.APP_ID,false);
-		
+		api.registerApp(Constant.APP_ID);
 
 		Intent intent = getIntent();
 		prod_name = intent.getStringExtra("prod_name");
@@ -236,29 +236,6 @@ public class MainTopRightDialog extends Activity  {
 			app.MyToast(mContext, "未安装微信");
 			return;
 		}
-		api.registerApp(Constant.APP_ID);
-		String text = "微信分享微信分享微信分享微信分享微信分享微信分享";
-
-		// 初始化一个WXTextObject对象
-		WXTextObject textObj = new WXTextObject();
-		textObj.text = text;
-
-		// 用WXTextObject对象初始化一个WXMediaMessage对象
-		WXMediaMessage msg = new WXMediaMessage();
-		msg.mediaObject = textObj;
-		// 发送文本类型的消息时，title字段不起作用
-		// msg.title = "Will be ignored";
-		msg.description = text;
-
-		// 构造一个Req
-		SendMessageToWX.Req req = new SendMessageToWX.Req();
-		req.transaction = buildTransaction("text"); // transaction字段用于唯一标识一个请求
-		req.message = msg;
-		req.scene = SendMessageToWX.Req.WXSceneSession;
-		// 调用api接口发送数据到微信
-		api.sendReq(req);
-		finish();
-		/*
 		String url = "weixin.joyplus.tv/info.php?prod_id="+prod_id;// 收到分享的好友点击信息会跳转到这个地址去
 		WXWebpageObject localWXWebpageObject = new WXWebpageObject();
 		localWXWebpageObject.webpageUrl = url;
@@ -269,13 +246,13 @@ public class MainTopRightDialog extends Activity  {
 				+ ">，推荐给大家哦！更多精彩尽在悦视频，欢迎下载：http://ums.bz/REGLDb/，快来和我一起看吧！";
 		localWXMediaMessage.thumbData = getBitmapBytes(bitmap, false);
 		SendMessageToWX.Req localReq = new SendMessageToWX.Req();
-		localReq.transaction = System.currentTimeMillis() + "";
+		localReq.transaction = buildTransaction("");
 		localReq.message = localWXMediaMessage;
 		localReq.scene = SendMessageToWX.Req.WXSceneSession;
 		api.sendReq(localReq);
 		MobclickAgent.onEvent(mContext, ue_wechat_friend_share);
 		finish();
-		*/
+		
 	}
 	private String buildTransaction(final String type) {
 		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
@@ -304,7 +281,7 @@ public class MainTopRightDialog extends Activity  {
 						+ ">，推荐给大家哦！更多精彩尽在悦视频，欢迎下载：http://ums.bz/REGLDb/，快来和我一起看吧！";
 		localWXMediaMessage.thumbData = getBitmapBytes(bitmap, false);
 		SendMessageToWX.Req localReq = new SendMessageToWX.Req();
-		localReq.transaction = System.currentTimeMillis() + "";
+		localReq.transaction = buildTransaction("");
 		localReq.message = localWXMediaMessage;
 		localReq.scene = SendMessageToWX.Req.WXSceneTimeline;
 		api.sendReq(localReq);
