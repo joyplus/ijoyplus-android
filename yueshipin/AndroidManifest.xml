@@ -59,10 +59,11 @@
             </intent-filter>
             <intent-filter>
                 <data
+                    android:scheme="http" 
                     android:host="ums.bz"
-                    android:path="/7J5Q4k/"
                     android:port="80"
-                    android:scheme="http" />
+                    android:path="/7J5Q4k/"
+                    />
 
                 <action android:name="android.intent.action.VIEW" />
 

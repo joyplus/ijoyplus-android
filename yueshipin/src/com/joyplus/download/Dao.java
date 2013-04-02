@@ -360,6 +360,24 @@ public class Dao {
 			}
 		}
 	}
+	/*
+	 * 下载完成后更新存放路径
+	 */
+	public synchronized void updataInfofilePath(String localfile,
+			String prod_id, String my_index) {
+		SQLiteDatabase database = getConnection();
+		try {
+			String sql = "update download_info set localfile=? where prod_id=? and my_index=?";
+			Object[] bindArgs = { localfile, prod_id, my_index };
+			database.execSQL(sql, bindArgs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+		}
+	}
 
 	/*
 	 * 删除某一个记录

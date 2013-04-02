@@ -604,7 +604,7 @@ public class MediaController extends FrameLayout  {
 		}else if(source.equalsIgnoreCase("m1905")){
 			videosource.setBackgroundResource(R.drawable.m1905);
 		}else{
-			videosource_tv.setVisibility(View.INVISIBLE);
+			videosource.setBackgroundResource(R.drawable.pptv);
 		}
 		
 	}
