@@ -284,12 +284,12 @@ public class Tab1 extends Activity implements
 	private Tab1ListAdapter getAdapter() {
 		if (Tab1Adapter == null) {
 			ArrayList arraylist = dataStruct;
-			Tab1ListAdapter listviewdetailadapter = new Tab1ListAdapter(this,
+			Tab1ListAdapter listviewdetailadapter = new Tab1ListAdapter(Tab1.this,
 					arraylist);
 			Tab1Adapter = listviewdetailadapter;
 		} else {
 			ArrayList arraylist1 = dataStruct;
-			Tab1ListAdapter listviewdetailadapter1 = new Tab1ListAdapter(this,
+			Tab1ListAdapter listviewdetailadapter1 = new Tab1ListAdapter(Tab1.this,
 					arraylist1);
 			Tab1Adapter = listviewdetailadapter1;
 		}

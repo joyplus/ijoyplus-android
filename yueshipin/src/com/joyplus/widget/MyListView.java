@@ -82,12 +82,7 @@ public class MyListView extends ListView implements OnScrollListener {
 	private void init(Context context) {
 		setCacheColorHint(context.getResources().getColor(R.color.transparent));
 		inflater = LayoutInflater.from(context);
-
 		headView = (LinearLayout) inflater.inflate(R.layout.head, null);
-		
-		footView = (LinearLayout) inflater.inflate(R.layout.foot,null);//yyc
-		drag_download_more = (TextView) footView.findViewById(R.id.drag_download_more);//yyc
-		
 		arrowImageView = (ImageView) headView
 				.findViewById(R.id.head_arrowImageView);
 		arrowImageView.setMinimumWidth(70);
@@ -97,9 +92,7 @@ public class MyListView extends ListView implements OnScrollListener {
 		tipsTextview = (TextView) headView.findViewById(R.id.head_tipsTextView);
 		lastUpdatedTextView = (TextView) headView
 				.findViewById(R.id.head_lastUpdatedTextView);
-
 		measureView(headView);
-//		measureView(footView);//yyc
 		
 		headContentHeight = headView.getMeasuredHeight();
 		headContentWidth = headView.getMeasuredWidth();
@@ -111,7 +104,6 @@ public class MyListView extends ListView implements OnScrollListener {
 				+ headContentHeight);
 
 		addHeaderView(headView, null, false);
-		addFooterView(footView, null, false);//yyc
 		setOnScrollListener(this);
 
 		animation = new RotateAnimation(0, -180,

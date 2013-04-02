@@ -33,9 +33,9 @@ import com.joyplus.widget.MyListView;
 import com.joyplus.widget.MyListView.OnRefreshListener;
 import com.joyplus.widget.RefreshListView;
 
+//,RefreshListView.IOnLoadMoreListener
 public class Tab2Page3 extends Activity implements
-		android.widget.AdapterView.OnItemClickListener,RefreshListView.IOnRefreshListener,
-		RefreshListView.IOnLoadMoreListener {
+		android.widget.AdapterView.OnItemClickListener,RefreshListView.IOnRefreshListener,RefreshListView.IOnLoadMoreListener {
 	private String TAG = "Tab2Page3";
 	protected AQuery aq;
 	private App app;
