@@ -102,6 +102,7 @@ public class Search extends Activity implements
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				String content = st[arg2].trim();
+				aq.id(R.id.editText1).text(content);
 				doSearch(content);
 			}
 		});

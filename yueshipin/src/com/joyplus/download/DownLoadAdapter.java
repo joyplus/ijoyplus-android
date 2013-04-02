@@ -69,6 +69,9 @@ public class DownLoadAdapter extends BaseAdapter{
 			holder.resourceImage = (ImageView)convertView.findViewById(R.id.movieImageview);
 			holder.resourceDownProgress =(ProgressBar)convertView.findViewById(R.id.downloadprogress);
 			holder.resourcePercentDown = (TextView)convertView.findViewById(R.id.precentDownload); 
+			holder.down_wait = (ImageView)convertView.findViewById(R.id.down_wait);
+			holder.down_pause = (ImageView)convertView.findViewById(R.id.down_pause);
+			holder.down_downing = (ImageView)convertView.findViewById(R.id.down_downing);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -95,14 +98,23 @@ public class DownLoadAdapter extends BaseAdapter{
 				if(info.getDownload_state().equalsIgnoreCase("wait"))
 				{
 					holder.resouceDownloadState.setText("等待下载");
+					aqtemp.id(R.id.down_wait).visible();
+					aqtemp.id(R.id.down_pause).gone();
+					aqtemp.id(R.id.down_downing).gone();
 				}
 				else if(info.getDownload_state().equalsIgnoreCase("downloading"))
 				{
 					holder.resouceDownloadState.setText("正在下载");
+					aqtemp.id(R.id.down_wait).gone();
+					aqtemp.id(R.id.down_pause).gone();
+					aqtemp.id(R.id.down_downing).visible();
 				}
 				else if(info.getDownload_state().equalsIgnoreCase("pause"))
 				{
 					holder.resouceDownloadState.setText("暂停下载");
+					aqtemp.id(R.id.down_wait).gone();
+					aqtemp.id(R.id.down_pause).visible();
+					aqtemp.id(R.id.down_downing).gone();
 				}
 				holder.resourceDownProgress.setMax(MAX);
 				if(filesize!=0)
@@ -143,5 +155,8 @@ public class DownLoadAdapter extends BaseAdapter{
 		public TextView resourcePercentDown;
 		public TextView resouceDownloadState;
 		public TextView resourceDownloadName;
+		public ImageView down_wait;
+		public ImageView down_pause;
+		public ImageView down_downing;
 	}	
 }
