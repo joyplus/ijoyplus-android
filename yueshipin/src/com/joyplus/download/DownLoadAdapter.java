@@ -98,23 +98,23 @@ public class DownLoadAdapter extends BaseAdapter{
 				if(info.getDownload_state().equalsIgnoreCase("wait"))
 				{
 					holder.resouceDownloadState.setText("等待下载");
-					aqtemp.id(R.id.down_wait).visible();
-					aqtemp.id(R.id.down_pause).gone();
-					aqtemp.id(R.id.down_downing).gone();
+//					aqtemp.id(R.id.down_wait).visible();
+//					aqtemp.id(R.id.down_pause).gone();
+//					aqtemp.id(R.id.down_downing).gone();
 				}
 				else if(info.getDownload_state().equalsIgnoreCase("downloading"))
 				{
 					holder.resouceDownloadState.setText("正在下载");
-					aqtemp.id(R.id.down_wait).gone();
-					aqtemp.id(R.id.down_pause).gone();
-					aqtemp.id(R.id.down_downing).visible();
+//					aqtemp.id(R.id.down_wait).gone();
+//					aqtemp.id(R.id.down_pause).gone();
+//					aqtemp.id(R.id.down_downing).visible();
 				}
 				else if(info.getDownload_state().equalsIgnoreCase("pause"))
 				{
 					holder.resouceDownloadState.setText("暂停下载");
-					aqtemp.id(R.id.down_wait).gone();
-					aqtemp.id(R.id.down_pause).visible();
-					aqtemp.id(R.id.down_downing).gone();
+//					aqtemp.id(R.id.down_wait).gone();
+//					aqtemp.id(R.id.down_pause).visible();
+//					aqtemp.id(R.id.down_downing).gone();
 				}
 				holder.resourceDownProgress.setMax(MAX);
 				if(filesize!=0)
