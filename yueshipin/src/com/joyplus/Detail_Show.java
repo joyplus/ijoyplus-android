@@ -521,6 +521,10 @@ public class Detail_Show extends Activity {
 				aq.id(R.id.Layout_comment).gone();
 			}
 		}
+		else
+		{
+			GetServiceData();
+		}
 
 	}
 
@@ -530,7 +534,7 @@ public class Detail_Show extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR||json == null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));

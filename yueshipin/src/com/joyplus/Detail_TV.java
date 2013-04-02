@@ -501,6 +501,10 @@ public class Detail_TV extends Activity {
 				aq.id(R.id.button20).clickable(false);
 			}
 		}
+		else
+		{
+			GetServiceData();
+		}
 	}
 
 	public void OnClickImageView(View v) {
@@ -509,7 +513,7 @@ public class Detail_TV extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR||json == null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));

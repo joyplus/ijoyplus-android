@@ -72,9 +72,6 @@ public class Detail_Movie extends Activity {
 	private int isLastisNext = 2;
 	private int mLastY = 0;
     private Bitmap bitmap;
-//	private String uid = null;
-//	private String token = null;
-//	private String expires_in = null;
 	String name;
 	// 播放记录变量
 	public static int REQUESTPLAYTIME = 200;
@@ -120,9 +117,6 @@ public class Detail_Movie extends Activity {
 				return false;
 			}
 		});
-		// 添加下载按钮的暂无下载的效果图
-//		downloaddisable = this.getResources().getDrawable(
-//				R.drawable.tab2_video_8);
 		cacheManager = new VideoCacheManager(Detail_Movie.this);
 		cacheInfo = new VideoCacheInfo();
 		mCurrentPlayData = new CurrentPlayData();
@@ -374,7 +368,7 @@ public class Detail_Movie extends Activity {
 
 	}
 
-	@SuppressWarnings("unchecked")
+
 	public void InitData() {
 		String m_j = null;
 		if (m_ReturnProgramView.movie != null) {
@@ -504,6 +498,10 @@ public class Detail_Movie extends Activity {
 				aq.id(R.id.Layout_comment).gone();
 			}
 		}
+		else
+		{
+			GetServiceData();
+		}
 
 	}
 
@@ -543,18 +541,9 @@ public class Detail_Movie extends Activity {
 				}
 			}
 			if (m_ReturnProgramView.movie.episodes[source_index].down_urls.length > 1) {
-				Arrays.sort(
-						m_ReturnProgramView.movie.episodes[source_index].down_urls,
-						new EComparatorIndex());
+				Arrays.sort(m_ReturnProgramView.movie.episodes[source_index].down_urls,new EComparatorIndex());
 			}
 		}
-		// for(int i = 0;i<Constant.video_index.length;i++)
-		// {
-		// for(int j = 0;j<Constant.quality_index.length;i++)
-		// {
-		//
-		// }
-		// }
 	}
 
 	// 将片源排序
@@ -575,7 +564,7 @@ public class Detail_Movie extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR||json == null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -591,7 +580,6 @@ public class Detail_Movie extends Activity {
 					ReturnProgramView.class);
 			if(m_ReturnProgramView != null&&prod_id!=null)
 			{
-//				app.SaveServiceData(prod_id, json.toString());//根据id保存住
 				if(cacheInfoTemp!=null)
 				{
 					cacheInfoTemp.setProd_value(json.toString());
@@ -672,14 +660,12 @@ public class Detail_Movie extends Activity {
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-
 		cb.SetHeader(app.getHeaders());
 		if(cacheInfoTemp == null)
 		{
 			aq.id(R.id.ProgressText).visible();
 			aq.progress(R.id.progress).ajax(cb);
 		}
-		
 		else
 		{
 			aq.ajax(cb);
