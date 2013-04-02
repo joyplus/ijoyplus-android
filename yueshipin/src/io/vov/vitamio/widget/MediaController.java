@@ -150,6 +150,7 @@ public class MediaController extends FrameLayout  {
 	private TextView mTextView1;
 	private TextView mTextView2;
 	private TextView mTextViewDownloadRate;
+	private TextView videosource_tv;
 	
 	private RelativeLayout mTopBlockLayout;//播放器顶部模块
 	private RelativeLayout mBottomBlockLayout;//播放器底部模块
@@ -266,6 +267,7 @@ public class MediaController extends FrameLayout  {
 		mSelectButton = (ImageButton) v.findViewById(R.id.imageButton6);
 
 		videosource = (ImageView)v.findViewById(R.id.videosource_img);
+		videosource_tv = (TextView)v.findViewById(R.id.videosource_tv);
 		
 		mTextView1 = (TextView) v.findViewById(R.id.textView1);
 		mTextView2 = (TextView) v.findViewById(R.id.textView2);
@@ -601,6 +603,8 @@ public class MediaController extends FrameLayout  {
 			videosource.setBackgroundResource(R.drawable.pptv);
 		}else if(source.equalsIgnoreCase("m1905")){
 			videosource.setBackgroundResource(R.drawable.m1905);
+		}else{
+			videosource_tv.setVisibility(View.INVISIBLE);
 		}
 		
 	}

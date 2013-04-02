@@ -246,7 +246,7 @@ public class MainTopRightDialog extends Activity  {
 				+ ">，推荐给大家哦！更多精彩尽在悦视频，欢迎下载：http://ums.bz/REGLDb/，快来和我一起看吧！";
 		localWXMediaMessage.thumbData = getBitmapBytes(bitmap, false);
 		SendMessageToWX.Req localReq = new SendMessageToWX.Req();
-		localReq.transaction = buildTransaction("");
+		localReq.transaction = String.valueOf(System.currentTimeMillis());
 		localReq.message = localWXMediaMessage;
 		localReq.scene = SendMessageToWX.Req.WXSceneSession;
 		api.sendReq(localReq);
@@ -254,9 +254,7 @@ public class MainTopRightDialog extends Activity  {
 		finish();
 		
 	}
-	private String buildTransaction(final String type) {
-		return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
-	}
+	
 	
 
 	public void OnClickFriendsSocial(View v) {
@@ -281,7 +279,7 @@ public class MainTopRightDialog extends Activity  {
 						+ ">，推荐给大家哦！更多精彩尽在悦视频，欢迎下载：http://ums.bz/REGLDb/，快来和我一起看吧！";
 		localWXMediaMessage.thumbData = getBitmapBytes(bitmap, false);
 		SendMessageToWX.Req localReq = new SendMessageToWX.Req();
-		localReq.transaction = buildTransaction("");
+		localReq.transaction = String.valueOf(System.currentTimeMillis());
 		localReq.message = localWXMediaMessage;
 		localReq.scene = SendMessageToWX.Req.WXSceneTimeline;
 		api.sendReq(localReq);
