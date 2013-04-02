@@ -57,7 +57,7 @@
             android:textColor="#444444"
             android:visibility="gone" />
 
-        <com.joyplus.widget.MyListView
+        <com.joyplus.widget.RefreshListView
             android:id="@+id/listView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

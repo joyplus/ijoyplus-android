@@ -330,6 +330,15 @@ public class VideoPlayerActivity extends Activity implements
 				if(playProdType!=1)
 				{
 					playrecordinfo.setProd_id(playProdId);
+					if(Constant.select_index>-1)
+					{
+						tvsubname = Integer.toString(Constant.select_index+1);//更新本地数据库
+						SharedPreferences myPreference = this.getSharedPreferences("myTvSetting",
+								Context.MODE_PRIVATE);
+						myPreference.edit()
+						.putString(playProdId, Integer.toString(Constant.select_index))
+						.commit();
+					}
 					playrecordinfo.setProd_subname(tvsubname);	
 					playrecordinfo.setLast_playtime(current_time+"");
 					playrecordmanager.savePlayRecord(playrecordinfo);

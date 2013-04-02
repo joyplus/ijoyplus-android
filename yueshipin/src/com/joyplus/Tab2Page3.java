@@ -31,17 +31,23 @@ import com.joyplus.Adapters.Tab2Page3ListData;
 import com.joyplus.Service.Return.ReturnTops;
 import com.joyplus.widget.MyListView;
 import com.joyplus.widget.MyListView.OnRefreshListener;
+import com.joyplus.widget.RefreshListView;
 
 public class Tab2Page3 extends Activity implements
-		android.widget.AdapterView.OnItemClickListener {
+		android.widget.AdapterView.OnItemClickListener,RefreshListView.IOnRefreshListener,
+		RefreshListView.IOnLoadMoreListener {
 	private String TAG = "Tab2Page3";
 	protected AQuery aq;
 	private App app;
 	private ReturnTops m_ReturnTops = null;
 
 	private ArrayList dataStruct;
-	private MyListView ItemsListView;
+	private RefreshListView ItemsListView;
 	private Tab2Page3ListAdapter Tab2Page3Adapter;
+	
+	private RefreshDataAsynTask mRefreshAsynTask;
+	private LoadMoreDataAsynTask mLoadMoreAsynTask;
+	private int isLastisNext = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,41 +56,66 @@ public class Tab2Page3 extends Activity implements
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		// 获取listview对象
-		ItemsListView = (MyListView) findViewById(R.id.listView1);
+		ItemsListView = (RefreshListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
-		ItemsListView.setonRefreshListener(new OnRefreshListener() {
-			public void onRefresh() {
-
-				new GetDataTask().execute();
-
-				GetServiceData();
-		}});
+		
+		ItemsListView.setOnRefreshListener(this);
+		ItemsListView.setOnLoadMoreListener(this);
+		dataStruct = new ArrayList();
 		CheckSaveData();
 	}
-
-	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
+	
+	class RefreshDataAsynTask extends AsyncTask<Void , Void, Void>
+	{
 
 		@Override
-		protected String[] doInBackground(Void... params) {
-			// Simulates a background job.
+		protected Void doInBackground(Void... arg0) {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
-				;
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			isLastisNext = 1;
+			GetServiceData(isLastisNext);
 			return null;
 		}
 
 		@Override
-		protected void onPostExecute(String[] result) {
-
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
 			ItemsListView.onRefreshComplete();
-//			Tab2Page3Adapter.notifyDataSetChanged();
-			super.onPostExecute(result);
 		}
 	}
+	
+	class LoadMoreDataAsynTask extends AsyncTask<Void , Void, Void>
+	{
 
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			isLastisNext++;
+			GetServiceData(isLastisNext++);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			ItemsListView.onLoadMoreComplete(false);
+		}
+		
+		
+		
+	}
+
+	
 	public void OnClickTab1TopLeft(View v) {
 		Intent i = new Intent(this, Search.class);
 		startActivity(i);
@@ -123,11 +154,39 @@ public class Tab2Page3 extends Activity implements
 
 	public void GetVideoMovies() {
 		String m_j = null;
-		dataStruct = new ArrayList();
-
-		NotifyDataAnalysisFinished();
+		
 		if (m_ReturnTops.tops == null)
 			return;
+		if(isLastisNext==1)
+		{
+			dataStruct = new ArrayList();
+		}
+		if(isLastisNext>1)
+		{
+			for (int i = 0; i < m_ReturnTops.tops.length; i++) {
+
+				if (m_ReturnTops.tops[i].items != null) {
+					for (int j = 0; j < m_ReturnTops.tops[i].items.length; j++) {
+						Tab2Page3ListData m_Tab2Page3ListData = new Tab2Page3ListData();
+						m_Tab2Page3ListData.Pic_ID = m_ReturnTops.tops[i].items[j].prod_id;
+						m_Tab2Page3ListData.Pic_url = m_ReturnTops.tops[i].items[j].prod_pic_url;
+						m_Tab2Page3ListData.Pic_name = m_ReturnTops.tops[i].items[j].prod_name;
+						m_Tab2Page3ListData.Pic_list1 = m_ReturnTops.tops[i].items[j].cur_item_name;
+						if(!dataStruct.contains(m_Tab2Page3ListData))
+						{
+							dataStruct.add(m_Tab2Page3ListData);
+						}
+					}
+				}
+				Tab2Page3Adapter.notifyDataSetChanged();
+			}
+
+			return;
+		}
+		else
+		{
+			NotifyDataAnalysisFinished();
+		}
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 
 			if (m_ReturnTops.tops[i].items != null) {
@@ -137,12 +196,13 @@ public class Tab2Page3 extends Activity implements
 					m_Tab2Page3ListData.Pic_url = m_ReturnTops.tops[i].items[j].prod_pic_url;
 					m_Tab2Page3ListData.Pic_name = m_ReturnTops.tops[i].items[j].prod_name;
 					m_Tab2Page3ListData.Pic_list1 = m_ReturnTops.tops[i].items[j].cur_item_name;
-
-					dataStruct.add(m_Tab2Page3ListData);
+					if(!dataStruct.contains(m_Tab2Page3ListData))
+					{
+						dataStruct.add(m_Tab2Page3ListData);
+					}
 				}
 			}
 			break;
-
 		}
 
 	}
@@ -167,13 +227,13 @@ public class Tab2Page3 extends Activity implements
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
+			if (isLastisNext > 1)
+				m_ReturnTops = null;
 			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
 			if (m_ReturnTops.tops.length > 0)
 				app.SaveServiceData("show_tops", json.toString());
-
 			// 创建数据源对象
 			GetVideoMovies();
-
 			aq.id(R.id.ProgressText).gone();
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -241,7 +301,8 @@ public class Tab2Page3 extends Activity implements
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("show_tops");
 		if (SaveData == null) {
-			GetServiceData();
+			isLastisNext = 1;
+			GetServiceData(isLastisNext);
 		} else {
 			try {
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
@@ -251,7 +312,8 @@ public class Tab2Page3 extends Activity implements
 					@Override
 					public void run() {
 						// execute the task
-						GetServiceData();
+						isLastisNext = 1;
+						GetServiceData(isLastisNext);
 					}
 				}, 2000);
 
@@ -270,8 +332,9 @@ public class Tab2Page3 extends Activity implements
 	}
 
 	// InitListData
-	public void GetServiceData() {
-		String url = Constant.BASE_URL + "show_tops";
+	public void GetServiceData(int index) {
+		String url = Constant.BASE_URL + "show_tops"+"?page_num="
+				+ Integer.toString(index) + "&page_size=30";;
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
@@ -287,5 +350,19 @@ public class Tab2Page3 extends Activity implements
 			aq.ajax(cb);
 		}
 
+	}
+
+	@Override
+	public void OnLoadMore() {
+		// TODO Auto-generated method stub
+		mLoadMoreAsynTask = new LoadMoreDataAsynTask();
+		mLoadMoreAsynTask.execute();
+	}
+
+	@Override
+	public void OnRefresh() {
+		// TODO Auto-generated method stub
+		mRefreshAsynTask = new RefreshDataAsynTask();
+		mRefreshAsynTask.execute();
 	}
 }
