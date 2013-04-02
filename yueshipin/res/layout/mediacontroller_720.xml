@@ -30,7 +30,24 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
             android:background="@drawable/player_back" />
-
+        
+           <TextView android:id="@+id/videosource_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="视频来源："
+                android:textColor="@color/white"
+                android:layout_toRightOf="@id/imageButton1"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                />
+            <ImageView android:id="@+id/videosource_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="2dp"
+                android:layout_toRightOf="@id/videosource_tv"
+                android:fadingEdge="none"
+                />
         <ImageButton
             android:id="@+id/imageButton6"
             android:layout_width="wrap_content"

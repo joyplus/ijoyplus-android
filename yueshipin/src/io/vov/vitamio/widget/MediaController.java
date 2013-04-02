@@ -26,6 +26,8 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Adapters.Tab3Page1ListData;
 import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramView;
+import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
+import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS.URLS;
 
 import io.vov.utils.Log;
 import io.vov.utils.StringUtils;
@@ -144,9 +146,11 @@ public class MediaController extends FrameLayout  {
 	private ImageButton mNextButton;
 	private ImageButton mQualityButton;
 	private ImageButton mSelectButton;
+	private ImageView videosource;
 	private TextView mTextView1;
 	private TextView mTextView2;
 	private TextView mTextViewDownloadRate;
+	private TextView videosource_tv;
 	
 	private RelativeLayout mTopBlockLayout;//播放器顶部模块
 	private RelativeLayout mBottomBlockLayout;//播放器底部模块
@@ -262,6 +266,9 @@ public class MediaController extends FrameLayout  {
 		mQualityButton = (ImageButton) v.findViewById(R.id.imageButton5);
 		mSelectButton = (ImageButton) v.findViewById(R.id.imageButton6);
 
+		videosource = (ImageView)v.findViewById(R.id.videosource_img);
+		videosource_tv = (TextView)v.findViewById(R.id.videosource_tv);
+		
 		mTextView1 = (TextView) v.findViewById(R.id.textView1);
 		mTextView2 = (TextView) v.findViewById(R.id.textView2);
 		mTextViewDownloadRate = (TextView) v.findViewById(R.id.textViewDownloadRate);
@@ -552,6 +559,56 @@ public class MediaController extends FrameLayout  {
 		mPlayer = player;
 		updatePausePlay();
 	}
+	public void setVideoSource(){
+		String source = null ;
+		switch(CurrentCategory){
+		case 0:
+			source = m_ReturnProgramView.movie.episodes[0].down_urls[CurrentSource].source;
+			if(source.equalsIgnoreCase("wangpan")){
+				source =  m_ReturnProgramView.movie.episodes[0].video_urls[CurrentSource].source;
+			}
+			break;
+		case 1:
+			source = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].source;
+			if(source.equalsIgnoreCase("wangpan")){
+				source =  m_ReturnProgramView.tv.episodes[CurrentIndex].video_urls[CurrentSource].source;
+			}
+			break;
+		case 2:
+			source = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].source;
+			if(source.equalsIgnoreCase("wangpan")){
+				source =  m_ReturnProgramView.show.episodes[CurrentIndex].video_urls[CurrentSource].source;
+			}
+ 			break;
+		}
+		
+
+		if(source.equalsIgnoreCase("letv") || source.equalsIgnoreCase("le_tv_fee")){
+			videosource.setBackgroundResource(R.drawable.letv);
+		}else if(source.equalsIgnoreCase("fengxing")){
+			videosource.setBackgroundResource(R.drawable.fengxing);
+		}else if(source.equalsIgnoreCase("qiyi")){
+			videosource.setBackgroundResource(R.drawable.qiyi);
+		}else if(source.equalsIgnoreCase("youku")){
+			videosource.setBackgroundResource(R.drawable.youku);
+		}else if(source.equalsIgnoreCase("sinahd")){
+			videosource.setBackgroundResource(R.drawable.sinahd);
+		}else if(source.equalsIgnoreCase("sohu")){
+			videosource.setBackgroundResource(R.drawable.sohu);
+		}else if(source.equalsIgnoreCase("56")){
+			videosource.setBackgroundResource(R.drawable.wole56);
+		}else if(source.equalsIgnoreCase("qq")){
+			videosource.setBackgroundResource(R.drawable.qq);
+		}else if(source.equalsIgnoreCase("pptv")){
+			videosource.setBackgroundResource(R.drawable.pptv);
+		}else if(source.equalsIgnoreCase("m1905")){
+			videosource.setBackgroundResource(R.drawable.m1905);
+		}else{
+			videosource_tv.setVisibility(View.INVISIBLE);
+		}
+		
+	}
+
 
 	/**
 	 * Control the action when the seekbar dragged by user
