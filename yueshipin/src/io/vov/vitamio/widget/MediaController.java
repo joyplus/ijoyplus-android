@@ -586,27 +586,27 @@ public class MediaController extends FrameLayout  {
 		}
         
 		if(source.equalsIgnoreCase("letv") || source.equalsIgnoreCase("le_tv_fee")){
-			videosource.setBackgroundResource(R.drawable.letv);
+			videosource.setBackgroundResource(R.drawable.logo_letv);
 		}else if(source.equalsIgnoreCase("fengxing")){
-			videosource.setBackgroundResource(R.drawable.fengxing);
+			videosource.setBackgroundResource(R.drawable.logo_fengxing);
 		}else if(source.equalsIgnoreCase("qiyi")){
-			videosource.setBackgroundResource(R.drawable.qiyi);
+			videosource.setBackgroundResource(R.drawable.logo_qiyi);
 		}else if(source.equalsIgnoreCase("youku")){
-			videosource.setBackgroundResource(R.drawable.youku);
+			videosource.setBackgroundResource(R.drawable.logo_youku);
 		}else if(source.equalsIgnoreCase("sinahd")){
-			videosource.setBackgroundResource(R.drawable.sinahd);
+			videosource.setBackgroundResource(R.drawable.logo_sinahd);
 		}else if(source.equalsIgnoreCase("sohu")){
-			videosource.setBackgroundResource(R.drawable.sohu);
+			videosource.setBackgroundResource(R.drawable.logo_sohu);
 		}else if(source.equalsIgnoreCase("56")){
-			videosource.setBackgroundResource(R.drawable.wole56);
+			videosource.setBackgroundResource(R.drawable.logo_56);
 		}else if(source.equalsIgnoreCase("qq")){
-			videosource.setBackgroundResource(R.drawable.qq);
+			videosource.setBackgroundResource(R.drawable.logo_qq);
 		}else if(source.equalsIgnoreCase("pptv")){
-			videosource.setBackgroundResource(R.drawable.pptv);
+			videosource.setBackgroundResource(R.drawable.logo_pptv);
 		}else if(source.equalsIgnoreCase("m1905")){
-			videosource.setBackgroundResource(R.drawable.m1905);
+			videosource.setBackgroundResource(R.drawable.logo_m1905);
 		}else{
-			videosource.setBackgroundResource(R.drawable.pptv);
+			videosource.setBackgroundResource(R.drawable.logo_pptv);
 		}
 		
 	}
