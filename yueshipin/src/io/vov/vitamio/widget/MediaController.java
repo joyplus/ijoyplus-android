@@ -581,8 +581,10 @@ public class MediaController extends FrameLayout  {
 			}
  			break;
 		}
-		
-
+		if(source != null){
+			videosource_tv.setVisibility(View.VISIBLE);
+		}
+        
 		if(source.equalsIgnoreCase("letv") || source.equalsIgnoreCase("le_tv_fee")){
 			videosource.setBackgroundResource(R.drawable.letv);
 		}else if(source.equalsIgnoreCase("fengxing")){

@@ -40,8 +40,8 @@
                 android:textColor="@color/white"
                 android:layout_toRightOf="@id/imageButton1"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                />
+                android:layout_marginLeft="15dp"
+                android:visibility="gone"/>
             <ImageView android:id="@+id/videosource_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
