@@ -76,7 +76,8 @@ public class App extends Application {
 	private Map<String, String> headers;
 	private CurrentPlayData mCurrentPlayData;
 	private ReturnProgramView m_ReturnProgramView = null;
-
+    private int number = 0;
+	
 	public ReturnProgramView get_ReturnProgramView() {
 		return m_ReturnProgramView;
 	}
@@ -330,6 +331,47 @@ public class App extends Application {
 		SharedPreferences sharedata = getSharedPreferences("ServiceData", 0);
 		return sharedata.getString(where, null);
 	}
+	
+	
+	public void SaveSearchData(String where, String Data) {
+		SharedPreferences sharerecord = getSharedPreferences("recordnumber", 0);
+		SharedPreferences.Editor recorddata = getSharedPreferences(
+				"recordnumber", 0).edit();
+		
+		
+		SharedPreferences.Editor sharedatab = getSharedPreferences(
+				"SearchData", 0).edit();
+		number = sharerecord.getInt("number", number);
+		if(number < 10){
+		number++;
+		recorddata.putInt("number", number);
+		sharedatab.putString(String.valueOf(number), Data);
+//		sharedatab.putString(where, Data);
+		}else{
+			number = 1;
+			recorddata.putInt("number", number);
+			sharedatab.putString(String.valueOf(number), Data);
+		}
+		sharedatab.commit();
+	}
+
+	public void DeleteSearchData() {
+		SharedPreferences.Editor sharedatab = getSharedPreferences(
+				"SearchData", 0).edit();
+		SharedPreferences.Editor recorddata = getSharedPreferences(
+				"recordnumber", 0).edit();
+		sharedatab.clear();
+		recorddata.clear();
+		recorddata.commit();
+		sharedatab.commit();
+	}
+
+	public String GetSearchData() {
+
+		SharedPreferences sharedata = getSharedPreferences("SearchData", 0);
+
+		return sharedata.getAll().values().toString();
+	}
 
 	public void SavePlayData(String where, String Data) {
 		String m_data = GetPlayData("order");
@@ -483,7 +525,7 @@ public class App extends Application {
 
 		HttpParams httpParams = mAndroidHttpClient.getParams();
 		// 连接时间最长5秒，可以更改
-		HttpConnectionParams.setConnectionTimeout(httpParams, 5000 * 1);
+		HttpConnectionParams.setConnectionTimeout(httpParams, 60000 * 1);
 
 		try {
 			URL url = new URL(srcUrl);

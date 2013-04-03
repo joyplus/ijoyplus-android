@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -50,13 +51,15 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	private ListView ItemsListView;
 	private Tab3Page3ListAdapter Tab3Page3Adapter;
 	private int isLastisNext = 1;
-
+	private static String MY_TOP_LIST  = "我的悦单";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab3page3);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		aq.id(R.id.linearLayout1).gone();
 		aq.id(R.id.button2).gone();
 		// 获取listview对象
@@ -128,12 +131,14 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		isLastisNext=1;
 		CheckSaveData();
 		GetServiceData(isLastisNext);
+		MobclickAgent.onEventBegin(mContext, MY_TOP_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, MY_TOP_LIST);
 		MobclickAgent.onPause(this);
 	}
 
@@ -257,7 +262,8 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("user_tops33");
 		if (SaveData == null) {
-			GetServiceData(1);
+			isLastisNext = 1;
+			GetServiceData(isLastisNext);
 		} else {
 			try {
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);

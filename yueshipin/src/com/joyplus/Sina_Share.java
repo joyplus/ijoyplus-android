@@ -28,13 +28,15 @@ public class Sina_Share extends Activity {
 	private static final int MAX_COUNT = 120;
 	private MultiAutoCompleteTextView mEditText = null;
 	private TextView tv_count = null;
-	
+	private Context mContext;
+	private static String ue_sina_share = "新浪微博分享";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sina_share);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		Intent intent = getIntent();
 		prod_name = intent.getStringExtra("prod_name");
 		aq.id(R.id.program_name).text(prod_name);
@@ -148,7 +150,7 @@ public class Sina_Share extends Activity {
 	}
 
 	public void ShareResult(String url, JSONObject json, AjaxStatus status) {
-
+        MobclickAgent.onEvent(mContext, ue_sina_share);
 		app.MyToast(this, "分享成功!");
 		finish();
 	}

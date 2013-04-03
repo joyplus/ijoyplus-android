@@ -48,9 +48,6 @@ public class DownloadTask extends AsyncTask<String, Integer, DownloadInfo> {
 					my_name,download_state,context);
 			App.downloaders.put(localfile, downloader);
 		}
-//		if (downloader.isdownloading())
-//			return null;
-		
 		// 得到下载信息类的个数组成集合
 		return downloader.getDownloaderInfors();
 	}

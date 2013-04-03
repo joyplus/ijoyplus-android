@@ -3,16 +3,14 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:background="#ffffff" >
+    android:layout_height="wrap_content" >
 
     <!-- 内容 -->
 
     <RelativeLayout
         android:id="@+id/head_contentLayout"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="30dp" >
+        android:layout_height="wrap_content" >
 
         <!-- 箭头图像、进度条 -->
 
@@ -20,7 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true" >
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30dp" >
 
             <!-- 箭头 -->
 
@@ -29,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/arrow_down" />
+                android:src="@drawable/arrow" />
 
             <!-- 进度条 -->
 
@@ -47,7 +46,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
             android:gravity="center_horizontal"
             android:orientation="vertical" >
 
@@ -57,8 +56,9 @@
                 android:id="@+id/head_tipsTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="下拉刷新"
-                android:textSize="15dp" />
+                android:text="下拉可以刷新"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
 
             <!-- 最近更新 -->
 
@@ -67,8 +67,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="上次更新"
-                android:textSize="12dp" />
+                android:textColor="@color/black"
+                android:textSize="15sp" />
         </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white" >
+        </View>
     </RelativeLayout>
 
 </LinearLayout>
