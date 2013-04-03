@@ -526,31 +526,12 @@ public class MediaController extends FrameLayout  {
 		
 		if (CurrentURLS != null && CurrentURLS.url != null)  {
 					PROD_SOURCE = CurrentURLS.url.trim();
-					app.CheckUrlIsValidFromServer(PROD_SOURCE,"1");
+//					app.CheckUrlIsValidFromServer(PROD_SOURCE,"1");
 		}
 		if (PROD_SOURCE != null)
 			mPlayer.setContinueVideoPath(null,PROD_SOURCE,true);
 	}
-//	public void SetMediaPlayerControlBGGone() {
-//		if (mAnchor != null) {
-//			mAnchor.setBackgroundResource(0);
-//			mTextView1.setVisibility(View.GONE);
-//			mTextView2.setVisibility(View.GONE);
-//		}
-//	}
 
-//	public void showDLNAButtom(boolean isShow){
-//		if(mDlnaButton != null){
-//			if(isShow){
-//				mHandler.removeMessages(FADE_OUT);
-//				mHandler.sendEmptyMessageDelayed(SHOW_DLNABUTTOM, 500);
-//			}else{
-//				mHandler.removeMessages(FADE_OUT);
-//				mHandler.sendEmptyMessageDelayed(HIDE_DLNABUTTOM, 500);
-//			}
-//
-//		}
-//	}
 	public void setDownloadRate(int rate){
 		if(mTextViewDownloadRate != null)
 			mTextViewDownloadRate.setText(Integer.toString(rate)+"kb/s");
@@ -606,7 +587,6 @@ public class MediaController extends FrameLayout  {
 		}else{
 			videosource.setBackgroundResource(R.drawable.pptv);
 		}
-		
 	}
 
 

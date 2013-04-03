@@ -525,7 +525,7 @@ public class App extends Application {
 
 		HttpParams httpParams = mAndroidHttpClient.getParams();
 		// 连接时间最长5秒，可以更改
-		HttpConnectionParams.setConnectionTimeout(httpParams, 5000 * 1);
+		HttpConnectionParams.setConnectionTimeout(httpParams, 60000 * 1);
 
 		try {
 			URL url = new URL(srcUrl);

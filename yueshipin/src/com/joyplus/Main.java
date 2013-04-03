@@ -28,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TabHost;
 import com.androidquery.AQuery;
@@ -84,7 +85,6 @@ public class Main extends TabActivity {
 			startService(intent);
 		}
 		
-		
 		PushService.subscribe(this, "", Main.class);
 		PushService.subscribe(this, "CHANNEL_ANDROID", Main.class);
 		PushService.setDefaultPushCallback(this, Main.class);
@@ -107,7 +107,6 @@ public class Main extends TabActivity {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		try {
-			/*{"alert":"真爱趁现在","prod_id":"977732","prod_type":"2","badge":"Increment"}  */
 			JSONObject json = new JSONObject(intent.getExtras().getString(
 					"com.parse.Data"));
 			String Prod_ID = json.getString("prod_id").trim();
@@ -246,27 +245,6 @@ public class Main extends TabActivity {
 		super.onPause();
 	}
 
-	// NETWORK
-	public boolean isNetworkAvailable() {
-		Context context = getApplicationContext();
-		ConnectivityManager connect = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (connect == null) {
-			return false;
-		} else// get all network info
-		{
-			NetworkInfo[] info = connect.getAllNetworkInfo();
-			if (info != null) {
-				for (int i = 0; i < info.length; i++) {
-					if (info[i].getState() == NetworkInfo.State.CONNECTED) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
 	// setnetwork
 	public void setNetwork() {
 
@@ -284,7 +262,6 @@ public class Main extends TabActivity {
 				});
 		builder.create();
 		builder.show();
-
 	}
 	/*
 	 * 添加之后关于在线的操作不成功
@@ -366,7 +343,6 @@ public class Main extends TabActivity {
 					getResources().getString(R.string.networknotwork));
 			}
 			//解决没有网络时程序不能关闭的问题
-			//finish();
 		}
 	}
 
