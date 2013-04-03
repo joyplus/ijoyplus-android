@@ -199,9 +199,9 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		dataStruct = new ArrayList();
 		Tab3Page1Adapter = new Tab3Page1ListAdapter();
 		ItemsListView.setAdapter(Tab3Page1Adapter);
-		isLastisNext = 1;
+//		isLastisNext = 1;
 		CheckSaveData();
-		GetServiceData(isLastisNext);
+//		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
 	}
 
@@ -228,7 +228,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				+ Integer.toString(index) + "&page_size=10";
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-
+		String str = app.UserID;
 		cb.SetHeader(app.getHeaders());
 		aq.ajax(cb);
 	}
@@ -473,14 +473,24 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("user_Histories");
 		if (SaveData == null) {
-			GetServiceData(1);
+			isLastisNext = 1;
+			GetServiceData(isLastisNext);
 		} else {
 			try {
 				m_ReturnUserPlayHistories = mapper.readValue(SaveData,
 						ReturnUserPlayHistories.class);
 				// 创建数据源对象
 				GetVideoMovies();
-
+				
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						isLastisNext = 1;
+						GetServiceData(isLastisNext);
+					}
+				}, 2000);
+				
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

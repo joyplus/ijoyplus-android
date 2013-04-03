@@ -309,7 +309,7 @@ public class Setting extends Activity {
 		if (json != null) {
 			app.SaveServiceData("UserInfo", json.toString());
 			try {
-				app.UserID = json.getString("user_id").trim();
+				app.UserID = json.getString("user_id").trim();//原来为user_id
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -378,7 +378,7 @@ public class Setting extends Activity {
 							app.setHeaders(headers);
 							
 							//将这个UserID保存在本地
-							//app.SaveServiceData("UserInfo", json.toString());
+//							app.SaveServiceData("UserInfo", json.toString());
 							//app.MyToast(aq.getContext(),
 									//"账号登陆成功!");
 							UploadSinaHeadAndScreen_nameUrl(token, uid);
