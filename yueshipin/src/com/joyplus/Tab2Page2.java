@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,23 +45,24 @@ public class Tab2Page2 extends Activity implements
 	// private ListView ItemsListView;
 	private MyListView ItemsListView;
 	private Tab2Page2ListAdapter Tab2Page2Adapter;
-
+	private static String POPULAR_MOVIE_TOP_LIST = "电影悦榜";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab2page2);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-
+        mContext = this;
 		// 获取listview对象
 		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
-				
+
 				new GetDataTask().execute();
-				
+
 				GetServiceData();
 		}});
 		CheckSaveData();
@@ -109,12 +111,14 @@ public class Tab2Page2 extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, POPULAR_MOVIE_TOP_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, POPULAR_MOVIE_TOP_LIST);
 		MobclickAgent.onPause(this);
 	}
 
@@ -310,7 +314,7 @@ public class Tab2Page2 extends Activity implements
 		{
 			aq.ajax(cb);
 		}
-		
+
 
 	}
 }

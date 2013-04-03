@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -52,12 +53,14 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 	private ListView ItemsListView;
 	private Tab3Page2ListAdapter Tab3Page2Adapter;
 	private int isLastisNext = 1;
-
+	private static String COLLECTION_LIST  = "我的收藏";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab3page2);
 		app = (App) getApplication();
+		mContext = this;
 		aq = new AQuery(this);
 		aq.id(R.id.Layout1).gone();
 		aq.id(R.id.Layout2).gone();
@@ -140,12 +143,14 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		isLastisNext = 1;
 		CheckSaveData();
 		GetServiceData(isLastisNext);
+		MobclickAgent.onEventBegin(mContext, COLLECTION_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, COLLECTION_LIST);
 		MobclickAgent.onPause(this);
 	}
 
@@ -258,7 +263,8 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("user_favorities");
 		if (SaveData == null) {
-			GetServiceData(1);
+			isLastisNext = 1;
+			GetServiceData(isLastisNext);
 		} else {
 			try {
 				m_ReturnUserFavorities = mapper.readValue(SaveData,

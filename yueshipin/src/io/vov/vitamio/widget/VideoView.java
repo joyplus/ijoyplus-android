@@ -325,6 +325,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 				if(URLUtil.isNetworkUrl(mUri.toString())){
 					mMediaController.ShowCurrentPlayData(app.getCurrentPlayData());
 					mMediaController.setProd_Data(app.get_ReturnProgramView());
+					mMediaController.setVideoSource();
 				}
 				
 			}
@@ -487,7 +488,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 
 			if (getWindowToken() != null) {
 				int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback : R.string.addressnotwork;
-
+				
 				new AlertDialog.Builder(mContext).setTitle(R.string.netstate).setMessage(message).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					@Override
           public void onClick(DialogInterface dialog, int whichButton) {
@@ -729,6 +730,7 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			mCurrentState = STATE_PLAYING;
 		}
 		mTargetState = STATE_PLAYING;
+		
 	}
 
 	@Override
@@ -927,41 +929,45 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	}
 	@Override
 	public void gotoDlnaVideoPlay() {
-		if (mMyService != null) {
-			ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
-			if (mDmrCache.size() >= 0) {
-				CharSequence[] items = new String[mDmrCache.size() + 1];
-				items[0] = "我的设备";
-				for (int i = 0; i < mDmrCache.size(); i++)
-					items[i + 1] = mDmrCache.get(i).friendlyName;
+		if(android.os.Build.VERSION.SDK_INT>=14)
+		{
+			if (mMyService != null) {
+				ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
+				if (mDmrCache.size() >= 0) {
+					CharSequence[] items = new String[mDmrCache.size() + 1];
+					items[0] = "我的设备";
+					for (int i = 0; i < mDmrCache.size(); i++)
+						items[i + 1] = mDmrCache.get(i).friendlyName;
 
-				
-				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-				builder.setTitle("请选择你的设备：");
-				builder.setSingleChoiceItems(items, 0,new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int item) {
-						if (item > 0) {
-							ArrayList<MediaRenderer> mDmrCache = mMyService
-									.getDmrCache();
-							MediaRenderer mMediaRenderer = mDmrCache
-									.get(item - 1);
-							mMyService.SetCurrentDevice(item);
-							if (mMediaRenderer != null) {
-								alert.dismiss();
-								gotoDlnaVideoPlay2();
+					
+					AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+					builder.setTitle("请选择你的设备：");
+					builder.setSingleChoiceItems(items, 0,new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int item) {
+							if (item > 0) {
+								ArrayList<MediaRenderer> mDmrCache = mMyService
+										.getDmrCache();
+								MediaRenderer mMediaRenderer = mDmrCache
+										.get(item - 1);
+								mMyService.SetCurrentDevice(item);
+								if (mMediaRenderer != null) {
+									alert.dismiss();
+									gotoDlnaVideoPlay2();
+								}
 							}
 						}
-					}
-				});
-				alert = builder.create();
-				Window window = alert.getWindow();
-				WindowManager.LayoutParams lp = window.getAttributes();
-				lp.alpha = 0.6f;
-				window.setAttributes(lp);
-				alert.show();
-				
+					});
+					alert = builder.create();
+					Window window = alert.getWindow();
+					WindowManager.LayoutParams lp = window.getAttributes();
+					lp.alpha = 0.6f;
+					window.setAttributes(lp);
+					alert.show();
+					
+				}
 			}
 		}
+	
 		// else {
 		// AlertDialog alertDialog = new
 		// AlertDialog.Builder(mContext).setMessage(
@@ -975,15 +981,19 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 	}
 	
 	private void gotoDlnaVideoPlay2() {
-		Intent intent = new Intent(mContext, DlnaVideoPlay.class);
-		intent.putExtra("prod_url", mUri.toString());
-		intent.putExtra("title", mTitle);
+		if(android.os.Build.VERSION.SDK_INT>=14)
+		{
+			Intent intent = new Intent(mContext, DlnaVideoPlay.class);
+			intent.putExtra("prod_url", mUri.toString());
+			intent.putExtra("title", mTitle);
 
-		try {
-			mContext.startActivity(intent);
-		} catch (ActivityNotFoundException ex) {
-			Log.e(TAG, "Call DlnaVideoPlay failed", ex);
+			try {
+				mContext.startActivity(intent);
+			} catch (ActivityNotFoundException ex) {
+				Log.e(TAG, "Call DlnaVideoPlay failed", ex);
+			}
 		}
+		
 	}
 	@Override
 	public int GetCurrentVideoLayout() {
@@ -1003,8 +1013,9 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			}
 			mLayoutBG.setVisibility(View.VISIBLE);
 		}
+		app.CheckUrlIsValidFromServer(path,"1");
 //		setVideoPath(path);
-		if( app.getURLPath() != null &&  app.getURLPath().length() >0)
+		if( app.getURLPath() != null && app.getURLPath().length() >0)
 			mPath = app.getURLPath();
 		else 
 			mPath = path;

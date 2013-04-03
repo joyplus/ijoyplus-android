@@ -50,10 +50,12 @@ public class Video_Cache extends Activity {
 	TextView textView;
 	private GridView gridView;
 	public List<DownloadInfo> data;
+	public List<DownloadInfo> tempdata;
 	View tempview = null;
 	DownLoadAdapter adapter = null;
 
 	private boolean isnotChecked = true;
+	private static String DOWNLOAD = "缓存";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -236,62 +238,59 @@ public class Video_Cache extends Activity {
 	}
 
 	public void OnDeleteGridViewItem(final int item) {
-		if (data.get(item).getMy_index().equalsIgnoreCase("movie")) {
-			String program_name = "你确定删除影片:<<" + data.get(item).getMy_name()
-					+ ">>吗？";// 最好加上名字
-			AlertDialog.Builder builder = new AlertDialog.Builder(
-					Video_Cache.this);
-			builder.setTitle("下载记录")
-					.setMessage(program_name)
-					.setPositiveButton("确定",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// 删除数据库数据,从新显示
-									DownloadInfo info = data.get(item);
-									if (App.downloaders.get(Constant.PATH_VIDEO
-											+ info.getProd_id() + "_"
-											+ info.getMy_index() + ".mp4") != null) {
-										App.downloaders.get(
-												Constant.PATH_VIDEO
-														+ info.getProd_id()
-														+ "_"
-														+ info.getMy_index()
-														+ ".mp4").pause();
-									}
-									Dao.getInstance(Video_Cache.this).delete(
-											info.getProd_id(),
-											info.getMy_index());
-									File file = new File(Constant.PATH_VIDEO
-											+ info.getProd_id() + "_"
-											+ info.getMy_index() + ".mp4");
-									if (file.exists()) {
-										file.delete();
-									}
-									showGridView();
-								}
-							}).setNegativeButton("取消", null).create();
-			builder.show();
-		} else {
-			// 添加相应的处理
-		}
+		String program_name = "你确定删除影片:<<" + data.get(item).getMy_name()
+				+ ">>吗？";// 最好加上名字
+		AlertDialog.Builder builder = new AlertDialog.Builder(Video_Cache.this);
+		builder.setTitle("下载记录").setMessage(program_name)
+				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// 删除数据库数据,从新显示
+						DownloadInfo info = data.get(item);
+						tempdata = Dao.getInstance(Video_Cache.this)
+								.getInfosOfProd_id(info.getProd_id());
+						for (int i = 0; i < tempdata.size(); i++) {
+							if (App.downloaders.get(Constant.PATH_VIDEO
+									+ tempdata.get(i).getProd_id() + "_"
+									+ tempdata.get(i) + ".mp4") != null) {
+								App.downloaders.get(
+										Constant.PATH_VIDEO
+												+ tempdata.get(i).getProd_id()
+												+ "_"
+												+ tempdata.get(i).getMy_index()
+												+ ".mp4").pause();
+							}
+							File file = new File(Constant.PATH_VIDEO
+									+ tempdata.get(i).getProd_id() + "_"
+									+ tempdata.get(i).getMy_index() + ".mp4");
+							if (file.exists()) {
+								file.delete();
+							}
+						}
+						Dao.getInstance(Video_Cache.this).delete(
+								info.getProd_id());
+						data.remove(info);
+						showGridView();
+					}
+				}).setNegativeButton("取消", null).create();
+		builder.show();
 	}
 
 	private void showGridView() {
 		// TODO Auto-generated method stub
 
 		data = Dao.getInstance(Video_Cache.this).getDownloadInfosGroup();
-		if(isnotChecked){
-		for (int i = 0; i < data.size(); i++) {
- 			String localfile = Constant.PATH_VIDEO + data.get(i).getProd_id()
- 					+ "_" + data.get(i).getMy_index() + ".mp4";
- 		    File file = new File(localfile);
- 		    if(!file.exists()){
- 		    	data.remove(i);
- 		    }
- 		}
-		isnotChecked = false;
+		if (isnotChecked) {
+			for (int i = 0; i < data.size(); i++) {
+				String localfile = Constant.PATH_VIDEO
+						+ data.get(i).getProd_id() + "_"
+						+ data.get(i).getMy_index() + ".mp4";
+				File file = new File(localfile);
+				if (!file.exists()) {
+					data.remove(i);
+				}
+			}
+			isnotChecked = false;
 		}
 		adapter.refresh(data);
 		if (data.isEmpty()) {
@@ -352,6 +351,7 @@ public class Video_Cache extends Activity {
 	public void onResume() {
 		super.onResume();
 		showGridView();
+		MobclickAgent.onEventBegin(context, DOWNLOAD);
 		MobclickAgent.onResume(this);
 		//
 	}
@@ -359,6 +359,7 @@ public class Video_Cache extends Activity {
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(context, DOWNLOAD);
 		MobclickAgent.onPause(this);
 	}
 

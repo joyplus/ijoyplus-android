@@ -12,6 +12,7 @@ public class DownloadInfo {
 	private String urlposter;//海报
 	private String my_name;
 	private String download_state;
+	private String localfile;//存放视频路径
 	public DownloadInfo(int compeleteSize,int fileSize,String prod_id,String my_index,String url,String urlposter,String my_name,String download_state)
 	{
 		this.compeleteSize = compeleteSize;
@@ -91,7 +92,9 @@ public class DownloadInfo {
 	public void setDownload_state(String download_state) {
 		this.download_state = download_state;
 	}
-	
+	public String  getLocalpath(){
+		return localfile;
+	}
 	
 	@Override
 	public String toString() {

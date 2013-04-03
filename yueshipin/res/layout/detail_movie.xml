@@ -42,6 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
+            android:paddingLeft="16dp"
             android:gravity="center"
             android:onClick="OnClickTab1TopLeft" >
 
@@ -73,6 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
+            android:paddingRight="16dp"
             android:gravity="center"
             android:onClick="OnClickTab1TopRight"
             android:orientation="horizontal" >
@@ -420,5 +422,13 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
+	<LinearLayout 
+	    android:id="@+id/new_guider_3"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:background="@drawable/new_guider_3"
+	    android:onClick="OnClickNewGuider_3"
+	    android:visibility="gone">
+	    
+	</LinearLayout>
 </RelativeLayout>

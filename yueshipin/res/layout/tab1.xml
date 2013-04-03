@@ -96,5 +96,4 @@
             android:divider="@drawable/tab1_divider">
         </ListView>
     </LinearLayout>
-
 </RelativeLayout>

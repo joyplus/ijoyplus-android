@@ -9,6 +9,7 @@ import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.NotificationType;
 import com.umeng.fb.UMFeedbackService;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -17,7 +18,8 @@ public class Z_Sug extends Activity {
 	/** Called when the activity is first created. */
 	private AQuery aq;
 	private App app;
-
+	private static String SUGGESTION   = "意见反馈";
+	Context mContext;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,6 +27,7 @@ public class Z_Sug extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);// 不显示标题
 		setContentView(R.layout.z_sug);
 		app = (App) getApplication();
+		mContext = this;
 		aq = new AQuery(this);
 		UMFeedbackService.enableNewReplyNotification(this,
 				NotificationType.AlertDialog);
@@ -91,12 +94,14 @@ public class Z_Sug extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, SUGGESTION);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, SUGGESTION);
 		MobclickAgent.onPause(this);
 	}
 }

@@ -23,6 +23,34 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginTop="2dp"
                 android:scaleType="centerCrop" />
+            <ImageView
+                 android:id="@+id/down_wait"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_centerHorizontal="true"
+                 android:layout_centerVertical="true"
+                 android:scaleType="centerCrop" 
+                 android:background="@drawable/down_wait"
+                 android:visibility="gone"/>
+             <ImageView
+                 android:id="@+id/down_pause"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_centerHorizontal="true"
+                 android:layout_centerVertical="true"
+                 android:scaleType="centerCrop" 
+                 android:background="@drawable/down_pause"
+                 android:visibility="gone"/>
+             
+             <ImageView
+                 android:id="@+id/down_downing"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_centerHorizontal="true"
+                 android:layout_centerVertical="true"
+                 android:scaleType="centerCrop" 
+                 android:background="@drawable/down_downing"
+                 android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/state_layer"

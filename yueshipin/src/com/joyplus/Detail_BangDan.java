@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,7 +42,8 @@ public class Detail_BangDan extends Activity implements
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private BangDanListAdapter BangDanAdapter;
-
+	private static String  TOP_LIST_DETAIL = "悦单详情";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,7 +51,7 @@ public class Detail_BangDan extends Activity implements
 		Intent intent = getIntent();
 		BangDan_id = intent.getStringExtra("BangDan_id");
 		BangDan_name = intent.getStringExtra("BangDan_name");
-
+		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		if (BangDan_name != null)
@@ -81,12 +83,14 @@ public class Detail_BangDan extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, TOP_LIST_DETAIL);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, TOP_LIST_DETAIL);
 		MobclickAgent.onPause(this);
 	}
 

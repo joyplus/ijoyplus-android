@@ -3,8 +3,6 @@ package com.joyplus.download;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.joyplus.Video.PlayHistory;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -326,7 +324,24 @@ public class Dao {
 			}
 		}
 	}
-
+	
+	/*
+	 * 更新某一条记录
+	 */
+	public synchronized void updataInfos(DownloadInfo info) {
+		SQLiteDatabase database = getConnection();
+		try {
+			String sql = "update download_info set fileSize=? where prod_id=? and my_index=?";
+			Object[] bindArgs = { info.getFileSize(), info.getProd_id(), info.getMy_index() };
+			database.execSQL(sql, bindArgs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+		}
+	}
 	/*
 	 * 更新某一条下载记录的状态
 	 */
@@ -336,6 +351,24 @@ public class Dao {
 		try {
 			String sql = "update download_info set download_state=? where prod_id=? and my_index=?";
 			Object[] bindArgs = { download_state, prod_id, my_index };
+			database.execSQL(sql, bindArgs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+		}
+	}
+	/*
+	 * 下载完成后更新存放路径
+	 */
+	public synchronized void updataInfofilePath(String localfile,
+			String prod_id, String my_index) {
+		SQLiteDatabase database = getConnection();
+		try {
+			String sql = "update download_info set localfile=? where prod_id=? and my_index=?";
+			Object[] bindArgs = { localfile, prod_id, my_index };
 			database.execSQL(sql, bindArgs);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -364,15 +397,13 @@ public class Dao {
 	}
 	
 	/*
-	 * 添加本地播放记录
+	 * 删除某个非电影的所有记录
 	 */
-	public synchronized void addPlayHistory(PlayHistory playhistory)
-	{
+	public synchronized void delete(String prod_id) {
 		SQLiteDatabase database = getConnection();
 		try {
-			String sql = "insert into play_history(prod_id,my_index,play_time) values (?,?,?)";
-			Object[] bindArgs = { playhistory.getProd_id(),playhistory.getMy_index(), playhistory.getPlay_time()};
-			database.execSQL(sql, bindArgs);
+			database.delete("download_info", "prod_id=?",
+					new String[] { prod_id});
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -380,67 +411,5 @@ public class Dao {
 				database.close();
 			}
 		}
-	}
-	/*
-	 * 删除本地播放记录
-	 */
-	public synchronized void delPlayHistory(PlayHistory playhistory)
-	{
-		SQLiteDatabase database = getConnection();
-		try {
-			database.delete("play_history", "prod_id=? and my_index=?",
-					new String[] { playhistory.getProd_id(), playhistory.getMy_index()});
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (null != database) {
-				database.close();
-			}
-		}
-	}
-	/*
-	 * 更新本地播放记录
-	 */
-	public synchronized void updatePlayHistory(PlayHistory playhistory)
-	{
-		SQLiteDatabase database = getConnection();
-		try {
-			String sql = "update play_history set play_time=? where prod_id=? and my_index=?";
-			Object[] bindArgs = { playhistory.getPlay_time(), playhistory.getProd_id(), playhistory.getMy_index() };
-			database.execSQL(sql, bindArgs);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (null != database) {
-				database.close();
-			}
-		}
-	}
-	/*
-	 * 查找本地播放记录
-	 */
-	public synchronized PlayHistory queryPlayHistory(PlayHistory playhistory)
-	{
-		PlayHistory tempPlayHistory = null;
-		SQLiteDatabase database = getConnection();
-		Cursor cursor = null;
-		try {
-			String sql = "select prod_id,my_index,play_time from play_history where prod_id=? and my_index=?";
-			cursor = database.rawQuery(sql, new String[] { playhistory.getProd_id(),playhistory.getMy_index() });
-			while (cursor.moveToNext()) {
-				tempPlayHistory = new PlayHistory(cursor.getString(0), cursor.getString(1),
-						cursor.getString(2));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (null != database) {
-				database.close();
-			}
-			if (null != cursor) {
-				cursor.close();
-			}
-		}
-		return tempPlayHistory;
 	}
 }

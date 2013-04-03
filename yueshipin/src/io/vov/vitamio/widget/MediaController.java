@@ -26,6 +26,8 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Adapters.Tab3Page1ListData;
 import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramView;
+import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
+import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS.URLS;
 
 import io.vov.utils.Log;
 import io.vov.utils.StringUtils;
@@ -144,9 +146,11 @@ public class MediaController extends FrameLayout  {
 	private ImageButton mNextButton;
 	private ImageButton mQualityButton;
 	private ImageButton mSelectButton;
+	private ImageView videosource;
 	private TextView mTextView1;
 	private TextView mTextView2;
 	private TextView mTextViewDownloadRate;
+	private TextView videosource_tv;
 	
 	private RelativeLayout mTopBlockLayout;//播放器顶部模块
 	private RelativeLayout mBottomBlockLayout;//播放器底部模块
@@ -193,30 +197,6 @@ public class MediaController extends FrameLayout  {
 		if (!mFromXml && initController(context))
 			initFloatingWindow();
 	}
-
-//	private void initPopWindows() {
-//		LayoutInflater mLayoutInflater = (LayoutInflater) mContext
-//				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		mViewTopRight = mLayoutInflater.inflate(R.layout.mediacontroller_top,
-//				null);
-//		mWindowTopRight = new PopupWindow(mViewTopRight, 194,
-//				LayoutParams.WRAP_CONTENT);
-//		lv_group = (ListView) mViewTopRight.findViewById(R.id.listView1);
-//		// 加载数据
-//		dataStruct = new ArrayList<String>();
-//
-//		groupAdapter = new GroupAdapter(mContext, dataStruct);
-//		lv_group.setAdapter(groupAdapter);
-//
-//		mViewTopRight.setVisibility(View.GONE);
-//
-//		mViewBottomRight = mLayoutInflater.inflate(R.layout.mediacontroller2,
-//				null);
-//		mWindowBottomRight = new PopupWindow(mViewBottomRight, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//
-//		mViewBottomRight.setVisibility(View.GONE);
-//
-//	}
 
 	private boolean initController(Context context) {
 		mContext = context;
@@ -286,6 +266,9 @@ public class MediaController extends FrameLayout  {
 		mQualityButton = (ImageButton) v.findViewById(R.id.imageButton5);
 		mSelectButton = (ImageButton) v.findViewById(R.id.imageButton6);
 
+		videosource = (ImageView)v.findViewById(R.id.videosource_img);
+		videosource_tv = (TextView)v.findViewById(R.id.videosource_tv);
+		
 		mTextView1 = (TextView) v.findViewById(R.id.textView1);
 		mTextView2 = (TextView) v.findViewById(R.id.textView2);
 		mTextViewDownloadRate = (TextView) v.findViewById(R.id.textViewDownloadRate);
@@ -391,7 +374,7 @@ public class MediaController extends FrameLayout  {
 		
 	
 		CurrentIndex = index;
-		
+		Constant.select_index = index;
 		groupAdapter.notifyDataSetChanged();
 		lv_group.invalidate();
 				
@@ -543,31 +526,12 @@ public class MediaController extends FrameLayout  {
 		
 		if (CurrentURLS != null && CurrentURLS.url != null)  {
 					PROD_SOURCE = CurrentURLS.url.trim();
-					app.CheckUrlIsValidFromServer(PROD_SOURCE,"1");
+//					app.CheckUrlIsValidFromServer(PROD_SOURCE,"1");
 		}
 		if (PROD_SOURCE != null)
 			mPlayer.setContinueVideoPath(null,PROD_SOURCE,true);
 	}
-//	public void SetMediaPlayerControlBGGone() {
-//		if (mAnchor != null) {
-//			mAnchor.setBackgroundResource(0);
-//			mTextView1.setVisibility(View.GONE);
-//			mTextView2.setVisibility(View.GONE);
-//		}
-//	}
 
-//	public void showDLNAButtom(boolean isShow){
-//		if(mDlnaButton != null){
-//			if(isShow){
-//				mHandler.removeMessages(FADE_OUT);
-//				mHandler.sendEmptyMessageDelayed(SHOW_DLNABUTTOM, 500);
-//			}else{
-//				mHandler.removeMessages(FADE_OUT);
-//				mHandler.sendEmptyMessageDelayed(HIDE_DLNABUTTOM, 500);
-//			}
-//
-//		}
-//	}
 	public void setDownloadRate(int rate){
 		if(mTextViewDownloadRate != null)
 			mTextViewDownloadRate.setText(Integer.toString(rate)+"kb/s");
@@ -576,6 +540,57 @@ public class MediaController extends FrameLayout  {
 		mPlayer = player;
 		updatePausePlay();
 	}
+	public void setVideoSource(){
+		String source = null ;
+		switch(CurrentCategory){
+		case 0:
+			source = m_ReturnProgramView.movie.episodes[0].down_urls[CurrentSource].source;
+			if(source.equalsIgnoreCase("wangpan")){
+				source =  m_ReturnProgramView.movie.episodes[0].video_urls[CurrentSource].source;
+			}
+			break;
+		case 1:
+			source = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].source;
+			if(source.equalsIgnoreCase("wangpan")){
+				source =  m_ReturnProgramView.tv.episodes[CurrentIndex].video_urls[CurrentSource].source;
+			}
+			break;
+		case 2:
+			source = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].source;
+			if(source.equalsIgnoreCase("wangpan")){
+				source =  m_ReturnProgramView.show.episodes[CurrentIndex].video_urls[CurrentSource].source;
+			}
+ 			break;
+		}
+		if(source != null){
+			videosource_tv.setVisibility(View.VISIBLE);
+		}
+        
+		if(source.equalsIgnoreCase("letv") || source.equalsIgnoreCase("le_tv_fee")){
+			videosource.setBackgroundResource(R.drawable.logo_letv);
+		}else if(source.equalsIgnoreCase("fengxing")){
+			videosource.setBackgroundResource(R.drawable.logo_fengxing);
+		}else if(source.equalsIgnoreCase("qiyi")){
+			videosource.setBackgroundResource(R.drawable.logo_qiyi);
+		}else if(source.equalsIgnoreCase("youku")){
+			videosource.setBackgroundResource(R.drawable.logo_youku);
+		}else if(source.equalsIgnoreCase("sinahd")){
+			videosource.setBackgroundResource(R.drawable.logo_sinahd);
+		}else if(source.equalsIgnoreCase("sohu")){
+			videosource.setBackgroundResource(R.drawable.logo_sohu);
+		}else if(source.equalsIgnoreCase("56")){
+			videosource.setBackgroundResource(R.drawable.logo_56);
+		}else if(source.equalsIgnoreCase("qq")){
+			videosource.setBackgroundResource(R.drawable.logo_qq);
+		}else if(source.equalsIgnoreCase("pptv")){
+			videosource.setBackgroundResource(R.drawable.logo_pptv);
+		}else if(source.equalsIgnoreCase("m1905")){
+			videosource.setBackgroundResource(R.drawable.logo_m1905);
+		}else{
+			videosource.setBackgroundResource(R.drawable.logo_pptv);
+		}
+	}
+
 
 	/**
 	 * Control the action when the seekbar dragged by user

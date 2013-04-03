@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,8 @@ public class Tab1 extends Activity implements
 	private ListView ItemsListView;
 	private Tab1ListAdapter Tab1Adapter;
 	private int isLastisNext = 1;
+	private static String POPULAR_TOP_LIST = "悦单";
+	Context mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class Tab1 extends Activity implements
 		setContentView(R.layout.tab1);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		dataStruct = new ArrayList();
 		
 		UmengUpdateAgent.setUpdateOnlyWifi(false);
@@ -113,12 +117,14 @@ public class Tab1 extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, POPULAR_TOP_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, POPULAR_TOP_LIST);
 		MobclickAgent.onPause(this);
 	}
 
@@ -235,7 +241,7 @@ public class Tab1 extends Activity implements
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR||json == null)  {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -278,12 +284,12 @@ public class Tab1 extends Activity implements
 	private Tab1ListAdapter getAdapter() {
 		if (Tab1Adapter == null) {
 			ArrayList arraylist = dataStruct;
-			Tab1ListAdapter listviewdetailadapter = new Tab1ListAdapter(this,
+			Tab1ListAdapter listviewdetailadapter = new Tab1ListAdapter(Tab1.this,
 					arraylist);
 			Tab1Adapter = listviewdetailadapter;
 		} else {
 			ArrayList arraylist1 = dataStruct;
-			Tab1ListAdapter listviewdetailadapter1 = new Tab1ListAdapter(this,
+			Tab1ListAdapter listviewdetailadapter1 = new Tab1ListAdapter(Tab1.this,
 					arraylist1);
 			Tab1Adapter = listviewdetailadapter1;
 		}
@@ -345,7 +351,7 @@ public class Tab1 extends Activity implements
 
 		}
 	}
-
+	
 	public void GetServiceData(int index) {
 		String url = Constant.BASE_URL + "tops" + "?page_num="
 				+ Integer.toString(index) + "&page_size=30";
@@ -354,10 +360,6 @@ public class Tab1 extends Activity implements
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
 		cb.SetHeader(app.getHeaders());
-//		cb.header("User-Agent",
-//				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-//		cb.header("app_key", Constant.APPKEY);
-//		cb.header("user_id", app.UserID);
 
 		aq.id(R.id.ProgressText).visible();
 		aq.progress(R.id.progress).ajax(cb);

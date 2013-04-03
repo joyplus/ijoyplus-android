@@ -1,24 +1,22 @@
 package com.joyplus;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedSet;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,19 +45,12 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramView;
-import com.joyplus.Service.Return.ReturnTops;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
-import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.cache.VideoCacheInfo;
+import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.download.Dao;
-import com.joyplus.download.DownLoadAdapter;
-import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
-import com.joyplus.weibo.net.AccessToken;
-import com.joyplus.weibo.net.DialogError;
-import com.joyplus.weibo.net.Weibo;
-import com.joyplus.weibo.net.WeiboDialogListener;
-import com.joyplus.weibo.net.WeiboException;
 import com.umeng.analytics.MobclickAgent;
 
 public class Detail_Movie extends Activity {
@@ -80,24 +71,22 @@ public class Detail_Movie extends Activity {
 	private ScrollView mScrollView;
 	private int isLastisNext = 2;
 	private int mLastY = 0;
-
-	private String uid = null;
-	private String token = null;
-	private String expires_in = null;
+    private Bitmap bitmap;
 	String name;
-//	private Drawable downloaddisable = null;
 	// 播放记录变量
 	public static int REQUESTPLAYTIME = 200;
 	public static int RETURN_CURRENT_TIME = 150;
 	
 	private CurrentPlayData mCurrentPlayData;
-//	private int current_time = 0;
-//	private int total_time = 0;
-
+	
+	VideoCacheInfo cacheInfo;
+	VideoCacheInfo cacheInfoTemp;
+	VideoCacheManager cacheManager;
 	/**
 	 * 利用消息处理机制适时更新APP里的数据
 	 */
-
+	private static String MOVIE_DETAIL = "电影详情";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -106,7 +95,7 @@ public class Detail_Movie extends Activity {
 		Intent intent = getIntent();
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
-
+        mContext = this;
 		aq = new AQuery(this);
 		aq.id(R.id.scrollView1).gone();
 		if (prod_name != null)
@@ -128,175 +117,64 @@ public class Detail_Movie extends Activity {
 				return false;
 			}
 		});
-		// 添加下载按钮的暂无下载的效果图
-//		downloaddisable = this.getResources().getDrawable(
-//				R.drawable.tab2_video_8);
+		cacheManager = new VideoCacheManager(Detail_Movie.this);
+		cacheInfo = new VideoCacheInfo();
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
 			CheckSaveData();
 	}
-
+	
+	
+	
 	public void OnClickTab1TopLeft(View v) {
 		finish();
 	}
 
 	public void OnClickTab1TopRight(View v) {
-		if (app.GetServiceData("Sina_Access_Token") != null) {
-			Intent i = new Intent(this, Sina_Share.class);
-			i.putExtra("prod_name", aq.id(R.id.program_name).getText()
-					.toString());
-			startActivity(i);
-		} else {
-			GotoSinaWeibo();
+		Intent intent = new Intent(Detail_Movie.this, MainTopRightDialog.class);
+		intent.putExtra("prod_name", aq.id(R.id.program_name).getText()
+				.toString());
+		ImageView imageView3 = (ImageView)findViewById(R.id.imageView3);
+
+		Drawable drawable = imageView3.getDrawable();
+		if(drawable == null){
+			drawable = getResources().getDrawable(R.drawable.detail_picture_bg);
 		}
+		bitmap = drawableToBitmap(drawable);
+		intent.putExtra("bitmapImage", bitmap);
+		String video_prod_id = "1007955";
+		if(prod_id != null){
+			video_prod_id = prod_id;
+		}
+		intent.putExtra("prod_id", video_prod_id);
+		startActivity(intent);
+//		if (app.GetServiceData("Sina_Access_Token") != null) {
+//			Intent i = new Intent(this, Sina_Share.class);
+//			i.putExtra("prod_name", aq.id(R.id.program_name).getText()
+//					.toString());
+//			startActivity(i);
+//		} else {
+//			GotoSinaWeibo();
+//		}
 
 	}
+	public static Bitmap drawableToBitmap(Drawable drawable) {
+		// 取 drawable 的长宽
+		int w = drawable.getIntrinsicWidth(); 
+		int h = drawable.getIntrinsicHeight();
 
-	public void GotoSinaWeibo() {
-		Weibo weibo = Weibo.getInstance();
-		weibo.setupConsumerConfig(Constant.SINA_CONSUMER_KEY,
-				Constant.SINA_CONSUMER_SECRET);
-		weibo.setRedirectUrl("https://api.weibo.com/oauth2/default.html");
-		weibo.authorize(this, new AuthDialogListener());
-
-	}
-
-	// 第三方新浪登录
-	class AuthDialogListener implements WeiboDialogListener {
-
-		@Override
-		public void onComplete(Bundle values) {
-			uid = values.getString("uid");
-			token = values.getString("access_token");
-			expires_in = values.getString("expires_in");
-			System.out.println("expires_in=====>" + expires_in);
-			AccessToken accessToken = new AccessToken(token,
-					Constant.SINA_CONSUMER_SECRET);
-			accessToken.setExpiresIn(expires_in);
-			Weibo.getInstance().setAccessToken(accessToken);
-			// save access_token
-			app.SaveServiceData("Sina_Access_Token", token);
-			app.SaveServiceData("Sina_Access_UID", uid);
-			UploadSinaHeadAndScreen_nameUrl(token, uid);
-			app.MyToast(getApplicationContext(), "新浪微博已绑定");
-		}
-
-		@Override
-		public void onError(DialogError e) {
-			app.MyToast(getApplicationContext(),
-					"Auth error : " + e.getMessage());
-		}
-
-		@Override
-		public void onCancel() {
-			app.MyToast(getApplicationContext(), "Auth cancel");
-		}
-
-		@Override
-		public void onWeiboException(WeiboException e) {
-			app.MyToast(getApplicationContext(),
-					"Auth exception : " + e.getMessage());
-		}
-
-	}
-
-	public boolean UploadSinaHeadAndScreen_nameUrl(String access_token,
-			String uid) {
-		String m_GetURL = "https://api.weibo.com/2/users/show.json?access_token="
-				+ access_token + "&uid=" + uid;
-
-		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.url(m_GetURL).type(JSONObject.class)
-				.weakHandler(this, "UploadSinaHeadAndScreen_nameUrlResult");
-
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-
-		aq.ajax(cb);
-
-		return false;
-	}
-
-	public void UploadSinaHeadAndScreen_nameUrlResult(String url,
-			JSONObject json, AjaxStatus status) {
-		String head_url = json.optString("avatar_large");
-		String screen_name = json.optString("screen_name");
-		if (head_url != null && screen_name != null) {
-			String m_PostURL = Constant.BASE_URL + "account/bindAccount";
-
-			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("source_id", uid);
-			params.put("source_type", "1");
-			params.put("pic_url", head_url);
-			params.put("nickname", screen_name);
-
-			// save to local
-			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.SetHeader(app.getHeaders());
-
-			cb.params(params).url(m_PostURL).type(JSONObject.class)
-					.weakHandler(this, "AccountBindAccountResult");
-
-			aq.ajax(cb);
-		}
-
-	}
-
-	public void AccountBindAccountResult(String url, JSONObject json,
-			AjaxStatus status) {
-		if (json != null) {
-			try {
-				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
-					// reload the userinfo
-					String url2 = Constant.BASE_URL + "user/view?userid="
-							+ app.UserID;
-					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-					cb.url(url2).type(JSONObject.class)
-							.weakHandler(this, "AccountBindAccountResult3");
-
-					cb.header("User-Agent",
-							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-					cb.header("app_key", Constant.APPKEY);
-					// cb.header("user_id", app.UserID);
-					aq.ajax(cb);
-				}
-				// else
-				// app.MyToast(this, "更新头像失败!");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			// ajax error, show error code
-			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
-				app.MyToast(this,
-						getResources().getString(R.string.networknotwork));
-		}
-	}
-
-	public void AccountBindAccountResult3(String url, JSONObject json,
-			AjaxStatus status) {
-
-		if (json != null) {
-			try {
-				if (json.getString("nickname").trim().length() > 0) {
-					app.SaveServiceData("UserInfo", json.toString());
-					app.MyToast(getApplicationContext(), "新浪微博已绑定");
-					Intent i = new Intent(this, Sina_Share.class);
-					i.putExtra("prod_name", aq.id(R.id.program_name).getText()
-							.toString());
-					startActivity(i);
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-
-		} else {
-			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
-				app.MyToast(this,
-						getResources().getString(R.string.networknotwork));
-		}
+		// 取 drawable 的颜色格式
+		Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+				: Bitmap.Config.RGB_565;
+		// 建立对应 bitmap
+		Bitmap bitmap = Bitmap.createBitmap(w, h, config);
+		// 建立对应 bitmap 的画布
+		Canvas canvas = new Canvas(bitmap);
+		drawable.setBounds(0, 0, w, h);
+		// 把 drawable 内容画到画布中
+		drawable.draw(canvas);
+		return bitmap;
 	}
 
 	public void OnClickContent(View v) throws JSONException {
@@ -312,6 +190,11 @@ public class Detail_Movie extends Activity {
 
 	@Override
 	protected void onDestroy() {
+		if(bitmap != null && !bitmap.isRecycled()){   
+	        bitmap.recycle();   
+	        bitmap = null;   
+	      } 
+		System.gc();
 		if (aq != null)
 			aq.dismiss();
 		super.onDestroy();
@@ -320,12 +203,14 @@ public class Detail_Movie extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, MOVIE_DETAIL);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd (mContext, MOVIE_DETAIL);
 		MobclickAgent.onPause(this);
 	}
 
@@ -338,7 +223,7 @@ public class Detail_Movie extends Activity {
 
 	}
 
-	@SuppressWarnings("unchecked")
+
 	public void InitData() {
 		String m_j = null;
 		if (m_ReturnProgramView.movie != null) {
@@ -468,6 +353,10 @@ public class Detail_Movie extends Activity {
 				aq.id(R.id.Layout_comment).gone();
 			}
 		}
+		else
+		{
+			GetServiceData();
+		}
 
 	}
 
@@ -507,18 +396,9 @@ public class Detail_Movie extends Activity {
 				}
 			}
 			if (m_ReturnProgramView.movie.episodes[source_index].down_urls.length > 1) {
-				Arrays.sort(
-						m_ReturnProgramView.movie.episodes[source_index].down_urls,
-						new EComparatorIndex());
+				Arrays.sort(m_ReturnProgramView.movie.episodes[source_index].down_urls,new EComparatorIndex());
 			}
 		}
-		// for(int i = 0;i<Constant.video_index.length;i++)
-		// {
-		// for(int j = 0;j<Constant.quality_index.length;i++)
-		// {
-		//
-		// }
-		// }
 	}
 
 	// 将片源排序
@@ -539,11 +419,11 @@ public class Detail_Movie extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR||json == null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
-			if(app.GetServiceData(prod_id) == null)
+			if(cacheInfoTemp == null)
 			{
 				aq.id(R.id.none_net).visible();
 			}
@@ -555,7 +435,22 @@ public class Detail_Movie extends Activity {
 					ReturnProgramView.class);
 			if(m_ReturnProgramView != null&&prod_id!=null)
 			{
-				app.SaveServiceData(prod_id, json.toString());//根据id保存住
+				if(cacheInfoTemp!=null)
+				{
+					cacheInfoTemp.setProd_value(json.toString());
+					cacheManager.saveVideoCache(cacheInfoTemp);
+				}
+				else
+				{
+					cacheInfo.setProd_id(prod_id);
+					cacheInfo.setProd_type("1");
+					cacheInfo.setProd_value(json.toString());
+					cacheInfo.setProd_subname("");
+					cacheInfo.setLast_playtime("");
+					cacheInfo.setCreate_date("");
+					cacheManager.saveVideoCache(cacheInfo);
+				}
+				
 			}
 			// 创建数据源对象
 			InitData();
@@ -577,7 +472,11 @@ public class Detail_Movie extends Activity {
 	private void CheckSaveData() {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
-		SaveData = app.GetServiceData(prod_id);
+		cacheInfoTemp = cacheManager.getVideoCache(prod_id);
+		if(cacheInfoTemp!=null)
+		{
+			SaveData = cacheInfoTemp.getProd_value();
+		}
 		if (SaveData == null) {
 			GetServiceData();
 		} else {
@@ -616,18 +515,12 @@ public class Detail_Movie extends Activity {
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-
 		cb.SetHeader(app.getHeaders());
-//		cb.header("User-Agent",
-//				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-//		cb.header("app_key", Constant.APPKEY);
-//		cb.header("user_id", app.UserID);
-		if(app.GetServiceData(prod_id) == null)
+		if(cacheInfoTemp == null)
 		{
 			aq.id(R.id.ProgressText).visible();
 			aq.progress(R.id.progress).ajax(cb);
 		}
-		
 		else
 		{
 			aq.ajax(cb);
@@ -1087,83 +980,6 @@ public class Detail_Movie extends Activity {
 			}
 		}
 	}
-
-//	private void GetVideoSource(final int episodeNum, String url) {
-//
-//		aq.progress(R.id.progress).ajax(url, InputStream.class,
-//				new AjaxCallback<InputStream>() {
-//
-//					public void callback(String url, InputStream is,
-//							AjaxStatus status) {
-//						String urlsave = Constant.BASE_URL + "program/play";
-//						if (is != null) {
-//
-//							Map<String, Object> params = new HashMap<String, Object>();
-//							params.put("app_key", Constant.APPKEY);// required
-//																	// string
-//																	// 申请应用时分配的AppKey。
-//							params.put("prod_id", m_ReturnProgramView.movie.id);// required
-//																				// string
-//																				// 视频id
-//							params.put("prod_name",
-//									m_ReturnProgramView.movie.name);// required
-//																	// string
-//																	// 视频名字
-//							params.put("prod_subname",
-//									m_ReturnProgramView.movie.episodes.length);// required
-//																				// string
-//																				// 视频的集数
-//							params.put("prod_type", 1);// required int 视频类别
-//														// 1：电影，2：电视剧，3：综艺，4：视频
-//							params.put("playback_time", 0);// _time required int
-//															// 上次播放时间，单位：秒
-//							params.put("duration", 0);// required int 视频时长， 单位：秒
-//							params.put("play_type", "1");// required string
-//															// 播放的类别 1: 视频地址播放
-//							// 2:webview播放
-//							params.put("video_url", url);// required
-//															// string
-//															// 视频url
-//
-//							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-//							cb.SetHeader(app.getHeaders());
-//
-//							cb.params(params).url(urlsave);
-//							aq.ajax(cb);
-//
-//							CallVideoPlayActivity(url,
-//									m_ReturnProgramView.movie.name);
-//						} else {
-//							if (m_ReturnProgramView.movie.episodes[episodeNum].down_urls != null) {
-//								for (int k = 0; k < m_ReturnProgramView.movie.episodes[episodeNum].down_urls[0].urls.length; k++) {
-//									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[episodeNum].down_urls[0].urls[k];
-//									if (urls != null) {
-//										if (urls.url != null) {
-//											if (urls.type.trim()
-//													.equalsIgnoreCase("mp4"))
-//												PROD_SOURCE = urls.url.trim();
-//											else if (urls.type.trim()
-//													.equalsIgnoreCase("flv"))
-//												PROD_SOURCE = urls.url.trim();
-//											else if (urls.type.trim()
-//													.equalsIgnoreCase("hd2"))
-//												PROD_SOURCE = urls.url.trim();
-//											else if (urls.type.trim()
-//													.equalsIgnoreCase("3gp"))
-//												PROD_SOURCE = urls.url.trim();
-//										}
-//										if (PROD_SOURCE != null) {
-//											GetVideoSource(episodeNum,
-//													PROD_SOURCE);
-//										}
-//									}
-//								}
-//							}
-//						}
-//					}
-//
-//				});
-//	}
 
 	public void CallVideoPlayActivity(String m_uri, String title) {
 		

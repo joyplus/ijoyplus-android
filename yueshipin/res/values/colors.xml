@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="red">#ED1C17</color>
@@ -8,13 +9,15 @@
     <color name="transparent">#00000000</color>
     <color name="fengexian">#131313</color>
     <color name="neirong">#A5A5A5</color>
-        <color name="item_common">#F111</color>
+    <color name="item_common">#F111</color>
     <color name="item_1">#F222</color>
     <color name="item_2">#F000</color>
-        <color name="transparent_gray">#A000</color>
-
+    <color name="transparent_gray">#A000</color>
     <color name="orange">#FFF48B00</color>
     <color name="darkorange">#FF824600</color>
     <color name="yellow">#FBBB37</color>
     <color name="listbg">#C57627</color>
+    <color name="gold">#b89766</color>
+    <color name="select">#98aacc</color>
+
 </resources>

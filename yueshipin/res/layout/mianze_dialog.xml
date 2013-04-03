@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#47484B"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+            <TextView android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:text="免责声明"
+                android:textSize="18sp"
+                android:textColor="#ffffff"
+                android:gravity="center"/>
+
+            <ScrollView
+                android:layout_width="260dp"
+                android:layout_height="316dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"
+                    android:text="@string/mianze_words" />
+            </ScrollView>
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:paddingLeft="20dp"
+                          android:paddingRight="20dp">
+		<Button
+                android:id="@+id/btnyes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="接受"
+                android:textSize="20sp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:background="@drawable/black_shape"
+                 />
+		</LinearLayout>
+</LinearLayout>

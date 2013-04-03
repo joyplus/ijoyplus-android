@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,7 +34,7 @@ import com.joyplus.widget.MyListView;
 import com.joyplus.widget.MyListView.OnRefreshListener;
 
 public class Tab2Page1 extends Activity implements
-		android.widget.AdapterView.OnItemClickListener {
+		android.widget.AdapterView.OnItemClickListener{
 	private String TAG = "Tab2Page1";
 	private AQuery aq;
 	private App app;
@@ -43,16 +44,19 @@ public class Tab2Page1 extends Activity implements
 	private ArrayList dataStruct;
 	private MyListView ItemsListView;
 	private Tab2Page1ListAdapter Tab2Page1Adapter;
-
+	private static String POPULAR_TV_TOP_LIST = "电视剧悦榜";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab2page1);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		// »ñÈ¡listview¶ÔÏó
 		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
+		
 		ItemsListView.setonRefreshListener(new OnRefreshListener() {
 			public void onRefresh() {
 
@@ -105,12 +109,14 @@ public class Tab2Page1 extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, POPULAR_TV_TOP_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, POPULAR_TV_TOP_LIST);
 		MobclickAgent.onPause(this);
 	}
 

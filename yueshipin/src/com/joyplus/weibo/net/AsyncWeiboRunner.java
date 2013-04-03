@@ -56,6 +56,22 @@ public class AsyncWeiboRunner {
 		}.run();
 
 	}
+	
+	public static void request(final String url, final com.joyplus.weibo.api.WeiboParameters params,
+			final String httpMethod, final com.joyplus.weibo.api.RequestListener listener) {
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					String resp = com.joyplus.weibo.api.HttpManager.openUrl(url, httpMethod, params, null);// .openUrl(url, httpMethod, params, "");
+					listener.onComplete(resp);
+				} catch (com.joyplus.weibo.api.WeiboException e) {
+					listener.onError(e);
+				}
+			}
+		}.start();
+
+	}
 
 	public static interface RequestListener {
 

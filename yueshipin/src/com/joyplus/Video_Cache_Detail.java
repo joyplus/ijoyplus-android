@@ -56,7 +56,7 @@ public class Video_Cache_Detail extends Activity {
 	View tempview = null;
 	DownLoadAdapterDetail adapter = null;
 	private boolean isnotChecked = true;
-
+	private static String DOWNLOAD  = "缓存";
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -185,7 +185,7 @@ public class Video_Cache_Detail extends Activity {
 					} else {
 						bundle.putString("prod_type", "2");
 						bundle.putString("prod_subname",
-								"第" + info.getMy_index() + "集"); // yu
+								info.getMy_index()); // yu
 					}
 					intent.putExtras(bundle);
 					try {
@@ -331,12 +331,14 @@ public class Video_Cache_Detail extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(context, DOWNLOAD);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(context, DOWNLOAD);
 		MobclickAgent.onPause(this);
 	}
 

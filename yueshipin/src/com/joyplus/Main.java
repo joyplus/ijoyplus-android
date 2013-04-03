@@ -1,13 +1,13 @@
 package com.joyplus;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.TabActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -21,18 +21,23 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TabHost;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.bodong.dianju.sdk.DianJuPlatform;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.update.UmengUpdateAgent;
 
 @SuppressWarnings("deprecation")
 public class Main extends TabActivity {
@@ -47,11 +52,14 @@ public class Main extends TabActivity {
 
 	private Intent mTab1, mTab2, mTab3;
 	private Map<String, String> headers;
+	private MianZeDialog mianzeDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//91互推平台
+		DianJuPlatform.init(this);
 		setContentView(R.layout.main);
 		app = (App) getApplicationContext();
 		aq = new AQuery(this);
@@ -71,11 +79,14 @@ public class Main extends TabActivity {
 		headers.put("app_key", Constant.APPKEY);
 		headers.put("client","android");
 		app.setHeaders(headers);
-			
-		Intent intent = new Intent(Main.this, DlnaSelectDevice.class);
-		startService(intent);
+		if(android.os.Build.VERSION.SDK_INT>=14)
+		{
+			Intent intent = new Intent(Main.this, DlnaSelectDevice.class);
+			startService(intent);
+		}
 		
 		PushService.subscribe(this, "", Main.class);
+		PushService.subscribe(this, "CHANNEL_ANDROID", Main.class);
 		PushService.setDefaultPushCallback(this, Main.class);
 		if(!Constant.TestEnv)
 			ReadLocalAppKey();
@@ -83,13 +94,19 @@ public class Main extends TabActivity {
 		CheckLogin();
 		setupIntent();
 		
-		
+		if(app.GetServiceData("mianzeshengming")==null)
+		{
+			mianzeDialog = new MianZeDialog(Main.this);
+			mianzeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			mianzeDialog.setCanceledOnTouchOutside(false);
+			mianzeDialog.show();
+		}
 	}
+	
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
 		try {
-			/*{"alert":"真爱趁现在","prod_id":"977732","prod_type":"2","badge":"Increment"}  */
 			JSONObject json = new JSONObject(intent.getExtras().getString(
 					"com.parse.Data"));
 			String Prod_ID = json.getString("prod_id").trim();
@@ -132,6 +149,19 @@ public class Main extends TabActivity {
 		super.onNewIntent(intent);
 
 	}
+	//新手引导
+	public void OnClickNewGuider_1(View v)
+	{
+		aq.id(R.id.new_guider_1).gone();
+		app.SaveServiceData("new_guider_1","new_guider_1");
+	}
+	
+	// 新手引导
+	public void OnClickNewGuider_2(View v) {
+		aq.id(R.id.new_guider_2).gone();
+		app.SaveServiceData("new_guider_2", "new_guider_2");
+	}
+	
 	private TabHost.TabSpec buildTabSpec(String tag, String resLabel,
 			int resIcon, final Intent content) {
 		return mTabHost.newTabSpec(tag)
@@ -168,6 +198,11 @@ public class Main extends TabActivity {
 					break;
 				case R.id.radio1:
 					mTabHost.setCurrentTabByTag(TAB_2);
+					//添加是否显示第二个
+					if(app.GetServiceData("new_guider_2")==null)
+					{
+						aq.id(R.id.new_guider_2).visible();
+					}
 					break;
 				case R.id.radio2:
 					mTabHost.setCurrentTabByTag(TAB_3);
@@ -183,43 +218,31 @@ public class Main extends TabActivity {
 
 	@Override
 	protected void onDestroy() {
+		
+		//需要在退出程序时调用平台的destroy方法关闭SDK
+		DianJuPlatform.destroy(this);
+		
 		if (aq != null)
 			aq.dismiss();
-		Intent i  = new Intent();
-		i.setClass(this, DlnaSelectDevice.class);
-		stopService(i);
+		if(android.os.Build.VERSION.SDK_INT>=14)
+		{
+			Intent i  = new Intent();
+			i.setClass(this, DlnaSelectDevice.class);
+			stopService(i);
+		}
+		
 		super.onDestroy();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+		
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-	}
-
-	// NETWORK
-	public boolean isNetworkAvailable() {
-		Context context = getApplicationContext();
-		ConnectivityManager connect = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (connect == null) {
-			return false;
-		} else// get all network info
-		{
-			NetworkInfo[] info = connect.getAllNetworkInfo();
-			if (info != null) {
-				for (int i = 0; i < info.length; i++) {
-					if (info[i].getState() == NetworkInfo.State.CONNECTED) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
 	}
 
 	// setnetwork
@@ -239,7 +262,6 @@ public class Main extends TabActivity {
 				});
 		builder.create();
 		builder.show();
-
 	}
 	/*
 	 * 添加之后关于在线的操作不成功
@@ -272,7 +294,7 @@ public class Main extends TabActivity {
 
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("uiid", macAddress);
-				params.put("device_type", "Android");
+				params.put("device_type", "android-mobile");
 
 				AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 				cb.header("User-Agent",
@@ -288,7 +310,7 @@ public class Main extends TabActivity {
 			JSONObject json;
 			try {
 				json = new JSONObject(UserInfo);
-				app.UserID = json.getString("user_id").trim();
+				app.UserID = json.getString("id").trim();//user_id
 				headers.put("user_id", app.UserID);
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
@@ -321,7 +343,6 @@ public class Main extends TabActivity {
 					getResources().getString(R.string.networknotwork));
 			}
 			//解决没有网络时程序不能关闭的问题
-			//finish();
 		}
 	}
 
@@ -357,5 +378,39 @@ public class Main extends TabActivity {
 		}
 		return super.dispatchKeyEvent(event);
 	}
+	
+	// 免责声明对话框
+	 
+	public class MianZeDialog extends Dialog {
 
+		public MianZeDialog(Context context) {
+			super(context);
+			// TODO Auto-generated constructor stub
+		}
+
+		protected void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			setContentView(R.layout.mianze_dialog);
+			
+			Window mWindow = getWindow();  
+            WindowManager.LayoutParams lp = mWindow.getAttributes();  
+            lp.dimAmount =0f;
+            mWindow.setAttributes(lp); 
+            
+			Button buttonYes = (Button) findViewById(R.id.btnyes);
+			buttonYes.setOnClickListener(new Button.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					dismiss();
+					//将内容保存在sharedPreference
+					app.SaveServiceData("mianzeshengming", "mianzeshengming");
+					if(app.GetServiceData("new_guider_1")==null)
+					{
+						aq.id(R.id.new_guider_1).visible();
+					}
+				}
+			});
+		}
+	}
 }
