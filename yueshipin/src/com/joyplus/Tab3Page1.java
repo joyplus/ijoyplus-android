@@ -42,17 +42,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Adapters.Tab3Page1ListData;
-import com.joyplus.Service.Return.ReturnTops;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.joyplus.Video.VideoPlayerActivity;
-import com.joyplus.download.Dao;
 import com.umeng.analytics.MobclickAgent;
 
 public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	private String TAG = "Tab3Page1";
 	private AQuery aq;
 	private App app;
-	private String datainfo = null;
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private Tab3Page1ListAdapter Tab3Page1Adapter;
@@ -228,7 +225,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				+ Integer.toString(index) + "&page_size=10";
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-
+		//String str = app.UserID;
 		cb.SetHeader(app.getHeaders());
 		aq.ajax(cb);
 	}
@@ -473,14 +470,24 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("user_Histories");
 		if (SaveData == null) {
-			GetServiceData(1);
+			isLastisNext = 1;
+			GetServiceData(isLastisNext);
 		} else {
 			try {
 				m_ReturnUserPlayHistories = mapper.readValue(SaveData,
 						ReturnUserPlayHistories.class);
 				// 创建数据源对象
 				GetVideoMovies();
-
+				
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// execute the task
+						isLastisNext = 1;
+						GetServiceData(isLastisNext);
+					}
+				}, 2000);
+				
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -550,7 +557,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				holder = (AccessoriesViewHolder) view.getTag();
 			}
 
-			// 获取当前数据项的数据
+//			 获取当前数据项的数据
 			Tab3Page1ListData m_Tab3Page1ListData = (Tab3Page1ListData) getItem(i);
 
 			holder.video_caption.setText(m_Tab3Page1ListData.Pro_name);
@@ -607,8 +614,8 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				break;
 			}
 			if (m_Tab3Page1ListData.Pro_time > 0
-					&& m_Tab3Page1ListData.Pro_time < m_Tab3Page1ListData.Pro_duration)
-				{((Button) view.findViewById(R.id.button1))
+					&& m_Tab3Page1ListData.Pro_time < m_Tab3Page1ListData.Pro_duration){
+				((Button) view.findViewById(R.id.button1))
 				.setBackgroundResource(R.drawable.tab3_page1_icon_see);
 				}
 			else

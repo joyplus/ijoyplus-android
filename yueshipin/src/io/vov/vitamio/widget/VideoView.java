@@ -1013,8 +1013,9 @@ public class VideoView extends SurfaceView implements MediaController.MediaPlaye
 			}
 			mLayoutBG.setVisibility(View.VISIBLE);
 		}
+		app.CheckUrlIsValidFromServer(path,"1");
 //		setVideoPath(path);
-		if( app.getURLPath() != null &&  app.getURLPath().length() >0)
+		if( app.getURLPath() != null && app.getURLPath().length() >0)
 			mPath = app.getURLPath();
 		else 
 			mPath = path;

@@ -178,7 +178,7 @@ public class Downloader {
 			try {
 				URL url = new URL(urlstr);
 				connection = (HttpURLConnection) url.openConnection();
-				connection.setConnectTimeout(10000);
+				connection.setConnectTimeout(20000);
 				connection.setRequestMethod("GET");
 				// 设置范围，格式为Range：bytes x-y;
 				connection.setRequestProperty("Range", "bytes=" + compeleteSize

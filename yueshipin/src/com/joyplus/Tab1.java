@@ -241,7 +241,7 @@ public class Tab1 extends Activity implements
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR||json == null)  {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -360,10 +360,6 @@ public class Tab1 extends Activity implements
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
 		cb.SetHeader(app.getHeaders());
-//		cb.header("User-Agent",
-//				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-//		cb.header("app_key", Constant.APPKEY);
-//		cb.header("user_id", app.UserID);
 
 		aq.id(R.id.ProgressText).visible();
 		aq.progress(R.id.progress).ajax(cb);
