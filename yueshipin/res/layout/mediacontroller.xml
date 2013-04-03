@@ -38,10 +38,11 @@
                 android:layout_height="wrap_content"
                 android:text="视频来源："
                 android:textColor="@color/white"
+                android:textSize="15sp"
                 android:layout_toRightOf="@id/imageButton1"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                />
+                android:layout_marginLeft="13dp"
+                android:visibility="gone"/>
             <ImageView android:id="@+id/videosource_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
