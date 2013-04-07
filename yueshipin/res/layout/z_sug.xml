@@ -72,5 +72,4 @@
         android:layout_marginRight="22dp"
 		android:onClick="OnClickSend"
         android:background="@drawable/sug_send_buttom"/>
-         -->
 </RelativeLayout>
