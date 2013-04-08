@@ -636,7 +636,6 @@ public class VideoPlayerActivity extends Activity implements
 											PROD_SOURCE = urls.url.trim();
 											MobclickAgent.onEventBegin(
 													mContext, MOVIE_PLAY);
-											return PROD_SOURCE;
 										}
 										if (PROD_SOURCE != null)
 											break;
@@ -672,7 +671,6 @@ public class VideoPlayerActivity extends Activity implements
 										PROD_SOURCE = urls.url.trim();
 										MobclickAgent.onEventBegin(mContext,
 												TV_PLAY);
-										return PROD_SOURCE;
 									}
 									if (PROD_SOURCE != null)
 										break;
@@ -707,7 +705,6 @@ public class VideoPlayerActivity extends Activity implements
 										PROD_SOURCE = urls.url.trim();
 										MobclickAgent.onEventBegin(mContext,
 												SHOW_PLAY);
-										return PROD_SOURCE;
 									}
 									if (PROD_SOURCE != null)
 										break;

@@ -33,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -63,6 +64,7 @@ public class Search extends Activity implements
 	private ListView ItemsListView, listHistory;
 	private EditText searchtext;
 	private SearchListAdapter SearchAdapter;
+	private Button removehistory;
 	
 	private static String SEARCH = "查询";
 	private static String SEARCH_LIST = "查询结果";
@@ -80,6 +82,7 @@ public class Search extends Activity implements
 		searchtext = (EditText)findViewById(R.id.editText1);
 		
 		listHistory = (ListView) findViewById(R.id.listView2);
+		removehistory = (Button)findViewById(R.id.removehistory);
 		
 		mContext = this;
 		app = (App) getApplication();
@@ -93,7 +96,6 @@ public class Search extends Activity implements
 					getResources().getString(R.string.networknotwork));
 		}
 		searchtext.addTextChangedListener(mTextWatcher);
-		
 		
 		showHistory();
 		listHistory.setOnItemClickListener(new OnItemClickListener() {
@@ -114,7 +116,7 @@ public class Search extends Activity implements
 		aq.id(R.id.textViewNoResult).gone();
 		aq.id(R.id.ProgressText).gone();
 		aq.id(R.id.progress).gone();
-		aq.id(R.id.removehistory).visible();
+		aq.id(R.id.removehistory).gone();
 		aq.id(R.id.listView2).visible();
 
 		String content = app.GetSearchData();
@@ -122,9 +124,13 @@ public class Search extends Activity implements
 		content = content.replaceAll("\\]", "");
 		st = content.split(",");
 		st = checkarray(st);
+		if(st !=null && !st[0].equalsIgnoreCase("")){
+			aq.id(R.id.removehistory).visible();
+		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.search_record, st);
 		
 		listHistory.setAdapter(adapter);
+		
 
 	}
 
