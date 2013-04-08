@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#F2F2F2" >
+    android:background="#F2F2F2"
+    android:id="@+id/parent" >
 	
 	<LinearLayout 
 	    android:id="@+id/none_net"
@@ -43,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:paddingLeft="16dp"
+            android:paddingLeft="6dp"
             android:gravity="center"
             android:onClick="OnClickTab1TopLeft" >
 

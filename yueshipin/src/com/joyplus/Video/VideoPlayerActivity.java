@@ -327,7 +327,7 @@ public class VideoPlayerActivity extends Activity implements
 			
 			if (current_time > 0) {
 				
-				if(playProdType!=1)
+				if(playProdType == 2||playProdType==131)
 				{
 					playrecordinfo.setProd_id(playProdId);
 					if(Constant.select_index>-1)
@@ -339,6 +339,13 @@ public class VideoPlayerActivity extends Activity implements
 						.putString(playProdId, Integer.toString(Constant.select_index))
 						.commit();
 					}
+					playrecordinfo.setProd_subname(tvsubname);	
+					playrecordinfo.setLast_playtime(current_time+"");
+					playrecordmanager.savePlayRecord(playrecordinfo);
+				}
+				else if(playProdType == 3)
+				{
+					playrecordinfo.setProd_id(playProdId);
 					playrecordinfo.setProd_subname(tvsubname);	
 					playrecordinfo.setLast_playtime(current_time+"");
 					playrecordmanager.savePlayRecord(playrecordinfo);
@@ -810,17 +817,24 @@ public class VideoPlayerActivity extends Activity implements
 		params.put("prod_id", playProdId);// required string
 											// 视频id
 		params.put("prod_name", playProdName);// required
-											// string 视频名字
-		if(Constant.select_index>-1)
+		if(playProdType != 3)// string 视频名字
 		{
-			params.put("prod_subname",
-				Integer.toString(Constant.select_index + 1));// required
+			if(Constant.select_index>-1)
+			{
+				params.put("prod_subname",
+					Integer.toString(Constant.select_index + 1));// required
+			}
+			else
+			{
+				params.put("prod_subname",
+					Integer.toString(mCurrentPlayData.CurrentIndex + 1));// required
+			}
 		}
 		else
 		{
-			params.put("prod_subname",
-				Integer.toString(mCurrentPlayData.CurrentIndex + 1));// required
+			params.put("prod_subname",tvsubname);
 		}
+		
 		
 		// string
 		// 视频的集数

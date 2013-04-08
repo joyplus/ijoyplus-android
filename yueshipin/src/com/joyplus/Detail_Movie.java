@@ -17,19 +17,27 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -73,6 +81,17 @@ public class Detail_Movie extends Activity {
 	private int mLastY = 0;
     private Bitmap bitmap;
 	String name;
+	private PopupWindow popup_report = null;
+	private String invalid_type = null; 
+	private String problemContext = null;
+	CheckBox checkbox1;
+	CheckBox checkbox2;
+	CheckBox checkbox3;
+	CheckBox checkbox4;
+	CheckBox checkbox5;
+	CheckBox checkbox6;
+	CheckBox checkbox7;
+	EditText problem_edit;
 	// 播放记录变量
 	public static int REQUESTPLAYTIME = 200;
 	public static int RETURN_CURRENT_TIME = 150;
@@ -597,19 +616,7 @@ public class Detail_Movie extends Activity {
 
 	// 看服务列表到底是什么东西,为什么不行
 	public void OnClickReportProblem(View v) {
-		String url = Constant.BASE_URL + "program/invalid";
-
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("prod_id", prod_id);
-
-		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.SetHeader(app.getHeaders());
-
-		cb.params(params).url(url).type(JSONObject.class)
-				.weakHandler(this, "CallServiceResultReportProblem");
-		aq.ajax(cb);
-		Toast.makeText(Detail_Movie.this, "您反馈的问题已提交，我们会尽快处理，感谢您的支持！",
-				Toast.LENGTH_LONG).show();
+		popupReportProblem();
 	}
 
 	public void CallServiceResultSupportNum(String url, JSONObject json,
@@ -642,7 +649,7 @@ public class Detail_Movie extends Activity {
 		}
 
 	}
-
+	
 	public void OnClickSupportNum(View v) {
 		String url = Constant.BASE_URL + "program/support";
 
@@ -1015,6 +1022,150 @@ public class Detail_Movie extends Activity {
 			startActivity(intent);
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "mp4 fail", ex);
+		}
+	}
+	
+	public void popupReportProblem()
+	{
+		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+		final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+				R.layout.report_problem, null, true);
+		checkbox1 = (CheckBox) menuView.findViewById(R.id.checkbox1);
+		checkbox2 = (CheckBox) menuView.findViewById(R.id.checkbox2);
+		checkbox3 = (CheckBox) menuView.findViewById(R.id.checkbox3);
+		checkbox4 = (CheckBox) menuView.findViewById(R.id.checkbox4);
+		checkbox5 = (CheckBox) menuView.findViewById(R.id.checkbox5);
+		checkbox6 = (CheckBox) menuView.findViewById(R.id.checkbox6);
+		checkbox7 = (CheckBox) menuView.findViewById(R.id.checkbox7);
+		problem_edit = (EditText) menuView.findViewById(R.id.problem_edit);
+		problemContext = problem_edit.getText().toString();
+		popup_report = new PopupWindow(menuView, LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT, true);
+		popup_report.setBackgroundDrawable(new BitmapDrawable());
+		popup_report.setAnimationStyle(R.style.PopupAnimation);
+		popup_report.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
+				| Gravity.CENTER, 10, 20);
+		popup_report.update();
+	}
+	
+	public void OnClickCloseReprot(View v)
+	{
+		popup_report.dismiss();
+	}
+	
+	public void OnClickSubmitProblem(View v)
+	{
+		initInvalid_type();
+		if(invalid_type==null)
+		{	
+			problemContext = problem_edit.getText().toString();
+			if(problemContext==null||problemContext.length()<1)
+			{
+				Toast.makeText(Detail_Movie.this, "亲，必须选择一个理由啊！", Toast.LENGTH_LONG).show();
+				return;
+			}
+		}
+		String url = Constant.BASE_URL + "program/invalid";
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("prod_id", prod_id);
+		if(problemContext==null||problemContext.length()<1)
+		{
+			params.put("invalid_type", invalid_type);
+		}
+		else
+		{
+			params.put("invalid_type", 8);
+			params.put("memo", problemContext);
+		}
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.SetHeader(app.getHeaders());
+
+		cb.params(params).url(url).type(JSONObject.class)
+				.weakHandler(this, "CallServiceResultReportProblem");
+		aq.ajax(cb);
+		Toast.makeText(Detail_Movie.this, "您反馈的问题已提交，我们会尽快处理，感谢您的支持！",
+				Toast.LENGTH_LONG).show();
+		popup_report.dismiss();
+	}
+	public void initInvalid_type()
+	{
+		if(checkbox1.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "1";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"1";
+			}
+		}
+		if(checkbox2.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "2";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"2";
+			}
+		}
+		if(checkbox3.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "3";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"3";
+			}
+		}
+		if(checkbox4.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "4";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"4";
+			}
+		}
+		if(checkbox5.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "5";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"5";
+			}
+		}
+		if(checkbox6.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "6";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"6";
+			}
+		}
+		if(checkbox7.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "7";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"7";
+			}
 		}
 	}
 }

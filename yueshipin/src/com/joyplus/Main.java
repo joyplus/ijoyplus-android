@@ -48,9 +48,10 @@ public class Main extends TabActivity {
 	private String TAB_1 = "Tab1";
 	private String TAB_2 = "Tab2";
 	private String TAB_3 = "Tab3";
+	private String TAB_4 = "Tab4";
 	private TabHost mTabHost;
 
-	private Intent mTab1, mTab2, mTab3;
+	private Intent mTab1, mTab2, mTab3,mTab4;
 	private Map<String, String> headers;
 	private MianZeDialog mianzeDialog;
 
@@ -174,16 +175,20 @@ public class Main extends TabActivity {
 		mTab1 = new Intent(this, Tab1.class);
 		mTab2 = new Intent(this, Tab2.class);
 		mTab3 = new Intent(this, Tab3.class);
+		mTab4 = new Intent(this, Video_Cache.class);
 		mTabHost.addTab(buildTabSpec(TAB_1,
 				getResources().getString(R.string.tab1),
-				R.drawable.tab1_yuedan, mTab1));
+				R.drawable.yuedan, mTab1));
 		mTabHost.addTab(buildTabSpec(TAB_2,
 				getResources().getString(R.string.tab2),
-				R.drawable.tab2_yuebang, mTab2));
+				R.drawable.yuebang, mTab2));
 		mTabHost.addTab(buildTabSpec(TAB_3,
-				getResources().getString(R.string.tab3), R.drawable.tab3_wode,
+				getResources().getString(R.string.tab3), R.drawable.my,
 				mTab3));
-		mTabHost.setCurrentTab(0);
+		mTabHost.addTab(buildTabSpec(TAB_4,
+				getResources().getString(R.string.tab4), R.drawable.xiazai,
+				mTab4));
+		mTabHost.setCurrentTab(0);//默认显示悦榜
 		RadioGroup radioGroup = (RadioGroup) this
 				.findViewById(R.id.radioGroup1);
 		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -207,10 +212,12 @@ public class Main extends TabActivity {
 				case R.id.radio2:
 					mTabHost.setCurrentTabByTag(TAB_3);
 					break;
-				default:
-					mTabHost.setCurrentTabByTag(TAB_1);
+				case R.id.radio3:
+					mTabHost.setCurrentTabByTag(TAB_4);
 					break;
-
+				default:
+					mTabHost.setCurrentTabByTag(TAB_2);
+					break;
 				}
 			}
 		});
