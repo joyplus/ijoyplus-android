@@ -65,6 +65,7 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Detail_TV.EComparatorIndex;
 import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramComments;
+import com.joyplus.Service.Return.ReturnProgramReviews;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Video.VideoPlayerActivity;
@@ -98,6 +99,7 @@ public class Detail_Show extends Activity {
 	private int m_SupportNum = 0;
 
 	private ReturnProgramComments m_ReturnProgramComments = null;
+//	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;
 	private int isLastisNext = 2;
 	private int mLastY = 0;

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#F2F2F2"
-    android:id="@+id/parent" >
+    android:background="#F2F2F2" >
 
     <LinearLayout
         android:id="@+id/none_net"
@@ -43,9 +43,9 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:paddingLeft="16dp"
             android:gravity="center"
-            android:onClick="OnClickTab1TopLeft" >
+            android:onClick="OnClickTab1TopLeft"
+            android:paddingLeft="16dp" >
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -75,10 +75,10 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:paddingRight="6dp"
             android:gravity="center"
             android:onClick="OnClickTab1TopRight"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:paddingRight="6dp" >
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -151,8 +151,8 @@
                     android:layout_below="@+id/button2"
                     android:layout_marginLeft="129dp"
                     android:layout_marginTop="14dp"
-                    android:textColor="@color/grey"
-                    android:text="导演：" />
+                    android:text="导演："
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView2"
@@ -161,8 +161,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/textView1"
                     android:layout_marginLeft="129dp"
-                    android:textColor="@color/grey"
-                    android:text="主演：" />
+                    android:text="主演："
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -171,8 +171,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/textView2"
                     android:layout_marginLeft="129dp"
-                    android:textColor="@color/grey"
-                    android:text="上映：" />
+                    android:text="上映："
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView4"
@@ -181,8 +181,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/textView3"
                     android:layout_marginLeft="129dp"
-                    android:textColor="@color/grey"
-                    android:text="地区：" />
+                    android:text="地区："
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView7"
@@ -192,8 +192,8 @@
                     android:layout_marginTop="14dp"
                     android:layout_toRightOf="@+id/textView1"
                     android:ellipsize="end"
-                    android:textColor="@color/grey"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView5"
@@ -203,8 +203,8 @@
                     android:layout_alignBottom="@+id/textView2"
                     android:layout_toRightOf="@+id/textView2"
                     android:ellipsize="end"
-                    android:textColor="@color/grey"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView8"
@@ -214,8 +214,8 @@
                     android:layout_alignBottom="@+id/textView3"
                     android:layout_alignLeft="@+id/textView6"
                     android:ellipsize="end"
-                    android:textColor="@color/grey"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/grey" />
 
                 <TextView
                     android:id="@+id/textView6"
@@ -225,8 +225,8 @@
                     android:layout_alignBottom="@+id/textView4"
                     android:layout_toRightOf="@+id/textView4"
                     android:ellipsize="end"
-                    android:textColor="@color/grey"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@color/grey" />
             </RelativeLayout>
 
             <LinearLayout
@@ -389,12 +389,12 @@
                         android:id="@+id/button8"
                         android:layout_width="match_parent"
                         android:layout_height="28dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="3dp"
                         android:background="@drawable/detail_movie_button"
                         android:drawableRight="@drawable/detailed_movie_related_in_bg"
                         android:gravity="center_vertical"
                         android:onClick="OnClickMovieBangdan"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="3dp"
                         android:text="    加载中..." />
                 </LinearLayout>
             </LinearLayout>
@@ -421,15 +421,109 @@
                     android:orientation="vertical" >
                 </LinearLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/review1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/white"
+                android:onClick="OnClickReviewComments"
+                android:orientation="vertical"
+                android:visibility="gone"  >
+
+                <TextView
+                    android:id="@+id/review1Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxEms="12"
+                    android:singleLine="true"
+                    android:text="1234" />
+
+                <TextView
+                    android:id="@+id/review1Content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="5"
+                    android:text="1234" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/review2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/darkorange"
+                android:onClick="OnClickReviewComments"
+                android:orientation="vertical"
+                android:visibility="gone"  >
+
+                <TextView
+                    android:id="@+id/review2Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:maxEms="12"
+                    android:text="1234" />
+
+                <TextView
+                    android:id="@+id/review2Content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="5"
+                    android:text="1234" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/review3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="16dp"
+                android:onClick="OnClickReviewComments"
+                android:background="@color/blue"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/review3Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:maxEms="12"
+                    android:text="1234" />
+
+                <TextView
+                    android:id="@+id/review3Content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                   	android:maxLines="5"
+                    android:text="1234" />
+            </LinearLayout>
+             <LinearLayout
+                 android:layout_width="fill_parent"
+                 android:layout_height="10dp"
+                 >
+                 
+             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-	<LinearLayout 
-	    android:id="@+id/new_guider_3"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:background="@drawable/new_guider_3"
-	    android:onClick="OnClickNewGuider_3"
-	    android:visibility="gone">
-	    
-	</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/new_guider_3"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/new_guider_3"
+        android:onClick="OnClickNewGuider_3"
+        android:visibility="gone" >
+    </LinearLayout>
+
 </RelativeLayout>
