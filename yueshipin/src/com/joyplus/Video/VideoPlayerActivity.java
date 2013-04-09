@@ -546,6 +546,7 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
 		MobclickAgent.onEventEnd(mContext, TV_PLAY);
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
+		//
 		finish();
 	}
 

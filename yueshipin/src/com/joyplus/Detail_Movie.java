@@ -351,13 +351,19 @@ public class Detail_Movie extends Activity {
 
 				}
 			}
-
+			if(m_ReturnProgramView.movie.douban_id==null)
+			{
+				//显示豆瓣更多
+				aq.id(R.id.moreReviews).gone();
+			}
+			
 			if (m_ReturnProgramView.topics != null
 					&& m_ReturnProgramView.topics.length >= 1) {
 				ShowTopics();
 			} else {
 				aq.id(R.id.LinearLayoutXGYD).gone();
 			}
+			
 			GetReviews();
 		} else {
 			GetServiceData();
@@ -957,7 +963,17 @@ public class Detail_Movie extends Activity {
 		}
 
 	}
-
+	
+	public void OnClickMoreReviews(View v)
+	{
+		String url = "http://movie.douban.com/subject/"+m_ReturnProgramView.movie.douban_id+"/reviews";
+		Intent intent = new Intent();
+		intent.setAction("android.intent.action.VIEW");
+		Uri content_url = Uri.parse(url);
+		intent.setData(content_url);
+		startActivity(intent);
+	}
+	
 	public void CallVideoPlayActivity(String m_uri, String title) {
 
 		int sourceId = -1;// 如果是风行那值为1,如果不是那就为其他的值
@@ -990,6 +1006,7 @@ public class Detail_Movie extends Activity {
 		intent.setClass(Detail_Movie.this, VideoPlayerActivity.class);
 		try {
 			startActivity(intent);
+			
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "mp4 fail", ex);
 		}
@@ -1013,7 +1030,7 @@ public class Detail_Movie extends Activity {
 		popup_report.setBackgroundDrawable(new BitmapDrawable());
 		popup_report.setAnimationStyle(R.style.PopupAnimation);
 		popup_report.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-				| Gravity.CENTER, 10, 20);
+				| Gravity.CENTER, 40, 80);
 		popup_report.update();
 	}
 

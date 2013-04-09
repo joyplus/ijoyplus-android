@@ -427,27 +427,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:maxEms="8"
+                        android:maxEms="13"
+                        android:paddingLeft="5dp"
                         android:singleLine="true"
                         android:text="1234"
                         android:textColor="@color/black"
-                        android:paddingLeft="5dp"
-                        android:textSize="20sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/review1Content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxLines="5"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
-                        android:maxLines="5"
                         android:text="1234" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:textColor="@color/darkorange"
-                        android:text="全部  >" />
+                        android:text="全部  >"
+                        android:textColor="@color/darkorange" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -468,12 +469,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:maxEms="8"
+                        android:maxEms="13"
+                        android:paddingLeft="5dp"
                         android:singleLine="true"
                         android:text="1234"
-                        android:paddingLeft="5dp"
                         android:textColor="@color/black"
-                        android:textSize="20sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/review2Content"
@@ -483,12 +484,13 @@
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
                         android:text="1234" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
-                        android:textColor="@color/darkorange"
-                        android:text="全部  >" />
+                        android:text="全部  >"
+                        android:textColor="@color/darkorange" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -509,27 +511,48 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:maxEms="8"
+                        android:maxEms="13"
+                        android:paddingLeft="5dp"
                         android:singleLine="true"
                         android:text="1234"
-                        android:paddingLeft="5dp"
                         android:textColor="@color/black"
-                        android:textSize="20sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/review3Content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:maxLines="5"
-                       	android:paddingLeft="5dp"
+                        android:paddingLeft="5dp"
                         android:paddingRight="5dp"
                         android:text="1234" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
+                        android:text="全部  >"
+                        android:textColor="@color/darkorange" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="10dp" />
+
+                <LinearLayout
+                    android:id="@+id/moreReviews"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="OnClickMoreReviews"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="更多影评 >"
                         android:textColor="@color/darkorange"
-                        android:text="全部  >" />
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <LinearLayout

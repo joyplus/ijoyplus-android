@@ -504,6 +504,11 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
 					aq.id(R.id.button20).clickable(false);
 				}
+				if(m_ReturnProgramView.tv.douban_id==null)
+				{
+					//显示豆瓣更多
+					aq.id(R.id.moreReviews).gone();
+				}
 				GetReviews();
 			} else {
 				aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
@@ -868,7 +873,17 @@ public class Detail_TV extends Activity {
 			}
 		}
 	}
-
+	
+	public void OnClickMoreReviews(View v)
+	{
+		String url = "http://movie.douban.com/subject/"+m_ReturnProgramView.tv.douban_id+"/reviews";
+		Intent intent = new Intent();
+		intent.setAction("android.intent.action.VIEW");
+		Uri content_url = Uri.parse(url);
+		intent.setData(content_url);
+		startActivity(intent);
+	}
+	
 	public void OnClickPre15(View v) {
 		String m_j = null;
 		int j = 0;
@@ -1757,7 +1772,7 @@ public class Detail_TV extends Activity {
 		popup_report.setBackgroundDrawable(new BitmapDrawable());
 		popup_report.setAnimationStyle(R.style.PopupAnimation);
 		popup_report.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-				| Gravity.CENTER, 0, 78);
+				| Gravity.CENTER,40, 80);
 		popup_report.update();
 	}
 	
