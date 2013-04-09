@@ -933,8 +933,6 @@ public class Detail_Movie extends Activity {
 				.weakHandler(this, "CallCommentsResult");
 
 		cb.SetHeader(app.getHeaders());
-
-//		aq.id(R.id.ProgressText).visible();
 		aq.ajax(cb);
 	}
 
