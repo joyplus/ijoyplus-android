@@ -88,6 +88,7 @@ public class Detail_Movie extends Activity {
 	private Bitmap bitmap;
 	String name;
 	private PopupWindow popup_report = null;
+	private PopupWindow popupReviewDetail = null;
 	private String invalid_type = null;
 	private String problemContext = null;
 	CheckBox checkbox1;
@@ -351,11 +352,6 @@ public class Detail_Movie extends Activity {
 
 				}
 			}
-			if(m_ReturnProgramView.movie.douban_id==null)
-			{
-				//显示豆瓣更多
-				aq.id(R.id.moreReviews).gone();
-			}
 			
 			if (m_ReturnProgramView.topics != null
 					&& m_ReturnProgramView.topics.length >= 1) {
@@ -363,7 +359,6 @@ public class Detail_Movie extends Activity {
 			} else {
 				aq.id(R.id.LinearLayoutXGYD).gone();
 			}
-			
 			GetReviews();
 		} else {
 			GetServiceData();
@@ -822,6 +817,10 @@ public class Detail_Movie extends Activity {
 				review2.setVisibility(View.VISIBLE);
 				review3.setVisibility(View.VISIBLE);
 			}
+			if(m_ReturnProgramReviews.reviews.length>0&&m_ReturnProgramView.movie.douban_id!=null)
+			{
+				aq.id(R.id.moreReviews).visible();
+			}
 		}
 		TextView review1Title = (TextView) findViewById(R.id.review1Title);
 		final TextView review1Content = (TextView) findViewById(R.id.review1Content);
@@ -909,14 +908,22 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void OnClickReviewComments(View v) {
-		AlertDialog alertDialog = new AlertDialog.Builder(this).setMessage(
-				m_ReturnProgramReviews.reviews[Integer.parseInt(v.getTag()
-						.toString())].comments).create();
-		Window window = alertDialog.getWindow();
-		WindowManager.LayoutParams lp = window.getAttributes();
-		lp.alpha = 0.6f;
-		window.setAttributes(lp);
-		alertDialog.show();
+		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+		final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+				R.layout.reviews, null, true);
+		TextView title = (TextView)menuView.findViewById(R.id.title);
+		TextView content = (TextView)menuView.findViewById(R.id.content);
+		title.setText(m_ReturnProgramReviews.reviews[Integer.parseInt(v.getTag()
+						.toString())].title);
+		content.setText(m_ReturnProgramReviews.reviews[Integer.parseInt(v.getTag()
+						.toString())].comments);
+		popupReviewDetail = new PopupWindow(menuView, LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT, true);
+		popupReviewDetail.setBackgroundDrawable(new BitmapDrawable());
+		popupReviewDetail.setAnimationStyle(R.style.PopupAnimation);
+		popupReviewDetail.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
+				| Gravity.CENTER, 40, 80);
+		popupReviewDetail.update();
 	}
 
 	public void GetReviews() {

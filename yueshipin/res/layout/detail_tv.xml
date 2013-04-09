@@ -690,7 +690,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:onClick="OnClickMoreReviews"
-                    android:orientation="vertical" >
+                    android:orientation="vertical"
+                    android:visibility="gone" >
 
                     <TextView
                         android:layout_width="wrap_content"
