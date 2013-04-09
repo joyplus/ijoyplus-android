@@ -66,14 +66,12 @@ import com.umeng.analytics.MobclickAgent;
 
 public class VideoPlayerActivity extends Activity implements
 		OnCompletionListener {
-	private String TAG = "VideoPlayerActivity";
 	private AQuery aq;
 	private App app;
 	private ReturnProgramView m_ReturnProgramView = null;
 	private String mPath;
 	private String mTitle;
 	private boolean checkBind = false;
-	private boolean isShowingDLNA = false;
 	private VideoView mVideoView;
 	private View mVolumeBrightnessLayout;
 	private ImageView mOperationBg;

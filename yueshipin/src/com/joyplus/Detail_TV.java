@@ -37,10 +37,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AbsListView;
@@ -68,6 +70,7 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Detail_Movie.EComparatorIndex;
 import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramComments;
+import com.joyplus.Service.Return.ReturnProgramReviews;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
@@ -123,8 +126,7 @@ public class Detail_TV extends Activity {
 	private String expires_in = null;
 
 	private String TV_String = null;
-
-	private ReturnProgramComments m_ReturnProgramComments = null;
+	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;
 	private int isLastisNext = 2;
 	private int mLastY = 0;
@@ -185,8 +187,8 @@ public class Detail_TV extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					if (mLastY == mScrollView.getScrollY()) {
 						// TODO
-						if (mScrollView.getScrollY() != 0)
-							ShowMoreComments();
+//						if (mScrollView.getScrollY() != 0)
+//							ShowMoreComments();
 					} else {
 						mLastY = mScrollView.getScrollY();
 					}
@@ -502,14 +504,7 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
 					aq.id(R.id.button20).clickable(false);
 				}
-
-				if (m_ReturnProgramView.comments != null
-						&& m_ReturnProgramView.comments.length >= 1) {
-					ShowComments();
-				} else {
-					aq.id(R.id.imageView_comment).gone();
-					aq.id(R.id.Layout_comment).gone();
-				}
+				GetReviews();
 			} else {
 				aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
 				aq.id(R.id.button20).clickable(false);
@@ -1108,103 +1103,156 @@ public class Detail_TV extends Activity {
 			startActivity(intent);
 		}
 	}
-
+	
 	public void ShowComments() {
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Layout_comment);
-		if (m_ReturnProgramView.comments != null) {
-			for (int i = 0; i < m_ReturnProgramView.comments.length; i++) {
-				RelativeLayout subLayout = new RelativeLayout(this);
-
-				RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
-						RelativeLayout.TRUE);
-
-				TextView valueName = new TextView(this);
-				// valueName.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
-				valueName.setTextColor(Color.BLACK);
-				if (!m_ReturnProgramView.comments[i].owner_name
-						.equalsIgnoreCase("EMPTY"))
-					valueName
-							.setText(m_ReturnProgramView.comments[i].owner_name
-									+ ":");
-				else
-					valueName.setText("网络用户:");
-				subLayout.addView(valueName, params1);
-
-				RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-						RelativeLayout.TRUE);
-
-				TextView valueTime = new TextView(this);
-				valueTime.setTextColor(color.grey);
-				valueTime.setText(m_ReturnProgramView.comments[i].create_date
-						.replaceAll(" 00:00:00", ""));
-				subLayout.addView(valueTime, params2);
-
-				LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params3.topMargin = 10;
-
-				linearLayout.addView(subLayout, params3);
-
-				TextView valueContent = new TextView(this);
-				valueContent.setTextColor(color.grey);
-				valueContent.setText(m_ReturnProgramView.comments[i].content);
-				linearLayout.addView(valueContent);
-
-				if (i != m_ReturnProgramView.comments.length - 1) {
-					LinearLayout.LayoutParams params4 = new LinearLayout.LayoutParams(
-							android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-							android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-					params4.topMargin = 10;
-
-					ImageView m_image = new ImageView(this);
-					m_image.setBackgroundResource(R.drawable.tab1_divider);
-
-					linearLayout.addView(m_image, params4);
+		if(m_ReturnProgramReviews == null)
+		{
+			aq.id(R.id.imageView_comment).gone();
+		}
+		LinearLayout review1 = (LinearLayout) findViewById(R.id.review1);
+		LinearLayout review2 = (LinearLayout) findViewById(R.id.review2);
+		LinearLayout review3 = (LinearLayout) findViewById(R.id.review3);
+		if (m_ReturnProgramReviews != null
+				&& m_ReturnProgramReviews.reviews != null) {
+			if (m_ReturnProgramReviews.reviews.length == 1) {
+				review1.setVisibility(View.VISIBLE);
+			} else if (m_ReturnProgramReviews.reviews.length == 2) {
+				review1.setVisibility(View.VISIBLE);
+				review2.setVisibility(View.VISIBLE);
+			} else if (m_ReturnProgramReviews.reviews.length == 3) {
+				review1.setVisibility(View.VISIBLE);
+				review2.setVisibility(View.VISIBLE);
+				review3.setVisibility(View.VISIBLE);
+			}
+		}
+		TextView review1Title = (TextView) findViewById(R.id.review1Title);
+		final TextView review1Content = (TextView) findViewById(R.id.review1Content);
+		TextView review2Title = (TextView) findViewById(R.id.review2Title);
+		final TextView review2Content = (TextView) findViewById(R.id.review2Content);
+		TextView review3Title = (TextView) findViewById(R.id.review3Title);
+		final TextView review3Content = (TextView) findViewById(R.id.review3Content);
+		if (m_ReturnProgramReviews != null
+				&& m_ReturnProgramReviews.reviews != null) {
+			for (int i = 0; i < m_ReturnProgramReviews.reviews.length; i++) {
+				if (i == 0) {
+					review1Title
+							.setText(m_ReturnProgramReviews.reviews[0].title);
+					review1Content
+							.setText(m_ReturnProgramReviews.reviews[0].comments);
+					ViewTreeObserver vto = review1Content.getViewTreeObserver();
+					vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							// TODO Auto-generated method stub
+							ViewTreeObserver obs = review1Content
+									.getViewTreeObserver();
+							if (review1Content.getLineCount() > 5) {
+								int lineEndIndex = review1Content.getLayout()
+										.getLineEnd(4);
+								String text = review1Content.getText()
+										.subSequence(0, lineEndIndex - 3)
+										+ "...";
+								review1Content.setText(text);
+							}
+						}
+					});
+					review1.setTag(i);
+				}
+				if (i == 1) {
+					review2Title
+							.setText(m_ReturnProgramReviews.reviews[1].title);
+					review2Content
+							.setText(m_ReturnProgramReviews.reviews[1].comments);
+					ViewTreeObserver vto = review2Content.getViewTreeObserver();
+					vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							// TODO Auto-generated method stub
+							ViewTreeObserver obs = review2Content
+									.getViewTreeObserver();
+							if (review2Content.getLineCount() > 5) {
+								int lineEndIndex = review2Content.getLayout()
+										.getLineEnd(4);
+								String text = review2Content.getText()
+										.subSequence(0, lineEndIndex - 3)
+										+ "...";
+								review2Content.setText(text);
+							}
+						}
+					});
+					review2.setTag(i);
+				}
+				if (i == 2) {
+					review3Title
+							.setText(m_ReturnProgramReviews.reviews[2].title);
+					review3Content
+							.setText(m_ReturnProgramReviews.reviews[2].comments);
+					ViewTreeObserver vto = review3Content.getViewTreeObserver();
+					vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							// TODO Auto-generated method stub
+							ViewTreeObserver obs = review3Content
+									.getViewTreeObserver();
+							if (review3Content.getLineCount() > 5) {
+								int lineEndIndex = review3Content.getLayout()
+										.getLineEnd(4);
+								String text = review3Content.getText()
+										.subSequence(0, lineEndIndex - 3)
+										+ "...";
+								review3Content.setText(text);
+							}
+						}
+					});
+					review3.setTag(i);
 				}
 			}
 		}
 	}
 
-	public void ShowMoreComments() {
+	public void OnClickReviewComments(View v) {
+		AlertDialog alertDialog = new AlertDialog.Builder(this).setMessage(
+				m_ReturnProgramReviews.reviews[Integer.parseInt(v.getTag()
+						.toString())].comments).create();
+		Window window = alertDialog.getWindow();
+		WindowManager.LayoutParams lp = window.getAttributes();
+		lp.alpha = 0.6f;
+		window.setAttributes(lp);
+		alertDialog.show();
+	}
+
+	public void GetReviews() {
 		/*
 		 * app_key required string 申请应用时分配的AppKey。 prod_id required string 节目id
 		 * page_num = 需要请求的页码（可选），默认为1 page_size = 每一页包含的记录数（可选），默认为10
 		 */
-		String url = Constant.BASE_URL + "program/comments" + "?prod_id="
-				+ prod_id + "&page_num=" + Integer.toString(isLastisNext)
-				+ "&page_size=10";
+		isLastisNext = 1;
+		String url = Constant.BASE_URL + "program/reviews" + "?prod_id="
+				+ prod_id + "&page_num=1" + "&page_size=3";
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class)
-				.weakHandler(this, "MoreCommentsResult");
+				.weakHandler(this, "CallCommentsResult");
 
 		cb.SetHeader(app.getHeaders());
 
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+//		aq.id(R.id.ProgressText).visible();
+		aq.ajax(cb);
 	}
 
-	public void MoreCommentsResult(String url, JSONObject json,
+	public void CallCommentsResult(String url, JSONObject json,
 			AjaxStatus status) {
 		if (json == null) {
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			if (isLastisNext > 2)
-				m_ReturnProgramComments = null;
-			m_ReturnProgramComments = mapper.readValue(json.toString(),
-					ReturnProgramComments.class);
+			if (isLastisNext > 1)
+				m_ReturnProgramReviews = null;
+			m_ReturnProgramReviews = mapper.readValue(json.toString(),
+					ReturnProgramReviews.class);
 			// 创建数据源对象
-			AddMoreComments();
-
+			ShowComments();
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1216,68 +1264,6 @@ public class Detail_TV extends Activity {
 			e.printStackTrace();
 		}
 
-	}
-
-	public void AddMoreComments() {
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Layout_comment);
-		if (m_ReturnProgramComments != null) {
-			for (int i = 0; i < m_ReturnProgramComments.comments.length; i++) {
-				RelativeLayout subLayout = new RelativeLayout(this);
-
-				LinearLayout.LayoutParams params4 = new LinearLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params4.topMargin = 10;
-
-				ImageView m_image = new ImageView(this);
-				m_image.setBackgroundResource(R.drawable.tab1_divider);
-
-				linearLayout.addView(m_image, params4);
-
-				RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
-						RelativeLayout.TRUE);
-
-				TextView valueName = new TextView(this);
-				// valueName.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
-				valueName.setTextColor(Color.BLACK);
-				if (!m_ReturnProgramComments.comments[i].owner_name
-						.equalsIgnoreCase("EMPTY"))
-					valueName
-							.setText(m_ReturnProgramComments.comments[i].owner_name
-									+ ":");
-				else
-					valueName.setText("网络用户:");
-				subLayout.addView(valueName, params1);
-
-				RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-						RelativeLayout.TRUE);
-
-				TextView valueTime = new TextView(this);
-				valueTime
-						.setText(m_ReturnProgramComments.comments[i].create_date
-								.replaceAll(" 00:00:00", ""));
-				subLayout.addView(valueTime, params2);
-
-				LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params3.topMargin = 10;
-
-				linearLayout.addView(subLayout, params3);
-
-				TextView valueContent = new TextView(this);
-				valueContent
-						.setText(m_ReturnProgramComments.comments[i].content);
-				linearLayout.addView(valueContent);
-
-			}
-		}
 	}
 
 	public void CallVideoPlayActivity(String m_uri, String title) {

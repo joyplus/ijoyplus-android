@@ -31,6 +31,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
@@ -78,7 +80,7 @@ public class Detail_Movie extends Activity {
 	private String download_index = "movie";
 	private int m_FavorityNum = 0;
 	private int m_SupportNum = 0;
-	
+
 	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;
 	private int isLastisNext = 1;
@@ -132,8 +134,8 @@ public class Detail_Movie extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					if (mLastY == mScrollView.getScrollY()) {
 						// TODO
-//						if (mScrollView.getScrollY() != 0)
-//							ShowMoreComments();
+						// if (mScrollView.getScrollY() != 0)
+						// ShowMoreComments();
 					} else {
 						mLastY = mScrollView.getScrollY();
 					}
@@ -356,14 +358,7 @@ public class Detail_Movie extends Activity {
 			} else {
 				aq.id(R.id.LinearLayoutXGYD).gone();
 			}
-			if (m_ReturnProgramView.comments != null
-					&& m_ReturnProgramView.comments.length >= 1) {
-				//获取评论的资源然后显示
-				GetReviews();
-			} else {
-				aq.id(R.id.imageView_comment).gone();
-				aq.id(R.id.Layout_comment).gone();
-			}
+			GetReviews();
 		} else {
 			GetServiceData();
 		}
@@ -802,71 +797,123 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void ShowComments() {
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Layout_comment);
+		if(m_ReturnProgramReviews == null)
+		{
+			aq.id(R.id.imageView_comment).gone();
+		}
 		LinearLayout review1 = (LinearLayout) findViewById(R.id.review1);
 		LinearLayout review2 = (LinearLayout) findViewById(R.id.review2);
 		LinearLayout review3 = (LinearLayout) findViewById(R.id.review3);
-		if(m_ReturnProgramReviews!=null&&m_ReturnProgramReviews.reviews != null)
-		{
-			if(m_ReturnProgramReviews.reviews.length == 1)
-			{
+		if (m_ReturnProgramReviews != null
+				&& m_ReturnProgramReviews.reviews != null) {
+			if (m_ReturnProgramReviews.reviews.length == 1) {
 				review1.setVisibility(View.VISIBLE);
-			}
-			else if(m_ReturnProgramReviews.reviews.length == 2)
-			{
+			} else if (m_ReturnProgramReviews.reviews.length == 2) {
 				review1.setVisibility(View.VISIBLE);
 				review2.setVisibility(View.VISIBLE);
-			}
-			else if(m_ReturnProgramReviews.reviews.length == 3)
-			{
+			} else if (m_ReturnProgramReviews.reviews.length == 3) {
 				review1.setVisibility(View.VISIBLE);
 				review2.setVisibility(View.VISIBLE);
 				review3.setVisibility(View.VISIBLE);
 			}
 		}
-		TextView review1Title = (TextView)findViewById(R.id.review1Title);
-		TextView review1Content = (TextView)findViewById(R.id.review1Content);
-		TextView review2Title = (TextView)findViewById(R.id.review2Title);
-		TextView review2Content = (TextView)findViewById(R.id.review2Content);
-		TextView review3Title = (TextView)findViewById(R.id.review3Title);
-		TextView review3Content = (TextView)findViewById(R.id.review3Content);
-		if (m_ReturnProgramReviews!=null&&m_ReturnProgramReviews.reviews != null) {
-			for (int i = 0; i < m_ReturnProgramReviews.reviews.length; i++){
-				if(i == 0)
-				{
-					review1Title.setText( m_ReturnProgramReviews.reviews[0].title);
-					review1Content.setText( m_ReturnProgramReviews.reviews[0].comments);
+		TextView review1Title = (TextView) findViewById(R.id.review1Title);
+		final TextView review1Content = (TextView) findViewById(R.id.review1Content);
+		TextView review2Title = (TextView) findViewById(R.id.review2Title);
+		final TextView review2Content = (TextView) findViewById(R.id.review2Content);
+		TextView review3Title = (TextView) findViewById(R.id.review3Title);
+		final TextView review3Content = (TextView) findViewById(R.id.review3Content);
+		if (m_ReturnProgramReviews != null
+				&& m_ReturnProgramReviews.reviews != null) {
+			for (int i = 0; i < m_ReturnProgramReviews.reviews.length; i++) {
+				if (i == 0) {
+					review1Title
+							.setText(m_ReturnProgramReviews.reviews[0].title);
+					review1Content
+							.setText(m_ReturnProgramReviews.reviews[0].comments);
+					ViewTreeObserver vto = review1Content.getViewTreeObserver();
+					vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							// TODO Auto-generated method stub
+							ViewTreeObserver obs = review1Content
+									.getViewTreeObserver();
+							if (review1Content.getLineCount() > 5) {
+								int lineEndIndex = review1Content.getLayout()
+										.getLineEnd(4);
+								String text = review1Content.getText()
+										.subSequence(0, lineEndIndex - 3)
+										+ "...";
+								review1Content.setText(text);
+							}
+						}
+					});
 					review1.setTag(i);
 				}
-				if(i == 1)
-				{
-					review2Title.setText( m_ReturnProgramReviews.reviews[1].title);
-					review2Content.setText( m_ReturnProgramReviews.reviews[1].comments);
+				if (i == 1) {
+					review2Title
+							.setText(m_ReturnProgramReviews.reviews[1].title);
+					review2Content
+							.setText(m_ReturnProgramReviews.reviews[1].comments);
+					ViewTreeObserver vto = review2Content.getViewTreeObserver();
+					vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							// TODO Auto-generated method stub
+							ViewTreeObserver obs = review2Content
+									.getViewTreeObserver();
+							if (review2Content.getLineCount() > 5) {
+								int lineEndIndex = review2Content.getLayout()
+										.getLineEnd(4);
+								String text = review2Content.getText()
+										.subSequence(0, lineEndIndex - 3)
+										+ "...";
+								review2Content.setText(text);
+							}
+						}
+					});
 					review2.setTag(i);
 				}
-				if(i == 2)
-				{
-					review3Title.setText( m_ReturnProgramReviews.reviews[2].title);
-					review3Content.setText( m_ReturnProgramReviews.reviews[2].comments);
+				if (i == 2) {
+					review3Title
+							.setText(m_ReturnProgramReviews.reviews[2].title);
+					review3Content
+							.setText(m_ReturnProgramReviews.reviews[2].comments);
+					ViewTreeObserver vto = review3Content.getViewTreeObserver();
+					vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							// TODO Auto-generated method stub
+							ViewTreeObserver obs = review3Content
+									.getViewTreeObserver();
+							if (review3Content.getLineCount() > 5) {
+								int lineEndIndex = review3Content.getLayout()
+										.getLineEnd(4);
+								String text = review3Content.getText()
+										.subSequence(0, lineEndIndex - 3)
+										+ "...";
+								review3Content.setText(text);
+							}
+						}
+					});
 					review3.setTag(i);
 				}
 			}
 		}
 	}
-	
-	public void  OnClickReviewComments(View v)
-	{
+
+	public void OnClickReviewComments(View v) {
 		AlertDialog alertDialog = new AlertDialog.Builder(this).setMessage(
-				m_ReturnProgramReviews.reviews[Integer.parseInt(v.getTag().toString())].comments).create();
+				m_ReturnProgramReviews.reviews[Integer.parseInt(v.getTag()
+						.toString())].comments).create();
 		Window window = alertDialog.getWindow();
 		WindowManager.LayoutParams lp = window.getAttributes();
 		lp.alpha = 0.6f;
 		window.setAttributes(lp);
 		alertDialog.show();
 	}
-	
-	public void GetReviews()
-	{
+
+	public void GetReviews() {
 		/*
 		 * app_key required string 申请应用时分配的AppKey。 prod_id required string 节目id
 		 * page_num = 需要请求的页码（可选），默认为1 page_size = 每一页包含的记录数（可选），默认为10
@@ -881,8 +928,8 @@ public class Detail_Movie extends Activity {
 
 		cb.SetHeader(app.getHeaders());
 
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+//		aq.id(R.id.ProgressText).visible();
+		aq.ajax(cb);
 	}
 
 	public void CallCommentsResult(String url, JSONObject json,
