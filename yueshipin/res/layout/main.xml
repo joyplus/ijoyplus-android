@@ -34,7 +34,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
-
+				
+                <RadioButton
+                    android:id="@+id/radio1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/tab_bottom2"
+                    android:button="@null" />
+                
                 <RadioButton
                     android:id="@+id/radio0"
                     android:layout_width="wrap_content"
@@ -43,15 +51,15 @@
                     android:background="@drawable/tab_bottom1"
                     android:button="@null"
                     android:checked="true" />
-
-                <RadioButton
-                    android:id="@+id/radio1"
+				
+                <RadioButton 
+                    android:id="@+id/radio3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/tab_bottom2"
-                    android:button="@null" />
-
+                    android:background="@drawable/tab_bottom4"
+                    android:button="@null"/>
+                
                 <RadioButton
                     android:id="@+id/radio2"
                     android:layout_width="wrap_content"
@@ -59,6 +67,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/tab_bottom3"
                     android:button="@null" />
+                
             </RadioGroup>
         </FrameLayout>
     </LinearLayout>

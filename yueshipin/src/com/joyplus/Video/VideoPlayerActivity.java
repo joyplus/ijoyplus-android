@@ -82,14 +82,12 @@ import com.yixia.zi.utils.Log;
 
 public class VideoPlayerActivity extends Activity implements
 		OnCompletionListener {
-	private String TAG = "VideoPlayerActivity";
 	private AQuery aq;
 	private App app;
 	private ReturnProgramView m_ReturnProgramView = null;
 	private String mPath;
 	private String mTitle;
 	private boolean checkBind = false;
-	private boolean isShowingDLNA = false;
 	private VideoView mVideoView;
 	private View mVolumeBrightnessLayout;
 	private ImageView mOperationBg;
@@ -355,7 +353,11 @@ public class VideoPlayerActivity extends Activity implements
 
 			if (current_time > 0) {
 
+
 				if (playProdType != 1) {
+				
+				if(playProdType == 2||playProdType==131)
+				{
 					playrecordinfo.setProd_id(playProdId);
 					if (Constant.select_index > -1) {
 						tvsubname = Integer.toString(Constant.select_index + 1);// 更新本地数据库
@@ -370,6 +372,15 @@ public class VideoPlayerActivity extends Activity implements
 					}
 					playrecordinfo.setProd_subname(tvsubname);
 					playrecordinfo.setLast_playtime(current_time + "");
+					playrecordinfo.setProd_subname(tvsubname);	
+					playrecordinfo.setLast_playtime(current_time+"");
+					playrecordmanager.savePlayRecord(playrecordinfo);
+				}
+				else if(playProdType == 3)
+				{
+					playrecordinfo.setProd_id(playProdId);
+					playrecordinfo.setProd_subname(tvsubname);	
+					playrecordinfo.setLast_playtime(current_time+"");
 					playrecordmanager.savePlayRecord(playrecordinfo);
 				} else {
 					// 保存播放记录在本地
@@ -382,6 +393,7 @@ public class VideoPlayerActivity extends Activity implements
 				play_current_time = current_time;
 			}
 			mVideoView.pause();
+		}
 		}
 	}
 
@@ -579,7 +591,6 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
 		MobclickAgent.onEventEnd(mContext, TV_PLAY);
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
-		
 		finish();
 	}
 
@@ -857,15 +868,32 @@ public class VideoPlayerActivity extends Activity implements
 		params.put("prod_id", playProdId);// required string
 											// 视频id
 		params.put("prod_name", playProdName);// required
-												// string 视频名字
+            // string 视频名字
 		if (Constant.select_index > -1) {
 			params.put("prod_subname",
 					Integer.toString(Constant.select_index + 1));// required
 		} else {
 			params.put("prod_subname",
 					Integer.toString(mCurrentPlayData.CurrentIndex + 1));// required
+		if(playProdType != 3)// string 视频名字
+		{
+			if(Constant.select_index>-1)
+			{
+				params.put("prod_subname",
+					Integer.toString(Constant.select_index + 1));// required
+			}
+			else
+			{
+				params.put("prod_subname",
+					Integer.toString(mCurrentPlayData.CurrentIndex + 1));// required
+			}
+		}
+		else
+		{
+			params.put("prod_subname",tvsubname);
 		}
 
+		
 		// string
 		// 视频的集数
 		params.put("prod_type", playProdType);// required int 视频类别
@@ -884,7 +912,7 @@ public class VideoPlayerActivity extends Activity implements
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallProgramPlayResult");
 		aq.ajax(cb);
-
+		}
 		/*
 		 * 怎么把数据保存在本地
 		 */
@@ -953,6 +981,7 @@ public class VideoPlayerActivity extends Activity implements
 	private static final String FENGXING = "1";
 
 	class HttpTread implements Runnable {
+		private static final String TAG = "HttpTread";
 		public int CurrentSource;
 		public int CurrentQuality;
 		public int ShowQuality;

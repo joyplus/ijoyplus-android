@@ -1,0 +1,159 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/report_bg" >
+	
+     <Button
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/closereport"
+        android:onClick="OnClickCloseReprot" />
+    
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_toLeftOf="@id/close"
+        android:maxLines="2"
+        android:text="亲,请您告知我们您在看片过程中遇到那些问题,我们一定尽快改进" />
+
+    <CheckBox
+        android:id="@+id/checkbox1"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_below="@id/text"
+        android:button="@drawable/select"
+        android:paddingLeft="60dp"
+        android:ems="15"
+        android:text="视频无法播放"
+        android:textColor="#4A4A4A" />
+
+    <CheckBox
+        android:id="@+id/checkbox2"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_below="@id/checkbox1"
+        android:button="@drawable/select"
+        android:paddingLeft="60dp"
+        android:ems="15"
+        android:text="影片播放不流畅"
+        android:textColor="#4A4A4A" />
+
+    <CheckBox
+        android:id="@+id/checkbox3"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_below="@id/checkbox2"
+        android:button="@drawable/select"
+        android:paddingLeft="60dp"
+        android:ems="15"
+        android:text="影片加载比较慢"
+        android:textColor="#4A4A4A" />
+
+    <CheckBox
+        android:id="@+id/checkbox4"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_below="@id/checkbox3"
+        android:button="@drawable/select"
+        android:paddingLeft="60dp"
+        android:ems="15"
+        android:text="影片不能下载"
+        android:textColor="#4A4A4A" />
+
+    <CheckBox
+        android:id="@+id/checkbox5"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_below="@id/checkbox4"
+        android:button="@drawable/select"
+        android:paddingLeft="60dp"
+        android:ems="15"
+        android:text="观看影片时出现闪退"
+        android:textColor="#4A4A4A" />
+
+    <CheckBox
+        android:id="@+id/checkbox6"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_below="@id/checkbox5"
+        android:button="@drawable/select"
+        android:paddingLeft="60dp"
+        android:ems="15"
+        android:text="画质不清晰 "
+        android:textColor="#4A4A4A" />
+
+    <CheckBox
+        android:id="@+id/checkbox7"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_below="@id/checkbox6"
+        android:button="@drawable/select"
+        android:paddingLeft="60dp"
+        android:ems="15"
+        android:text="音画不同步"
+        android:textColor="#4A4A4A" />
+
+    <LinearLayout
+        android:id="@+id/textview2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/checkbox7"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="其他"
+            android:textSize="20sp" />
+		<LinearLayout
+		    android:layout_width="15dp"
+		    android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/problem_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="#DFDFDF"
+            android:hint="请输入您的宝贵意见和建议..." />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textview2"
+        android:gravity="center_horizontal" >
+
+        <Button
+            android:id="@+id/submitbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/submitbtn"
+            android:onClick="OnClickSubmitProblem" />
+
+    </LinearLayout>
+	 <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:layout_below="@id/submitbtn"
+         />
+</RelativeLayout>

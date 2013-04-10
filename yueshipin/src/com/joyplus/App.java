@@ -113,8 +113,9 @@ public class App extends Application {
 		super.onCreate();
 
 		File cacheDir = new File(Constant.PATH);
-		if (cacheDir.exists())
-			AQUtility.setCacheDir(cacheDir);
+		if (!cacheDir.exists())
+			cacheDir.mkdirs();
+		AQUtility.setCacheDir(cacheDir);
 		// 创建一个目录
 		File destDir = new File(Constant.PATH_VIDEO);
 		if (!destDir.exists()) {

@@ -149,7 +149,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					// 1：电影，2：电视剧，3：综艺，4：视频
 					mCurrentPlayData.prod_id = m_Tab3Page1ListData.Pro_ID;
 					mCurrentPlayData.CurrentCategory =m_Tab3Page1ListData.Pro_type-1;
-					if(m_Tab3Page1ListData.Pro_type == 2 || m_Tab3Page1ListData.Pro_type ==3)
+					if(m_Tab3Page1ListData.Pro_type == 2 || m_Tab3Page1ListData.Pro_type ==131)//原本有点问题
 						mCurrentPlayData.CurrentIndex = Integer.parseInt(m_Tab3Page1ListData.Pro_name1) -1;
 					
 					CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
@@ -196,9 +196,8 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		dataStruct = new ArrayList();
 		Tab3Page1Adapter = new Tab3Page1ListAdapter();
 		ItemsListView.setAdapter(Tab3Page1Adapter);
-		isLastisNext = 1;
+
 		CheckSaveData();
-		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
 	}
 
@@ -224,14 +223,13 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		String url = Constant.BASE_URL + "user/playHistories" + "?page_num="
 				+ Integer.toString(index) + "&page_size=10";
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-		//String str = app.UserID;
+		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListDataForHistory");
 		cb.SetHeader(app.getHeaders());
 		aq.ajax(cb);
 	}
 
 	// 初始化list数据函数
-	public void InitListData(String url, JSONObject json, AjaxStatus status) {
+	public void InitListDataForHistory(String url, JSONObject json, AjaxStatus status) {
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR&&app.GetServiceData("user_Histories")==null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -600,7 +598,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					if ((m_Tab3Page1ListData.Pro_time > 0)
 							&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
 						holder.textView03
-								.setText("第"+m_Tab3Page1ListData.Pro_name1+"期");
+								.setText(m_Tab3Page1ListData.Pro_name1);
 						holder.textView04
 								.setText(stringForTime(m_Tab3Page1ListData.Pro_time*1000));
 					} else {

@@ -127,10 +127,13 @@ private static final int MAX = 100;
 			holder.resourcePercentDown.setText((percent)+"%");
 			if(info.getCompeleteSize()==info.getFileSize())
 			{
-				holder.resouceDownloadState.setText("");
-				holder.resourcePercentDown.setText("");
-				aqtemp.id(R.id.downloadprogress).gone();
-				aqtemp.id(R.id.state_layer).gone();
+				if(info.getFileSize()>10)//过滤掉文件长度为零的情况
+				{
+					holder.resouceDownloadState.setText("");
+					holder.resourcePercentDown.setText("");
+					aqtemp.id(R.id.downloadprogress).gone();
+					aqtemp.id(R.id.state_layer).gone();
+				}
 			}
 			aqtemp.id(R.id.movieImageview).image(posterurl,true,true);
 		}

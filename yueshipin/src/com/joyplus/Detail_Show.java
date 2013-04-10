@@ -23,27 +23,35 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -59,6 +67,7 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Detail_TV.EComparatorIndex;
 import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramComments;
+import com.joyplus.Service.Return.ReturnProgramReviews;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Video.VideoPlayerActivity;
@@ -91,7 +100,7 @@ public class Detail_Show extends Activity {
 	private int m_FavorityNum = 0;
 	private int m_SupportNum = 0;
 
-	private ReturnProgramComments m_ReturnProgramComments = null;
+	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;
 	private int isLastisNext = 2;
 	private int mLastY = 0;
@@ -111,6 +120,19 @@ public class Detail_Show extends Activity {
 	private CurrentPlayData mCurrentPlayData;
 	private static String SHOW_DETAIL = "综艺详情";
 	Context mContext;
+	
+	private PopupWindow popup_report = null;
+	private PopupWindow popupReviewDetail = null;
+	private String invalid_type = null; 
+	private String problemContext = null;
+	CheckBox checkbox1;
+	CheckBox checkbox2;
+	CheckBox checkbox3;
+	CheckBox checkbox4;
+	CheckBox checkbox5;
+	CheckBox checkbox6;
+	CheckBox checkbox7;
+	EditText problem_edit;
 	
 	VideoCacheInfo cacheInfo;
 	VideoCacheInfo cacheInfoTemp;
@@ -143,8 +165,8 @@ public class Detail_Show extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					if (mLastY == mScrollView.getScrollY()) {
 						// TODO
-						if (mScrollView.getScrollY() != 0)
-							ShowMoreComments();
+//						if (mScrollView.getScrollY() != 0)
+//							ShowMoreComments();
 					} else {
 						mLastY = mScrollView.getScrollY();
 					}
@@ -201,15 +223,6 @@ public class Detail_Show extends Activity {
 		}
 		intent.putExtra("prod_id", video_prod_id);
 		startActivity(intent);
-//		if (app.GetServiceData("Sina_Access_Token") != null) {
-//			Intent i = new Intent(this, Sina_Share.class);
-//			i.putExtra("prod_name", aq.id(R.id.program_name).getText()
-//					.toString());
-//			startActivity(i);
-//		} else {
-//			GotoSinaWeibo();
-//		}
-
 	}
 	public static Bitmap drawableToBitmap(Drawable drawable) {
 		// 取 drawable 的长宽
@@ -228,153 +241,6 @@ public class Detail_Show extends Activity {
 		drawable.draw(canvas);
 		return bitmap;
 	}
-//	public void GotoSinaWeibo() {
-//		Weibo weibo = Weibo.getInstance();
-//		weibo.setupConsumerConfig(Constant.SINA_CONSUMER_KEY,
-//				Constant.SINA_CONSUMER_SECRET);
-//		weibo.setRedirectUrl("https://api.weibo.com/oauth2/default.html");
-//		weibo.authorize(this, new AuthDialogListener());
-//
-//	}
-//
-//	// 第三方新浪登录
-//	class AuthDialogListener implements WeiboDialogListener {
-//
-//		@Override
-//		public void onComplete(Bundle values) {
-//			uid = values.getString("uid");
-//			token = values.getString("access_token");
-//			expires_in = values.getString("expires_in");
-//			System.out.println("expires_in=====>" + expires_in);
-//			AccessToken accessToken = new AccessToken(token,
-//					Constant.SINA_CONSUMER_SECRET);
-//			accessToken.setExpiresIn(expires_in);
-//			Weibo.getInstance().setAccessToken(accessToken);
-//			// save access_token
-//			app.SaveServiceData("Sina_Access_Token", token);
-//			app.SaveServiceData("Sina_Access_UID", uid);
-//			UploadSinaHeadAndScreen_nameUrl(token, uid);
-//			app.MyToast(getApplicationContext(), "新浪微博已绑定");
-//		}
-//
-//		@Override
-//		public void onError(DialogError e) {
-//			app.MyToast(getApplicationContext(),
-//					"Auth error : " + e.getMessage());
-//		}
-//
-//		@Override
-//		public void onCancel() {
-//			app.MyToast(getApplicationContext(), "Auth cancel");
-//		}
-//
-//		@Override
-//		public void onWeiboException(WeiboException e) {
-//			app.MyToast(getApplicationContext(),
-//					"Auth exception : " + e.getMessage());
-//		}
-//
-//	}
-//
-//	public boolean UploadSinaHeadAndScreen_nameUrl(String access_token,
-//			String uid) {
-//		String m_GetURL = "https://api.weibo.com/2/users/show.json?access_token="
-//				+ access_token + "&uid=" + uid;
-//
-//		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-//		cb.url(m_GetURL).type(JSONObject.class)
-//				.weakHandler(this, "UploadSinaHeadAndScreen_nameUrlResult");
-//
-//		cb.header("User-Agent",
-//				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-//
-//		aq.ajax(cb);
-//
-//		return false;
-//	}
-//
-//	public void UploadSinaHeadAndScreen_nameUrlResult(String url,
-//			JSONObject json, AjaxStatus status) {
-//		String head_url = json.optString("avatar_large");
-//		String screen_name = json.optString("screen_name");
-//		if (head_url != null && screen_name != null) {
-//			String m_PostURL = Constant.BASE_URL + "account/bindAccount";
-//
-//			Map<String, Object> params = new HashMap<String, Object>();
-//			params.put("source_id", uid);
-//			params.put("source_type", "1");
-//			params.put("pic_url", head_url);
-//			params.put("nickname", screen_name);
-//
-//			// save to local
-//			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-//			cb.SetHeader(app.getHeaders());
-//
-//			cb.params(params).url(m_PostURL).type(JSONObject.class)
-//					.weakHandler(this, "AccountBindAccountResult");
-//
-//			aq.ajax(cb);
-//		}
-//
-//	}
-//
-//	public void AccountBindAccountResult(String url, JSONObject json,
-//			AjaxStatus status) {
-//		if (json != null) {
-//			try {
-//				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
-//
-//					// reload the userinfo
-//					String url2 = Constant.BASE_URL + "user/view?userid="
-//							+ app.UserID;
-//
-//					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-//					cb.url(url2).type(JSONObject.class)
-//							.weakHandler(this, "AccountBindAccountResult3");
-//
-//					cb.SetHeader(app.getHeaders());
-//
-//					aq.ajax(cb);
-//				}
-//				// else
-//				// app.MyToast(this, "更新头像失败!");
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//
-//		} else {
-//
-//			// ajax error, show error code
-//			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
-//				app.MyToast(this,
-//						getResources().getString(R.string.networknotwork));
-//		}
-//	}
-//
-//	public void AccountBindAccountResult3(String url, JSONObject json,
-//			AjaxStatus status) {
-//
-//		if (json != null) {
-//			try {
-//				if (json.getString("nickname").trim().length() > 0) {
-//					app.SaveServiceData("UserInfo", json.toString());
-//					app.MyToast(getApplicationContext(), "新浪微博已绑定");
-//					Intent i = new Intent(this, Sina_Share.class);
-//					i.putExtra("prod_name", aq.id(R.id.program_name).getText()
-//							.toString());
-//					startActivity(i);
-//				}
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			}
-//
-//		} else {
-//			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
-//				app.MyToast(this,
-//						getResources().getString(R.string.networknotwork));
-//		}
-//	}
 
 	public void OnClickContent(View v) {
 		if (m_ReturnProgramView.show != null) {
@@ -512,14 +378,9 @@ public class Detail_Show extends Activity {
 				aq.id(R.id.cache_button9).background(R.drawable.zan_wu_xia_zai);
 				aq.id(R.id.cache_button9).clickable(false);
 			}
-
-			if (m_ReturnProgramView.comments != null
-					&& m_ReturnProgramView.comments.length >= 1) {
-				ShowComments();
-			} else {
-				aq.id(R.id.imageView_comment).gone();
-				aq.id(R.id.Layout_comment).gone();
-			}
+			
+			GetReviews();//
+			
 		}
 		else
 		{
@@ -736,19 +597,7 @@ public class Detail_Show extends Activity {
 	}
 
 	public void OnClickReportProblem(View v) {
-		String url = Constant.BASE_URL + "program/invalid";
-
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("prod_id", prod_id);
-
-		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.SetHeader(app.getHeaders());
-
-		cb.params(params).url(url).type(JSONObject.class)
-				.weakHandler(this, "CallServiceResultReportProblem");
-		aq.ajax(cb);
-		Toast.makeText(Detail_Show.this, "您反馈的问题已提交，我们会尽快处理，感谢您的支持！",
-				Toast.LENGTH_LONG).show();
+		popupReportProblem();
 	}
 
 	public void OnClickPlay(View v) {
@@ -1049,103 +898,168 @@ public class Detail_Show extends Activity {
 //			Log.e(TAG, "VideoPlayerActivity fail", ex);
 //		}
 //	}
-
+	
 	public void ShowComments() {
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Layout_comment);
-		if (m_ReturnProgramView.comments != null) {
-			for (int i = 0; i < m_ReturnProgramView.comments.length; i++) {
-				RelativeLayout subLayout = new RelativeLayout(this);
-
-				RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
-						RelativeLayout.TRUE);
-
-				TextView valueName = new TextView(this);
-				// valueName.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
-				valueName.setTextColor(Color.BLACK);
-				if (!m_ReturnProgramView.comments[i].owner_name
-						.equalsIgnoreCase("EMPTY"))
-					valueName
-							.setText(m_ReturnProgramView.comments[i].owner_name
-									+ ":");
-				else
-					valueName.setText("网络用户:");
-				subLayout.addView(valueName, params1);
-
-				RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-						RelativeLayout.TRUE);
-
-				TextView valueTime = new TextView(this);
-				valueTime.setTextColor(color.grey);
-				valueTime.setText(m_ReturnProgramView.comments[i].create_date
-						.replaceAll(" 00:00:00", ""));
-				subLayout.addView(valueTime, params2);
-
-				LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params3.topMargin = 10;
-
-				linearLayout.addView(subLayout, params3);
-
-				TextView valueContent = new TextView(this);
-				valueContent.setTextColor(color.grey);
-				valueContent.setText(m_ReturnProgramView.comments[i].content);
-				linearLayout.addView(valueContent);
-
-				if (i != m_ReturnProgramView.comments.length - 1) {
-					LinearLayout.LayoutParams params4 = new LinearLayout.LayoutParams(
-							android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-							android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-					params4.topMargin = 10;
-
-					ImageView m_image = new ImageView(this);
-					m_image.setBackgroundResource(R.drawable.tab1_divider);
-
-					linearLayout.addView(m_image, params4);
+		if(m_ReturnProgramReviews == null)
+		{
+			aq.id(R.id.imageView_comment).gone();
+		}
+		LinearLayout review1 = (LinearLayout) findViewById(R.id.review1);
+		LinearLayout review2 = (LinearLayout) findViewById(R.id.review2);
+		LinearLayout review3 = (LinearLayout) findViewById(R.id.review3);
+		if (m_ReturnProgramReviews != null
+				&& m_ReturnProgramReviews.reviews != null) {
+			if (m_ReturnProgramReviews.reviews.length == 1) {
+				review1.setVisibility(View.VISIBLE);
+			} else if (m_ReturnProgramReviews.reviews.length == 2) {
+				review1.setVisibility(View.VISIBLE);
+				review2.setVisibility(View.VISIBLE);
+			} else if (m_ReturnProgramReviews.reviews.length == 3) {
+				review1.setVisibility(View.VISIBLE);
+				review2.setVisibility(View.VISIBLE);
+				review3.setVisibility(View.VISIBLE);
+			}
+			if(m_ReturnProgramReviews.reviews.length>0&&m_ReturnProgramView.show.douban_id!=null)
+			{
+				aq.id(R.id.moreReviews).visible();
+			}
+		}
+		TextView review1Title = (TextView) findViewById(R.id.review1Title);
+		final TextView review1Content = (TextView) findViewById(R.id.review1Content);
+		TextView review2Title = (TextView) findViewById(R.id.review2Title);
+		final TextView review2Content = (TextView) findViewById(R.id.review2Content);
+		TextView review3Title = (TextView) findViewById(R.id.review3Title);
+		final TextView review3Content = (TextView) findViewById(R.id.review3Content);
+		if (m_ReturnProgramReviews != null
+				&& m_ReturnProgramReviews.reviews != null) {
+			for (int i = 0; i < m_ReturnProgramReviews.reviews.length; i++) {
+				if (i == 0) {
+					review1Title
+							.setText(m_ReturnProgramReviews.reviews[0].title);
+					review1Content
+							.setText(m_ReturnProgramReviews.reviews[0].comments);
+					ViewTreeObserver vto = review1Content.getViewTreeObserver();
+					vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							// TODO Auto-generated method stub
+							ViewTreeObserver obs = review1Content
+									.getViewTreeObserver();
+							if (review1Content.getLineCount() > 5) {
+								int lineEndIndex = review1Content.getLayout()
+										.getLineEnd(4);
+								String text = review1Content.getText()
+										.subSequence(0, lineEndIndex - 3)
+										+ "...";
+								review1Content.setText(text);
+							}
+						}
+					});
+					review1.setTag(i);
+				}
+				if (i == 1) {
+					review2Title
+							.setText(m_ReturnProgramReviews.reviews[1].title);
+					review2Content
+							.setText(m_ReturnProgramReviews.reviews[1].comments);
+					ViewTreeObserver vto = review2Content.getViewTreeObserver();
+					vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							// TODO Auto-generated method stub
+							ViewTreeObserver obs = review2Content
+									.getViewTreeObserver();
+							if (review2Content.getLineCount() > 5) {
+								int lineEndIndex = review2Content.getLayout()
+										.getLineEnd(4);
+								String text = review2Content.getText()
+										.subSequence(0, lineEndIndex - 3)
+										+ "...";
+								review2Content.setText(text);
+							}
+						}
+					});
+					review2.setTag(i);
+				}
+				if (i == 2) {
+					review3Title
+							.setText(m_ReturnProgramReviews.reviews[2].title);
+					review3Content
+							.setText(m_ReturnProgramReviews.reviews[2].comments);
+					ViewTreeObserver vto = review3Content.getViewTreeObserver();
+					vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							// TODO Auto-generated method stub
+							ViewTreeObserver obs = review3Content
+									.getViewTreeObserver();
+							if (review3Content.getLineCount() > 5) {
+								int lineEndIndex = review3Content.getLayout()
+										.getLineEnd(4);
+								String text = review3Content.getText()
+										.subSequence(0, lineEndIndex - 3)
+										+ "...";
+								review3Content.setText(text);
+							}
+						}
+					});
+					review3.setTag(i);
 				}
 			}
 		}
 	}
 
-	public void ShowMoreComments() {
+	public void OnClickReviewComments(View v) {
+		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+		final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+				R.layout.reviews, null, true);
+		TextView title = (TextView)menuView.findViewById(R.id.title);
+		TextView content = (TextView)menuView.findViewById(R.id.content);
+		title.setText(m_ReturnProgramReviews.reviews[Integer.parseInt(v.getTag()
+						.toString())].title);
+		content.setText(m_ReturnProgramReviews.reviews[Integer.parseInt(v.getTag()
+						.toString())].comments);
+		popupReviewDetail = new PopupWindow(menuView, LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT, true);
+		popupReviewDetail.setBackgroundDrawable(new BitmapDrawable());
+		popupReviewDetail.setAnimationStyle(R.style.PopupAnimation);
+		popupReviewDetail.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
+				| Gravity.CENTER, 40, 80);
+		popupReviewDetail.update();
+	}
+
+	public void GetReviews() {
 		/*
 		 * app_key required string 申请应用时分配的AppKey。 prod_id required string 节目id
 		 * page_num = 需要请求的页码（可选），默认为1 page_size = 每一页包含的记录数（可选），默认为10
 		 */
-		String url = Constant.BASE_URL + "program/comments" + "?prod_id="
-				+ prod_id + "&page_num=" + Integer.toString(isLastisNext)
-				+ "&page_size=10";
+		isLastisNext = 1;
+		String url = Constant.BASE_URL + "program/reviews" + "?prod_id="
+				+ prod_id + "&page_num=1" + "&page_size=3";
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class)
-				.weakHandler(this, "MoreCommentsResult");
+				.weakHandler(this, "CallCommentsResult");
 
 		cb.SetHeader(app.getHeaders());
 
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+//		aq.id(R.id.ProgressText).visible();
+		aq.ajax(cb);
 	}
-
-	public void MoreCommentsResult(String url, JSONObject json,
+	
+	public void CallCommentsResult(String url, JSONObject json,
 			AjaxStatus status) {
 		if (json == null) {
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			if (isLastisNext > 2)
-				m_ReturnProgramComments = null;
-			m_ReturnProgramComments = mapper.readValue(json.toString(),
-					ReturnProgramComments.class);
+			if (isLastisNext > 1)
+				m_ReturnProgramReviews = null;
+			m_ReturnProgramReviews = mapper.readValue(json.toString(),
+					ReturnProgramReviews.class);
 			// 创建数据源对象
-			AddMoreComments();
-
+			ShowComments();
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1158,68 +1072,41 @@ public class Detail_Show extends Activity {
 		}
 
 	}
+	
+	public void OnClickMoreReviews(View v)
+	{
+		String url = "http://movie.douban.com/subject/"+m_ReturnProgramView.show.douban_id+"/reviews";
+		Intent intent = new Intent();
+		intent.setAction("android.intent.action.VIEW");
+		Uri content_url = Uri.parse(url);
+		intent.setData(content_url);
+		startActivity(intent);
+	}
+	
+	public void CallVideoPlayActivity(String m_uri, String title) {
+		app.IfSupportFormat(m_uri);
+		mCurrentPlayData.CurrentCategory = 2;
+		mCurrentPlayData.CurrentIndex = current_index;
+		app.setCurrentPlayData(mCurrentPlayData);
+		
+		Intent intent = new Intent(this, VideoPlayerActivity.class);
+		Bundle bundle = new Bundle();
+		bundle.putString("path", m_uri);
+		bundle.putString("title", title);
+		bundle.putString("prod_id", prod_id);
+		bundle.putString("prod_subname", m_ReturnProgramView.show.episodes[current_index].name);
+		bundle.putString("prod_type", "3");
+		bundle.putLong("current_time", current_time);
+		intent.putExtras(bundle);
 
-	public void AddMoreComments() {
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Layout_comment);
-		if (m_ReturnProgramComments != null) {
-			for (int i = 0; i < m_ReturnProgramComments.comments.length; i++) {
-				RelativeLayout subLayout = new RelativeLayout(this);
-
-				LinearLayout.LayoutParams params4 = new LinearLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params4.topMargin = 10;
-
-				ImageView m_image = new ImageView(this);
-				m_image.setBackgroundResource(R.drawable.tab1_divider);
-
-				linearLayout.addView(m_image, params4);
-
-				RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
-						RelativeLayout.TRUE);
-
-				TextView valueName = new TextView(this);
-				// valueName.setTypeface(Typeface.DEFAULT_BOLD, Typeface.BOLD);
-				valueName.setTextColor(Color.BLACK);
-				if (!m_ReturnProgramComments.comments[i].owner_name
-						.equalsIgnoreCase("EMPTY"))
-					valueName
-							.setText(m_ReturnProgramComments.comments[i].owner_name
-									+ ":");
-				else
-					valueName.setText("网络用户:");
-				subLayout.addView(valueName, params1);
-
-				RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-						RelativeLayout.TRUE);
-
-				TextView valueTime = new TextView(this);
-				valueTime
-						.setText(m_ReturnProgramComments.comments[i].create_date
-								.replaceAll(" 00:00:00", ""));
-				subLayout.addView(valueTime, params2);
-
-				LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-						android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-				params3.topMargin = 10;
-
-				linearLayout.addView(subLayout, params3);
-
-				TextView valueContent = new TextView(this);
-				valueContent
-						.setText(m_ReturnProgramComments.comments[i].content);
-				linearLayout.addView(valueContent);
-
-			}
+		try {
+			startActivity(intent);
+		} catch (ActivityNotFoundException ex) {
+			Log.e(TAG, "VideoPlayerActivity fail", ex);
 		}
 	}
+
+	
 
 	private void SaveToServer(int play_type, String SourceUrl, int episodesNum) {
 		String url = Constant.BASE_URL + "program/play";
@@ -1532,5 +1419,149 @@ public class Detail_Show extends Activity {
 			}
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	public void popupReportProblem()
+	{
+		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+		final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+				R.layout.report_problem, null, true);
+		checkbox1 = (CheckBox) menuView.findViewById(R.id.checkbox1);
+		checkbox2 = (CheckBox) menuView.findViewById(R.id.checkbox2);
+		checkbox3 = (CheckBox) menuView.findViewById(R.id.checkbox3);
+		checkbox4 = (CheckBox) menuView.findViewById(R.id.checkbox4);
+		checkbox5 = (CheckBox) menuView.findViewById(R.id.checkbox5);
+		checkbox6 = (CheckBox) menuView.findViewById(R.id.checkbox6);
+		checkbox7 = (CheckBox) menuView.findViewById(R.id.checkbox7);
+		problem_edit = (EditText) menuView.findViewById(R.id.problem_edit);
+		problemContext = problem_edit.getText().toString();
+		popup_report = new PopupWindow(menuView, LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT, true);
+		popup_report.setBackgroundDrawable(new BitmapDrawable());
+		popup_report.setAnimationStyle(R.style.PopupAnimation);
+		popup_report.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
+				| Gravity.CENTER,40, 80);
+		popup_report.update();
+	}
+	
+	public void OnClickCloseReprot(View v)
+	{
+		popup_report.dismiss();
+	}
+	
+	public void OnClickSubmitProblem(View v)
+	{
+		initInvalid_type();
+		if(invalid_type==null)
+		{	
+			problemContext = problem_edit.getText().toString();
+			if(problemContext==null||problemContext.length()<1)
+			{
+				Toast.makeText(Detail_Show.this, "亲，必须选择一个理由啊！", Toast.LENGTH_LONG).show();
+				return;
+			}
+		}
+		String url = Constant.BASE_URL + "program/invalid";
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("prod_id", prod_id);
+		if(problemContext==null||problemContext.length()<1)
+		{
+			params.put("invalid_type", invalid_type);
+		}
+		else
+		{
+			params.put("invalid_type", 8);
+			params.put("memo", problemContext);
+		}
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.SetHeader(app.getHeaders());
+
+		cb.params(params).url(url).type(JSONObject.class)
+				.weakHandler(this, "CallServiceResultReportProblem");
+		aq.ajax(cb);
+		Toast.makeText(Detail_Show.this, "您反馈的问题已提交，我们会尽快处理，感谢您的支持！",
+				Toast.LENGTH_LONG).show();
+		popup_report.dismiss();
+	}
+	public void initInvalid_type()
+	{
+		if(checkbox1.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "1";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"1";
+			}
+		}
+		if(checkbox2.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "2";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"2";
+			}
+		}
+		if(checkbox3.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "3";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"3";
+			}
+		}
+		if(checkbox4.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "4";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"4";
+			}
+		}
+		if(checkbox5.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "5";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"5";
+			}
+		}
+		if(checkbox6.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "6";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"6";
+			}
+		}
+		if(checkbox7.isChecked())
+		{
+			if(invalid_type==null)
+			{
+				invalid_type = "7";
+			}
+			else
+			{
+				invalid_type = invalid_type+","+"7";
+			}
+		}
 	}
 }

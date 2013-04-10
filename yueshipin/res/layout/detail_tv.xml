@@ -44,8 +44,8 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:paddingLeft="16dp"
-            android:onClick="OnClickTab1TopLeft" >
+            android:onClick="OnClickTab1TopLeft"
+            android:paddingLeft="16dp" >
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -76,9 +76,9 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:paddingRight="16dp"
             android:onClick="OnClickTab1TopRight"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:paddingRight="16dp" >
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -557,15 +557,154 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="9dp"
-                    android:src="@drawable/detail_movie_comment" />
+                    android:src="@drawable/yingping" />
 
                 <LinearLayout
-                    android:id="@+id/Layout_comment"
-                    android:layout_width="match_parent"
+                    android:id="@+id/review1"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/detail_movie_comments"
-                    android:orientation="vertical" >
+                    android:background="@color/white"
+                    android:onClick="OnClickReviewComments"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/review1Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxEms="13"
+                        android:paddingLeft="5dp"
+                        android:singleLine="true"
+                        android:text="1234"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/review1Content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="5"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="1234" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="全部  >"
+                        android:textColor="@color/darkorange" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="10dp" />
+
+                <LinearLayout
+                    android:id="@+id/review2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:onClick="OnClickReviewComments"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/review2Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxEms="13"
+                        android:paddingLeft="5dp"
+                        android:singleLine="true"
+                        android:text="1234"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/review2Content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="5"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="1234" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="全部  >"
+                        android:textColor="@color/darkorange" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="10dp" />
+
+                <LinearLayout
+                    android:id="@+id/review3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:onClick="OnClickReviewComments"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/review3Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxEms="13"
+                        android:paddingLeft="5dp"
+                        android:singleLine="true"
+                        android:text="1234"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/review3Content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="5"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="1234" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="全部  >"
+                        android:textColor="@color/darkorange" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="10dp" />
+
+                <LinearLayout
+                    android:id="@+id/moreReviews"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="OnClickMoreReviews"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="更多影评 >"
+                        android:textColor="@color/darkorange"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="10dp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
