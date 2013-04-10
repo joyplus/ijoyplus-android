@@ -1,11 +1,7 @@
 package com.joyplus;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -20,7 +16,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -37,42 +32,33 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AbsListView.OnScrollListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.CurrentPlayData;
-import com.joyplus.Detail_Movie.EComparatorIndex;
-import com.joyplus.R.color;
-import com.joyplus.Service.Return.ReturnProgramComments;
 import com.joyplus.Service.Return.ReturnProgramReviews;
 import com.joyplus.Service.Return.ReturnProgramView;
-import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.EPISODES;
 import com.joyplus.Video.VideoPlayerActivity;
@@ -83,11 +69,6 @@ import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
-import com.joyplus.weibo.net.AccessToken;
-import com.joyplus.weibo.net.DialogError;
-import com.joyplus.weibo.net.Weibo;
-import com.joyplus.weibo.net.WeiboDialogListener;
-import com.joyplus.weibo.net.WeiboException;
 import com.umeng.analytics.MobclickAgent;
 
 public class Detail_TV extends Activity {
@@ -122,17 +103,17 @@ public class Detail_TV extends Activity {
 	CheckBox checkbox7;
 	EditText problem_edit;
 	
-	private String uid = null;
-	private String token = null;
-	private String expires_in = null;
-
-	private String TV_String = null;
+//	private String uid = null;
+//	private String token = null;
+//	private String expires_in = null;
+//
+//	private String TV_String = null;
 	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;
 	private int isLastisNext = 2;
 	private int mLastY = 0;
 	// 标示当前有多少个按钮被点击了
-	private ArrayList download_indexs = new ArrayList();
+	private List <Integer>download_indexs = new ArrayList<Integer>();
 
 	// added by yyc,in order to flag the playing tv's index btn
 	Drawable focuse = null;
@@ -339,6 +320,7 @@ public class Detail_TV extends Activity {
 	}
 
 	// added by yyc,for sort the episodesArray
+	@SuppressWarnings("rawtypes")
 	class EComparator implements Comparator {
 
 		@Override
@@ -354,6 +336,7 @@ public class Detail_TV extends Activity {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void InitData() {
 		String m_j = null;
 		int i = 0;
@@ -410,7 +393,7 @@ public class Detail_TV extends Activity {
 				for (i = 0; i < m_ReturnProgramView.tv.episodes.length
 						&& i < 15; i++) {
 					m_j = Integer.toString(i + 4);// m_ReturnProgramView.tv.episodes[i].name;
-					String str = m_ReturnProgramView.tv.episodes[i].name;
+//					String str = m_ReturnProgramView.tv.episodes[i].name;
 					Button m_button = (Button) this.findViewById(getResources()
 							.getIdentifier("tv_button" + m_j, "id",
 									getPackageName()));
@@ -549,7 +532,7 @@ public class Detail_TV extends Activity {
 			InitData();
 			aq.id(R.id.ProgressText).gone();
 			aq.id(R.id.scrollView1).visible();
-			TV_String = json.toString();
+//			TV_String = json.toString();
 
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -1039,6 +1022,7 @@ public class Detail_TV extends Activity {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void videoSourceSort(int source_index) {
 		if (m_ReturnProgramView.tv.episodes[source_index].down_urls != null) {
 			for (int j = 0; j < m_ReturnProgramView.tv.episodes[source_index].down_urls.length; j++) {
@@ -1083,6 +1067,7 @@ public class Detail_TV extends Activity {
 	}
 
 	// 将片源排序
+	@SuppressWarnings("rawtypes")
 	class EComparatorIndex implements Comparator {
 
 		@Override
@@ -1159,8 +1144,6 @@ public class Detail_TV extends Activity {
 						@Override
 						public void onGlobalLayout() {
 							// TODO Auto-generated method stub
-							ViewTreeObserver obs = review1Content
-									.getViewTreeObserver();
 							if (review1Content.getLineCount() > 5) {
 								int lineEndIndex = review1Content.getLayout()
 										.getLineEnd(4);
@@ -1183,8 +1166,7 @@ public class Detail_TV extends Activity {
 						@Override
 						public void onGlobalLayout() {
 							// TODO Auto-generated method stub
-							ViewTreeObserver obs = review2Content
-									.getViewTreeObserver();
+//							ViewTreeObserver obs = review2Content.getViewTreeObserver();
 							if (review2Content.getLineCount() > 5) {
 								int lineEndIndex = review2Content.getLayout()
 										.getLineEnd(4);
@@ -1207,8 +1189,7 @@ public class Detail_TV extends Activity {
 						@Override
 						public void onGlobalLayout() {
 							// TODO Auto-generated method stub
-							ViewTreeObserver obs = review3Content
-									.getViewTreeObserver();
+//							ViewTreeObserver obs = review3Content.getViewTreeObserver();
 							if (review3Content.getLineCount() > 5) {
 								int lineEndIndex = review3Content.getLayout()
 										.getLineEnd(4);
@@ -1240,7 +1221,7 @@ public class Detail_TV extends Activity {
 		popupReviewDetail.setBackgroundDrawable(new BitmapDrawable());
 		popupReviewDetail.setAnimationStyle(R.style.PopupAnimation);
 		popupReviewDetail.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-				| Gravity.CENTER, 40, 80);
+				| Gravity.CENTER, 0, 40);
 		popupReviewDetail.update();
 	}
 
@@ -1637,13 +1618,6 @@ public class Detail_TV extends Activity {
 						+ (index + 1) + ".mp4";
 				String my_name = m_ReturnProgramView.tv.name;
 				String download_state = "wait";
-				// if(Dao.getInstance(Detail_TV.this).isHasInfors(prod_id,
-				// Integer.toString(index)))
-				// {
-				// DownloadInfo info = new
-				// DownloadInfo(0,0,prod_id,Integer.toString(index+1),urlstr,m_ReturnProgramView.tv.poster,my_name,download_state);
-				// Dao.getInstance(Detail_TV.this).InsertOneInfo(info);
-				// }
 				DownloadTask downloadTask = new DownloadTask(v, this,
 						Detail_TV.this, prod_id, Integer.toString(index + 1),
 						urlstr, localfile);
@@ -1661,7 +1635,7 @@ public class Detail_TV extends Activity {
 				if (!download_indexs.contains(index)) {
 					download_indexs.add(index);
 				}
-
+				System.out.println(download_indexs);
 			} else {
 				Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
 						.show();
@@ -1727,12 +1701,6 @@ public class Detail_TV extends Activity {
 			m_button.setTextColor(Color.BLACK);// 设置颜色和文字的位置
 			m_button.setGravity(Gravity.CENTER);
 			m_button.setEnabled(true);
-			if (download_indexs.contains(m_j)) {
-				m_button.setBackgroundDrawable(download_been);
-				m_button.setEnabled(false);
-				m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
-				m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-			}
 			for (int m = 0; m < data.size(); m++) {
 				if (data.get(m).getMy_index().equalsIgnoreCase(m_j)) { // 设置已缓存背景
 					m_button.setBackgroundDrawable(download_been);
@@ -1740,6 +1708,13 @@ public class Detail_TV extends Activity {
 					m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
 					m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 				}
+			}
+			System.out.println(download_indexs);
+			if (download_indexs.contains(m_j)) {
+				m_button.setBackgroundDrawable(download_been);
+				m_button.setEnabled(false);
+				m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
+				m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 			}
 			m_button.setVisibility(View.VISIBLE);
 		}
@@ -1780,7 +1755,7 @@ public class Detail_TV extends Activity {
 		popup_report.setBackgroundDrawable(new BitmapDrawable());
 		popup_report.setAnimationStyle(R.style.PopupAnimation);
 		popup_report.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-				| Gravity.CENTER,40, 80);
+				| Gravity.CENTER,0, 40);
 		popup_report.update();
 	}
 	

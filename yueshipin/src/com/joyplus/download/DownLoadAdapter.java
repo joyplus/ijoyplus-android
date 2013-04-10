@@ -134,6 +134,7 @@ public class DownLoadAdapter extends BaseAdapter{
 						holder.resouceDownloadState.setText("");
 						holder.resourcePercentDown.setText("");
 						aqtemp.id(R.id.downloadprogress).gone();
+						
 					}
 				}
 			}

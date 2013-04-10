@@ -195,12 +195,12 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void OnClickContent(View v) throws JSONException {
-
+		
 		AlertDialog alertDialog = new AlertDialog.Builder(this).setMessage(
 				m_ReturnProgramView.movie.summary).create();
 		Window window = alertDialog.getWindow();
 		WindowManager.LayoutParams lp = window.getAttributes();
-		lp.alpha = 0.6f;
+		lp.alpha = 0.5f;
 		window.setAttributes(lp);
 		alertDialog.show();
 	}
@@ -889,8 +889,6 @@ public class Detail_Movie extends Activity {
 						@Override
 						public void onGlobalLayout() {
 							// TODO Auto-generated method stub
-							ViewTreeObserver obs = review3Content
-									.getViewTreeObserver();
 							if (review3Content.getLineCount() > 5) {
 								int lineEndIndex = review3Content.getLayout()
 										.getLineEnd(4);
@@ -922,7 +920,7 @@ public class Detail_Movie extends Activity {
 		popupReviewDetail.setBackgroundDrawable(new BitmapDrawable());
 		popupReviewDetail.setAnimationStyle(R.style.PopupAnimation);
 		popupReviewDetail.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-				| Gravity.CENTER, 40, 80);
+				| Gravity.CENTER, 0, 40);//调整整个界面开始位置的
 		popupReviewDetail.update();
 	}
 
@@ -1035,7 +1033,7 @@ public class Detail_Movie extends Activity {
 		popup_report.setBackgroundDrawable(new BitmapDrawable());
 		popup_report.setAnimationStyle(R.style.PopupAnimation);
 		popup_report.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-				| Gravity.CENTER, 40, 80);
+				| Gravity.CENTER, 0, 40);
 		popup_report.update();
 	}
 

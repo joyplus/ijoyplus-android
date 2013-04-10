@@ -44,6 +44,7 @@ import android.view.WindowManager;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -549,6 +550,8 @@ public class VideoPlayerActivity extends Activity implements
 		//
 		finish();
 	}
+	
+
 
 	public void GetServiceData() {
 		String url = Constant.BASE_URL + "program/view?prod_id=" + playProdId;

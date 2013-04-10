@@ -283,7 +283,7 @@ public class Dao {
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
-			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info where prod_id=?";
+			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info where prod_id=? order by cast(my_index as int)";
 			cursor = database.rawQuery(sql, new String[] { prod_id });
 			while (cursor.moveToNext()) {
 				DownloadInfo info = new DownloadInfo(cursor.getInt(0),

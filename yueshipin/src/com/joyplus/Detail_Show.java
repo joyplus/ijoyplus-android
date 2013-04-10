@@ -935,8 +935,6 @@ public class Detail_Show extends Activity {
 						@Override
 						public void onGlobalLayout() {
 							// TODO Auto-generated method stub
-							ViewTreeObserver obs = review3Content
-									.getViewTreeObserver();
 							if (review3Content.getLineCount() > 5) {
 								int lineEndIndex = review3Content.getLayout()
 										.getLineEnd(4);
@@ -968,7 +966,7 @@ public class Detail_Show extends Activity {
 		popupReviewDetail.setBackgroundDrawable(new BitmapDrawable());
 		popupReviewDetail.setAnimationStyle(R.style.PopupAnimation);
 		popupReviewDetail.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-				| Gravity.CENTER, 40, 80);
+				| Gravity.CENTER, 0, 40);
 		popupReviewDetail.update();
 	}
 
@@ -1240,7 +1238,7 @@ public class Detail_Show extends Activity {
 						String localfile = Constant.PATH_VIDEO + prod_id + "_"
 								+ download_index + ".mp4";
 						String my_name = m_ReturnProgramView.show.episodes[position].name;
-						String download_state = "wait";
+						String download_state = "wait";	
 						DownloadTask downloadTask = new DownloadTask(arg1,
 								Detail_Show.this, Detail_Show.this, prod_id,
 								download_index, urlstr, localfile);
@@ -1384,7 +1382,7 @@ public class Detail_Show extends Activity {
 		popup_report.setBackgroundDrawable(new BitmapDrawable());
 		popup_report.setAnimationStyle(R.style.PopupAnimation);
 		popup_report.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-				| Gravity.CENTER,40, 80);
+				| Gravity.CENTER,40, 40);
 		popup_report.update();
 	}
 	
