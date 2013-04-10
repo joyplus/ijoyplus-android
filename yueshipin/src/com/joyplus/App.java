@@ -219,16 +219,16 @@ public class App extends Application {
 	public boolean CheckUrlIsValidFromServer(String url, String id) {
 
 		if (CheckUrl(url)) {
-
+			
+//            GetUrlTask geturl  = new GetUrlTask();
+//            geturl.execute(new String[]{url, "" + id });
 			mURLPath = newATask(url, id);
-//			mURLPath = CheckRedirectkUrl(url, id);
-
-			if (CheckUrl(mURLPath)) {
+           
+            if (CheckUrl(mURLPath)) {
 
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -505,7 +505,7 @@ public class App extends Application {
 
 		HttpParams httpParams = mAndroidHttpClient.getParams();
 		// 连接时间最长5秒，可以更改
-		HttpConnectionParams.setConnectionTimeout(httpParams, 20000 * 1);
+		HttpConnectionParams.setConnectionTimeout(httpParams, 20000);
 
 		try {
 			URL url = new URL(srcUrl);
@@ -517,13 +517,28 @@ public class App extends Application {
 			StatusLine statusLine = response.getStatusLine();
 			int status = statusLine.getStatusCode();
 
+			Header headertop = response.getFirstHeader("Content-Type");// 拿到重新定位后的header
+			String type = headertop.getValue().toLowerCase();// 从header重新取出信息
+			Header header_length = response.getFirstHeader("Content-Length");
+			String lengthStr = header_length.getValue();
+			int length = 0;
+			try {
+				length = Integer.parseInt(lengthStr);
+			} finally {
+			}
+			
 			if (BuildConfig.DEBUG)
 				Log.i(TAG, "HTTP STATUS : " + status);
 
 			// 如果资源来源为风行，那就对url进行重定向 如果不是就只是简单判断
 			// 风行资源id 为 1
 			// 如果拿到资源直接返回url 如果没有拿到资源，并且要进行跳转,那就使用递归跳转
-			if (status != HttpStatus.SC_OK) {
+			if(!type.startsWith("text/html") && status >= 200 && status <= 299
+					&& length > 100){
+				// 正确的话直接返回，不进行下面的步骤
+				mAndroidHttpClient.close();
+				list.add(srcUrl);
+			}else if (status > 299 && status < 400) {
 				if (BuildConfig.DEBUG)
 					Log.i(TAG, "NOT OK   start");
 
@@ -559,10 +574,6 @@ public class App extends Application {
 				// mAndroidHttpClient.close();
 				// list.add(NOT_VALID_LINK);
 				// }
-			} else {
-				// 正确的话直接返回，不进行下面的步骤
-				mAndroidHttpClient.close();
-				list.add(srcUrl);
 			}
 
 		} catch (Exception e) {
@@ -575,75 +586,56 @@ public class App extends Application {
 			e.printStackTrace();
 		}
 	}
-
-//	/**
-//	 * 
-//	 * @param url
-//	 * @param sourceId
-//	 *            对应播放源 letv 0、fengxing 1、qiyi 2、youku 3、sinahd 4、 sohu 5、56
-//	 *            6、qq 7、pptv 8、m1905
-//	 * @return
-//	 */
-//	private  String path = null;
-//	public String CheckRedirectkUrl(final String playurl, String sourceId){
-//		
-//		
-//		AsyncTask<String, Void, String> aynAsyncTask = new AsyncTask<String, Void, String>() {
-//
+//	class GetUrlTask extends AsyncTask<String, Void, String>{
+//    	//后面尖括号内分别是参数（例子里是线程休息时间），进度(publishProgress用到)，返回值 类型
+//    	
+//    	@Override
+//		protected void onPreExecute() {
+//    		//第一个执行方法
+//    		mURLPath = null;
+//			super.onPreExecute();
+//		}
+//    	
 //		@Override
 //		protected String doInBackground(String... params) {
-//			
-//			// 模拟火狐ios发用请求 使用userAgent
-////			AndroidHttpClient mAndroidHttpClient = AndroidHttpClient
-////					.newInstance(userAgent);
-//		HttpClient httpClient = null;
-//		HttpParams httpparams = new BasicHttpParams();
-//		HttpConnectionParams.setConnectionTimeout(httpparams, 20000); // 设置连接超时
-//		httpparams.setParameter("User-Agent", Constant.USER_AGENT_IOS);
-//	
-//		
-//		try {
-//			HttpGet mHttpGet = new HttpGet(playurl);
-//			httpClient = new DefaultHttpClient();
-//			HttpResponse response = httpClient.execute(mHttpGet);
-//			StatusLine statusLine = response.getStatusLine();
-//			int status = statusLine.getStatusCode();
-//			Header header = response.getFirstHeader("Content-Type");// 拿到重新定位后的header
-//			String type = header.getValue().toLowerCase();// 从header重新取出信息
-//			Header header_length = response.getFirstHeader("Content-Length");
-//			String lengthStr = header_length.getValue();
-//			int length = 0;
+//			List<String> list = new ArrayList<String>();
+//			String dstUrl = params[0];
+//			if (BuildConfig.DEBUG)
+//				Log.i(TAG, "newATask--->>params : " + params[0] + params[1]);
 //			try {
-//				length = Integer.parseInt(lengthStr);
-//			} finally {
-//			}
-//			if (!type.startsWith("text/html") && status >= 200 && status <= 299
-//					&& length > 100) {
-//				path = playurl;
-//			} else {
-//				path = null;
-//			}
-//			httpClient.getConnectionManager().shutdown();
-//		} catch (Exception e) {
-//			try {
-//				httpClient.getConnectionManager().shutdown();
-//			} catch (Exception ignore) {
-//			}
-//			path = null;
-//			e.printStackTrace();
-//		}
-//		return path;
-//		
-//	  }
-//		}.execute(new String[] { playurl, "" + sourceId });
-//		try {
-//			String redirectUrl = aynAsyncTask.get();// 从异步任务中获取结果
+//				simulateFirfoxRequest(Constant.USER_AGENT_IOS, params, list);// 使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
 //
-//			return redirectUrl;
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
+//				dstUrl = list.get(list.size() - 1);
+//				if (BuildConfig.DEBUG)
+//					Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
+//				list.clear();
+//
+//				if (!dstUrl.equals(NOT_VALID_LINK)) {
+//					return dstUrl;
+//				}
+//			} catch (Exception e) {
+//				if (BuildConfig.DEBUG)
+//					Log.i(TAG, "TimeOut!!!!!! : " + e);
+//				e.printStackTrace();
+//			}
+//			return NOT_VALID_LINK;
 //		}
-//		return path;
-//  }
+//
+//		@Override
+//		protected void onProgressUpdate(Void... progress) {
+//			//这个函数在doInBackground调用publishProgress时触发，虽然调用时只有一个参数
+//			//但是这里取到的是一个数组,所以要用progesss[0]来取值
+//			//第n个参数就用progress[n]来取值
+//			super.onProgressUpdate(progress);
+//		}
+//
+//		@Override
+//		protected void onPostExecute(String result) {
+//			//doInBackground返回时触发，换句话说，就是doInBackground执行完后触发
+//			//这里的result就是上面doInBackground执行后的返回值，所以这里是"执行完毕"
+//			mURLPath = result;
+//			super.onPostExecute(result);
+//		}
+//    }
+
 }

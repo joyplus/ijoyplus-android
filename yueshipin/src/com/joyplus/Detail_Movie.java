@@ -674,6 +674,19 @@ public class Detail_Movie extends Activity {
 		if (app.use2G3G) {
 
 			// 统计点击次数
+
+			//因为电影 只有一集，所以为“”，电影type为1
+			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name, "", 1);
+			
+//			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+//				if (PROD_SOURCE.contains("test=m3u8")) {
+//					PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
+//				}
+//				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.movie.name);
+//
+//			} else
+				if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+
 			// 因为电影 只有一集，所以为“”，电影type为1
 			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
 					"", 1);
@@ -688,12 +701,31 @@ public class Detail_Movie extends Activity {
 			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
 				SaveToServer(2, PROD_URI);
-				Intent intent = new Intent();
-				intent.setAction("android.intent.action.VIEW");
-				Uri content_url = Uri.parse(PROD_URI);
-				intent.setData(content_url);
+				Intent intent = new Intent(this,Webview_Play.class);
+//				intent.setAction("android.intent.action.VIEW");
+//				Uri content_url = Uri.parse(PROD_URI);
+//				intent.setData(content_url);
+//				startActivity(intent);
+				Bundle bundle = new Bundle();
+				bundle.putString("PROD_URI", PROD_URI);
+				bundle.putString("NAME", m_ReturnProgramView.movie.name);
+//				bundle.putString("prod_subname", m_ReturnProgramView.movie.episodes[0].name);
+				
+				if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+					if (PROD_SOURCE.contains("test=m3u8")) {
+						PROD_SOURCE = PROD_SOURCE.replace("tag=ios", "tag=android");
+					}
+							bundle.putString("prod_id", prod_id);
+							bundle.putInt("CurrentIndex", 0);
+							bundle.putInt("CurrentCategory",0);
+							bundle.putString("PROD_SOURCE",PROD_SOURCE);
+							bundle.putString("prod_type", "1");
+							bundle.putLong("current_time", 0);
+				}
+				intent.putExtras(bundle);
 				startActivity(intent);
 			}
+		}
 		}
 	}
 
@@ -976,6 +1008,44 @@ public class Detail_Movie extends Activity {
 		intent.setData(content_url);
 		startActivity(intent);
 	}
+
+
+//	public void CallVideoPlayActivity(String m_uri, String title) {
+//		
+//		int sourceId = -1;//如果是风行那值为1,如果不是那就为其他的值
+//		
+//		if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
+//			
+//			for (int j = 0; j < m_ReturnProgramView.movie.episodes[0].down_urls.length; j++) {
+//				
+//				if (m_ReturnProgramView.movie.episodes[0].down_urls[j].source
+//						.equalsIgnoreCase("fengxing")) {
+//					sourceId = 1;
+//				}
+//			}
+//		}
+//
+//		if (BuildConfig.DEBUG)
+//			Log.i(TAG, "CallVideoPlayActivity--->>sourceId : " + sourceId);
+//		
+//		mCurrentPlayData.CurrentCategory = 0;
+//		mCurrentPlayData.CurrentIndex = 0;
+//		app.setCurrentPlayData(mCurrentPlayData);
+//		Intent intent = new Intent();
+//		Bundle bundle = new Bundle();
+//		bundle.putString("path", m_uri);
+//		bundle.putString("title", title);
+//		bundle.putString("prod_id", prod_id);
+//		bundle.putString("prod_type", "1");
+//		bundle.putLong("current_time", 0);
+//		intent.putExtras(bundle);
+//		intent.setClass(Detail_Movie.this, VideoPlayerActivity.class);
+//		try {
+//			startActivity(intent);
+//		} catch (ActivityNotFoundException ex) {
+//			Log.e(TAG, "mp4 fail", ex);
+//		}
+//	}
 	
 	public void CallVideoPlayActivity(String m_uri, String title) {
 

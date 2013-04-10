@@ -48,8 +48,8 @@
     <string name="resume_playing_restart">重新开始</string>
     <string name="init_decoders">正在进行第一次解压解码包...</string>
     <string name="VideoView_error_title">Cannot play video</string>
-    <string name="addressnotwork">播放的地址失效！</string>
-    <string name="VideoView_error_text_invalid_progressive_playback">播放的地址失效！</string>
+    <string name="addressnotwork">即将使用网页播放</string>
+    <string name="VideoView_error_text_invalid_progressive_playback">即将使用网页播放</string>
     <string name="VideoView_error_text_unknown">Sorry, this video cannot be played.</string>
     <string name="VideoView_error_button">OK</string>
     <string name="mediacontroller_play_pause">Play/Pause</string>

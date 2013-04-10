@@ -36,6 +36,7 @@ import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Dlna.DlnaVideoPlay;
+import com.joyplus.Video.VideoPlayerActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -506,7 +507,7 @@ public class VideoView extends SurfaceView implements
 				new AlertDialog.Builder(mContext)
 						.setTitle(R.string.netstate)
 						.setMessage(message)
-						.setPositiveButton(R.string.ok,
+						.setPositiveButton(R.string.queding,
 								new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog,
@@ -1068,6 +1069,7 @@ public class VideoView extends SurfaceView implements
 	@Override
 	public void OnComplete() {
 		((Activity) mContext).finish();
+
 	}
 
 }

@@ -10,11 +10,21 @@ import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
@@ -30,6 +40,8 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.TrafficStats;
+import android.net.http.AndroidHttpClient;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -54,17 +66,21 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.App;
+import com.joyplus.BuildConfig;
 import com.joyplus.Constant;
 import com.joyplus.R;
+import com.joyplus.Webview_Play;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
+import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS.URLS;
 import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
 import com.umeng.analytics.MobclickAgent;
+import com.yixia.zi.utils.Log;
 
 public class VideoPlayerActivity extends Activity implements
 		OnCompletionListener {
@@ -85,6 +101,12 @@ public class VideoPlayerActivity extends Activity implements
 	long play_current_time = 0;
 	public static int RETURN_CURRENT_TIME = 150;
 
+	private Handler mvediohandler;
+	public static final int VideoPlay = 0;
+	private boolean IsPlaying = false;
+	public Handler fHanlder;
+    
+	
 	/** 最大声音 */
 	private int mMaxVolume;
 	/** 当前声音 */
@@ -122,16 +144,16 @@ public class VideoPlayerActivity extends Activity implements
 //	private String playPlayType = null;// 播放的类别 1: 视频地址播放 2:webview播放
 	private String playVideoUrl = null;// 视频url
 	private int playProdType = 0;// 视频类别 1：电影，2：电视剧，3：综艺，4：视频
-
+	private static final int FINISH_ACTTIVITY = 10;
+	public static boolean IsFinish = false;
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
-			if(android.os.Build.VERSION.SDK_INT>=14)
-			{
+			if (android.os.Build.VERSION.SDK_INT >= 14) {
 				mMyService = ((DlnaSelectDevice.MyBinder) service).getService();
 				mVideoView.setServiceConnection(mMyService);
 			}
-			
+
 		}
 
 		public void onServiceDisconnected(ComponentName name) {
@@ -148,17 +170,17 @@ public class VideoPlayerActivity extends Activity implements
 			return;
 
 		setContentView(R.layout.videoview);
-		//保持常亮
+		// 保持常亮
 		findViewById(R.id.layout).setKeepScreenOn(true);
 		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
-		Constant.select_index = -1;//保证每次进来当前没有任何集数记录
+		Constant.select_index = -1;// 保证每次进来当前没有任何集数记录
 		cacheManager = new VideoCacheManager(VideoPlayerActivity.this);
 		cacheInfo = new VideoCacheInfo();
 		playrecordmanager = new PlayRecordManager(VideoPlayerActivity.this);
 		playrecordinfo = new PlayRecordInfo();
-		
+
 		InitPlayData();
 		// 每次播放时及时把播放的flag清除为0
 		if (app.use2G3G) {
@@ -234,8 +256,7 @@ public class VideoPlayerActivity extends Activity implements
 		mGestureDetector = new GestureDetector(this, new MyGestureListener());
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		if(android.os.Build.VERSION.SDK_INT>=14)
-		{
+		if (android.os.Build.VERSION.SDK_INT >= 14) {
 			Intent i = new Intent();
 			i.setClass(this, DlnaSelectDevice.class);
 			bindService(i, mServiceConnection, BIND_AUTO_CREATE);
@@ -254,6 +275,15 @@ public class VideoPlayerActivity extends Activity implements
 				GetServiceData();
 			// }
 		}
+
+		mvediohandler = new Handler() {
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case VideoPlay:
+					videoplay(msg.obj.toString());
+				}
+			}
+		};
 
 	}
 
@@ -284,18 +314,16 @@ public class VideoPlayerActivity extends Activity implements
 		playProdId = bundle.getString("prod_id");
 		playProdSubName = bundle.getString("prod_subname");
 		playProdType = Integer.parseInt(bundle.getString("prod_type"));
-		if(playProdType == 2||playProdType == 131)
+		if (playProdType == 2 || playProdType == 131) {
+			tvsubname = playProdSubName;
+			playProdSubName = "第" + playProdSubName + "集";
+			playrecordmanager.deletePlayRecord(playProdId);
+		} else if (playProdType == 3)// 综艺
 		{
 			tvsubname = playProdSubName;
-			playProdSubName = "第"+playProdSubName+"集";
 			playrecordmanager.deletePlayRecord(playProdId);
 		}
-		else if(playProdType == 3)//综艺
-		{
-			tvsubname = playProdSubName;
-			playrecordmanager.deletePlayRecord(playProdId);
-		}
-		
+
 		play_current_time = bundle.getLong("current_time");
 
 		if (playProdType == 1) {
@@ -324,22 +352,29 @@ public class VideoPlayerActivity extends Activity implements
 			current_time = mVideoView.getCurrentPosition();
 			long total_time = mVideoView.getDuration();
 			if (URLUtil.isNetworkUrl(mPath))
-				SaveToServer(current_time/1000, total_time);
-			
+				SaveToServer(current_time / 1000, total_time);
+
 			if (current_time > 0) {
+
+
+				if (playProdType != 1) {
 				
 				if(playProdType == 2||playProdType==131)
 				{
 					playrecordinfo.setProd_id(playProdId);
-					if(Constant.select_index>-1)
-					{
-						tvsubname = Integer.toString(Constant.select_index+1);//更新本地数据库
-						SharedPreferences myPreference = this.getSharedPreferences("myTvSetting",
-								Context.MODE_PRIVATE);
-						myPreference.edit()
-						.putString(playProdId, Integer.toString(Constant.select_index))
-						.commit();
+					if (Constant.select_index > -1) {
+						tvsubname = Integer.toString(Constant.select_index + 1);// 更新本地数据库
+						SharedPreferences myPreference = this
+								.getSharedPreferences("myTvSetting",
+										Context.MODE_PRIVATE);
+						myPreference
+								.edit()
+								.putString(playProdId,
+										Integer.toString(Constant.select_index))
+								.commit();
 					}
+					playrecordinfo.setProd_subname(tvsubname);
+					playrecordinfo.setLast_playtime(current_time + "");
 					playrecordinfo.setProd_subname(tvsubname);	
 					playrecordinfo.setLast_playtime(current_time+"");
 					playrecordmanager.savePlayRecord(playrecordinfo);
@@ -350,9 +385,7 @@ public class VideoPlayerActivity extends Activity implements
 					playrecordinfo.setProd_subname(tvsubname);	
 					playrecordinfo.setLast_playtime(current_time+"");
 					playrecordmanager.savePlayRecord(playrecordinfo);
-				}
-				else
-				{
+				} else {
 					// 保存播放记录在本地
 					cacheInfo = cacheManager.getVideoCache(playProdId);
 					if (cacheInfo != null) {
@@ -363,6 +396,7 @@ public class VideoPlayerActivity extends Activity implements
 				play_current_time = current_time;
 			}
 			mVideoView.pause();
+		}
 		}
 	}
 
@@ -388,15 +422,14 @@ public class VideoPlayerActivity extends Activity implements
 		if (mVideoView != null) {
 			mVideoView.stopPlayback();
 		}
-		
-		if (checkBind){
-			if(android.os.Build.VERSION.SDK_INT>=14){
+
+		if (checkBind) {
+			if (android.os.Build.VERSION.SDK_INT >= 14) {
 				unbindService(mServiceConnection);
 			}
-		}			
+		}
 		super.onDestroy();
 	}
-	
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -417,8 +450,20 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
 		MobclickAgent.onEventEnd(mContext, TV_PLAY);
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
+		Intent mIntent = new Intent();  
+		VideoPlayerActivity.this.setResult(FINISH_ACTTIVITY, mIntent); 
 		finish();
 
+	}
+
+	@Override
+	public void finish() {
+		if(IsFinish){
+			Intent mIntent = new Intent();  
+			VideoPlayerActivity.this.setResult(FINISH_ACTTIVITY, mIntent);
+			IsFinish = false;
+		}
+		super.finish();
 	}
 
 	public void OnClickSelect(View v) {
@@ -550,7 +595,6 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
 		MobclickAgent.onEventEnd(mContext, TV_PLAY);
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
-		//
 		finish();
 	}
 	
@@ -582,17 +626,11 @@ public class VideoPlayerActivity extends Activity implements
 					ReturnProgramView.class);
 			if (m_ReturnProgramView == null)
 				finish();
-			mPath = GetRedirectURL();
 
-			if (mMediaController != null) {
+			// mPath = GetRedirectURL();
+			GetRedirectURL();
 
-				app.setCurrentPlayData(mCurrentPlayData);
-				app.set_ReturnProgramView(m_ReturnProgramView);
-				// mMediaController.ShowCurrentPlayData(mCurrentPlayData);
-				// mMediaController.setProd_Data(m_ReturnProgramView);
-			}
-			if (mPath != null && mPath.length() > 0)
-				mVideoView.setVideoPath(app.getURLPath());
+			// videoplay(mPath);
 
 			// 创建数据源对象
 		} catch (JsonParseException e) {
@@ -608,7 +646,23 @@ public class VideoPlayerActivity extends Activity implements
 
 	}
 
-	private String GetRedirectURL() {
+	private void videoplay(String mPath) {
+		if (IsPlaying)
+			return;
+		if (mMediaController != null) {
+
+			app.setCurrentPlayData(mCurrentPlayData);
+			app.set_ReturnProgramView(m_ReturnProgramView);
+			// mMediaController.ShowCurrentPlayData(mCurrentPlayData);
+			// mMediaController.setProd_Data(m_ReturnProgramView);
+		}
+		if (mPath != null && mPath.length() > 0) {
+			IsPlaying = true;
+			mVideoView.setVideoPath(mPath);
+		}
+	}
+
+	private void GetRedirectURL() {
 		String PROD_SOURCE = null;
 
 		mCurrentPlayData.CurrentCategory = playProdType - 1;
@@ -631,23 +685,28 @@ public class VideoPlayerActivity extends Activity implements
 										 * 
 										 * @"hd2" #define LIU_CHANG @"3gp"
 										 */
-										if (urls != null
-												&& urls.url != null
-												&& app.CheckUrlIsValidFromServer(
-														urls.url, "1")) {
-											mCurrentPlayData.CurrentSource = i;
-											mCurrentPlayData.CurrentQuality = ki;
-											mCurrentPlayData.ShowQuality = qi;
+										if (urls != null && urls.url != null
+												&& !IsPlaying) {
+											// mCurrentPlayData.CurrentSource =i
+											// ;
+											// mCurrentPlayData.CurrentQuality =
+											// ki;
+											// mCurrentPlayData.ShowQuality =
+											// qi;
 											PROD_SOURCE = urls.url.trim();
+											HttpThreadPoolUtils
+													.execute(new HttpTread(
+															urls.url, "1", i,
+															ki, qi, PROD_SOURCE));
 											MobclickAgent.onEventBegin(
 													mContext, MOVIE_PLAY);
 										}
-										if (PROD_SOURCE != null)
-											break;
+										// if (PROD_SOURCE != null)
+										// break;
 									}
 								}
-							if (PROD_SOURCE != null)
-								break;
+							// if (PROD_SOURCE != null)
+							// break;
 						}
 
 					}
@@ -662,27 +721,29 @@ public class VideoPlayerActivity extends Activity implements
 				for (int i = 0; i < m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls.length; i++) {
 					for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
 						if (PROD_SOURCE == null)
-							for (int ki = 0; ki < m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls.length; ki++) {//原来字典里的值为0yy
+							for (int ki = 0; ki < m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls.length; ki++) {// 原来字典里的值为0yy
 								if (m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki].type
 										.equalsIgnoreCase(Constant.player_quality_index[qi])) {
 									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki];
 
-									if (urls != null
-											&& urls.url != null
-											&& app.CheckUrlIsValidFromServer(
-													urls.url, "1")) {
+									if (urls != null && urls.url != null
+											&& !IsPlaying) {
 										mCurrentPlayData.CurrentSource = i;
 										mCurrentPlayData.CurrentQuality = ki;
 										PROD_SOURCE = urls.url.trim();
+										HttpThreadPoolUtils
+												.execute(new HttpTread(
+														urls.url, "1", i, ki,
+														qi, PROD_SOURCE));
 										MobclickAgent.onEventBegin(mContext,
 												TV_PLAY);
 									}
-									if (PROD_SOURCE != null)
-										break;
+									// if (PROD_SOURCE != null)
+									// break;
 								}
 							}
-						if (PROD_SOURCE != null)
-							break;
+						// if (PROD_SOURCE != null)
+						// break;
 					}
 				}
 			}
@@ -701,22 +762,24 @@ public class VideoPlayerActivity extends Activity implements
 										.equalsIgnoreCase(Constant.player_quality_index[qi])) {
 									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki];
 
-									if (urls != null
-											&& urls.url != null
-											&& app.CheckUrlIsValidFromServer(
-													urls.url, "1")) {
+									if (urls != null && urls.url != null
+											&& !IsPlaying) {
 										mCurrentPlayData.CurrentSource = i;
 										mCurrentPlayData.CurrentQuality = ki;
 										PROD_SOURCE = urls.url.trim();
+										HttpThreadPoolUtils
+												.execute(new HttpTread(
+														urls.url, "1", i, ki,
+														qi, PROD_SOURCE));
 										MobclickAgent.onEventBegin(mContext,
 												SHOW_PLAY);
 									}
-									if (PROD_SOURCE != null)
-										break;
+									// if (PROD_SOURCE != null)
+									// break;
 								}
 							}
-						if (PROD_SOURCE != null)
-							break;
+						// if (PROD_SOURCE != null)
+						// break;
 					}
 				}
 			}
@@ -725,68 +788,58 @@ public class VideoPlayerActivity extends Activity implements
 			break;
 		}
 
-		return PROD_SOURCE;
 	}
-	//给片源赋权值
+
+	// 给片源赋权值
 	@SuppressWarnings("unchecked")
 	public void videoSourceSort(DOWN_URLS[] down_urls) {
 		if (down_urls != null) {
 			for (int j = 0; j < down_urls.length; j++) {
-				if (down_urls[j].source
-						.equalsIgnoreCase("letv")) {
+				if (down_urls[j].source.equalsIgnoreCase("letv")) {
 					down_urls[j].index = 0;
-				} else if (down_urls[j].source
-						.equalsIgnoreCase("fengxing")) {
+				} else if (down_urls[j].source.equalsIgnoreCase("fengxing")) {
 					down_urls[j].index = 1;
-				} else if (down_urls[j].source
-						.equalsIgnoreCase("qiyi")) {
+				} else if (down_urls[j].source.equalsIgnoreCase("qiyi")) {
 					down_urls[j].index = 2;
-				} else if (down_urls[j].source
-						.equalsIgnoreCase("youku")) {
+				} else if (down_urls[j].source.equalsIgnoreCase("youku")) {
 					down_urls[j].index = 3;
-				} else if (down_urls[j].source
-						.equalsIgnoreCase("sinahd")) {
+				} else if (down_urls[j].source.equalsIgnoreCase("sinahd")) {
 					down_urls[j].index = 4;
-				} else if (down_urls[j].source
-						.equalsIgnoreCase("sohu")) {
+				} else if (down_urls[j].source.equalsIgnoreCase("sohu")) {
 					down_urls[j].index = 5;
-				} else if (down_urls[j].source
-						.equalsIgnoreCase("56")) {
+				} else if (down_urls[j].source.equalsIgnoreCase("56")) {
 					down_urls[j].index = 6;
-				} else if (down_urls[j].source
-						.equalsIgnoreCase("qq")) {
+				} else if (down_urls[j].source.equalsIgnoreCase("qq")) {
 					down_urls[j].index = 7;
-				} else if (down_urls[j].source
-						.equalsIgnoreCase("pptv")) {
+				} else if (down_urls[j].source.equalsIgnoreCase("pptv")) {
 					down_urls[j].index = 8;
-				} else if (down_urls[j].source
-						.equalsIgnoreCase("m1905")) {
+				} else if (down_urls[j].source.equalsIgnoreCase("m1905")) {
 					down_urls[j].index = 9;
 				}
 			}
 			if (down_urls.length > 1) {
-				Arrays.sort(down_urls,new EComparatorIndex());
+				Arrays.sort(down_urls, new EComparatorIndex());
 			}
 		}
 	}
-	
+
 	// 将片源排序
 		@SuppressWarnings("rawtypes")
-		class EComparatorIndex implements Comparator {
+	class EComparatorIndex implements Comparator {
 
-			@Override
-			public int compare(Object first, Object second) {
-				// TODO Auto-generated method stub
-				int first_name = ((DOWN_URLS) first).index;
-				int second_name = ((DOWN_URLS) second).index;
-				if (first_name - second_name < 0) {
-					return -1;
-				} else {
-					return 1;
-				}
+		@Override
+		public int compare(Object first, Object second) {
+			// TODO Auto-generated method stub
+			int first_name = ((DOWN_URLS) first).index;
+			int second_name = ((DOWN_URLS) second).index;
+			if (first_name - second_name < 0) {
+				return -1;
+			} else {
+				return 1;
 			}
 		}
-	
+	}
+
 	private final Runnable mRunnable = new Runnable() {
 		@SuppressWarnings("unused")
 		long beginTimeMillis, timeTakenMillis, timeLeftMillis, rxByteslast,
@@ -822,6 +875,13 @@ public class VideoPlayerActivity extends Activity implements
 		params.put("prod_id", playProdId);// required string
 											// 视频id
 		params.put("prod_name", playProdName);// required
+            // string 视频名字
+		if (Constant.select_index > -1) {
+			params.put("prod_subname",
+					Integer.toString(Constant.select_index + 1));// required
+		} else {
+			params.put("prod_subname",
+					Integer.toString(mCurrentPlayData.CurrentIndex + 1));// required
 		if(playProdType != 3)// string 视频名字
 		{
 			if(Constant.select_index>-1)
@@ -839,7 +899,7 @@ public class VideoPlayerActivity extends Activity implements
 		{
 			params.put("prod_subname",tvsubname);
 		}
-		
+
 		
 		// string
 		// 视频的集数
@@ -859,7 +919,7 @@ public class VideoPlayerActivity extends Activity implements
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "CallProgramPlayResult");
 		aq.ajax(cb);
-
+		}
 		/*
 		 * 怎么把数据保存在本地
 		 */
@@ -888,9 +948,14 @@ public class VideoPlayerActivity extends Activity implements
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
-										    MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
-									        MobclickAgent.onEventEnd(mContext, TV_PLAY);
-									        MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
+										MobclickAgent.onEventEnd(mContext,
+												MOVIE_PLAY);
+										MobclickAgent.onEventEnd(mContext,
+												TV_PLAY);
+										MobclickAgent.onEventEnd(mContext,
+												SHOW_PLAY);
+										Intent mIntent = new Intent();  
+										VideoPlayerActivity.this.setResult(FINISH_ACTTIVITY, mIntent); 
 										finish();
 									}
 								})
@@ -909,4 +974,176 @@ public class VideoPlayerActivity extends Activity implements
 		return super.dispatchKeyEvent(event);
 	}
 
+	/**
+	 * id 对应播放源 letv 0、fengxing 1、qiyi 2、youku 3、sinahd 4、 sohu 5、56 6、qq 7、pptv
+	 * 8、m1905 9. 启动一个异步任务，把网络相关放在此任务中 重定向新的链接，直到拿到资源URL
+	 * 
+	 * 注意：因为网络或者服务器原因，重定向时间有可能比较长 因此需要较长时间等待
+	 * 
+	 * @param url
+	 * @param id
+	 * @return 字符串
+	 */
+	private static final String NOT_VALID_LINK = "NULL";
+	private static final String FENGXING = "1";
+
+	class HttpTread implements Runnable {
+		private static final String TAG = "HttpTread";
+		public int CurrentSource;
+		public int CurrentQuality;
+		public int ShowQuality;
+		String[] params;
+
+		public HttpTread(String url, String sourceId, int CurrentSource,
+				int CurrentQuality, int ShowQuality, String pROD_SOURCE) {
+			this.CurrentSource = CurrentSource;
+			this.CurrentQuality = CurrentQuality;
+			this.ShowQuality = ShowQuality;
+			params = new String[] { url, "" + sourceId };
+		}
+
+		@Override
+		public void run() {
+			if (IsPlaying)
+				return;
+			List<String> list = new ArrayList<String>();
+			String dstUrl = params[0];
+			if (BuildConfig.DEBUG)
+				Log.i(TAG, "newATask--->>params : " + params[0] + params[1]);
+			try {
+				simulateFirfoxRequest(Constant.USER_AGENT_IOS, params, list);// 使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
+
+				dstUrl = list.get(list.size() - 1);
+				if (BuildConfig.DEBUG)
+					Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
+				list.clear();
+
+				if (!dstUrl.equalsIgnoreCase(NOT_VALID_LINK)) {
+					mCurrentPlayData.CurrentSource = CurrentSource;
+					mCurrentPlayData.CurrentQuality = CurrentQuality;
+					mCurrentPlayData.ShowQuality = ShowQuality;
+					Message message = mvediohandler.obtainMessage(VideoPlay,
+							dstUrl);
+					mvediohandler.sendMessage(message);
+				}
+			} catch (Exception e) {
+				if (BuildConfig.DEBUG)
+					Log.i(TAG, "TimeOut!!!!!! : " + e);
+				e.printStackTrace();
+			}
+		}
+
+		/**
+		 * 模拟火狐浏览器给服务器发送不同请求，有火狐本身请求，IOS请求，Android请求
+		 * 
+		 * @param userAgent
+		 *            firfox ios android
+		 * @param params包括srcUrl
+		 *            原始地址【可能可以播放，可能需要跳转】和 sourceID 例："1"
+		 * @param list
+		 *            存储播放地址
+		 */
+		private void simulateFirfoxRequest(String userAgent, String[] params,
+				List<String> list) {
+			if (params == null || params.length < 2) {
+
+				if (BuildConfig.DEBUG)
+					Log.i(TAG, "Params Wrong");
+				list.add(NOT_VALID_LINK);
+				return;
+			}
+
+			String srcUrl = params[0];// 源地址
+			String sourceId = params[1];// 资源来源id
+
+			// 模拟火狐ios发用请求 使用userAgent
+			AndroidHttpClient mAndroidHttpClient = AndroidHttpClient
+					.newInstance(userAgent);
+
+			HttpParams httpParams = mAndroidHttpClient.getParams();
+			// 连接时间最长5秒，可以更改
+			HttpConnectionParams.setConnectionTimeout(httpParams, 20000);
+
+			try {
+				URL url = new URL(srcUrl);
+				HttpGet mHttpGet = new HttpGet(url.toURI());
+				HttpResponse response = mAndroidHttpClient.execute(mHttpGet);
+
+				// 限定连接时间
+
+				StatusLine statusLine = response.getStatusLine();
+				int status = statusLine.getStatusCode();
+
+				Header headertop = response.getFirstHeader("Content-Type");// 拿到重新定位后的header
+				String type = headertop.getValue().toLowerCase();// 从header重新取出信息
+				Header header_length = response
+						.getFirstHeader("Content-Length");
+				String lengthStr = header_length.getValue();
+				int length = 0;
+				try {
+					length = Integer.parseInt(lengthStr);
+				} finally {
+				}
+
+				if (BuildConfig.DEBUG)
+					Log.i(TAG, "HTTP STATUS : " + status);
+
+				// 如果资源来源为风行，那就对url进行重定向 如果不是就只是简单判断
+				// 风行资源id 为 1
+				// 如果拿到资源直接返回url 如果没有拿到资源，并且要进行跳转,那就使用递归跳转
+				if (!type.startsWith("text/html") && status >= 200
+						&& status <= 299 && length > 100) {
+					// 正确的话直接返回，不进行下面的步骤
+					mAndroidHttpClient.close();
+					list.add(srcUrl);
+
+					// mCurrentPlayData.CurrentSource = CurrentSource;
+					// mCurrentPlayData.CurrentQuality = CurrentQuality;
+					// mCurrentPlayData.ShowQuality = ShowQuality;
+					// Message message = mvediohandler.obtainMessage(VideoPlay,
+					// srcUrl);
+					// mvediohandler.sendMessage(message);
+
+				} else if (status > 299 && status < 400) {
+					if (BuildConfig.DEBUG)
+						Log.i(TAG, "NOT OK   start");
+
+					if (BuildConfig.DEBUG)
+						Log.i(TAG, "NOT OK start");
+					if (status == HttpStatus.SC_MOVED_PERMANENTLY || // 网址被永久移除
+							status == HttpStatus.SC_MOVED_TEMPORARILY || // 网址暂时性移除
+							status == HttpStatus.SC_SEE_OTHER || // 重新定位资源
+							status == HttpStatus.SC_TEMPORARY_REDIRECT) {// 暂时定向
+
+						Header header = response.getFirstHeader("Location");// 拿到重新定位后的header
+						String location = header.getValue();// 从header重新取出信息
+						list.add(location);
+
+						mAndroidHttpClient.close();// 关闭此次连接
+
+						if (BuildConfig.DEBUG)
+							Log.i(TAG, "Location: " + location);
+						// 进行下一次递归
+						simulateFirfoxRequest(userAgent, new String[] {
+								location, FENGXING }, list);
+					} else {
+
+						// 如果地址真的不存在，那就往里面加NULL字符串
+						mAndroidHttpClient.close();
+						list.add(NOT_VALID_LINK);
+					}
+				}
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				if (BuildConfig.DEBUG)
+					Log.i(TAG, "NOT OK" + e);
+				// 如果地址真的不存在，那就往里面加NULL字符串
+				mAndroidHttpClient.close();
+				list.add(params[0]);
+				e.printStackTrace();
+			}
+		}
+
+	}
 }
