@@ -285,10 +285,6 @@ public class MediaController extends FrameLayout  {
 		// 加载数据
 		dataStruct = new ArrayList<String>();
 
-//		dataStruct.add("第一�?);
-//		dataStruct.add("第二�?);
-//		dataStruct.add("第三�?);
-//		dataStruct.add("第四�?);
 		groupAdapter = new GroupAdapter(mContext, dataStruct);
 //		lv_group.setItemsCanFocus(false);  
 		lv_group.setAdapter(groupAdapter);

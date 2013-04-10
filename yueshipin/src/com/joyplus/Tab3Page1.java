@@ -15,8 +15,10 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +46,10 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Adapters.Tab3Page1ListData;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.cache.VideoCacheInfo;
+import com.joyplus.cache.VideoCacheManager;
+import com.joyplus.playrecord.PlayRecordInfo;
+import com.joyplus.playrecord.PlayRecordManager;
 import com.umeng.analytics.MobclickAgent;
 
 public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
@@ -60,7 +66,15 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	private long current_play_time = 0;
 	Tab3Page1ListData tempPlayHistoryData = null;
 	private CurrentPlayData mCurrentPlayData;
-
+	/*
+	 * playHistoryData
+	 */
+	VideoCacheInfo cacheInfo;
+	VideoCacheInfo cacheInfoTemp;
+	VideoCacheManager cacheManager;
+	PlayRecordInfo playrecordinfo;
+	PlayRecordManager playrecordmanager;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -106,6 +120,13 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 
 			}
 		});
+		
+		cacheManager = new VideoCacheManager(Tab3Page1.this);//电影的
+		cacheInfo = new VideoCacheInfo();
+		playrecordmanager = new PlayRecordManager(Tab3Page1.this);//播放记录
+		playrecordinfo = new PlayRecordInfo();
+//		、
+		
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		mCurrentPlayData = new CurrentPlayData();
@@ -385,6 +406,12 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			// 1：电影，2：电视剧，3：综艺，4：视频
 			switch (m_Tab3Page1ListData.Pro_type) {
 			case 1:
+				//让本地数据跟服务器上的数据同步
+				cacheInfo.setLast_playtime(Integer.toString(m_Tab3Page1ListData.Pro_time*1000));
+				cacheInfo.setProd_id(m_Tab3Page1ListData.Pro_ID);
+				cacheInfo.setProd_type(Integer.toString(m_Tab3Page1ListData.Pro_type));
+				cacheManager.saveVideoCache(cacheInfo);
+				
 				intent.setClass(this, Detail_Movie.class);
 				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
 				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
@@ -395,6 +422,11 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				}
 				break;
 			case 2:
+				//让本地数据跟服务器上的数据同步
+				playrecordinfo.setProd_id(m_Tab3Page1ListData.Pro_ID);
+				playrecordinfo.setProd_subname(m_Tab3Page1ListData.Pro_name1);	
+				playrecordinfo.setLast_playtime(Integer.toString(m_Tab3Page1ListData.Pro_time*1000));
+				playrecordmanager.savePlayRecord(playrecordinfo);
 				intent.setClass(this, Detail_TV.class);
 				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
 				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
@@ -405,6 +437,12 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				}
 				break;
 			case 3:
+				//让本地数据跟服务器上的数据同步
+				playrecordinfo.setProd_id(m_Tab3Page1ListData.Pro_ID);
+				playrecordinfo.setProd_subname(m_Tab3Page1ListData.Pro_name1);	
+				playrecordinfo.setLast_playtime(Integer.toString(m_Tab3Page1ListData.Pro_time*1000));
+				playrecordmanager.savePlayRecord(playrecordinfo);
+				
 				intent.setClass(this, Detail_Show.class);
 				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
 				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);

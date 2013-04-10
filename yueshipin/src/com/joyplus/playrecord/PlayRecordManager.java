@@ -31,7 +31,6 @@ public class PlayRecordManager {
 				{
 					PlayRecordDao.getInstance(context).updateOneInfo(info);
 				}
-				
 			}
 		}
 		else

@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -118,7 +119,7 @@ public class VideoPlayerActivity extends Activity implements
 	private String playProdId = null;// 视频id
 	private String playProdName = null;// 视频名字
 	private String playProdSubName = null;// 视频的集数
-	private String playPlayType = null;// 播放的类别 1: 视频地址播放 2:webview播放
+//	private String playPlayType = null;// 播放的类别 1: 视频地址播放 2:webview播放
 	private String playVideoUrl = null;// 视频url
 	private int playProdType = 0;// 视频类别 1：电影，2：电视剧，3：综艺，4：视频
 
@@ -256,6 +257,7 @@ public class VideoPlayerActivity extends Activity implements
 
 	}
 
+	@SuppressLint("DefaultLocale")
 	private String stringForTime(long time) {
 
 		long totalSeconds = time / 1000;
@@ -466,6 +468,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	/** 定时隐藏 */
+	@SuppressLint("HandlerLeak")
 	private Handler mDismissHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -725,6 +728,7 @@ public class VideoPlayerActivity extends Activity implements
 		return PROD_SOURCE;
 	}
 	//给片源赋权值
+	@SuppressWarnings("unchecked")
 	public void videoSourceSort(DOWN_URLS[] down_urls) {
 		if (down_urls != null) {
 			for (int j = 0; j < down_urls.length; j++) {
@@ -767,6 +771,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 	
 	// 将片源排序
+		@SuppressWarnings("rawtypes")
 		class EComparatorIndex implements Comparator {
 
 			@Override
@@ -783,6 +788,7 @@ public class VideoPlayerActivity extends Activity implements
 		}
 	
 	private final Runnable mRunnable = new Runnable() {
+		@SuppressWarnings("unused")
 		long beginTimeMillis, timeTakenMillis, timeLeftMillis, rxByteslast,
 				m_bitrate;
 
