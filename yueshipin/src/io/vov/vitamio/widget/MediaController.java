@@ -30,6 +30,7 @@ import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS.URLS;
+import com.joyplus.Video.VideoPlayerActivity;
 
 import io.vov.utils.Log;
 import io.vov.utils.StringUtils;
@@ -1075,6 +1076,7 @@ public class MediaController extends FrameLayout  {
 //			if(DLNAMODE)
 //				DLNAMODE = false;
 //			else
+			VideoPlayerActivity.IsFinish = true;
 				mPlayer.OnComplete();
 		}
 	};

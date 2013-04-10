@@ -765,18 +765,34 @@ public class Detail_Show extends Activity {
 			StatisticsUtils.StatisticsClicksShow(aq,app,prod_id, prod_name,
 					m_ReturnProgramView.show.episodes[0].name , 3);
 			
-			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-				current_index = 0;
-				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
-
-			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+//			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+//				current_index = 0;
+//				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
+//
+//			} else 
+				if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
 				SaveToServer(2, PROD_URI, 1);
 
-				Intent intent = new Intent();
-				intent.setAction("android.intent.action.VIEW");
-				Uri content_url = Uri.parse(PROD_URI);
-				intent.setData(content_url);
+				Intent intent = new Intent(this,Webview_Play.class);
+//				intent.setAction("android.intent.action.VIEW");
+//				Uri content_url = Uri.parse(PROD_URI);
+//				intent.setData(content_url);
+//				startActivity(intent);
+				Bundle bundle = new Bundle();
+				bundle.putString("PROD_URI", PROD_URI);
+				bundle.putString("NAME", m_ReturnProgramView.show.name);
+				bundle.putString("prod_subname", m_ReturnProgramView.show.episodes[0].name);
+				
+				if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				bundle.putString("prod_id", prod_id);
+				bundle.putInt("CurrentIndex", 0);
+				bundle.putInt("CurrentCategory",2);
+				bundle.putString("PROD_SOURCE",PROD_SOURCE);
+				bundle.putString("prod_type", "3");
+				bundle.putLong("current_time", current_time);
+				}
+				intent.putExtras(bundle);
 				startActivity(intent);
 			}
 		}
@@ -910,16 +926,33 @@ public class Detail_Show extends Activity {
 				current_time = Long.parseLong(playrecordinfo.getLast_playtime());
 			}
 			
-			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
-			} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+//			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+//				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.show.name);
+//			} else 
+				if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
 				SaveToServer(2, PROD_URI, index + 1);
 
-				Intent intent = new Intent();
-				intent.setAction("android.intent.action.VIEW");
-				Uri content_url = Uri.parse(PROD_URI);
-				intent.setData(content_url);
+				Intent intent = new Intent(this,Webview_Play.class);
+//				intent.setAction("android.intent.action.VIEW");
+//				Uri content_url = Uri.parse(PROD_URI);
+//				intent.setData(content_url);
+//				startActivity(intent);
+				Bundle bundle = new Bundle();
+				bundle.putString("PROD_URI", PROD_URI);
+				bundle.putString("NAME", m_ReturnProgramView.show.name);
+				bundle.putString("prod_subname", m_ReturnProgramView.show.episodes[current_index].name);
+				
+				if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+				     		
+							bundle.putString("prod_id", prod_id);
+							bundle.putInt("CurrentIndex", index);
+							bundle.putInt("CurrentCategory",2);
+							bundle.putString("PROD_SOURCE",PROD_SOURCE);
+							bundle.putString("prod_type", "3");
+							bundle.putLong("current_time", current_time);
+				}
+				intent.putExtras(bundle);
 				startActivity(intent);
 			}
 		}
@@ -994,28 +1027,28 @@ public class Detail_Show extends Activity {
 		}
 	}
 		
-	public void CallVideoPlayActivity(String m_uri, String title) {
-		app.IfSupportFormat(m_uri);
-		mCurrentPlayData.CurrentCategory = 2;
-		mCurrentPlayData.CurrentIndex = current_index;
-		app.setCurrentPlayData(mCurrentPlayData);
-		
-		Intent intent = new Intent(this, VideoPlayerActivity.class);
-		Bundle bundle = new Bundle();
-		bundle.putString("path", m_uri);
-		bundle.putString("title", title);
-		bundle.putString("prod_id", prod_id);
-		bundle.putString("prod_subname", m_ReturnProgramView.show.episodes[current_index].name);
-		bundle.putString("prod_type", "3");
-		bundle.putLong("current_time", current_time);
-		intent.putExtras(bundle);
-
-		try {
-			startActivity(intent);
-		} catch (ActivityNotFoundException ex) {
-			Log.e(TAG, "VideoPlayerActivity fail", ex);
-		}
-	}
+//	public void CallVideoPlayActivity(String m_uri, String title) {
+//		app.IfSupportFormat(m_uri);
+//		mCurrentPlayData.CurrentCategory = 2;
+//		mCurrentPlayData.CurrentIndex = current_index;
+//		app.setCurrentPlayData(mCurrentPlayData);
+//		
+//		Intent intent = new Intent(this, VideoPlayerActivity.class);
+//		Bundle bundle = new Bundle();
+//		bundle.putString("path", m_uri);
+//		bundle.putString("title", title);
+//		bundle.putString("prod_id", prod_id);
+//		bundle.putString("prod_subname", m_ReturnProgramView.show.episodes[current_index].name);
+//		bundle.putString("prod_type", "3");
+//		bundle.putLong("current_time", current_time);
+//		intent.putExtras(bundle);
+//
+//		try {
+//			startActivity(intent);
+//		} catch (ActivityNotFoundException ex) {
+//			Log.e(TAG, "VideoPlayerActivity fail", ex);
+//		}
+//	}
 
 	public void ShowComments() {
 		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Layout_comment);
@@ -1227,82 +1260,82 @@ public class Detail_Show extends Activity {
 	
 	}
 
-	private void GetVideoSource(final int episodeNum, String url) {
-
-		aq.progress(R.id.progress).ajax(url, InputStream.class,
-				new AjaxCallback<InputStream>() {
-
-					public void callback(String url, InputStream is,
-							AjaxStatus status) {
-						String urlsave = Constant.BASE_URL + "program/play";
-						if (is != null) {
-
-							Map<String, Object> params = new HashMap<String, Object>();
-							params.put("app_key", Constant.APPKEY);// required
-																	// string
-																	// 申请应用时分配的AppKey。
-							params.put("prod_id", m_ReturnProgramView.show.id);// required
-																				// string
-																				// 视频id
-							params.put("prod_name",
-									m_ReturnProgramView.show.name);// required
-																	// string
-																	// 视频名字
-							params.put("prod_subname",
-									m_ReturnProgramView.show.episodes.length);// required
-																				// string
-																				// 视频的集数
-							params.put("prod_type", 3);// required int 视频类别
-														// 1：电影，2：电视剧，3：综艺，4：视频
-							params.put("playback_time", 0);// _time required int
-															// 上次播放时间，单位：秒
-							params.put("duration", 0);// required int 视频时长， 单位：秒
-							params.put("play_type", "1");// required string
-															// 播放的类别 1: 视频地址播放
-							// 2:webview播放
-							params.put("video_url", url);// required
-															// string
-															// 视频url
-
-							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-							cb.SetHeader(app.getHeaders());
-
-							cb.params(params).url(urlsave);
-							aq.ajax(cb);
-
-							CallVideoPlayActivity(url,
-									m_ReturnProgramView.show.name);
-						} else {
-							if (m_ReturnProgramView.show.episodes[episodeNum].down_urls != null) {
-								for (int k = 0; k < m_ReturnProgramView.show.episodes[episodeNum].down_urls[0].urls.length; k++) {
-									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[episodeNum].down_urls[0].urls[k];
-									if (urls != null) {
-										if (urls.url != null) {
-											if (urls.type.trim()
-													.equalsIgnoreCase("mp4"))
-												PROD_SOURCE = urls.url.trim();
-											else if (urls.type.trim()
-													.equalsIgnoreCase("flv"))
-												PROD_SOURCE = urls.url.trim();
-											else if (urls.type.trim()
-													.equalsIgnoreCase("hd2"))
-												PROD_SOURCE = urls.url.trim();
-											else if (urls.type.trim()
-													.equalsIgnoreCase("3gp"))
-												PROD_SOURCE = urls.url.trim();
-										}
-										if (PROD_SOURCE != null) {
-											GetVideoSource(episodeNum,
-													PROD_SOURCE);
-										}
-									}
-								}
-							}
-						}
-					}
-
-				});
-	}
+//	private void GetVideoSource(final int episodeNum, String url) {
+//
+//		aq.progress(R.id.progress).ajax(url, InputStream.class,
+//				new AjaxCallback<InputStream>() {
+//
+//					public void callback(String url, InputStream is,
+//							AjaxStatus status) {
+//						String urlsave = Constant.BASE_URL + "program/play";
+//						if (is != null) {
+//
+//							Map<String, Object> params = new HashMap<String, Object>();
+//							params.put("app_key", Constant.APPKEY);// required
+//																	// string
+//																	// 申请应用时分配的AppKey。
+//							params.put("prod_id", m_ReturnProgramView.show.id);// required
+//																				// string
+//																				// 视频id
+//							params.put("prod_name",
+//									m_ReturnProgramView.show.name);// required
+//																	// string
+//																	// 视频名字
+//							params.put("prod_subname",
+//									m_ReturnProgramView.show.episodes.length);// required
+//																				// string
+//																				// 视频的集数
+//							params.put("prod_type", 3);// required int 视频类别
+//														// 1：电影，2：电视剧，3：综艺，4：视频
+//							params.put("playback_time", 0);// _time required int
+//															// 上次播放时间，单位：秒
+//							params.put("duration", 0);// required int 视频时长， 单位：秒
+//							params.put("play_type", "1");// required string
+//															// 播放的类别 1: 视频地址播放
+//							// 2:webview播放
+//							params.put("video_url", url);// required
+//															// string
+//															// 视频url
+//
+//							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+//							cb.SetHeader(app.getHeaders());
+//
+//							cb.params(params).url(urlsave);
+//							aq.ajax(cb);
+//
+//							CallVideoPlayActivity(url,
+//									m_ReturnProgramView.show.name);
+//						} else {
+//							if (m_ReturnProgramView.show.episodes[episodeNum].down_urls != null) {
+//								for (int k = 0; k < m_ReturnProgramView.show.episodes[episodeNum].down_urls[0].urls.length; k++) {
+//									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[episodeNum].down_urls[0].urls[k];
+//									if (urls != null) {
+//										if (urls.url != null) {
+//											if (urls.type.trim()
+//													.equalsIgnoreCase("mp4"))
+//												PROD_SOURCE = urls.url.trim();
+//											else if (urls.type.trim()
+//													.equalsIgnoreCase("flv"))
+//												PROD_SOURCE = urls.url.trim();
+//											else if (urls.type.trim()
+//													.equalsIgnoreCase("hd2"))
+//												PROD_SOURCE = urls.url.trim();
+//											else if (urls.type.trim()
+//													.equalsIgnoreCase("3gp"))
+//												PROD_SOURCE = urls.url.trim();
+//										}
+//										if (PROD_SOURCE != null) {
+//											GetVideoSource(episodeNum,
+//													PROD_SOURCE);
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//
+//				});
+//	}
 	
 	public void OnClickCacheDown(View v) {
 		GotoDownloadPage();

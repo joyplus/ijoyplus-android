@@ -222,6 +222,11 @@
             android:name=".MainTopRightDialog"
             android:theme="@style/MyDialogStyleTop" >
         </activity>
+        <activity 
+            android:name=".Webview_Play"
+            android:screenOrientation="landscape">
+            
+        </activity>
 
         <service
             android:name=".Dlna.DlnaSelectDevice"
