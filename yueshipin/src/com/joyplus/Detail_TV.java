@@ -107,11 +107,6 @@ public class Detail_TV extends Activity {
 	CheckBox checkbox7;
 	EditText problem_edit;
 	
-//	private String uid = null;
-//	private String token = null;
-//	private String expires_in = null;
-//
-//	private String TV_String = null;
 	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;
 	private int isLastisNext = 2;

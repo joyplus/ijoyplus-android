@@ -233,12 +233,7 @@ public class VideoPlayerActivity extends Activity implements
 		}
 		mVideoView.setApp(app);
 		mMediaController.setApp(app);
-
-		// mVideoView.setVideoPath(mPath);
-		//
 		mVideoView.setOnCompletionListener(this);
-
-		// mVideoView.setBackgroundColor(color.black);
 
 		// 设置显示名称
 		if (play_current_time > 0) {
@@ -485,11 +480,6 @@ public class VideoPlayerActivity extends Activity implements
 		/** 双击 */
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-			// mLayout++;
-			// if(mLayout >VideoView.VIDEO_LAYOUT_ZOOM)
-			// mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
-			// if (mVideoView != null)
-			// mVideoView.setVideoLayout(mLayout, 0);
 			return true;
 		}
 
@@ -626,11 +616,7 @@ public class VideoPlayerActivity extends Activity implements
 					ReturnProgramView.class);
 			if (m_ReturnProgramView == null)
 				finish();
-
-			// mPath = GetRedirectURL();
 			GetRedirectURL();
-
-			// videoplay(mPath);
 
 			// 创建数据源对象
 		} catch (JsonParseException e) {
@@ -1096,13 +1082,6 @@ public class VideoPlayerActivity extends Activity implements
 					// 正确的话直接返回，不进行下面的步骤
 					mAndroidHttpClient.close();
 					list.add(srcUrl);
-
-					// mCurrentPlayData.CurrentSource = CurrentSource;
-					// mCurrentPlayData.CurrentQuality = CurrentQuality;
-					// mCurrentPlayData.ShowQuality = ShowQuality;
-					// Message message = mvediohandler.obtainMessage(VideoPlay,
-					// srcUrl);
-					// mvediohandler.sendMessage(message);
 
 				} else if (status > 299 && status < 400) {
 					if (BuildConfig.DEBUG)

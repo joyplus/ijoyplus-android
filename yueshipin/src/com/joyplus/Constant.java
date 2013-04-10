@@ -55,8 +55,8 @@ IOS: ijoyplusios001bj
 	public static String SINA_REDIRECTURL = "https://api.weibo.com/oauth2/default.html";
 
 	// Test Env
-	public static String Parse_AppId = "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB";
-	public static String Parse_ClientKey = "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl";
+	public static String Parse_AppId = "5FNbLx7dnRAx3knxV4rOdaLMRJMByqfKjWQRQakT";
+	public static String Parse_ClientKey = "RZHrZVn6MK8VGZxfpeshrC2tpxpzzMOZjU0rSS6X";
 	
 	//Production Env
 //	public static String Parse_AppId = "UBgv7IjGR8i6AN0nS4diS48oQTk6YErFi3LrjK4P";
