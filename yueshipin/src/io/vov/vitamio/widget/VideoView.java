@@ -507,7 +507,7 @@ public class VideoView extends SurfaceView implements
 				new AlertDialog.Builder(mContext)
 						.setTitle(R.string.netstate)
 						.setMessage(message)
-						.setPositiveButton(R.string.ok,
+						.setPositiveButton(R.string.queding,
 								new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog,

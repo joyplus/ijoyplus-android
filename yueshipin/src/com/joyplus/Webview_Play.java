@@ -50,6 +50,9 @@ public class Webview_Play extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.webviewplay);
+		
+		// 保持常亮
+		findViewById(R.id.webview_layout).setKeepScreenOn(true);
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		Intent intent = getIntent();
@@ -102,15 +105,17 @@ public class Webview_Play extends Activity {
 
 		new Handler().postDelayed(new Runnable() {
 			public void run() {
-				aq.id(R.id.image_view).visible();	
-				mAnimation = new AlphaAnimation(0f, 1.0f);
-				mAnimation.setDuration(500);
-				imageview.startAnimation(mAnimation);
+				
 				if(PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0){
+					aq.id(R.id.image_view).visible();	
+					mAnimation = new AlphaAnimation(0f, 1.0f);
+					mAnimation.setDuration(500);
+					imageview.startAnimation(mAnimation);
 				mCurrentPlayData.CurrentIndex = CurrentIndex;
 				CallVideoPlayActivity(PROD_SOURCE, name);
 				}
 				aq.id(R.id.image_view).gone();
+				
 			}
 		}, 500);
 	}
