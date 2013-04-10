@@ -797,7 +797,7 @@ public class Detail_TV extends Activity {
 				
 				if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 				bundle.putString("prod_id", prod_id);
-				bundle.putInt("CurrentIndex", 0);
+				bundle.putInt("CurrentIndex", current_index);
 				bundle.putInt("CurrentCategory",1);
 				bundle.putString("PROD_SOURCE",PROD_SOURCE);
 				bundle.putString("prod_type", "2");

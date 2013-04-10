@@ -795,7 +795,7 @@ public class Detail_Show extends Activity {
 				if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
 				     		
 							bundle.putString("prod_id", prod_id);
-							bundle.putInt("CurrentIndex", index);
+							bundle.putInt("CurrentIndex", current_index);
 							bundle.putInt("CurrentCategory",2);
 							bundle.putString("PROD_SOURCE",PROD_SOURCE);
 							bundle.putString("prod_type", "3");
