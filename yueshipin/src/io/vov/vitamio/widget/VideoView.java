@@ -343,27 +343,7 @@ public class VideoView extends SurfaceView implements
 			mMediaController.setEnabled(isInPlaybackState());
 			if (!URLUtil.isNetworkUrl(mUri.toString()))
 				mMediaController.DisableButtom();
-
-			// if (mUri != null) {
-			// List<String> paths = mUri.getPathSegments();
-			// String name = paths == null || paths.isEmpty() ? "null" :
-			// paths.get(paths.size() - 1);
-			// mMediaController.setFileName(name);
-			// }
 		}
-		// if (mLayoutBG != null){
-		// mLayoutBG.setVisibility(View.VISIBLE);
-		// View anchorView = this.getParent() instanceof View ? (View)
-		// this.getParent() : this;
-		//
-		// ViewGroup.LayoutParams lp = anchorView.getLayoutParams();
-		// //
-		// // lp.width = (int)
-		// (findViewById(R.id.operation_full).getLayoutParams().width *
-		// lpa.screenBrightness);
-		// mLayoutBG.setLayoutParams(lp);
-		// }
-
 	}
 
 	OnVideoSizeChangedListener mSizeChangedListener = new OnVideoSizeChangedListener() {
@@ -428,7 +408,6 @@ public class VideoView extends SurfaceView implements
 		@Override
 		public void onCompletion(MediaPlayer mp) {
 			Log.d("onCompletion");
-
 			if (mMediaController != null) {
 
 				// 播放资源有问题的代码 处理
@@ -564,8 +543,8 @@ public class VideoView extends SurfaceView implements
 		@Override
 		public boolean onInfo(MediaPlayer mp, int what, int extra) {
 
-			if (BuildConfig.DEBUG)
-				android.util.Log.i("VideoViewYangzhg", "state : " + what);
+//			if (BuildConfig.DEBUG)
+//				android.util.Log.i("VideoViewYangzhg", "state : " + what);
 			store30PlayTime(getCurrentPosition());// 当状态改变时，保存那一段时间到数组里面，并随时间更新而更新
 
 			if (mOnInfoListener != null) {
@@ -818,6 +797,7 @@ public class VideoView extends SurfaceView implements
 
 	@Override
 	public void seekTo(long msec) {
+		
 		if (isInPlaybackState()) {
 			mMediaPlayer.seekTo(msec);
 			mSeekWhenPrepared = 0;
