@@ -273,7 +273,7 @@ public class VideoView extends SurfaceView implements
 		try {
 			mDuration = -1;
 			mCurrentBufferPercentage = 0;
-			// mMediaPlayer = new MediaPlayer(mContext,true);
+//			mMediaPlayer = new MediaPlayer(mContext,true);//设置了第二个参数就会开启硬解码
 			mMediaPlayer = new MediaPlayer(mContext);
 			mMediaPlayer.setOnPreparedListener(mPreparedListener);
 			mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
@@ -640,7 +640,8 @@ public class VideoView extends SurfaceView implements
 	public void setOnSubtitleUpdateListener(OnSubtitleUpdateListener l) {
 		mOnSubtitleUpdateListener = l;
 	}
-
+	
+	//注册此方法以后会在网络不好的时候暂停然后继续播放
 	public void setOnInfoListener(OnInfoListener l) {
 		mOnInfoListener = l;
 	}
@@ -1071,5 +1072,5 @@ public class VideoView extends SurfaceView implements
 		((Activity) mContext).finish();
 
 	}
-
+	
 }

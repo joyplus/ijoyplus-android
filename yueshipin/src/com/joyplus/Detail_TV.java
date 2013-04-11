@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +113,7 @@ public class Detail_TV extends Activity {
 	private int isLastisNext = 2;
 	private int mLastY = 0;
 	// 标示当前有多少个按钮被点击了
-	private List <Integer>download_indexs = new ArrayList<Integer>();
+	private HashSet <Integer>download_indexs = new HashSet<Integer>();
 
 	// added by yyc,in order to flag the playing tv's index btn
 	Drawable focuse = null;
@@ -1326,29 +1327,6 @@ public class Detail_TV extends Activity {
 
 	}
 
-//	public void CallVideoPlayActivity(String m_uri, String title) {
-//		app.IfSupportFormat(m_uri);
-//		mCurrentPlayData.CurrentCategory = 1;
-//
-//		app.setCurrentPlayData(mCurrentPlayData);
-//
-//		Intent intent = new Intent(this, VideoPlayerActivity.class);
-//		Bundle bundle = new Bundle();
-//		bundle.putString("path", m_uri);
-//		bundle.putString("title", title);
-//		bundle.putString("prod_id", prod_id);
-//		bundle.putString("prod_subname",
-//				m_ReturnProgramView.tv.episodes[current_index].name);
-//		bundle.putString("prod_type", "2");
-//		bundle.putLong("current_time", current_time);
-//		intent.putExtras(bundle);
-//		try {
-//			startActivity(intent);
-//		} catch (ActivityNotFoundException ex) {
-//			Log.e(TAG, "VideoPlayerActivity fail", ex);
-//		}
-//	}
-
 	/*
 	 * 保存网页播放地址,不需要保存时间
 	 */
@@ -1396,83 +1374,6 @@ public class Detail_TV extends Activity {
 		 * 保存播放记录的回调函数
 		 */
 	}
-
-//	private void GetVideoSource(final int episodeNum, String url) {
-//
-//		aq.progress(R.id.progress).ajax(url, InputStream.class,
-//				new AjaxCallback<InputStream>() {
-//
-//					public void callback(String url, InputStream is,
-//							AjaxStatus status) {
-//						String urlsave = Constant.BASE_URL + "program/play";
-//						if (is != null) {
-//
-//							Map<String, Object> params = new HashMap<String, Object>();
-//							params.put("app_key", Constant.APPKEY);// required
-//																	// string
-//																	// 申请应用时分配的AppKey。
-//							params.put("prod_id", m_ReturnProgramView.tv.id);// required
-//																				// string
-//																				// 视频id
-//							params.put("prod_name", m_ReturnProgramView.tv.name);// required
-//																					// string
-//																					// 视频名字
-//							params.put("prod_subname",
-//									Integer.toString(episodeNum));// required
-//																	// string
-//																	// 视频的集数
-//							params.put("prod_type", 2);// required int 视频类别
-//														// 1：电影，2：电视剧，3：综艺，4：视频
-//							params.put("playback_time", 0);// _time required int
-//															// 上次播放时间，单位：秒
-//							params.put("duration", 0);// required int 视频时长， 单位：秒
-//							params.put("play_type", "1");// required string
-//															// 播放的类别 1: 视频地址播放
-//							// 2:webview播放
-//							params.put("video_url", url);// required
-//															// string
-//															// 视频url
-//
-//							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-//							cb.SetHeader(app.getHeaders());
-//
-//							cb.params(params).url(urlsave);
-//							aq.ajax(cb);
-//
-//							CallVideoPlayActivity(url,
-//									m_ReturnProgramView.tv.name);
-//						} else {
-//							if (m_ReturnProgramView.tv.episodes[episodeNum].down_urls != null) {
-//								for (int k = 0; k < m_ReturnProgramView.tv.episodes[episodeNum].down_urls[0].urls.length; k++) {
-//									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[episodeNum].down_urls[0].urls[k];
-//									if (urls != null) {
-//										if (urls.url != null) {
-//											if (urls.type.trim()
-//													.equalsIgnoreCase("mp4"))
-//												PROD_SOURCE = urls.url.trim();
-//											else if (urls.type.trim()
-//													.equalsIgnoreCase("flv"))
-//												PROD_SOURCE = urls.url.trim();
-//											else if (urls.type.trim()
-//													.equalsIgnoreCase("hd2"))
-//												PROD_SOURCE = urls.url.trim();
-//											else if (urls.type.trim()
-//													.equalsIgnoreCase("3gp"))
-//												PROD_SOURCE = urls.url.trim();
-//										}
-//										if (PROD_SOURCE != null) {
-//											GetVideoSource(episodeNum,
-//													PROD_SOURCE);
-//										}
-//									}
-//								}
-//							}
-//						}
-//					}
-//
-//				});
-//
-//	}
 
 	// click which btn flag that one yy
 	public void SetPlayBtnFlag(int current_index) {
@@ -1686,8 +1587,7 @@ public class Detail_TV extends Activity {
 				v.setBackgroundDrawable(download_been);
 				v.setEnabled(false);
 				((Button) v).setTextColor(Color.WHITE);// 设置颜色和文字的位置
-				((Button) v)
-						.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+				((Button) v).setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 				if (!download_indexs.contains(index)) {
 					download_indexs.add(index);
 				}
@@ -1776,7 +1676,7 @@ public class Detail_TV extends Activity {
 		}
 		if (i < 15) {
 			for (j = i; j < 15; j++) {
-				m_j = Integer.toString(j + 4);// m_ReturnProgramView.tv.episodes[i].name;
+				m_j = Integer.toString(j + 4);
 				Button m_button = (Button) menuView.findViewById(getResources()
 						.getIdentifier("download_button" + m_j, "id",
 								getPackageName()));

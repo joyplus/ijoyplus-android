@@ -108,8 +108,6 @@ public class MediaController extends FrameLayout  {
 	private ReturnProgramView m_ReturnProgramView = null;
 	private Context mContext;
 	private PopupWindow mWindow;
-//	private PopupWindow mWindowBottomRight;
-//	private PopupWindow mWindowTopRight;
 	private ListView lv_group;
 	private RadioButton lv_radio0;
 	private RadioButton lv_radio1;
@@ -130,8 +128,6 @@ public class MediaController extends FrameLayout  {
 	private String mSubName;
 	private long mDuration;
 	private boolean mShowing;
-	private boolean mTopRightShowing = false;
-	private boolean mBottomRightShowing = false;
 	private boolean mDragging;
 	private boolean mInstantSeeking = true;
 	private static final int sDefaultTimeout = 3000;
@@ -150,8 +146,6 @@ public class MediaController extends FrameLayout  {
 	private ImageButton mQualityButton;
 	private ImageButton mSelectButton;
 	private ImageView videosource;
-	private TextView mTextView1;
-	private TextView mTextView2;
 	private TextView mTextViewDownloadRate;
 	private TextView videosource_tv;
 	
@@ -272,8 +266,8 @@ public class MediaController extends FrameLayout  {
 		videosource = (ImageView)v.findViewById(R.id.videosource_img);
 		videosource_tv = (TextView)v.findViewById(R.id.videosource_tv);
 		
-		mTextView1 = (TextView) v.findViewById(R.id.textView1);
-		mTextView2 = (TextView) v.findViewById(R.id.textView2);
+//		mTextView1 = (TextView) v.findViewById(R.id.textView1);
+//		mTextView2 = (TextView) v.findViewById(R.id.textView2);
 		mTextViewDownloadRate = (TextView) v.findViewById(R.id.textViewDownloadRate);
 		mimageView33 =  v.findViewById(R.id.imageView33);
 		mViewTopRight = v.findViewById(R.id.relativeLayoutTopRight);
@@ -370,8 +364,6 @@ public class MediaController extends FrameLayout  {
 	}
 	public void OnClickSelect(int index) {
 		mPlayer.pause();
-		
-	
 		CurrentIndex = index;
 		Constant.select_index = index;
 		groupAdapter.notifyDataSetChanged();

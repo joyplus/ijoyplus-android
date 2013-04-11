@@ -170,7 +170,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					// 1：电影，2：电视剧，3：综艺，4：视频
 					mCurrentPlayData.prod_id = m_Tab3Page1ListData.Pro_ID;
 					mCurrentPlayData.CurrentCategory =m_Tab3Page1ListData.Pro_type-1;
-					if(m_Tab3Page1ListData.Pro_type == 2 || m_Tab3Page1ListData.Pro_type ==131)//原本有点问题
+					if(m_Tab3Page1ListData.Pro_type == 2 || m_Tab3Page1ListData.Pro_type ==131)
 						mCurrentPlayData.CurrentIndex = Integer.parseInt(m_Tab3Page1ListData.Pro_name1) -1;
 					
 					CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
