@@ -386,24 +386,16 @@ public class MediaController extends FrameLayout {
 					CurrentSource = i;
 
 					for (int j = 0; j < Constant.video_index.length; j++) {
-						if (PROD_SOURCE == null
-								&& m_ReturnProgramView.tv.episodes[index].down_urls[i].source
-										.trim().equalsIgnoreCase(
-												Constant.video_index[j])) {
-							title = "第"
-									+ m_ReturnProgramView.tv.episodes[CurrentIndex].name
-									+ "集";
-							mFileName.setText(title);
-							PROD_SOURCE = GetSource(index, i);
-
-							StatisticsUtils
-									.StatisticsClicksShow(
-											new AQuery(mContext),
-											app,
-											m_ReturnProgramView.tv.id,
-											m_ReturnProgramView.tv.name,
-											m_ReturnProgramView.tv.episodes[CurrentIndex].name,
-											2);
+						if (PROD_SOURCE == null &&m_ReturnProgramView.tv.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							String name = m_ReturnProgramView.tv.name;
+							title = "第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集";
+							mFileName.setText(name+title);
+							PROD_SOURCE =  GetSource(index,i);
+							
+							//yangzhg
+							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
+									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
+									m_ReturnProgramView.tv.episodes[CurrentIndex].name, 2);
 							break;
 						}
 					}
@@ -417,22 +409,18 @@ public class MediaController extends FrameLayout {
 					CurrentSource = i;
 
 					for (int j = 0; j < Constant.video_index.length; j++) {
-						if (PROD_SOURCE == null
-								&& m_ReturnProgramView.show.episodes[index].down_urls[i].source
-										.trim().equalsIgnoreCase(
-												Constant.video_index[j])) {
-							title = m_ReturnProgramView.show.episodes[index].name;
-							mFileName.setText(title);
-							PROD_SOURCE = GetSource(index, i);
 
-							StatisticsUtils
-									.StatisticsClicksShow(
-											new AQuery(mContext),
-											app,
-											m_ReturnProgramView.tv.id,
-											m_ReturnProgramView.tv.name,
-											m_ReturnProgramView.tv.episodes[CurrentIndex].name,
-											3);
+						if (PROD_SOURCE == null &&m_ReturnProgramView.show.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							String name = m_ReturnProgramView.show.name;
+							title = m_ReturnProgramView.show.episodes[index].name;
+
+							mFileName.setText(name+title);
+							PROD_SOURCE =  GetSource(index,i);
+							
+							//yangzhg
+							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
+									app, m_ReturnProgramView.show.id, m_ReturnProgramView.show.name,
+									m_ReturnProgramView.show.episodes[CurrentIndex].name, 3);
 							break;
 						}
 					}
@@ -446,6 +434,7 @@ public class MediaController extends FrameLayout {
 
 		if (PROD_SOURCE != null)
 			mPlayer.setContinueVideoPath(title, PROD_SOURCE, false);
+		
 	}
 
 	// 给片源赋权值

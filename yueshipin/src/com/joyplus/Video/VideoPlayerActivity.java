@@ -222,7 +222,7 @@ public class VideoPlayerActivity extends Activity implements
 				aq.id(R.id.mediacontroller_file_name).text(
 						mTitle + playProdSubName);
 				mVideoView.setTitle(mTitle + playProdSubName);
-				mMediaController.setFileName(playProdSubName);
+				mMediaController.setFileName(mTitle+playProdSubName);
 				mMediaController.setSubName(playProdSubName);
 			} else {
 				aq.id(R.id.mediacontroller_file_name).text(mTitle);
