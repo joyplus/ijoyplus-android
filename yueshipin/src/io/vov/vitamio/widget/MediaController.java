@@ -391,8 +391,9 @@ public class MediaController extends FrameLayout  {
 					
 					for (int j = 0; j < Constant.video_index.length; j++) {
 						if (PROD_SOURCE == null &&m_ReturnProgramView.tv.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							String name = m_ReturnProgramView.tv.name;
 							title = "第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集";
-							mFileName.setText(title);
+							mFileName.setText(name+title);
 							PROD_SOURCE =  GetSource(index,i);
 							
 							//yangzhg
@@ -413,14 +414,15 @@ public class MediaController extends FrameLayout  {
 					
 					for (int j = 0; j < Constant.video_index.length; j++) {
 						if (PROD_SOURCE == null &&m_ReturnProgramView.show.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+							String name = m_ReturnProgramView.show.name;
 							title = m_ReturnProgramView.show.episodes[index].name;
-							mFileName.setText(title);
+							mFileName.setText(name+title);
 							PROD_SOURCE =  GetSource(index,i);
 							
 							//yangzhg
 							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
-									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
-									m_ReturnProgramView.tv.episodes[CurrentIndex].name, 3);
+									app, m_ReturnProgramView.show.id, m_ReturnProgramView.show.name,
+									m_ReturnProgramView.show.episodes[CurrentIndex].name, 3);
 							break;
 						}
 					}			
