@@ -3,21 +3,35 @@ package com.joyplus;
 import com.androidquery.AQuery;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AlphaAnimation;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 public class Webview_Play extends Activity {
@@ -35,11 +49,14 @@ public class Webview_Play extends Activity {
 	private String prod_type;
 	private long current_time;
 	public Handler fHandler;
-
+	private ImageView imageview;
+	private String player_select;
+	private PopupWindow popup_player_select = null;
 	private App app;
 	private CurrentPlayData mCurrentPlayData;
-	AlphaAnimation mAnimation = null;  
+	AlphaAnimation mAnimation = null;
 	AQuery aq;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,7 +67,6 @@ public class Webview_Play extends Activity {
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.webviewplay);
-		
 		// 保持常亮
 		findViewById(R.id.webview_layout).setKeepScreenOn(true);
 		app = (App) getApplication();
@@ -77,12 +93,12 @@ public class Webview_Play extends Activity {
 		webView = (WebView) this.findViewById(R.id.webView1);
 		TextView textview = (TextView) findViewById(R.id.program_name);
 		textview.setText(name + " " + "第" + prod_subname + "集");
-		if(prod_subname == null){
+		if (prod_subname == null) {
 			textview.setText(name);
 		}
-         
-		final ImageView imageview = (ImageView)findViewById(R.id.image_view);
-		
+
+		imageview = (ImageView) findViewById(R.id.image_view);
+
 		// 设置加载进来的页面自适应手机屏幕
 		WebSettings settings = webView.getSettings();
 		settings.setUseWideViewPort(true);
@@ -102,20 +118,86 @@ public class Webview_Play extends Activity {
 				return true;
 			}
 		});
+		player_select = app.GetServiceData("player_select");
+		newHandler();
+	}
 
+	public void newHandler() {
 		new Handler().postDelayed(new Runnable() {
+
 			public void run() {
-				
-				if(PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0){
-					aq.id(R.id.image_view).visible();	
-					mAnimation = new AlphaAnimation(0f, 1.0f);
-					mAnimation.setDuration(500);
-					imageview.startAnimation(mAnimation);
-				mCurrentPlayData.CurrentIndex = CurrentIndex;
-				CallVideoPlayActivity(PROD_SOURCE, name);
+				if (player_select != null) {
+					if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+						if (player_select.equalsIgnoreCase("third")) {
+							Intent it = new Intent(Intent.ACTION_VIEW);
+							Uri uri = Uri.parse(PROD_SOURCE);
+							it.setDataAndType(uri, "video/*");
+							startActivity(it);
+						} else {
+							aq.id(R.id.image_view).visible();
+							mAnimation = new AlphaAnimation(0f, 1.0f);
+							mAnimation.setDuration(500);
+							imageview.startAnimation(mAnimation);
+							mCurrentPlayData.CurrentIndex = CurrentIndex;
+							CallVideoPlayActivity(PROD_SOURCE, name);
+						}
+
+					}
+				}
+				else
+				{
+					LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+					final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+							R.layout.player_select, null, true);
+					popup_player_select = new PopupWindow(menuView,
+							LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
+					Button default_btn = (Button) menuView.findViewById(R.id.neizhibtn);
+					default_btn.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+						
+							player_select = "default";
+							if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+								aq.id(R.id.image_view).visible();
+//								mAnimation = new AlphaAnimation(0f, 1.0f);
+//								mAnimation.setDuration(500);
+//								imageview.startAnimation(mAnimation);
+								mCurrentPlayData.CurrentIndex = CurrentIndex;
+								CallVideoPlayActivity(PROD_SOURCE, name);
+								popup_player_select.dismiss();
+							}
+							app.SaveServiceData("player_select", "default");
+						}
+
+					});
+					Button third_btn = (Button) menuView
+							.findViewById(R.id.disanfangbtn);
+					third_btn.setOnClickListener(new Button.OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							
+							player_select = "third";
+							if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+								if (player_select.equalsIgnoreCase("third")) {
+									Intent it = new Intent(Intent.ACTION_VIEW);
+									Uri uri = Uri.parse(PROD_SOURCE);
+									it.setDataAndType(uri, "video/*");
+									startActivity(it);
+									popup_player_select.dismiss();
+								}
+							}
+							app.SaveServiceData("player_select", "third");
+						}
+					});
+					popup_player_select.setBackgroundDrawable(new BitmapDrawable());
+					popup_player_select.setAnimationStyle(R.style.PopupAnimation);
+					popup_player_select.showAtLocation(Webview_Play.this.findViewById(R.id.webview_layout),Gravity.CENTER | Gravity.CENTER, 0, 40);
+					popup_player_select.update();
 				}
 				aq.id(R.id.image_view).gone();
-				
 			}
 		}, 500);
 	}

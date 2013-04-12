@@ -669,7 +669,6 @@ public class Detail_Movie extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-
 		app.checkUserSelect(Detail_Movie.this);
 		if (app.use2G3G) {
 
@@ -685,27 +684,26 @@ public class Detail_Movie extends Activity {
 						prod_name, "", 1);
 
 				if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+						SaveToServer(2, PROD_URI);
+						Intent intent = new Intent(this, Webview_Play.class);
+						Bundle bundle = new Bundle();
+						bundle.putString("PROD_URI", PROD_URI);
+						bundle.putString("NAME", m_ReturnProgramView.movie.name);
 
-					SaveToServer(2, PROD_URI);
-					Intent intent = new Intent(this, Webview_Play.class);
-					Bundle bundle = new Bundle();
-					bundle.putString("PROD_URI", PROD_URI);
-					bundle.putString("NAME", m_ReturnProgramView.movie.name);
-
-					if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-						if (PROD_SOURCE.contains("test=m3u8")) {
-							PROD_SOURCE = PROD_SOURCE.replace("tag=ios",
-									"tag=android");
+						if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+							if (PROD_SOURCE.contains("test=m3u8")) {
+								PROD_SOURCE = PROD_SOURCE.replace("tag=ios",
+										"tag=android");
+							}
+							bundle.putString("prod_id", prod_id);
+							bundle.putInt("CurrentIndex", 0);
+							bundle.putInt("CurrentCategory", 0);
+							bundle.putString("PROD_SOURCE", PROD_SOURCE);
+							bundle.putString("prod_type", "1");
+							bundle.putLong("current_time", 0);
 						}
-						bundle.putString("prod_id", prod_id);
-						bundle.putInt("CurrentIndex", 0);
-						bundle.putInt("CurrentCategory", 0);
-						bundle.putString("PROD_SOURCE", PROD_SOURCE);
-						bundle.putString("prod_type", "1");
-						bundle.putLong("current_time", 0);
-					}
-					intent.putExtras(bundle);
-					startActivity(intent);
+						intent.putExtras(bundle);
+						startActivity(intent);
 				}
 			}
 		}

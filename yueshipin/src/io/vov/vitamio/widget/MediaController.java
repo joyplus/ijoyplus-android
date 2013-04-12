@@ -1243,7 +1243,7 @@ public class MediaController extends FrameLayout {
 			if (mInstantSeeking)
 			{
 				mPlayer.seekTo(newposition);
-//				mPlayer.pause();
+				
 			}
 			if (mInfoView != null)
 				mInfoView.setText(time);

@@ -13,13 +13,20 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AlphaAnimation;
+import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.ScrollView;
 
 import com.androidquery.AQuery;
@@ -51,6 +58,7 @@ public class Setting extends Activity {
 	private String uid = null;
 	private String token = null;
 	private String expires_in = null;
+	private PopupWindow popup_player_select = null;
 	
 	//应用推荐
 	public static ExchangeDataService preloadDataService;
@@ -156,15 +164,10 @@ public class Setting extends Activity {
 
 	public void OnClickGuanzhu(View v) {
 		if (app.GetServiceData("Sina_Access_Token") != null) {
-
-//			int uid = 3058636171;
-//			uid = Integer.parseInt(app.GetServiceData("Sina_Access_UID"));
-//			if (uid >0) {
 					String m_PostURL = "https://api.weibo.com/2/friendships/create.json";
 
 					Map<String, Object> params = new HashMap<String, Object>();
 					params.put("access_token", app.GetServiceData("Sina_Access_Token"));
-//					params.put("uid","3058636171");
 					params.put("screen_name", "悦视频");
 					// save to local
 					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
@@ -173,7 +176,6 @@ public class Setting extends Activity {
 					cb.params(params).url(m_PostURL).type(JSONObject.class)
 							.weakHandler(this, "GuanzhuResult");
 					aq.ajax(cb);
-//			}
 		
 		} else {
 			String m_URI = "http://weibo.com/signup/signup.php?inviteCode=3058636171";
@@ -199,7 +201,44 @@ public class Setting extends Activity {
 			app.MyToast(this, "你已关注过了，谢谢!");
 		}
 	}
+	
+	//第三方播放器
+	public void OnClickSettingPlayer(View v)
+	{
+		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+		final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+				R.layout.player_select, null, true);
+		popup_player_select = new PopupWindow(menuView,
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
+		Button default_btn = (Button) menuView.findViewById(R.id.neizhibtn);
+		default_btn.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				app.SaveServiceData("player_select", "default");
+				popup_player_select.dismiss();
+			}
 
+		});
+		Button third_btn = (Button) menuView
+				.findViewById(R.id.disanfangbtn);
+		third_btn.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				app.SaveServiceData("player_select", "third");
+				Intent it = new Intent(Intent.ACTION_VIEW);
+				it.setType("video/*");
+				startActivity(it);
+				popup_player_select.dismiss();
+			}
+		});
+		popup_player_select.setBackgroundDrawable(new BitmapDrawable());
+		popup_player_select.setAnimationStyle(R.style.PopupAnimation);
+		popup_player_select.showAtLocation(Setting.this.findViewById(R.id.parent),Gravity.CENTER | Gravity.CENTER, 0, 40);
+		popup_player_select.update();
+	}
+	
 	public void OnClickClearMemery(View v) {
 		BitmapAjaxCallback.clearCache();
 		app.MyToast(this, "清除缓存成功");

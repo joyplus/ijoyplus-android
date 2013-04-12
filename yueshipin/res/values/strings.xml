@@ -70,4 +70,8 @@
     <string name="pull_to_refresh_footer_release_label">松开后加载</string>
     <string name="pull_to_refresh_footer_pull_label">上拉加载更多</string>
     <string name="pull_to_refresh_footer_refreshing_label">加载中\u2026</string>
+    <string name="setting_player_msg">您可以在设置里面取消绑定当前的播放器</string>
+    <string name="setting_player">播放器设置</string>
+    <string name="default_player">内置播放器</string>
+    <string name="third_player">第三方播放</string>
 </resources>

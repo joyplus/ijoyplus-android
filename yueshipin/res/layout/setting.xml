@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:background="#F2F2F2"
     android:gravity="center_horizontal"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:id="@+id/parent" >
 
     <LinearLayout
         android:id="@+id/LayoutTitle"
@@ -78,7 +79,25 @@
                     android:onClick="OnClickSinaWeibo"
                     android:paddingRight="30dp" />
             </RelativeLayout>
+			
+             <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_player"
+                android:gravity="center_vertical|right"
+                android:paddingTop="4dp" 
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp">
 
+                <CheckBox
+                    android:id="@+id/checkBox1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/setting_weibo_button"
+                    android:onClick="OnClickSettingPlayer"
+                    android:paddingRight="30dp" />
+            </RelativeLayout>
+            
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
