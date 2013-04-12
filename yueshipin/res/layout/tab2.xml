@@ -56,7 +56,7 @@
             android:layout_weight="0.37"
             android:gravity="center"
             android:orientation="horizontal" 
-             android:onClick="OnClickTab1TopRight">
+             android:onClick="OnClickSaoMiaoTopRight">
 
             <ImageView
                 android:id="@+id/Tab1TopRightImage"
@@ -65,7 +65,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="5dp"
-                android:background="@drawable/tab1_r"
+                android:background="@drawable/saoyisao"
                 />
         </LinearLayout>
     </LinearLayout>

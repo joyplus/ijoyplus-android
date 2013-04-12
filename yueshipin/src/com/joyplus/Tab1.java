@@ -2,9 +2,6 @@ package com.joyplus;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -32,9 +29,11 @@ import com.joyplus.Service.Return.ReturnTops;
 import com.parse.Parse;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
+import com.zxing.activity.CaptureActivity;
 
 public class Tab1 extends Activity implements
 		android.widget.AdapterView.OnItemClickListener {
+	private static final int Sao_Yi_Sao = 11;
 	private String TAG = "Tab1";
 	private AQuery aq;
 	private App app;
@@ -102,11 +101,23 @@ public class Tab1 extends Activity implements
 		startActivity(intent);
 	}
 
-	public void OnClickTab1TopRight(View v) {
-		Intent i = new Intent(this, Setting.class);
-		startActivity(i);
+	public void OnClickSaoMiaoTopRight(View v) {
+		Intent openCameraIntent = new Intent(Tab1.this,CaptureActivity.class);
+		startActivityForResult(openCameraIntent, Sao_Yi_Sao);
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		//处理扫描结果（在界面上显示）
+		if (resultCode == Sao_Yi_Sao) {
+			Bundle bundle = data.getExtras();
+			String scanResult = bundle.getString("result"); //扫描结果
 
+			Intent intent = new Intent(this, Before_Binding.class);
+			startActivity(intent);
+		}
+	}
 	@Override
 	protected void onDestroy() {
 		if (aq != null)

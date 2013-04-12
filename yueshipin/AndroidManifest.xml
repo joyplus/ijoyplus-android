@@ -59,11 +59,10 @@
             </intent-filter>
             <intent-filter>
                 <data
-                    android:scheme="http" 
                     android:host="ums.bz"
-                    android:port="80"
                     android:path="/7J5Q4k/"
-                    />
+                    android:port="80"
+                    android:scheme="http" />
 
                 <action android:name="android.intent.action.VIEW" />
 
@@ -141,7 +140,6 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-
         <activity
             android:name=".Tab3Page3"
             android:screenOrientation="portrait"
@@ -222,10 +220,9 @@
             android:name=".MainTopRightDialog"
             android:theme="@style/MyDialogStyleTop" >
         </activity>
-        <activity 
+        <activity
             android:name=".Webview_Play"
-            android:screenOrientation="landscape">
-            
+            android:screenOrientation="landscape" >
         </activity>
 
         <service
@@ -240,6 +237,21 @@
         <activity
             android:name="com.umeng.fb.ui.FeedbackConversation"
             android:configChanges="keyboard" />
+        <activity
+            android:name="com.zxing.activity.CaptureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name=".Before_Binding"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".Relieve_Binding"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
 
         <service
             android:name="com.umeng.common.net.DownloadingService"

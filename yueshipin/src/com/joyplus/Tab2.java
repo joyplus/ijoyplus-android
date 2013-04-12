@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.json.JSONObject;
 
+import com.zxing.activity.CaptureActivity;
+
 import android.app.ActivityGroup;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 public class Tab2 extends ActivityGroup {
+	private static final int Sao_Yi_Sao = 11;
 	private ViewPager viewPager;
 	private ArrayList<View> pageViews;
 
@@ -86,9 +89,22 @@ public class Tab2 extends ActivityGroup {
 		startActivity(i);
 	}
 
-	public void OnClickTab1TopRight(View v) {
-		Intent i = new Intent(this, Setting.class);
-		startActivity(i);
+	public void OnClickSaoMiaoTopRight(View v) {
+		Intent openCameraIntent = new Intent(Tab2.this,CaptureActivity.class);
+		startActivityForResult(openCameraIntent, Sao_Yi_Sao);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		//处理扫描结果（在界面上显示）
+		if (resultCode == Sao_Yi_Sao) {
+			Bundle bundle = data.getExtras();
+			String scanResult = bundle.getString("result"); //扫描结果
+
+			Intent intent = new Intent(this, Before_Binding.class);
+			startActivity(intent);
+		}
 	}
 
 }
