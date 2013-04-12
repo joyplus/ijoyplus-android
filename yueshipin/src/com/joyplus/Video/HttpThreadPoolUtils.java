@@ -38,15 +38,11 @@ public class HttpThreadPoolUtils {
 	}
 
 	public static void execute(Runnable runnable) {
-		Log.i("Yang", "HttpThreadPoolUtils>>>workQueue size:>>>"+workQueue.size());
-		Log.i("Yang", "HttpThreadPoolUtils>>>threadPool size:>>>"+httpthreadPool.getPoolSize());
-		
 		httpthreadPool.execute(runnable);
 		
 	}
 	private synchronized static int getQueueSize(Queue queue)  
     {  
-		Log.i("Yang", "ThredQueue size:>>>"+queue.size());
         return queue.size();  
     }   
 }

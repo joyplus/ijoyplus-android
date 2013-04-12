@@ -273,7 +273,7 @@ public class VideoView extends SurfaceView implements
 		try {
 			mDuration = -1;
 			mCurrentBufferPercentage = 0;
-			// mMediaPlayer = new MediaPlayer(mContext,true);
+//			mMediaPlayer = new MediaPlayer(mContext,true);//设置了第二个参数就会开启硬解码
 			mMediaPlayer = new MediaPlayer(mContext);
 			mMediaPlayer.setOnPreparedListener(mPreparedListener);
 			mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
@@ -343,27 +343,7 @@ public class VideoView extends SurfaceView implements
 			mMediaController.setEnabled(isInPlaybackState());
 			if (!URLUtil.isNetworkUrl(mUri.toString()))
 				mMediaController.DisableButtom();
-
-			// if (mUri != null) {
-			// List<String> paths = mUri.getPathSegments();
-			// String name = paths == null || paths.isEmpty() ? "null" :
-			// paths.get(paths.size() - 1);
-			// mMediaController.setFileName(name);
-			// }
 		}
-		// if (mLayoutBG != null){
-		// mLayoutBG.setVisibility(View.VISIBLE);
-		// View anchorView = this.getParent() instanceof View ? (View)
-		// this.getParent() : this;
-		//
-		// ViewGroup.LayoutParams lp = anchorView.getLayoutParams();
-		// //
-		// // lp.width = (int)
-		// (findViewById(R.id.operation_full).getLayoutParams().width *
-		// lpa.screenBrightness);
-		// mLayoutBG.setLayoutParams(lp);
-		// }
-
 	}
 
 	OnVideoSizeChangedListener mSizeChangedListener = new OnVideoSizeChangedListener() {
@@ -428,7 +408,6 @@ public class VideoView extends SurfaceView implements
 		@Override
 		public void onCompletion(MediaPlayer mp) {
 			Log.d("onCompletion");
-
 			if (mMediaController != null) {
 
 				// 播放资源有问题的代码 处理
@@ -564,8 +543,8 @@ public class VideoView extends SurfaceView implements
 		@Override
 		public boolean onInfo(MediaPlayer mp, int what, int extra) {
 
-			if (BuildConfig.DEBUG)
-				android.util.Log.i("VideoViewYangzhg", "state : " + what);
+//			if (BuildConfig.DEBUG)
+//				android.util.Log.i("VideoViewYangzhg", "state : " + what);
 			store30PlayTime(getCurrentPosition());// 当状态改变时，保存那一段时间到数组里面，并随时间更新而更新
 
 			if (mOnInfoListener != null) {
@@ -640,7 +619,8 @@ public class VideoView extends SurfaceView implements
 	public void setOnSubtitleUpdateListener(OnSubtitleUpdateListener l) {
 		mOnSubtitleUpdateListener = l;
 	}
-
+	
+	//注册此方法以后会在网络不好的时候暂停然后继续播放
 	public void setOnInfoListener(OnInfoListener l) {
 		mOnInfoListener = l;
 	}
@@ -817,6 +797,7 @@ public class VideoView extends SurfaceView implements
 
 	@Override
 	public void seekTo(long msec) {
+		
 		if (isInPlaybackState()) {
 			mMediaPlayer.seekTo(msec);
 			mSeekWhenPrepared = 0;
@@ -1071,5 +1052,5 @@ public class VideoView extends SurfaceView implements
 		((Activity) mContext).finish();
 
 	}
-
+	
 }
