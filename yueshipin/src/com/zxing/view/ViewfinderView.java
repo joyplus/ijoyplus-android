@@ -144,8 +144,6 @@ public final class ViewfinderView extends View {
 				bmpDTY += 10;
 			} else if (bmpDTY == maxDTY) {
 				bmpDTY = 0;
-				resultBitmap.recycle();
-				resultBitmap = null;
 			}
 			ViewfinderView.this.postInvalidate();
 		}
