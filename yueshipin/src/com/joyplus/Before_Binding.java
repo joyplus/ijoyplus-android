@@ -95,3 +95,5 @@ public class Before_Binding extends Activity {
 		finish();
 	}
 }
+
+
