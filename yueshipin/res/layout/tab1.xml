@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:text="悦    单"
                 android:textStyle="bold"
-                android:textColor="@android:color/white"
+                android:textColor="#EAE7E0"
                 android:textSize="25sp"/>
         </LinearLayout>
 

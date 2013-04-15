@@ -29,17 +29,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#444444"
             android:visibility="gone" />
-        <!--
-           ListView
-            android:id="@+id/listView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fadingEdge="none"
-            android:background="#F2F2F2"
-            android:cacheColorHint="#F2F2F2"
-            android:divider="@drawable/tab1_divider"
-           >
-        -->
 
         <com.joyplus.widget.MyListView
             android:id="@+id/listView1"

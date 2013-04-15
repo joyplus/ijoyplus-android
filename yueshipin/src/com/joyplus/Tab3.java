@@ -134,9 +134,8 @@ public class Tab3 extends TabActivity {
 					aq.id(R.id.textView4).text(
 							json.getString("nickname").trim());
 					aq.id(R.id.textView5).gone();
-					String temp = json.getString("pic_url").trim();
-					aq.id(R.id.imageView4).image(
-							json.getString("pic_url").trim(), true, true, 0,
+					String temp = json.getString("pic_url");
+					aq.id(R.id.imageView4).image(json.getString("pic_url").trim(), true, true, 0,
 							R.drawable.default_header);
 				} else {
 					aq.id(R.id.textView5)

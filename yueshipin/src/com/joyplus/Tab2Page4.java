@@ -14,8 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab2Page4ListAdapter;
 import com.joyplus.Adapters.Tab2Page4ListData;
 import com.joyplus.Service.Return.ReturnTops;
+import com.joyplus.Tab2Page1.RefreshDataAsynTask;
 import com.joyplus.widget.MyListView;
-import com.joyplus.widget.MyListView.OnRefreshListener;
 import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
@@ -31,7 +31,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 public class Tab2Page4 extends Activity implements
-		android.widget.AdapterView.OnItemClickListener {
+		android.widget.AdapterView.OnItemClickListener,MyListView.IOnRefreshListener  {
 	private String TAG = "Tab2Page4";
 	private AQuery aq;
 	private App app;
@@ -41,6 +41,8 @@ public class Tab2Page4 extends Activity implements
 	private ArrayList dataStruct;
 	private MyListView ItemsListView;
 	private Tab2Page4ListAdapter Tab2Page4Adapter;
+	private RefreshDataAsynTask mRefreshAsynTask;
+	
 	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,35 +53,29 @@ public class Tab2Page4 extends Activity implements
 		mContext = this;
 		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
-		
-		ItemsListView.setonRefreshListener(new OnRefreshListener() {
-			public void onRefresh() {
-
-				new GetDataTask().execute();
-
-				GetServiceData();
-			}
-		});
+		ItemsListView.setOnRefreshListener(this);
 		CheckSaveData();
 	}
 
-	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
+	class RefreshDataAsynTask extends AsyncTask<Void , Void, Void>
+	{
 
 		@Override
-		protected String[] doInBackground(Void... params) {
-			// Simulates a background job.
+		protected Void doInBackground(Void... arg0) {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
-				;
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			GetServiceData();
 			return null;
 		}
 
 		@Override
-		protected void onPostExecute(String[] result) {
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
 			ItemsListView.onRefreshComplete();
-			super.onPostExecute(result);
 		}
 	}
 
@@ -285,5 +281,12 @@ public class Tab2Page4 extends Activity implements
 			aq.ajax(cb);
 		}
 
+	}
+
+	@Override
+	public void OnRefresh() {
+		// TODO Auto-generated method stub
+		mRefreshAsynTask = new RefreshDataAsynTask();
+		mRefreshAsynTask.execute();
 	}
 }

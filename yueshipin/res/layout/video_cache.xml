@@ -44,6 +44,7 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="视频下载"
+                android:textColor="#EAE7E0"
                 android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </LinearLayout>

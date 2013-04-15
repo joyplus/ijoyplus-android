@@ -54,22 +54,6 @@ public class InitActivity extends Activity {
 
 		}.execute();
 	}
-
-//	private Handler uiHandler = new Handler() {
-//		@Override
-//		public void handleMessage(Message msg) {
-//			mPD.dismiss();
-//			Intent src = getIntent();
-//			Intent i = new Intent();
-//			i.setClassName(src.getStringExtra("package"), src.getStringExtra("className"));
-//			i.setData(src.getData());
-//			i.putExtras(src);
-//			i.putExtra(FROM_ME, true);
-//			startActivity(i);
-//
-//			finish();
-//		}
-//	};
 	
 	private static class UIHandler extends Handler {
 		private WeakReference<Context> mContext;
@@ -82,7 +66,6 @@ public class InitActivity extends Activity {
 			InitActivity ctx = (InitActivity) mContext.get();
 			switch (msg.what) {
 			case 0:
-//				ctx.mPD.dismiss();
 				Intent src = ctx.getIntent();
 				Intent i = new Intent();
 				i.setClassName(src.getStringExtra("package"), src.getStringExtra("className"));

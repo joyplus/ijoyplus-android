@@ -14,11 +14,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
+//import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ListView;
+//import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AbsListView.OnScrollListener;
+//import android.widget.AbsListView.OnScrollListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -29,8 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab2Page3ListAdapter;
 import com.joyplus.Adapters.Tab2Page3ListData;
 import com.joyplus.Service.Return.ReturnTops;
-import com.joyplus.widget.MyListView;
-import com.joyplus.widget.MyListView.OnRefreshListener;
+//import com.joyplus.widget.MyListView;
+//import com.joyplus.widget.MyListView.OnRefreshListener;
 import com.joyplus.widget.RefreshListView;
 
 //,RefreshListView.IOnLoadMoreListener
