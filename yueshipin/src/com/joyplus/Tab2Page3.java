@@ -29,8 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab2Page3ListAdapter;
 import com.joyplus.Adapters.Tab2Page3ListData;
 import com.joyplus.Service.Return.ReturnTops;
-import com.joyplus.widget.MyListView;
-import com.joyplus.widget.MyListView.OnRefreshListener;
+//import com.joyplus.widget.MyListView;
+//import com.joyplus.widget.MyListView.OnRefreshListener;
 import com.joyplus.widget.RefreshListView;
 
 //,RefreshListView.IOnLoadMoreListener

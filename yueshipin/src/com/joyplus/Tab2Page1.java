@@ -31,7 +31,7 @@ import com.joyplus.Adapters.Tab2Page1ListAdapter;
 import com.joyplus.Adapters.Tab2Page1ListData;
 import com.joyplus.Service.Return.ReturnTops;
 import com.joyplus.widget.MyListView;
-import com.joyplus.widget.MyListView.OnRefreshListener;
+//import com.joyplus.widget.MyListView.OnRefreshListener;
 
 public class Tab2Page1 extends Activity implements
 		android.widget.AdapterView.OnItemClickListener{
@@ -57,14 +57,14 @@ public class Tab2Page1 extends Activity implements
 		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
 		
-		ItemsListView.setonRefreshListener(new OnRefreshListener() {
-			public void onRefresh() {
-
-				new GetDataTask().execute();
-
-				GetServiceData();
-			}
-		});
+//		ItemsListView.setonRefreshListener(new OnRefreshListener() {
+//			public void onRefresh() {
+//
+//				new GetDataTask().execute();
+//
+//				GetServiceData();
+//			}
+//		});
 		CheckSaveData();
 	}
 

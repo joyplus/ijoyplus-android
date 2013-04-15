@@ -31,10 +31,12 @@ import com.joyplus.Adapters.Tab2Page2ListAdapter;
 import com.joyplus.Adapters.Tab2Page2ListData;
 import com.joyplus.Service.Return.ReturnTops;
 import com.joyplus.widget.MyListView;
-import com.joyplus.widget.MyListView.OnRefreshListener;
+import com.joyplus.widget.MyListView.IOnRefreshListener;
+//import com.joyplus.widget.MyListView.OnRefreshListener;
+import com.joyplus.widget.RefreshListView;
 
 public class Tab2Page2 extends Activity implements
-		android.widget.AdapterView.OnItemClickListener {
+		android.widget.AdapterView.OnItemClickListener,RefreshListView.IOnRefreshListener {
 	private String TAG = "Tab2Page2";
 	protected AQuery aq;
 	private App app;
@@ -58,13 +60,7 @@ public class Tab2Page2 extends Activity implements
 		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
 		ItemsListView.setOnItemClickListener(this);
-		ItemsListView.setonRefreshListener(new OnRefreshListener() {
-			public void onRefresh() {
-
-				new GetDataTask().execute();
-
-				GetServiceData();
-		}});
+//		ItemsListView.setOnRefreshListener(this);
 		CheckSaveData();
 	}
 
@@ -316,5 +312,11 @@ public class Tab2Page2 extends Activity implements
 		}
 
 
+	}
+
+	@Override
+	public void OnRefresh() {
+		// TODO Auto-generated method stub
+		
 	}
 }
