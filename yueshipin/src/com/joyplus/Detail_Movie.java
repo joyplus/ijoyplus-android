@@ -254,7 +254,8 @@ public class Detail_Movie extends Activity {
 			aq.id(R.id.textView11).text(
 					"    " + m_ReturnProgramView.movie.summary);
 			if (m_ReturnProgramView.movie.episodes != null
-					&& m_ReturnProgramView.movie.episodes[0].video_urls != null
+					&& m_ReturnProgramView.movie.episodes[0].video_urls != null &&
+					m_ReturnProgramView.movie.episodes[0].video_urls.length>0 
 					&& m_ReturnProgramView.movie.episodes[0].video_urls[0].url != null)
 				PROD_URI = m_ReturnProgramView.movie.episodes[0].video_urls[0].url;
 			videoSourceSort(0);

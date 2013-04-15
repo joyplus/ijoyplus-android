@@ -247,12 +247,13 @@ public class Video_Cache extends Activity {
 					public void onClick(DialogInterface dialog, int which) {
 						// 删除数据库数据,从新显示
 						DownloadInfo info = data.get(item);
+						//调用暂停
 						tempdata = Dao.getInstance(Video_Cache.this)
 								.getInfosOfProd_id(info.getProd_id());
 						for (int i = 0; i < tempdata.size(); i++) {
 							if (App.downloaders.get(Constant.PATH_VIDEO
 									+ tempdata.get(i).getProd_id() + "_"
-									+ tempdata.get(i) + ".mp4") != null) {
+									+ tempdata.get(i).getMy_index() + ".mp4") != null) {
 								App.downloaders.get(
 										Constant.PATH_VIDEO
 												+ tempdata.get(i).getProd_id()

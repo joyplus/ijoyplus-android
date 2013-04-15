@@ -222,8 +222,8 @@ public class Downloader {
 								prod_id, my_index);
 						return;
 					}
-//					Log.i("Downloader:compeleteSize",Integer.toString(compeleteSize));
-//					Log.i("Downloader:fileSize", Integer.toString(fileSize));
+					Log.i("Downloader:compeleteSize",Integer.toString(compeleteSize));
+					Log.i("Downloader:fileSize", Integer.toString(fileSize));
 				}
 			} catch (Exception e) {
 				state = STOP;

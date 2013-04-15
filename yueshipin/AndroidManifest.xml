@@ -73,7 +73,8 @@
         <activity
             android:name=".Search"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar"
+             >
         </activity>
         <activity
             android:name=".Setting"
