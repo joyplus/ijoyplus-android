@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
     <ProgressBar
         android:id="@+id/progress"
@@ -70,39 +70,119 @@
         </LinearLayout>
     </LinearLayout>
 
-    <RelativeLayout
+   <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        
-        android:orientation="vertical"
-        android:layout_marginTop="50dp"
-        >
-        <!-- android:layout_below="@id/LayoutTitle" -->
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignParentTop="true" >
-        </android.support.v4.view.ViewPager>
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab2_10_bg"
+        android:orientation="horizontal" >
 
-        <com.joyplus.CirclePageIndicator
-            android:id="@+id/indicator"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="6dp"
-            android:alpha="128"
-            android:background="@drawable/tab2_mark0"
-            android:paddingBottom="10dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="7dp"
-            android:paddingTop="10dp"
-            app:fillColor="#FF1982CA"
-            app:pageColor="#88F8F8F8"
-            app:radius="5dp"
-            app:strokeColor="#FFEAEAEA"
-            app:strokeWidth="1dp"/>
-    </RelativeLayout>
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center" >
 
-</RelativeLayout>
+            <ImageView
+                android:id="@+id/movie_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tab2_10_s_icon"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:text="电影悦榜"
+                android:textColor="@color/grey"
+                android:textSize="15.0dip" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center" >
+
+            <ImageView
+                android:id="@+id/tv_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tab2_10_s_icon"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:text="电视剧悦榜"
+                android:textColor="@color/grey"
+                android:textSize="15.0dip" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center" >
+
+            <ImageView
+                android:id="@+id/animation_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tab2_10_s_icon"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/text3"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:text="动漫悦榜"
+                android:textColor="@color/grey"
+                android:textSize="15.0dip" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center" >
+
+            <ImageView
+                android:id="@+id/show_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tab2_10_s_icon"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/text4"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:text="综艺悦榜"
+                android:textColor="@color/grey"
+                android:textSize="15.0dip" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/cursor"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="matrix"
+        android:src="@drawable/tab2_10_s" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vPager"
+        android:layout_width="wrap_content"
+        android:layout_height="0dip"
+        android:layout_gravity="center"
+        android:layout_weight="1.0"
+        android:flipInterval="30"
+        android:persistentDrawingCache="animation" />
+</LinearLayout>

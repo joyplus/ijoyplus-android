@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="144dp"
+    android:paddingTop="5.0dip">
+
+    <ImageView
+        android:id="@+id/video_preview_bg"
+        android:layout_width="92dp"
+        android:layout_height="125dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="11dip"
+        android:scaleType="centerInside"
+        android:src="@drawable/tab1_moviecard"/>
+
+    <ImageView
+        android:id="@+id/video_preview_img"
+        android:layout_width="74dp"
+        android:layout_height="111dp"
+        android:layout_alignLeft="@id/video_preview_bg"
+        android:layout_alignTop="@id/video_preview_bg"
+        android:layout_marginLeft="9dip"
+        android:layout_marginTop="3dp"
+        android:scaleType="fitXY"/>
+
+    <TextView
+        android:id="@+id/txt_video_caption"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@id/video_preview_bg"
+        android:layout_marginLeft="125dp"
+        android:layout_marginTop="10dp"
+       android:ellipsize="end"
+        android:singleLine="true"
+        android:text="444444"
+        android:textColor="#444444"
+        android:textSize="18dip"/>
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/txt_video_caption"
+        android:layout_marginLeft="145dp"
+        android:layout_marginTop="11dp"
+        android:src="@drawable/tab2_tv_01"/>
+
+    <TextView
+        android:id="@+id/txt_1"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView1"
+        android:layout_marginLeft="11dp"
+        android:layout_toRightOf="@+id/imageView1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="9f9f9f"
+        android:textColor="#9f9f9f"
+        android:textSize="13dip"/>
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/imageView1"
+        android:layout_below="@id/imageView1"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/tab2_tv_02"/>
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView2"
+        android:layout_marginLeft="11dp"
+        android:layout_toRightOf="@+id/imageView2"
+       android:ellipsize="end"
+        android:singleLine="true"
+        android:text="9f9f9f"
+        android:textColor="#9f9f9f"
+        android:textSize="13dip"/>
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/imageView1"
+        android:layout_below="@id/imageView2"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/tab2_tv_03"/>
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView3"
+        android:layout_marginLeft="11dp"
+        android:layout_toRightOf="@+id/imageView3"
+       android:ellipsize="end"
+        android:singleLine="true"
+        android:text="9f9f9f"
+        android:textColor="#9f9f9f"
+        android:textSize="13dip"/>
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/video_preview_img"
+        android:layout_alignLeft="@+id/TextView02"
+       android:ellipsize="end"
+        android:singleLine="true"
+        android:text="• • •"
+        android:textColor="#9f9f9f"
+        android:textSize="13dip"/>
+
+</RelativeLayout>

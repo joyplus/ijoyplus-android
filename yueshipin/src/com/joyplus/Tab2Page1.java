@@ -53,7 +53,6 @@ public class Tab2Page1 extends Activity implements
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		mContext = this;
-		// »ñÈ¡listview¶ÔÏó
 		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
 		
@@ -89,15 +88,7 @@ public class Tab2Page1 extends Activity implements
 		}
 	}
 
-	public void OnClickTab1TopLeft(View v) {
-		Intent i = new Intent(this, Search.class);
-		startActivity(i);
-	}
-
-	public void OnClickTab1TopRight(View v) {
-		Intent i = new Intent(this, Setting.class);
-		startActivity(i);
-	}
+	
 
 	@Override
 	protected void onDestroy() {

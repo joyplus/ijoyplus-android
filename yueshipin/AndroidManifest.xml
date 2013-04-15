@@ -126,6 +126,11 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
+            android:name=".Tab2Page4"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
             android:name=".Tab3"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
