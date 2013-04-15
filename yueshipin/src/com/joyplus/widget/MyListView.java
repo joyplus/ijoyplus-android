@@ -108,7 +108,7 @@ public class MyListView extends ListView implements OnScrollListener, OnClickLis
 	{
 		initHeadView(context);
 		
-		initLoadMoreView(context);
+//		initLoadMoreView(context);//去掉尾部
 		
 		setOnScrollListener(this);
 	}
