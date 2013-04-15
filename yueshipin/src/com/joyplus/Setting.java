@@ -215,46 +215,31 @@ public class Setting extends Activity {
 	//第三方播放器
 	public void OnClickSettingPlayer(View v)
 	{
-		if(app.GetServiceData("player_select")==null)
+	
+		if(app.GetServiceData("player_select")!=null)
 		{
-			LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-			final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
-					R.layout.player_select, null, true);
-			popup_player_select = new PopupWindow(menuView,
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
-			Button default_btn = (Button) menuView.findViewById(R.id.neizhibtn);
-			default_btn.setOnClickListener(new Button.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					app.SaveServiceData("player_select", "default");
-					popup_player_select.dismiss();
-				}
-
-			});
-			Button third_btn = (Button) menuView
-					.findViewById(R.id.disanfangbtn);
-			third_btn.setOnClickListener(new Button.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					app.SaveServiceData("player_select", "third");
-					Intent it = new Intent(Intent.ACTION_VIEW);
-					it.setType("video/*");
-					startActivity(it);
-					popup_player_select.dismiss();
-				}
-			});
-			popup_player_select.setBackgroundDrawable(new BitmapDrawable());
-			popup_player_select.setAnimationStyle(R.style.PopupAnimation);
-			popup_player_select.showAtLocation(Setting.this.findViewById(R.id.parent),Gravity.CENTER | Gravity.CENTER, 0, 40);
-			popup_player_select.update();
+			if(app.GetServiceData("player_select").equalsIgnoreCase("third"))
+			{
+				app.SaveServiceData("player_select","default");
+				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
+			}
+			else if(app.GetServiceData("player_select").equalsIgnoreCase("default"))
+			{
+				app.SaveServiceData("player_select","third");
+				aq.id(R.id.checkBox2).getCheckBox().setChecked(true);
+			}
 		}
-		else
+		if(app.GetServiceData("player_select")!=null)
 		{
-			//改变player_select的值
+			if(app.GetServiceData("player_select").equalsIgnoreCase("third"))
+			{
+				aq.id(R.id.checkBox2).getCheckBox().setChecked(true);
+			}
+			else
+			{
+				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
+			}
 		}
-		
 	}
 	
 	public void OnClickClearMemery(View v) {
