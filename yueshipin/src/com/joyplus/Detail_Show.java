@@ -464,13 +464,14 @@ public class Detail_Show extends Activity {
 				InitData();
 				aq.id(R.id.ProgressText).gone();
 				aq.id(R.id.scrollView1).visible();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData();
-					}
-				}, 2000);
+				GetServiceData();
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						GetServiceData();
+//					}
+//				}, 2000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block

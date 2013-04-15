@@ -566,13 +566,14 @@ public class Detail_TV extends Activity {
 				InitData();
 				aq.id(R.id.ProgressText).gone();
 				aq.id(R.id.scrollView1).visible();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData();
-					}
-				}, 2000);
+				GetServiceData();
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						GetServiceData();
+//					}
+//				}, 2000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
@@ -1419,7 +1420,7 @@ public class Detail_TV extends Activity {
 	private ViewGroup OpenDownloadPapup() {
 		// TODO Auto-generated method stub
 		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-		final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+		ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
 				R.layout.download_tv, null, true);
 		Button download_prevbtn = (Button) menuView
 				.findViewById(R.id.download_prevbtn);
