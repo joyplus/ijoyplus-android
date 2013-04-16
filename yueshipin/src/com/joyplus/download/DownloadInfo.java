@@ -12,8 +12,10 @@ public class DownloadInfo {
 	private String urlposter;//海报
 	private String my_name;
 	private String download_state;
+	private String file_path;
 	private String localfile;//存放视频路径
-	public DownloadInfo(int compeleteSize,int fileSize,String prod_id,String my_index,String url,String urlposter,String my_name,String download_state)
+	
+	public DownloadInfo(int compeleteSize,int fileSize,String prod_id,String my_index,String url,String urlposter,String my_name,String download_state,String file_path)
 	{
 		this.compeleteSize = compeleteSize;
 		this.fileSize = fileSize;
@@ -23,6 +25,7 @@ public class DownloadInfo {
 		this.urlposter = urlposter;
 		this.my_name = my_name;
 		this.download_state = download_state;
+		this.file_path = file_path;
 	}
 	
 	public DownloadInfo() {
@@ -96,14 +99,21 @@ public class DownloadInfo {
 		return localfile;
 	}
 	
+	public void setFilePath(String file_path)
+	{
+		this.file_path = file_path;
+	}
+	
+	public String getFilePath()
+	{
+		return file_path;
+	}
+	
 	@Override
 	public String toString() {
-		/*return "DownloadInfo [threadId=" + threadId + ", startPos=" + startPos
-				+ ", endPos=" + endPos + ", compeleteSize=" + compeleteSize
-				+ "]";*/
 		return "DownloadInfo [compeleteSize=" + compeleteSize + ", fileSize=" + fileSize
 				+ ", prod_id=" + prod_id + ",index=" + my_index+",url=" + url+
 				",urlposter="+urlposter+",my_name="+my_name+",download_state="+download_state
-				+ "]";
+				+",file_path="+file_path+ "]";
 	}
 }

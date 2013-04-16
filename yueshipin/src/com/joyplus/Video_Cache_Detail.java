@@ -262,6 +262,16 @@ public class Video_Cache_Detail extends Activity {
 		// TODO Auto-generated method stub
 		data = Dao.getInstance(Video_Cache_Detail.this).getInfosOfProd_id(
 				prod_id);
+//		if (isnotChecked) {
+//			for (int i = 0; i < data.size(); i++) {
+//				File file = new File(data.get(i).getFilePath());
+//				if (!file.exists()) {
+//					data.remove(i);
+//					Dao.getInstance(Video_Cache_Detail.this).delete(data.get(i).getProd_id());
+//				}
+//			}
+//			isnotChecked = false;
+//		}
 		adapter.refresh(data);
 		if (data.isEmpty()) {
 			aq.id(R.id.none_cache).visible();

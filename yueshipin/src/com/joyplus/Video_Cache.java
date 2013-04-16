@@ -283,12 +283,11 @@ public class Video_Cache extends Activity {
 		data = Dao.getInstance(Video_Cache.this).getDownloadInfosGroup();
 		if (isnotChecked) {
 			for (int i = 0; i < data.size(); i++) {
-				String localfile = Constant.PATH_VIDEO
-						+ data.get(i).getProd_id() + "_"
-						+ data.get(i).getMy_index() + ".mp4";
-				File file = new File(localfile);
+				File file = new File(data.get(i).getFilePath());
 				if (!file.exists()) {
-					data.remove(i);
+					//直接删除更彻底
+					Dao.getInstance(Video_Cache.this).updataInfoState("remove", data.get(i).getProd_id(),
+							data.get(i).getMy_index());
 				}
 			}
 			isnotChecked = false;

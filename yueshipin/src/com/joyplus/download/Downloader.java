@@ -25,6 +25,7 @@ public class Downloader {
 	private String urlposter;// 下载文件的图片
 	private String my_name;// 下载文件的名字
 	private String download_state;// 下载文件的大小
+	private String file_path;
 	private Context context;
 	private List<DownloadInfo> infos;// 存放下载信息类的集合
 	private static final int INIT = 1;// 定义三种下载的状态：初始化状态，正在下载状态，暂停状态
@@ -58,10 +59,11 @@ public class Downloader {
 		if (isFirst(prod_id)) {
 			Log.v("TAG", "isFirst");
 			init();
+			file_path = localfile;
 			infos = new ArrayList<DownloadInfo>();
 			DownloadInfo info = new DownloadInfo(compeleteSize, fileSize,
 					prod_id, my_index, urlstr, urlposter, my_name,
-					download_state);
+					download_state,file_path);
 			infos.add(info);
 			// 保存infos中的数据到数据库
 			Dao.getInstance(context).saveInfos(infos);
@@ -69,13 +71,14 @@ public class Downloader {
 		} else {
 			// 得到数据库中已有的urlstr的下载器的具体信息
 			infos = Dao.getInstance(context).getInfos(prod_id, my_index);
+			file_path = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
 			int compeleteSize = 0;
 			for (DownloadInfo info : infos) {
 				compeleteSize += info.getCompeleteSize();
 				fileSize = info.getFileSize();
 			}
 			return new DownloadInfo(compeleteSize, fileSize, prod_id, my_index,
-					urlstr, urlposter, my_name, download_state);
+					urlstr, urlposter, my_name, download_state,file_path);
 		}
 	}
 

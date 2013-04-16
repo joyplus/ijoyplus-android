@@ -112,7 +112,7 @@ public class VideoPlayerActivity extends Activity implements
 	/** 当前声音 */
 	private int mVolume = -1;
 	/** 当前亮度 */
-	private float mBrightness = -1f;
+//	private float mBrightness = -1f;
 	/** 当前缩放模式 */
 	private int mLayout = VideoView.VIDEO_LAYOUT_STRETCH;// VIDEO_LAYOUT_ZOOM;
 	private GestureDetector mGestureDetector;
@@ -468,7 +468,7 @@ public class VideoPlayerActivity extends Activity implements
 	/** 手势结束 */
 	private void endGesture() {
 		mVolume = -1;
-		mBrightness = -1f;
+//		mBrightness = -1f;
 
 		// 隐藏
 		mDismissHandler.removeMessages(0);
@@ -495,8 +495,8 @@ public class VideoPlayerActivity extends Activity implements
 
 			if (mOldX > windowWidth * 4.0 / 5)// 右边滑动
 				onVolumeSlide((mOldY - y) / windowHeight);
-			else if (mOldX < windowWidth / 5.0)// 左边滑动
-				onBrightnessSlide((mOldY - y) / windowHeight);
+//			else if (mOldX < windowWidth / 5.0)// 左边滑动
+//				onBrightnessSlide((mOldY - y) / windowHeight);
 
 			return super.onScroll(e1, e2, distanceX, distanceY);
 		}
@@ -548,30 +548,30 @@ public class VideoPlayerActivity extends Activity implements
 	 * 
 	 * @param percent
 	 */
-	private void onBrightnessSlide(float percent) {
-		if (mBrightness < 0) {
-			mBrightness = getWindow().getAttributes().screenBrightness;
-			if (mBrightness <= 0.00f)
-				mBrightness = 0.50f;
-			if (mBrightness < 0.01f)
-				mBrightness = 0.01f;
-
-			// 显示
-			mOperationBg.setImageResource(R.drawable.video_brightness_bg);
-			mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
-		}
-		WindowManager.LayoutParams lpa = getWindow().getAttributes();
-		lpa.screenBrightness = mBrightness + percent;
-		if (lpa.screenBrightness > 1.0f)
-			lpa.screenBrightness = 1.0f;
-		else if (lpa.screenBrightness < 0.01f)
-			lpa.screenBrightness = 0.01f;
-		getWindow().setAttributes(lpa);
-
-		ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
-		lp.width = (int) (findViewById(R.id.operation_full).getLayoutParams().width * lpa.screenBrightness);
-		mOperationPercent.setLayoutParams(lp);
-	}
+//	private void onBrightnessSlide(float percent) {
+//		if (mBrightness < 0) {
+//			mBrightness = getWindow().getAttributes().screenBrightness;
+//			if (mBrightness <= 0.00f)
+//				mBrightness = 0.50f;
+//			if (mBrightness < 0.01f)
+//				mBrightness = 0.01f;
+//
+//			// 显示
+//			mOperationBg.setImageResource(R.drawable.video_brightness_bg);
+//			mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
+//		}
+//		WindowManager.LayoutParams lpa = getWindow().getAttributes();
+//		lpa.screenBrightness = mBrightness + percent;
+//		if (lpa.screenBrightness > 1.0f)
+//			lpa.screenBrightness = 1.0f;
+//		else if (lpa.screenBrightness < 0.01f)
+//			lpa.screenBrightness = 0.01f;
+//		getWindow().setAttributes(lpa);
+//
+//		ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
+//		lp.width = (int) (findViewById(R.id.operation_full).getLayoutParams().width * lpa.screenBrightness);
+//		mOperationPercent.setLayoutParams(lp);
+//	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {

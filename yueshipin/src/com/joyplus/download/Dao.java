@@ -94,11 +94,11 @@ public class Dao {
 		SQLiteDatabase database = getConnection();
 		try {
 			for (DownloadInfo info : infos) {
-				String sql = "insert into download_info(compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state) values (?,?,?,?,?,?,?,?)";
+				String sql = "insert into download_info(compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state,file_path) values (?,?,?,?,?,?,?,?,?)";
 				Object[] bindArgs = { info.getCompeleteSize(),
 						info.getFileSize(), info.getProd_id(), info.getMy_index(),
 						info.getUrl(), info.getUrlposter(), info.getMy_name(),
-						info.getDownload_state()};
+						info.getDownload_state(),info.getFilePath()};
 				database.execSQL(sql, bindArgs);
 			}
 		} catch (Exception e) {
@@ -116,10 +116,10 @@ public class Dao {
 	public synchronized void InsertOneInfo(DownloadInfo info) {
 		SQLiteDatabase database = getConnection();
 		try {
-			String sql = "insert into download_info(compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state) values (?,?,?,?,?,?,?,?)";
+			String sql = "insert into download_info(compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state,file_path) values (?,?,?,?,?,?,?,?,?)";
 			Object[] bindArgs = { info.getCompeleteSize(), info.getFileSize(),
 					info.getProd_id(), info.getMy_index(), info.getUrl(),
-					info.getUrlposter(), info.getMy_name(), info.getDownload_state() };
+					info.getUrlposter(), info.getMy_name(), info.getDownload_state() ,info.getFilePath()};
 			database.execSQL(sql, bindArgs);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -139,14 +139,14 @@ public class Dao {
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
-			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info where prod_id=? and my_index=?";
+			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state,file_path from download_info where prod_id=? and my_index=?";
 			cursor = database.rawQuery(sql, new String[] { prod_id, my_index });
 			while (cursor.moveToNext()) {
 				DownloadInfo info = new DownloadInfo(cursor.getInt(0),
 						cursor.getInt(1), cursor.getString(2),
 						cursor.getString(3), cursor.getString(4),
 						cursor.getString(5), cursor.getString(6),
-						cursor.getString(7));
+						cursor.getString(7), cursor.getString(8));
 				list.add(info);
 			}
 		} catch (Exception e) {
@@ -167,13 +167,14 @@ public class Dao {
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
-			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info where prod_id=? and my_index=?";
+			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state,file_path from download_info where prod_id=? and my_index=?";
 			cursor = database.rawQuery(sql, new String[] { prod_id, my_index });
 			while (cursor.moveToNext()) {
 				info = new DownloadInfo(cursor.getInt(0), cursor.getInt(1),
 						cursor.getString(2), cursor.getString(3),
 						cursor.getString(4), cursor.getString(5),
-						cursor.getString(6), cursor.getString(7));
+						cursor.getString(6), cursor.getString(7),
+						cursor.getString(8));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -196,13 +197,14 @@ public class Dao {
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
-			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info where download_state=?";
+			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state,file_path from download_info where download_state=?";
 			cursor = database.rawQuery(sql, new String[] { download_state });
 			while (cursor.moveToNext()) {
 				info = new DownloadInfo(cursor.getInt(0), cursor.getInt(1),
 						cursor.getString(2), cursor.getString(3),
 						cursor.getString(4), cursor.getString(5),
-						cursor.getString(6), cursor.getString(7));
+						cursor.getString(6), cursor.getString(7),
+						cursor.getString(8));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -225,14 +227,14 @@ public class Dao {
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
-			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info";
+			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state,file_path from download_info";
 			cursor = database.rawQuery(sql, null);
 			while (cursor.moveToNext()) {
 				DownloadInfo info = new DownloadInfo(cursor.getInt(0),
 						cursor.getInt(1), cursor.getString(2),
 						cursor.getString(3), cursor.getString(4),
 						cursor.getString(5), cursor.getString(6),
-						cursor.getString(7));
+						cursor.getString(7), cursor.getString(8));
 				list.add(info);
 			}
 		} catch (Exception e) {
@@ -254,14 +256,14 @@ public class Dao {
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
-			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info group by prod_id";
+			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state,file_path from download_info group by prod_id";
 			cursor = database.rawQuery(sql, null);
 			while (cursor.moveToNext()) {
 				DownloadInfo info = new DownloadInfo(cursor.getInt(0),
 						cursor.getInt(1), cursor.getString(2),
 						cursor.getString(3), cursor.getString(4),
 						cursor.getString(5), cursor.getString(6),
-						cursor.getString(7));
+						cursor.getString(7), cursor.getString(8));
 				list.add(info);
 			}
 		} catch (Exception e) {
@@ -283,14 +285,14 @@ public class Dao {
 		SQLiteDatabase database = getConnection();
 		Cursor cursor = null;
 		try {
-			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state from download_info where prod_id=? order by cast(my_index as int)";
+			String sql = "select compeleteSize,fileSize, prod_id,my_index,url,urlposter,my_name,download_state,file_path from download_info where prod_id=? order by cast(my_index as int)";
 			cursor = database.rawQuery(sql, new String[] { prod_id });
 			while (cursor.moveToNext()) {
 				DownloadInfo info = new DownloadInfo(cursor.getInt(0),
 						cursor.getInt(1), cursor.getString(2),
 						cursor.getString(3), cursor.getString(4),
 						cursor.getString(5), cursor.getString(6),
-						cursor.getString(7));
+						cursor.getString(7), cursor.getString(8));
 				list.add(info);
 			}
 		} catch (Exception e) {
