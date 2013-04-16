@@ -16,16 +16,18 @@ public class DBHelper extends SQLiteOpenHelper {
 	/**
 	 * 在download.db数据库下创建一个download_info表存储下载信息
 	 */
+	//create table if not exits 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("create table download_info(_id integer PRIMARY KEY AUTOINCREMENT,  "
+		db.execSQL("create table if not exists download_info(_id integer PRIMARY KEY AUTOINCREMENT,  "
 				+ "compeleteSize integer, fileSize integer, prod_id char, my_index char, url char,urlposter char,my_name char,download_state char,file_path char)");
-		db.execSQL("create table video_cache(_id integer PRIMARY KEY AUTOINCREMENT,  "
+		db.execSQL("create table if not exists video_cache(_id integer PRIMARY KEY AUTOINCREMENT,  "
 				+ "prod_id char, prod_value char,prod_type char,create_date TimeStamp NOT NULL DEFAULT (datetime('now','localtime')),prod_subname char,last_playtime)");
-		db.execSQL("create table play_record(_id integer PRIMARY KEY AUTOINCREMENT,  "
+		db.execSQL("create table if not exists play_record(_id integer PRIMARY KEY AUTOINCREMENT,  "
 				+ "prod_id char,prod_subname char,create_date TimeStamp NOT NULL DEFAULT (datetime('now','localtime')),last_playtime)");
 		db.execSQL("create table search_record(_id integer PRIMARY KEY AUTOINCREMENT,  "
 				+ "search_word char,create_date TimeStamp NOT NULL DEFAULT (datetime('now','localtime')))");
+		db.execSQL("if exists(select * from syscolumns where id=object_id('download_info') and name='comments') alter table download_info add comments char");
 	}
 
 	@Override

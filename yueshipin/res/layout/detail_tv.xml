@@ -578,7 +578,7 @@
                         android:paddingLeft="5dp"
                         android:singleLine="true"
                         android:text="1234"
-                        android:textColor="@color/black"
+                        android:textColor="#4f4f4f"
                         android:textSize="15sp" />
 
                     <TextView
@@ -588,6 +588,7 @@
                         android:maxLines="5"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
+                        
                         android:text="1234" />
 
                     <TextView
@@ -620,7 +621,7 @@
                         android:paddingLeft="5dp"
                         android:singleLine="true"
                         android:text="1234"
-                        android:textColor="@color/black"
+                        android:textColor="#4f4f4f"
                         android:textSize="15sp" />
 
                     <TextView
@@ -630,6 +631,7 @@
                         android:maxLines="5"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
+                        
                         android:text="1234" />
 
                     <TextView
@@ -662,7 +664,7 @@
                         android:paddingLeft="5dp"
                         android:singleLine="true"
                         android:text="1234"
-                        android:textColor="@color/black"
+                        android:textColor="#4f4f4f"
                         android:textSize="15sp" />
 
                     <TextView
@@ -672,6 +674,7 @@
                         android:maxLines="5"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
+                        
                         android:text="1234" />
 
                     <TextView
