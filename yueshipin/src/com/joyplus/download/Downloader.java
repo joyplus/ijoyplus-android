@@ -69,7 +69,6 @@ public class Downloader {
 		} else {
 			// 得到数据库中已有的urlstr的下载器的具体信息
 			infos = Dao.getInstance(context).getInfos(prod_id, my_index);
-//			Log.v("TAG", "not isFirst size=" + infos.size());
 			int compeleteSize = 0;
 			for (DownloadInfo info : infos) {
 				compeleteSize += info.getCompeleteSize();

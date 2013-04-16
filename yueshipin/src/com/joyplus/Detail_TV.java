@@ -194,8 +194,6 @@ public class Detail_TV extends Activity {
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
 		InitTVButtom();
-//		if (prod_id != null)
-//			CheckSaveData();
 		if (app.GetServiceData("new_guider_3") == null) {
 			aq.id(R.id.new_guider_3).visible();
 		}
@@ -498,10 +496,10 @@ public class Detail_TV extends Activity {
 				aq.id(R.id.button20).clickable(false);
 			}
 		}
-		else
-		{
-			GetServiceData();
-		}
+//		else
+//		{
+//			GetServiceData();
+//		}
 	}
 
 	public void OnClickImageView(View v) {
@@ -571,13 +569,6 @@ public class Detail_TV extends Activity {
 				aq.id(R.id.ProgressText).gone();
 				aq.id(R.id.scrollView1).visible();
 				GetServiceData();
-//				new Handler().postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						// execute the task
-//						GetServiceData();
-//					}
-//				}, 2000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
