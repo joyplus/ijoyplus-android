@@ -296,9 +296,10 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		}
 		if(isLastisNext == 1)
 		{
-			for(int i = 0;i<dataStruct.size();i++)
+			//考虑会不会越界
+			for(int j=dataStruct.size()-1;j>-1;j--)
 			{
-				dataStruct.remove(i);
+				dataStruct.remove(j);
 			}
 			dataStruct.clear();
 		}

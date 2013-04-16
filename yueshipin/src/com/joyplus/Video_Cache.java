@@ -300,8 +300,8 @@ public class Video_Cache extends Activity {
 			}
 			isnotChecked = false;
 		}
-		int k = data.size();
-		for(int j = 0;j<data.size();j++)
+		
+		for(int j = data.size()-1;j>-1;j--)
 		{
 			if(data.get(j).getDownload_state().equalsIgnoreCase("remove"))
 			{
