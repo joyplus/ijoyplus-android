@@ -755,7 +755,17 @@ public class Detail_Movie extends Activity {
 							bundle.putLong("current_time", 0);
 						}
 						intent.putExtras(bundle);
-						startActivity(intent);
+						if(player_select.equalsIgnoreCase("third"))
+						{
+							Intent it = new Intent(Intent.ACTION_VIEW);
+							Uri uri = Uri.parse(PROD_SOURCE);
+							it.setDataAndType(uri, "video/*");
+							startActivity(it);
+						}
+						else
+						{
+							startActivity(intent);
+						}
 				}
 			}
 		}

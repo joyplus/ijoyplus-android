@@ -36,7 +36,6 @@ public class Webview_Play extends Activity {
 	private long current_time;
 	public Handler fHandler;
 	private ImageView imageview;
-	private String player_select;
 	private App app;
 	private CurrentPlayData mCurrentPlayData;
 	AlphaAnimation mAnimation = null;
@@ -103,7 +102,6 @@ public class Webview_Play extends Activity {
 				return true;
 			}
 		});
-		player_select = app.GetServiceData("player_select");
 		newHandler();
 	}
 
@@ -111,24 +109,14 @@ public class Webview_Play extends Activity {
 		new Handler().postDelayed(new Runnable() {
 
 			public void run() {
-				if (player_select != null) {
 					if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-						if (player_select.equalsIgnoreCase("default")) {
 							aq.id(R.id.image_view).visible();
 							mAnimation = new AlphaAnimation(0f, 1.0f);
 							mAnimation.setDuration(500);
 							imageview.startAnimation(mAnimation);
 							mCurrentPlayData.CurrentIndex = CurrentIndex;
 							CallVideoPlayActivity(PROD_SOURCE, name);
-						} else {
-							Intent it = new Intent(Intent.ACTION_VIEW);
-							Uri uri = Uri.parse(PROD_SOURCE);
-							it.setDataAndType(uri, "video/*");
-							startActivity(it);
-							Webview_Play.this.finish();
-						}
 					}
-				}
 				aq.id(R.id.image_view).gone();
 			}
 		}, 500);

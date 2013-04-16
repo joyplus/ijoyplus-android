@@ -846,7 +846,18 @@ public class Detail_TV extends Activity {
 				bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				startActivity(intent);
+				if(player_select.equalsIgnoreCase("third"))
+				{
+					Intent it = new Intent(Intent.ACTION_VIEW);
+					Uri uri = Uri.parse(PROD_SOURCE);
+					it.setDataAndType(uri, "video/*");
+					startActivity(it);
+				}
+				else
+				{
+					startActivity(intent);
+				}
+				
 			}
 		}
 	}
@@ -1136,7 +1147,17 @@ public class Detail_TV extends Activity {
 							bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				startActivity(intent);
+				if(player_select.equalsIgnoreCase("third"))
+				{
+					Intent it = new Intent(Intent.ACTION_VIEW);
+					Uri uri = Uri.parse(PROD_SOURCE);
+					it.setDataAndType(uri, "video/*");
+					startActivity(it);
+				}
+				else
+				{
+					startActivity(intent);
+				}
 			}
 		}
 	}
