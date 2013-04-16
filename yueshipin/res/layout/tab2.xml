@@ -104,9 +104,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical"
-                android:text="电影悦榜"
+                android:text="电影"
                 android:textColor="@color/grey"
-                android:textSize="10.0sp" />
+                android:textSize="15.0sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -127,9 +127,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical"
-                android:text="电视剧悦榜"
+                android:text="电视剧"
                 android:textColor="@color/grey"
-                android:textSize="10.0sp" />
+                android:textSize="15.0sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -150,9 +150,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical"
-                android:text="动漫悦榜"
+                android:text="动漫"
                 android:textColor="@color/grey"
-                android:textSize="10.0sp" />
+                android:textSize="15.0sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -173,9 +173,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:gravity="center_vertical"
-                android:text="综艺悦榜"
+                android:text="综艺"
                 android:textColor="@color/grey"
-                android:textSize="10.0sp" />
+                android:textSize="15.0sp" />
         </LinearLayout>
          <ImageView
                 android:layout_width="wrap_content"
