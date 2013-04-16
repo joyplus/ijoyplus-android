@@ -116,13 +116,6 @@ public class DownLoadAdapter extends BaseAdapter{
 					aqtemp.id(R.id.down_pause).visible();
 					aqtemp.id(R.id.down_downing).gone();
 				}
-//				else if(info.getDownload_state().equalsIgnoreCase("remove"))
-//				{
-//					holder.resouceDownloadState.setText("日日日日");
-//					aqtemp.id(R.id.down_wait).gone();
-//					aqtemp.id(R.id.down_pause).visible();
-//					aqtemp.id(R.id.down_downing).gone();
-//				}
 				holder.resourceDownProgress.setMax(MAX);
 				if(filesize!=0)
 				{

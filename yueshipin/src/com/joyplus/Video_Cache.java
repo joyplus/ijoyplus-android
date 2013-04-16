@@ -289,8 +289,24 @@ public class Video_Cache extends Activity {
 					Dao.getInstance(Video_Cache.this).updataInfoState("remove", data.get(i).getProd_id(),
 							data.get(i).getMy_index());
 				}
+				else
+				{
+					if(data.get(i).getDownload_state().equalsIgnoreCase("remove"))
+					{
+						Dao.getInstance(Video_Cache.this).updataInfoState("pause", data.get(i).getProd_id(),
+								data.get(i).getMy_index());
+					}
+				}
 			}
 			isnotChecked = false;
+		}
+		int k = data.size();
+		for(int j = 0;j<data.size();j++)
+		{
+			if(data.get(j).getDownload_state().equalsIgnoreCase("remove"))
+			{
+				data.remove(j);
+			}
 		}
 		adapter.refresh(data);
 		if (data.isEmpty()) {
