@@ -10,11 +10,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 
 public class Before_Binding extends Activity {
 	FayeClient mClient;
@@ -24,8 +25,8 @@ public class Before_Binding extends Activity {
 	private String user_id = null;
 	App app;
 	ProgressDialog pb;
-
-	@Override
+    Handler mhandler;
+ 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
@@ -62,6 +63,7 @@ public class Before_Binding extends Activity {
 						try {
 							et.put("user_id", user_id);
 							et.put("push_type", "31");
+							et.put("tv_channel", tv_channel);
 							mClient.sendMessage(et);
 
 						} catch (JSONException e) {
@@ -87,6 +89,20 @@ public class Before_Binding extends Activity {
 
 			}
 		});
+		
+		mhandler = new Handler(){
+			
+			public void handleMessage(Message msg){
+				switch(msg.what){
+				case 1:
+					app.MyToast(Before_Binding.this, "已绑定成功");
+					break;
+				case 2:
+					app.MyToast(Before_Binding.this, "绑定失败");
+					break;
+				}
+			}
+		};
 
 	}
 
@@ -128,19 +144,26 @@ public class Before_Binding extends Activity {
 
 		@Override
 		public void messageReceived(JSONObject json) {
+			Message message = new Message();
 			String push_type = null;
+			String userid = null;
 			try {
 				push_type = (String) json.get("push_type");
+				userid = (String) json.getString("user_id");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if (push_type.equals("32")) {
-				pb.dismiss();
+			pb.dismiss();
+			if (push_type.equals("32") && userid.equals(user_id)) {
 				app.SaveServiceData("Binding_TV_Channal", macAddress);
+				message.what = 1;
+				mhandler.sendMessage(message);
 				Log.i("TVChannleListener", "messageReceived" + json.toString());
 				finish();
-
+			} else {
+				message.what = 2;
+				mhandler.sendMessage(message);
 			}
 		}
 
