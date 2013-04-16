@@ -51,7 +51,6 @@ public class Webview_Play extends Activity {
 	public Handler fHandler;
 	private ImageView imageview;
 	private String player_select;
-	private PopupWindow popup_player_select = null;
 	private App app;
 	private CurrentPlayData mCurrentPlayData;
 	AlphaAnimation mAnimation = null;
@@ -143,66 +142,6 @@ public class Webview_Play extends Activity {
 							Webview_Play.this.finish();
 						}
 					}
-				} else {
-					LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-					final ViewGroup menuView = (ViewGroup) mLayoutInflater
-							.inflate(R.layout.player_select, null, true);
-					popup_player_select = new PopupWindow(menuView,
-							LayoutParams.WRAP_CONTENT,
-							LayoutParams.WRAP_CONTENT, true);
-					Button default_btn = (Button) menuView
-							.findViewById(R.id.neizhibtn);
-					default_btn
-							.setOnClickListener(new Button.OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									// TODO Auto-generated method stub
-									player_select = "default";
-									if (PROD_SOURCE != null
-											&& PROD_SOURCE.trim().length() > 0) {
-										aq.id(R.id.image_view).visible();
-										mCurrentPlayData.CurrentIndex = CurrentIndex;
-										CallVideoPlayActivity(PROD_SOURCE, name);
-										popup_player_select.dismiss();
-									}
-									app.SaveServiceData("player_select",
-											"default");
-								}
-
-							});
-					Button third_btn = (Button) menuView
-							.findViewById(R.id.disanfangbtn);
-					third_btn.setOnClickListener(new Button.OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							// TODO Auto-generated method stub
-							player_select = "third";
-							if (PROD_SOURCE != null
-									&& PROD_SOURCE.trim().length() > 0) {
-								if (player_select.equalsIgnoreCase("third")) {
-									Intent it = new Intent(Intent.ACTION_VIEW);
-									Uri uri = Uri.parse(PROD_SOURCE);
-									it.setDataAndType(uri, "video/*");
-									startActivity(it);
-									popup_player_select.dismiss();
-									Webview_Play.this.finish();
-								}
-								app.SaveServiceData("player_select",
-										"third");
-							}
-							//app.SaveServiceData("player_select","third");
-						}
-					});
-					popup_player_select
-							.setBackgroundDrawable(new BitmapDrawable());
-					popup_player_select
-							.setAnimationStyle(R.style.PopupAnimation);
-					popup_player_select
-							.showAtLocation(Webview_Play.this
-									.findViewById(R.id.webview_layout),
-									Gravity.CENTER | Gravity.CENTER, 0, 40);
-					popup_player_select.update();
 				}
 				aq.id(R.id.image_view).gone();
 			}

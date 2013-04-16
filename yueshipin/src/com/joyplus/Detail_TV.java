@@ -95,6 +95,9 @@ public class Detail_TV extends Activity {
 	private int m_SupportNum = 0;
 	public List<DownloadInfo> data;
 	
+	private String player_select;
+	private PopupWindow popup_player_select = null;
+	
 	private PopupWindow popup_report = null;
 	private PopupWindow popupReviewDetail = null;
 	private String invalid_type = null; 
@@ -196,6 +199,7 @@ public class Detail_TV extends Activity {
 		if (app.GetServiceData("new_guider_3") == null) {
 			aq.id(R.id.new_guider_3).visible();
 		}
+		player_select = app.GetServiceData("player_select");
 	}
 
 	public void OnClickNewGuider_3(View v) {
@@ -709,6 +713,59 @@ public class Detail_TV extends Activity {
 			return;
 		}
 
+		if(player_select==null)
+		{
+			{
+				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+				final ViewGroup menuView = (ViewGroup) mLayoutInflater
+						.inflate(R.layout.player_select, null, true);
+				popup_player_select = new PopupWindow(menuView,
+						LayoutParams.WRAP_CONTENT,
+						LayoutParams.WRAP_CONTENT, true);
+				Button default_btn = (Button) menuView
+						.findViewById(R.id.neizhibtn);
+				default_btn
+						.setOnClickListener(new Button.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								player_select = "default";
+								app.SaveServiceData("player_select",
+										"default");
+								popup_player_select.dismiss();
+								StartIntentToPlayer();
+							}
+						});
+				Button third_btn = (Button) menuView
+						.findViewById(R.id.disanfangbtn);
+				third_btn.setOnClickListener(new Button.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						player_select = "third";
+						app.SaveServiceData("player_select","third");
+						popup_player_select.dismiss();
+						StartIntentToPlayer();
+						}
+				});
+				popup_player_select
+						.setBackgroundDrawable(new BitmapDrawable());
+				popup_player_select
+						.showAtLocation(Detail_TV.this
+								.findViewById(R.id.parent),
+								Gravity.CENTER | Gravity.CENTER, 0, 40);
+				popup_player_select.update();
+			}
+		}
+		else
+		{
+			StartIntentToPlayer();
+		}
+	}
+	
+	public void StartIntentToPlayer()
+	{
 		app.checkUserSelect(Detail_TV.this);
 		if (app.use2G3G) {
 			// 电视剧type为2 ，sbuname 为当前集数
@@ -780,17 +837,10 @@ public class Detail_TV extends Activity {
 							break;
 					}
 				}
-			}
-//			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-//				mCurrentPlayData.CurrentIndex = 0;
-//				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
-//			} else 
+			} 
 				if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 				SaveToServer(2, PROD_URI, 1);
 				Intent intent = new Intent(this,Webview_Play.class);
-//				intent.setAction("android.intent.action.VIEW");
-//				Uri content_url = Uri.parse(PROD_URI);
-//				intent.setData(content_url);
 				Bundle bundle = new Bundle();
 				bundle.putString("PROD_URI", PROD_URI);
 				bundle.putString("NAME", m_ReturnProgramView.tv.name);
@@ -809,7 +859,7 @@ public class Detail_TV extends Activity {
 			}
 		}
 	}
-
+	
 	// OnClickNext15
 	public void OnClickNext15(View v) {
 		String m_j = null;
@@ -951,6 +1001,60 @@ public class Detail_TV extends Activity {
 
 		final int index = Integer.parseInt(v.getTag().toString());
 
+		if(player_select==null)
+		{
+			{
+				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+				final ViewGroup menuView = (ViewGroup) mLayoutInflater
+						.inflate(R.layout.player_select, null, true);
+				popup_player_select = new PopupWindow(menuView,
+						LayoutParams.WRAP_CONTENT,
+						LayoutParams.WRAP_CONTENT, true);
+				Button default_btn = (Button) menuView
+						.findViewById(R.id.neizhibtn);
+				default_btn
+						.setOnClickListener(new Button.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								player_select = "default";
+								app.SaveServiceData("player_select",
+										"default");
+								popup_player_select.dismiss();
+								StartIntentToPlayerTv(index);
+							}
+						});
+				Button third_btn = (Button) menuView
+						.findViewById(R.id.disanfangbtn);
+				third_btn.setOnClickListener(new Button.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						player_select = "third";
+						app.SaveServiceData("player_select","third");
+						popup_player_select.dismiss();
+						StartIntentToPlayerTv(index);
+						}
+				});
+				popup_player_select
+						.setBackgroundDrawable(new BitmapDrawable());
+				popup_player_select
+						.showAtLocation(Detail_TV.this
+								.findViewById(R.id.parent),
+								Gravity.CENTER | Gravity.CENTER, 0, 40);
+				popup_player_select.update();
+			}
+		}
+		else
+		{
+			StartIntentToPlayerTv(index);
+		}
+		
+	}
+	
+	public void StartIntentToPlayerTv(int index)
+	{
 		app.checkUserSelect(Detail_TV.this);
 		if (app.use2G3G) {
 			current_index = index;
@@ -1014,26 +1118,9 @@ public class Detail_TV extends Activity {
 					}
 				}
 			}
-
-//			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-//				mCurrentPlayData.CurrentIndex = index;
-//				playrecordinfo = playrecordmanager.getPlayRecord(prod_id,
-//						Integer.toString(index + 1));
-//				current_time = 0;
-//				if (playrecordinfo != null
-//						&& playrecordinfo.getLast_playtime() != null
-//						&& playrecordinfo.getLast_playtime().length() > 0) {
-//					current_time = Long.parseLong(playrecordinfo
-//							.getLast_playtime());
-//				}
-//				CallVideoPlayActivity(PROD_SOURCE, m_ReturnProgramView.tv.name);
-//			} else 
 				if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 				SaveToServer(2, PROD_URI, index + 1);
 				Intent intent = new Intent(this,Webview_Play.class);
-//				intent.setAction("android.intent.action.VIEW");
-//				Uri content_url = Uri.parse(PROD_URI);
-//				intent.setData(content_url);
 				Bundle bundle = new Bundle();
 				bundle.putString("PROD_URI", PROD_URI);
 				bundle.putString("NAME", m_ReturnProgramView.tv.name);
@@ -1062,7 +1149,7 @@ public class Detail_TV extends Activity {
 			}
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public void videoSourceSort(int source_index) {
 		if (m_ReturnProgramView.tv.episodes[source_index].down_urls != null) {

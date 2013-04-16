@@ -95,8 +95,9 @@ public class Detail_Movie extends Activity {
 	// 播放记录变量
 	public static int REQUESTPLAYTIME = 200;
 	public static int RETURN_CURRENT_TIME = 150;
-
 	private CurrentPlayData mCurrentPlayData;
+	private String player_select;
+	private PopupWindow popup_player_select = null;
 
 	VideoCacheInfo cacheInfo;
 	VideoCacheInfo cacheInfoTemp;
@@ -143,6 +144,8 @@ public class Detail_Movie extends Activity {
 		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
 			CheckSaveData();
+		
+		player_select = app.GetServiceData("player_select");
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -664,6 +667,60 @@ public class Detail_Movie extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
+		
+		if(player_select==null)
+		{
+			{
+				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+				final ViewGroup menuView = (ViewGroup) mLayoutInflater
+						.inflate(R.layout.player_select, null, true);
+				popup_player_select = new PopupWindow(menuView,
+						LayoutParams.WRAP_CONTENT,
+						LayoutParams.WRAP_CONTENT, true);
+				Button default_btn = (Button) menuView
+						.findViewById(R.id.neizhibtn);
+				default_btn
+						.setOnClickListener(new Button.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								player_select = "default";
+								app.SaveServiceData("player_select",
+										"default");
+								popup_player_select.dismiss();
+								StartIntentToPlayer();
+							}
+						});
+				Button third_btn = (Button) menuView
+						.findViewById(R.id.disanfangbtn);
+				third_btn.setOnClickListener(new Button.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						player_select = "third";
+						app.SaveServiceData("player_select","third");
+						popup_player_select.dismiss();
+						StartIntentToPlayer();
+						}
+				});
+				popup_player_select
+						.setBackgroundDrawable(new BitmapDrawable());
+				popup_player_select
+						.showAtLocation(Detail_Movie.this
+								.findViewById(R.id.parent),
+								Gravity.CENTER | Gravity.CENTER, 0, 40);
+				popup_player_select.update();
+			}
+		}
+		else
+		{
+			StartIntentToPlayer();
+		}
+	}
+
+	public void StartIntentToPlayer()
+	{
 		app.checkUserSelect(Detail_Movie.this);
 		if (app.use2G3G) {
 
@@ -703,7 +760,7 @@ public class Detail_Movie extends Activity {
 			}
 		}
 	}
-
+		
 	/*
 	 * 将播放数据保存在服务器
 	 */
