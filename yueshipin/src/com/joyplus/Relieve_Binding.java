@@ -9,12 +9,14 @@ import com.joyplus.faye.FayeClient;
 import com.joyplus.faye.FayeClient.FayeListener;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class Relieve_Binding extends Activity {
 	FayeClient mClient;
@@ -24,7 +26,7 @@ public class Relieve_Binding extends Activity {
 	private String user_id = null;
 	App app;
 	ProgressDialog pb;
-
+	Handler mhandler;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -40,12 +42,10 @@ public class Relieve_Binding extends Activity {
 		pb.setCanceledOnTouchOutside(false);
 		pb.setCancelable(true);
 
-		connect_TVChannel(tv_channel, user_id);
+		 connect_TVChannel(tv_channel, user_id);
 
-
-		ImageButton confirmBinding = (ImageButton) findViewById(R.id.confirm_binding);
-		confirmBinding.setOnClickListener(new OnClickListener() {
-
+		ImageButton relieveBinding = (ImageButton) findViewById(R.id.relieve_binding);
+		relieveBinding.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				pb.show();
@@ -59,6 +59,7 @@ public class Relieve_Binding extends Activity {
 						try {
 							et.put("user_id", user_id);
 							et.put("push_type", "33");
+							et.put("tv_channel", tv_channel);
 							mClient.sendMessage(et);
 
 						} catch (JSONException e) {
@@ -74,16 +75,20 @@ public class Relieve_Binding extends Activity {
 
 			}
 		});
-
-		ImageButton cancel_Binding = (ImageButton) findViewById(R.id.cancel_binding);
-		cancel_Binding.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				finish();
-
+		
+         mhandler = new Handler(){
+			
+			public void handleMessage(Message msg){
+				switch(msg.what){
+				case 1:
+					app.MyToast(Relieve_Binding.this, "已取消成功");
+					break;
+				case 2:
+					app.MyToast(Relieve_Binding.this, "取消绑定失败");
+					break;
+				}
 			}
-		});
+		};
 
 	}
 
@@ -123,18 +128,23 @@ public class Relieve_Binding extends Activity {
 		@Override
 		public void messageReceived(JSONObject json) {
 			String push_type = null;
+			Message message = new Message();
 			try {
 				push_type = (String) json.get("push_type");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			pb.dismiss();
 			if (push_type.equals("33")) {
-				pb.dismiss();
+				message.what = 1;
+				mhandler.sendMessage(message);
 				app.DeleteServiceData("Binding_TV_Channal");
 				Log.i("TVChannleListener", "messageReceived" + json.toString());
 				finish();
-
+			}else {
+				message.what = 2;
+				mhandler.sendMessage(message);
 			}
 		}
 
