@@ -17,8 +17,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,17 +35,47 @@ public class Tab2 extends ActivityGroup {
 	private int currIndex = 0;// 当前页卡编号
 	private int bmpW;// 动画图片宽度
     AQuery aq;
-
+    private App app;
+    ImageButton Relieve_Binding;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab2);
-		
+		app = (App) getApplication();
 		aq = new AQuery(this);
 		InitImageView();
 		InitTextView();
 		InitViewPager();
+		
+		Relieve_Binding = (ImageButton)findViewById(R.id.Binding_Click);
+		Relieve_Binding.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent it = new Intent(Tab2.this, Relieve_Binding.class);
+				startActivity(it);
+			}
+		});
+	}
 
+
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+	}
+
+
+
+	@Override
+	protected void onResume() {
+		if(app.GetServiceData("Binding_TV_Channal") != null){
+			aq.id(R.id.Binding_Click).visible();
+		}else{
+			aq.id(R.id.Binding_Click).gone();
+		}
+		super.onResume();
 	}
 
 
@@ -282,6 +314,7 @@ public class Tab2 extends ActivityGroup {
 			String scanResult = bundle.getString("result"); //扫描结果
 
 			Intent intent = new Intent(this, Before_Binding.class);
+			intent.putExtra("SaoMiao_result", scanResult);
 			startActivity(intent);
 		}
 	}

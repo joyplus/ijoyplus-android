@@ -48,7 +48,6 @@ public class Tab1 extends Activity implements
 	private int isLastisNext = 1;
 	private static String POPULAR_TOP_LIST = "悦单";
 	Context mContext;
-    private ImageButton Relieve_Binding;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -90,17 +89,7 @@ public class Tab1 extends Activity implements
 			}
 		});
 		CheckSaveData();
-		// MobclickAgent.setDebugMode(true);
-		Relieve_Binding = (ImageButton)findViewById(R.id.Binding_Click);
-			Relieve_Binding.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Intent it = new Intent(Tab1.this, Relieve_Binding.class);
-					startActivity(it);
-				}
-			});
-		
+
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -109,10 +98,7 @@ public class Tab1 extends Activity implements
 		startActivity(i);
 	}
 
-	public void OnClickDownloadTopRight(View v) {
-		Intent intent = new Intent(this, Video_Cache.class);
-		startActivity(intent);
-	}
+	
 
 	public void OnClickSaoMiaoTopRight(View v) {
 		Intent openCameraIntent = new Intent(Tab1.this,CaptureActivity.class);
@@ -126,10 +112,10 @@ public class Tab1 extends Activity implements
 		if (resultCode == Sao_Yi_Sao) {
 			Bundle bundle = data.getExtras();
 			String scanResult = bundle.getString("result"); //扫描结果
-			if(app.GetServiceData("Binding_TV") != null){
-				aq.id(R.id.Binding_Click).visible();
-			}
+			scanResult = scanResult.replace("joy", "");
+			
 			Intent intent = new Intent(this, Before_Binding.class);
+			intent.putExtra("SaoMiao_result", scanResult);
 			startActivity(intent);
 		}
 	}
@@ -142,11 +128,7 @@ public class Tab1 extends Activity implements
 
 	@Override
 	public void onResume() {
-		if(app.GetServiceData("Binding_TV") != null){
-			aq.id(R.id.Binding_Click).visible();
-		}else{
-			aq.id(R.id.Binding_Click).gone();
-		}
+		
 		super.onResume();
 		MobclickAgent.onEventBegin(mContext, POPULAR_TOP_LIST);
 		MobclickAgent.onResume(this);

@@ -141,7 +141,14 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="77dp"
                 android:background="@drawable/player_route" />
-
+             <ImageButton android:id="@+id/yunduan_toufang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/mediacontroller_dlna"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="41dp"
+                android:background="@drawable/yunduan_bofang"
+                android:visibility="invisible"/>
             <ImageButton
                 android:id="@+id/mediacontroller_play_pause"
                 android:layout_width="wrap_content"

@@ -139,6 +139,7 @@ public class MediaController extends FrameLayout {
 	private boolean mFromXml = false;
 	private ImageButton mPauseButton;
 	private ImageButton mDlnaButton;
+	private ImageButton mYunduanButton;
 	private ImageButton mReturnButton;
 	private ImageButton mReduceButton;
 	private ImageButton mPreButton;
@@ -256,6 +257,12 @@ public class MediaController extends FrameLayout {
 		mPauseButton = (ImageButton) v
 				.findViewById(R.id.mediacontroller_play_pause);
 		mDlnaButton = (ImageButton) v.findViewById(R.id.mediacontroller_dlna);
+		mYunduanButton = (ImageButton) v.findViewById(R.id.yunduan_toufang);
+		if(app.GetServiceData("Binding_TV_Channal")!=null){
+			mYunduanButton.setVisibility(View.VISIBLE);
+		}else{
+			mYunduanButton.setVisibility(View.INVISIBLE);
+		}
 		mReturnButton = (ImageButton) v.findViewById(R.id.imageButton1);
 		mReduceButton = (ImageButton) v.findViewById(R.id.imageButton2);
 		mPreButton = (ImageButton) v.findViewById(R.id.imageButton3);
@@ -335,6 +342,10 @@ public class MediaController extends FrameLayout {
 		if (mDlnaButton != null) {
 			// mDlnaButton.setVisibility(View.INVISIBLE);
 			mDlnaButton.setOnClickListener(mDlnaListener);
+		}
+		if (mYunduanButton != null) {
+			// mDlnaButton.setVisibility(View.INVISIBLE);
+			mYunduanButton.setOnClickListener(mYunduanListener);
 		}
 
 		if (mReturnButton != null)
@@ -1067,6 +1078,17 @@ public class MediaController extends FrameLayout {
 			mPlayer.gotoDlnaVideoPlay();
 			// doPauseResume();
 			// show(sDefaultTimeout);
+		}
+	};
+	
+	private View.OnClickListener mYunduanListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (mPlayer.isPlaying()) {
+				mPlayer.pause();
+				updatePausePlay();
+			}
+
 		}
 	};
 

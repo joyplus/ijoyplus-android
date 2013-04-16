@@ -60,7 +60,7 @@
                 android:text="悦    单"
                 android:textStyle="bold"
                 android:textColor="#EAE7E0"
-                android:textSize="20sp"/>
+                android:textSize="23sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -87,13 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/LayoutTitle"
         android:orientation="vertical">
-        <ImageButton
-            android:id="@+id/Binding_Click" 
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:background="@drawable/android_saoyisao_shouye"
-            android:visibility="gone"/>
+       
         <ListView
             android:id="@+id/listView1"
             android:layout_width="wrap_content"
