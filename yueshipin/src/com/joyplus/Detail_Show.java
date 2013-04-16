@@ -1099,6 +1099,10 @@ public class Detail_Show extends Activity {
 	}
 
 	public void OnClickReviewComments(View v) {
+		if(popupReviewDetail!=null)
+		{
+			popupReviewDetail.dismiss();
+		}
 		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 		final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
 				R.layout.reviews, null, true);
