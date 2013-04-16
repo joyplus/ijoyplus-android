@@ -69,6 +69,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:singleLine="true"
+                android:textSize="22sp"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </LinearLayout>
 

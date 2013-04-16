@@ -265,6 +265,8 @@ public class Video_Cache_Detail extends Activity {
 		adapter.refresh(data);
 		if (data.isEmpty()) {
 			aq.id(R.id.none_cache).visible();
+		}else{
+			aq.id(R.id.none_cache).gone();
 		}
 	}
 

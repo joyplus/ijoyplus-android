@@ -203,8 +203,8 @@ public class Tab2 extends ActivityGroup {
 	 */
 	public class MyOnPageChangeListener implements OnPageChangeListener {
 
-		int one = offset * 2 + bmpW +5;// 页卡1 -> 页卡2 偏移量
-		int two = one * 2 + 5;// 页卡1 -> 页卡3 偏移量
+		int one = offset * 2 + bmpW-5;// 页卡1 -> 页卡2 偏移量
+		int two = one * 2;// 页卡1 -> 页卡3 偏移量
 		int three = one*3;
 
 		@Override
@@ -312,7 +312,7 @@ public class Tab2 extends ActivityGroup {
 		if (resultCode == Sao_Yi_Sao) {
 			Bundle bundle = data.getExtras();
 			String scanResult = bundle.getString("result"); //扫描结果
-
+			scanResult = scanResult.replace("joy", "");
 			Intent intent = new Intent(this, Before_Binding.class);
 			intent.putExtra("SaoMiao_result", scanResult);
 			startActivity(intent);
