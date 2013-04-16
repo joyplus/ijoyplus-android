@@ -1,27 +1,30 @@
 package com.joyplus;
 
+import java.net.URI;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.parse.ParseException;
-import com.parse.ParsePush;
-import com.parse.SendCallback;
-
+import com.joyplus.faye.FayeClient;
+import com.joyplus.faye.FayeClient.FayeListener;
 import android.app.Activity;
-import android.content.Context;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
 public class Relieve_Binding extends Activity {
+	FayeClient mClient;
 	private String macAddress = null;
-	private String channel = null;
-	private JSONObject data;
+	private String tv_channel = null;
+
 	private String user_id = null;
 	App app;
+	ProgressDialog pb;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -29,74 +32,122 @@ public class Relieve_Binding extends Activity {
 		setContentView(R.layout.relieve_binding);
 		app = (App) getApplication();
 		user_id = app.UserID;
-		WifiManager wifiMgr = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-		WifiInfo info = (null == wifiMgr ? null : wifiMgr.getConnectionInfo());
-		if (info != null) {
-			macAddress = info.getMacAddress();
-			channel = "CHANNEL_TV_" + macAddress;
-		}
+		macAddress = app.GetServiceData("Binding_TV_Channal");
+		tv_channel = "/screencast/CHANNEL_TV_" + macAddress;
 
-		ImageButton relieveBinding = (ImageButton) findViewById(R.id.relieve_binding);
-		relieveBinding.setOnClickListener(new OnClickListener() {
+		pb = new ProgressDialog(this);
+		pb.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		pb.setCanceledOnTouchOutside(false);
+		pb.setCancelable(true);
+
+		connect_TVChannel(tv_channel, user_id);
+
+
+		ImageButton confirmBinding = (ImageButton) findViewById(R.id.confirm_binding);
+		confirmBinding.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
+				pb.show();
 				if (!app.isNetworkAvailable()) {
 					app.MyToast(Relieve_Binding.this, "您的网络有问题！");
 					return;
 				}
-				if (channel != null && user_id != null) {
+				if (tv_channel != null && user_id != null) {
 					try {
-						data = new JSONObject(
-								"{\"push_type\": \"5\", \"user_id\": user_id}");
-						ParsePush push = new ParsePush();
+						JSONObject et = new JSONObject();
+						try {
+							et.put("user_id", user_id);
+							et.put("push_type", "33");
+							mClient.sendMessage(et);
 
-						push.setChannel(channel);
-						push.setData(data);
-						push.sendInBackground(callback);
-					} catch (JSONException e) {
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				
+
 			}
 		});
+
+		ImageButton cancel_Binding = (ImageButton) findViewById(R.id.cancel_binding);
+		cancel_Binding.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				finish();
+
+			}
+		});
+
 	}
-	SendCallback callback = new SendCallback() {
+
+	private void connect_TVChannel(String channel, String user_id) {
+		if (android.os.Build.VERSION.SDK_INT <= 8)
+			return;
+		try {
+			URI uri = URI.create("http://comettest.joyplus.tv:8000/bindtv");
+			JSONObject ext = new JSONObject();
+			ext.put("push_type", "33");
+			ext.put("user_id", user_id);
+			mClient = new FayeClient(null, uri, channel);
+			mClient.setFayeListener(TVChannleListener);
+			mClient.connectToServer(ext);
+		} catch (JSONException ex) {
+		}
+	}
+
+	public void OnClickTab1TopLeft(View v) {
+		finish();
+	}
+
+	FayeListener TVChannleListener = new FayeListener() {
 
 		@Override
-		public void done(ParseException arg0) {
-			if (arg0 == null) {
-				app.MyToast(Relieve_Binding.this, "已解除绑定");
-				app.DeleteServiceData("Binding_TV");
-				finish();
-				// Log.d("push", "success!");
-			} else {
-				app.MyToast(Relieve_Binding.this, "操作失败！");
-				// Log.d("push", "failure");
+		public void subscriptionFailedWithError(String error) {
+			Log.i("TVChannleListener", "subscriptionFailedWithError" + error);
+
+		}
+
+		@Override
+		public void subscribedToChannel(String subscription) {
+			Log.i("TVChannleListener", "subscribedToChannel" + subscription);
+
+		}
+
+		@Override
+		public void messageReceived(JSONObject json) {
+			String push_type = null;
+			try {
+				push_type = (String) json.get("push_type");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			if (push_type.equals("33")) {
+				pb.dismiss();
+				app.DeleteServiceData("Binding_TV_Channal");
+				Log.i("TVChannleListener", "messageReceived" + json.toString());
+				finish();
+
+			}
+		}
+
+		@Override
+		public void disconnectedFromServer() {
+			Log.i("TVChannleListener", "disconnectedFromServer");
+
+		}
+
+		@Override
+		public void connectedToServer() {
+			Log.i("TVChannleListener", "connectedToServer");
 
 		}
 	};
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-	}
-
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-	public void OnClickTab1TopLeft(View v){
-		finish();
-	}
 }

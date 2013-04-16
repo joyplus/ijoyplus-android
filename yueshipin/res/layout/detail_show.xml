@@ -64,11 +64,12 @@
 
             <TextView
                 android:id="@+id/program_name"
-                android:layout_width="216dp"
+                android:layout_width="190dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="center"
                 android:singleLine="true"
+                android:textSize="20sp"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </LinearLayout>
 

@@ -32,7 +32,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_weight="0.63"
+            android:layout_weight="0.37"
             android:gravity="center" 
             android:onClick="OnClickTab1TopLeft">
 
@@ -76,6 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/saoyisao"
+                android:layout_marginRight="5dp"
                 android:layout_centerVertical="true"
                />
         </LinearLayout>

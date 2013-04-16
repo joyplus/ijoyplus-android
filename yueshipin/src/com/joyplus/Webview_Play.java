@@ -3,35 +3,21 @@ package com.joyplus;
 import com.androidquery.AQuery;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Video.VideoPlayerActivity;
-import com.umeng.analytics.MobclickAgent;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AlphaAnimation;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 public class Webview_Play extends Activity {
@@ -186,16 +172,18 @@ public class Webview_Play extends Activity {
 		bundle.putString("prod_type", prod_type);
 		bundle.putLong("current_time", current_time);
 		intent.putExtras(bundle);
-		try {
-			startActivityForResult(intent, FINISH_ACTTIVITY);
-		} catch (ActivityNotFoundException ex) {
-			Log.e(TAG, "VideoPlayerActivity fail", ex);
+		startActivityForResult(intent, FINISH_ACTTIVITY);
+		if (app.GetServiceData("firstplayvideo") == null)
+		{
+			app.SaveServiceData("firstplayvideo", "firstplayvideo");
+			Webview_Play.this.finish();
 		}
 	}
 
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (resultCode) {
-		case FINISH_ACTTIVITY:
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == FINISH_ACTTIVITY) {
 			Webview_Play.this.finish();
 		}
 	}

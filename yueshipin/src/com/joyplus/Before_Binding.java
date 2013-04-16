@@ -20,7 +20,6 @@ public class Before_Binding extends Activity {
 	FayeClient mClient;
 	private String macAddress = null;
 	private String tv_channel = null;
-	private String user_channel = null;
 
 	private String user_id = null;
 	App app;
@@ -36,12 +35,15 @@ public class Before_Binding extends Activity {
 		Intent intent = getIntent();
 		macAddress = intent.getStringExtra("SaoMiao_result");
 		tv_channel = "/screencast/CHANNEL_TV_" + macAddress;
-		user_channel = "/screencast/CHANNEL_MOBILE_" + user_id;
 
 		pb = new ProgressDialog(this);
 		pb.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		pb.setCanceledOnTouchOutside(false);
 		pb.setCancelable(true);
+
+		connect_TVChannel(tv_channel, user_id);
+
+		// connect_userChannel(user_channel);
 
 		ImageButton confirmBinding = (ImageButton) findViewById(R.id.confirm_binding);
 		confirmBinding.setOnClickListener(new OnClickListener() {
@@ -55,10 +57,18 @@ public class Before_Binding extends Activity {
 				}
 				if (tv_channel != null && user_id != null) {
 					try {
-						connect_TVChannel(tv_channel, user_id);
-						connect_userChannel(user_channel);
-						// app.MyToast(Before_Binding.this, "已成功绑定");
-						// app.SaveServiceData("Binding_TV", "Binding_TV");
+						// connect_TVChannel(tv_channel, user_id);
+						JSONObject et = new JSONObject();
+						try {
+							et.put("user_id", user_id);
+							et.put("push_type", "31");
+							mClient.sendMessage(et);
+
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -80,26 +90,6 @@ public class Before_Binding extends Activity {
 
 	}
 
-	protected void connect_userChannel(String user_channel) {
-		if (android.os.Build.VERSION.SDK_INT <= 8)
-			return;
-		try {
-
-			URI uri = URI.create("http://comettest.joyplus.tv:8000/bindtv");
-
-			JSONObject ext = new JSONObject();
-			ext.put("push_type", "32");
-			 ext.put("user_id", user_id);
-			mClient = new FayeClient(null, uri, user_channel);
-			mClient.setFayeListener(userChannleListener);
-			mClient.connectToServer(ext);
-			mClient.sendMessage(ext);
-		} catch (JSONException ex) {
-
-		}
-
-	}
-
 	private void connect_TVChannel(String channel, String user_id) {
 		if (android.os.Build.VERSION.SDK_INT <= 8)
 			return;
@@ -113,7 +103,7 @@ public class Before_Binding extends Activity {
 			mClient = new FayeClient(null, uri, channel);
 			mClient.setFayeListener(TVChannleListener);
 			mClient.connectToServer(ext);
-			mClient.sendMessage(ext);
+			// mClient.sendMessage(ext);
 		} catch (JSONException ex) {
 		}
 	}
@@ -138,8 +128,20 @@ public class Before_Binding extends Activity {
 
 		@Override
 		public void messageReceived(JSONObject json) {
-			Log.i("TVChannleListener", "messageReceived" + json.toString());
+			String push_type = null;
+			try {
+				push_type = (String) json.get("push_type");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (push_type.equals("32")) {
+				pb.dismiss();
+				app.SaveServiceData("Binding_TV_Channal", macAddress);
+				Log.i("TVChannleListener", "messageReceived" + json.toString());
+				finish();
 
+			}
 		}
 
 		@Override
@@ -154,42 +156,4 @@ public class Before_Binding extends Activity {
 
 		}
 	};
-
-	FayeListener userChannleListener = new FayeListener() {
-
-		@Override
-		public void subscriptionFailedWithError(String error) {
-			Log.i("userChannleListener", "subscriptionFailedWithError" + error);
-
-		}
-
-		@Override
-		public void subscribedToChannel(String subscription) {
-			Log.i("userChannleListener", "subscribedToChannel" + subscription);
-
-		}
-
-		@Override
-		public void messageReceived(JSONObject json) {
-			Log.i("userChannleListener", "messageReceived" + json.toString());
-			if (json.toString() != null) {
-				app.MyToast(Before_Binding.this, "已成功绑定");
-				app.SaveServiceData("Binding_TV_Channal", macAddress);
-				pb.dismiss();
-			}
-		}
-
-		@Override
-		public void disconnectedFromServer() {
-			Log.i("userChannleListener", "disconnectedFromServer");
-
-		}
-
-		@Override
-		public void connectedToServer() {
-			Log.i("userChannleListener", "connectedToServer");
-
-		}
-	};
-
 }
