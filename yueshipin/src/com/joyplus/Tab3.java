@@ -103,6 +103,7 @@ public class Tab3 extends TabActivity {
 	public void onResume() {
 		super.onResume();
         MobclickAgent.onEventBegin(mContext, PERSONAL);
+        CheckLogin();
 	}
 
 	@Override

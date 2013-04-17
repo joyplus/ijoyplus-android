@@ -418,11 +418,7 @@ public class Setting extends Activity {
 							headers.remove("user_id");
 							headers.put("user_id", app.UserID);
 							app.setHeaders(headers);
-							
 							//将这个UserID保存在本地
-//							app.SaveServiceData("UserInfo", json.toString());
-							//app.MyToast(aq.getContext(),
-									//"账号登陆成功!");
 							UploadSinaHeadAndScreen_nameUrl(token, uid);
 						}
 					}
