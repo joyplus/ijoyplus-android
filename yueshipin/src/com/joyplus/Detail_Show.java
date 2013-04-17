@@ -375,7 +375,43 @@ public class Detail_Show extends Activity {
 				aq.id(R.id.cache_button9).clickable(false);
 			}
 
-			GetReviews();//
+			if(cacheManager!=null&&cacheInfoTemp!=null)
+			{
+				
+				String temp = cacheInfoTemp.getComments();
+				if(temp!=null&&temp.toString().length()>10)
+				{
+					ObjectMapper mapper = new ObjectMapper();
+					m_ReturnProgramReviews = null;
+					try {
+						m_ReturnProgramReviews = mapper.readValue(temp,
+								ReturnProgramReviews.class);
+					} catch (JsonParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (JsonMappingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					// 创建数据源对象
+					if(m_ReturnProgramReviews==null)
+					{
+						GetReviews();
+					}
+					ShowComments();
+				}
+				else
+				{
+					GetReviews();
+				}
+			}
+			else
+			{
+				GetReviews();
+			}
 
 		} else {
 			GetServiceData();
@@ -1151,6 +1187,10 @@ public class Detail_Show extends Activity {
 				m_ReturnProgramReviews = null;
 			m_ReturnProgramReviews = mapper.readValue(json.toString(),
 					ReturnProgramReviews.class);
+			if(json!=null&&cacheManager!=null)
+			{
+				cacheManager.saveVideoCacheComments(json.toString(), prod_id);
+			}
 			// 创建数据源对象
 			ShowComments();
 		} catch (JsonParseException e) {

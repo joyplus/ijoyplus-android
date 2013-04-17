@@ -96,6 +96,26 @@ public class Dao_Cache {
 			}
 		}
 	}
+	
+	/*
+	 * 更新一条缓存记录的影评
+	 */
+	public synchronized void updateOneInfoComments(String comments,String prod_id) {
+		SQLiteDatabase database = getConnection();
+		try {
+			String sql = null;
+			sql = "update video_cache set comments=? where prod_id=?";
+			Object[] bindArgs = {comments,prod_id};
+			database.execSQL(sql, bindArgs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != database) {
+				database.close();
+			}
+		}
+	}
+	
 	/*
 	 * 更新subname
 	 */
@@ -150,13 +170,14 @@ public class Dao_Cache {
 		Cursor cursor = null;
 		try {
 			String sql = null;
-			sql = "select prod_id,prod_value, prod_type,create_date,prod_subname,last_playtime from video_cache where prod_id=?";
+			sql = "select prod_id,prod_value, prod_type,create_date,prod_subname,last_playtime,comments from video_cache where prod_id=?";
 			cursor = database.rawQuery(sql, new String[] { prod_id});
 			while (cursor.moveToNext()) {
 				info = new VideoCacheInfo(cursor.getString(0),
 						cursor.getString(1), cursor.getString(2),
 						cursor.getString(3), cursor.getString(4),
-						cursor.getString(5));
+						cursor.getString(5), cursor.getString(6));
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -170,7 +191,7 @@ public class Dao_Cache {
 		}
 		return info;
 	}
-
+	
 	/*
 	 * 获取数据库中总的条数
 	 */
