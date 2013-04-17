@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -77,16 +77,18 @@
         android:layout_height="wrap_content"
         android:background="@drawable/android_saoyisao_shouye"
         android:clickable="true"
+        android:layout_below="@id/LayoutTitle"
         android:adjustViewBounds="true"
         android:padding="0dip"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/tab2_10_bg"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:layout_below="@id/LayoutTitle" >
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -192,6 +194,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:scaleType="matrix"
+        android:layout_below="@id/linearLayout1"
         android:src="@drawable/tab2_10_s" />
 
     <android.support.v4.view.ViewPager
@@ -203,4 +206,4 @@
         android:flipInterval="30"
         android:persistentDrawingCache="animation" />
 
-</LinearLayout>
+</RelativeLayout>

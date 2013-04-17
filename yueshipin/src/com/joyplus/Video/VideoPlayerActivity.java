@@ -10,6 +10,7 @@ import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +26,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
@@ -77,6 +79,8 @@ import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS.URLS;
 import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
+import com.joyplus.faye.FayeClient;
+import com.joyplus.faye.FayeClient.FayeListener;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
 import com.umeng.analytics.MobclickAgent;
@@ -105,14 +109,14 @@ public class VideoPlayerActivity extends Activity implements
 	public static final int VideoPlay = 0;
 	private boolean IsPlaying = false;
 	public Handler fHanlder;
-    
-	
+
+	FayeClient mClient;
 	/** 最大声音 */
 	private int mMaxVolume;
 	/** 当前声音 */
 	private int mVolume = -1;
 	/** 当前亮度 */
-//	private float mBrightness = -1f;
+	// private float mBrightness = -1f;
 	/** 当前缩放模式 */
 	private int mLayout = VideoView.VIDEO_LAYOUT_STRETCH;// VIDEO_LAYOUT_ZOOM;
 	private GestureDetector mGestureDetector;
@@ -141,7 +145,7 @@ public class VideoPlayerActivity extends Activity implements
 	private String playProdId = null;// 视频id
 	private String playProdName = null;// 视频名字
 	private String playProdSubName = null;// 视频的集数
-//	private String playPlayType = null;// 播放的类别 1: 视频地址播放 2:webview播放
+	// private String playPlayType = null;// 播放的类别 1: 视频地址播放 2:webview播放
 	private String playVideoUrl = null;// 视频url
 	private int playProdType = 0;// 视频类别 1：电影，2：电视剧，3：综艺，4：视频
 	private static final int FINISH_ACTTIVITY = 10;
@@ -181,6 +185,10 @@ public class VideoPlayerActivity extends Activity implements
 		playrecordmanager = new PlayRecordManager(VideoPlayerActivity.this);
 		playrecordinfo = new PlayRecordInfo();
 
+		String user_id = app.UserID;
+		String macAddress = app.GetServiceData("Binding_TV_Channal");
+		String tv_channel = Constant.TV_CHANNEL + macAddress;
+		connect_TVChannel(tv_channel);
 		InitPlayData();
 		// 每次播放时及时把播放的flag清除为0
 		if (app.use2G3G) {
@@ -214,7 +222,9 @@ public class VideoPlayerActivity extends Activity implements
 		} else {
 			mHandler.postDelayed(mRunnable, 1000);
 		}
-		mMediaController = new MediaController(this);
+
+		mMediaController = new MediaController(this, mClient, user_id,
+				tv_channel);
 
 		if (mTitle != null && mTitle.length() > 0) {
 			aq.id(R.id.textView1).text("正在载入 ...");
@@ -222,7 +232,7 @@ public class VideoPlayerActivity extends Activity implements
 				aq.id(R.id.mediacontroller_file_name).text(
 						mTitle + playProdSubName);
 				mVideoView.setTitle(mTitle + playProdSubName);
-				mMediaController.setFileName(mTitle+playProdSubName);
+				mMediaController.setFileName(mTitle + playProdSubName);
 				mMediaController.setSubName(playProdSubName);
 			} else {
 				aq.id(R.id.mediacontroller_file_name).text(mTitle);
@@ -351,47 +361,45 @@ public class VideoPlayerActivity extends Activity implements
 
 			if (current_time > 0) {
 
-
 				if (playProdType != 1) {
-				
-				if(playProdType == 2||playProdType==131)
-				{
-					playrecordinfo.setProd_id(playProdId);
-					if (Constant.select_index > -1) {
-						tvsubname = Integer.toString(Constant.select_index + 1);// 更新本地数据库
-						SharedPreferences myPreference = this
-								.getSharedPreferences("myTvSetting",
-										Context.MODE_PRIVATE);
-						myPreference
-								.edit()
-								.putString(playProdId,
-										Integer.toString(Constant.select_index))
-								.commit();
+
+					if (playProdType == 2 || playProdType == 131) {
+						playrecordinfo.setProd_id(playProdId);
+						if (Constant.select_index > -1) {
+							tvsubname = Integer
+									.toString(Constant.select_index + 1);// 更新本地数据库
+							SharedPreferences myPreference = this
+									.getSharedPreferences("myTvSetting",
+											Context.MODE_PRIVATE);
+							myPreference
+									.edit()
+									.putString(
+											playProdId,
+											Integer.toString(Constant.select_index))
+									.commit();
+						}
+						playrecordinfo.setProd_subname(tvsubname);
+						playrecordinfo.setLast_playtime(current_time + "");
+						playrecordinfo.setProd_subname(tvsubname);
+						playrecordinfo.setLast_playtime(current_time + "");
+						playrecordmanager.savePlayRecord(playrecordinfo);
+					} else if (playProdType == 3) {
+						playrecordinfo.setProd_id(playProdId);
+						playrecordinfo.setProd_subname(tvsubname);
+						playrecordinfo.setLast_playtime(current_time + "");
+						playrecordmanager.savePlayRecord(playrecordinfo);
+					} else {
+						// 保存播放记录在本地
+						cacheInfo = cacheManager.getVideoCache(playProdId);
+						if (cacheInfo != null) {
+							cacheInfo.setLast_playtime(current_time + "");
+							cacheManager.saveVideoCache(cacheInfo);
+						}
 					}
-					playrecordinfo.setProd_subname(tvsubname);
-					playrecordinfo.setLast_playtime(current_time + "");
-					playrecordinfo.setProd_subname(tvsubname);	
-					playrecordinfo.setLast_playtime(current_time+"");
-					playrecordmanager.savePlayRecord(playrecordinfo);
+					play_current_time = current_time;
 				}
-				else if(playProdType == 3)
-				{
-					playrecordinfo.setProd_id(playProdId);
-					playrecordinfo.setProd_subname(tvsubname);	
-					playrecordinfo.setLast_playtime(current_time+"");
-					playrecordmanager.savePlayRecord(playrecordinfo);
-				} else {
-					// 保存播放记录在本地
-					cacheInfo = cacheManager.getVideoCache(playProdId);
-					if (cacheInfo != null) {
-						cacheInfo.setLast_playtime(current_time + "");
-						cacheManager.saveVideoCache(cacheInfo);
-					}
-				}
-				play_current_time = current_time;
+				mVideoView.pause();
 			}
-			mVideoView.pause();
-		}
 		}
 	}
 
@@ -445,16 +453,16 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, MOVIE_PLAY);
 		MobclickAgent.onEventEnd(mContext, TV_PLAY);
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
-		Intent mIntent = new Intent();  
-		VideoPlayerActivity.this.setResult(FINISH_ACTTIVITY, mIntent); 
+		Intent mIntent = new Intent();
+		VideoPlayerActivity.this.setResult(FINISH_ACTTIVITY, mIntent);
 		finish();
 
 	}
 
 	@Override
 	public void finish() {
-		if(IsFinish){
-			Intent mIntent = new Intent();  
+		if (IsFinish) {
+			Intent mIntent = new Intent();
 			VideoPlayerActivity.this.setResult(FINISH_ACTTIVITY, mIntent);
 			IsFinish = false;
 		}
@@ -468,7 +476,7 @@ public class VideoPlayerActivity extends Activity implements
 	/** 手势结束 */
 	private void endGesture() {
 		mVolume = -1;
-//		mBrightness = -1f;
+		// mBrightness = -1f;
 
 		// 隐藏
 		mDismissHandler.removeMessages(0);
@@ -495,8 +503,8 @@ public class VideoPlayerActivity extends Activity implements
 
 			if (mOldX > windowWidth * 4.0 / 5)// 右边滑动
 				onVolumeSlide((mOldY - y) / windowHeight);
-//			else if (mOldX < windowWidth / 5.0)// 左边滑动
-//				onBrightnessSlide((mOldY - y) / windowHeight);
+			// else if (mOldX < windowWidth / 5.0)// 左边滑动
+			// onBrightnessSlide((mOldY - y) / windowHeight);
 
 			return super.onScroll(e1, e2, distanceX, distanceY);
 		}
@@ -548,30 +556,32 @@ public class VideoPlayerActivity extends Activity implements
 	 * 
 	 * @param percent
 	 */
-//	private void onBrightnessSlide(float percent) {
-//		if (mBrightness < 0) {
-//			mBrightness = getWindow().getAttributes().screenBrightness;
-//			if (mBrightness <= 0.00f)
-//				mBrightness = 0.50f;
-//			if (mBrightness < 0.01f)
-//				mBrightness = 0.01f;
-//
-//			// 显示
-//			mOperationBg.setImageResource(R.drawable.video_brightness_bg);
-//			mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
-//		}
-//		WindowManager.LayoutParams lpa = getWindow().getAttributes();
-//		lpa.screenBrightness = mBrightness + percent;
-//		if (lpa.screenBrightness > 1.0f)
-//			lpa.screenBrightness = 1.0f;
-//		else if (lpa.screenBrightness < 0.01f)
-//			lpa.screenBrightness = 0.01f;
-//		getWindow().setAttributes(lpa);
-//
-//		ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
-//		lp.width = (int) (findViewById(R.id.operation_full).getLayoutParams().width * lpa.screenBrightness);
-//		mOperationPercent.setLayoutParams(lp);
-//	}
+	// private void onBrightnessSlide(float percent) {
+	// if (mBrightness < 0) {
+	// mBrightness = getWindow().getAttributes().screenBrightness;
+	// if (mBrightness <= 0.00f)
+	// mBrightness = 0.50f;
+	// if (mBrightness < 0.01f)
+	// mBrightness = 0.01f;
+	//
+	// // 显示
+	// mOperationBg.setImageResource(R.drawable.video_brightness_bg);
+	// mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
+	// }
+	// WindowManager.LayoutParams lpa = getWindow().getAttributes();
+	// lpa.screenBrightness = mBrightness + percent;
+	// if (lpa.screenBrightness > 1.0f)
+	// lpa.screenBrightness = 1.0f;
+	// else if (lpa.screenBrightness < 0.01f)
+	// lpa.screenBrightness = 0.01f;
+	// getWindow().setAttributes(lpa);
+	//
+	// ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
+	// lp.width = (int)
+	// (findViewById(R.id.operation_full).getLayoutParams().width *
+	// lpa.screenBrightness);
+	// mOperationPercent.setLayoutParams(lp);
+	// }
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -587,8 +597,6 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		finish();
 	}
-	
-
 
 	public void GetServiceData() {
 		String url = Constant.BASE_URL + "program/view?prod_id=" + playProdId;
@@ -810,7 +818,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	// 将片源排序
-		@SuppressWarnings("rawtypes")
+	@SuppressWarnings("rawtypes")
 	class EComparatorIndex implements Comparator {
 
 		@Override
@@ -861,50 +869,44 @@ public class VideoPlayerActivity extends Activity implements
 		params.put("prod_id", playProdId);// required string
 											// 视频id
 		params.put("prod_name", playProdName);// required
-            // string 视频名字
+		// string 视频名字
 		if (Constant.select_index > -1) {
 			params.put("prod_subname",
 					Integer.toString(Constant.select_index + 1));// required
 		} else {
 			params.put("prod_subname",
 					Integer.toString(mCurrentPlayData.CurrentIndex + 1));// required
-		if(playProdType != 3)// string 视频名字
-		{
-			if(Constant.select_index>-1)
+			if (playProdType != 3)// string 视频名字
 			{
-				params.put("prod_subname",
-					Integer.toString(Constant.select_index + 1));// required
+				if (Constant.select_index > -1) {
+					params.put("prod_subname",
+							Integer.toString(Constant.select_index + 1));// required
+				} else {
+					params.put("prod_subname",
+							Integer.toString(mCurrentPlayData.CurrentIndex + 1));// required
+				}
+			} else {
+				params.put("prod_subname", tvsubname);
 			}
-			else
-			{
-				params.put("prod_subname",
-					Integer.toString(mCurrentPlayData.CurrentIndex + 1));// required
-			}
-		}
-		else
-		{
-			params.put("prod_subname",tvsubname);
-		}
 
-		
-		// string
-		// 视频的集数
-		params.put("prod_type", playProdType);// required int 视频类别
-												// 1：电影，2：电视剧，3：综艺，4：视频
-		params.put("playback_time", playback_time);// _time required int
-													// 上次播放时间，单位：秒
-		params.put("duration", duration);// required int 视频时长， 单位：秒
-		params.put("play_type", "1");// required string
-		// 播放的类别 1: 视频地址播放
-		// 2:webview播放
-		params.put("video_url", playVideoUrl);// required
-		// string
-		// 视频url
-		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.SetHeader(app.getHeaders());
-		cb.params(params).url(url).type(JSONObject.class)
-				.weakHandler(this, "CallProgramPlayResult");
-		aq.ajax(cb);
+			// string
+			// 视频的集数
+			params.put("prod_type", playProdType);// required int 视频类别
+													// 1：电影，2：电视剧，3：综艺，4：视频
+			params.put("playback_time", playback_time);// _time required int
+														// 上次播放时间，单位：秒
+			params.put("duration", duration);// required int 视频时长， 单位：秒
+			params.put("play_type", "1");// required string
+			// 播放的类别 1: 视频地址播放
+			// 2:webview播放
+			params.put("video_url", playVideoUrl);// required
+			// string
+			// 视频url
+			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+			cb.SetHeader(app.getHeaders());
+			cb.params(params).url(url).type(JSONObject.class)
+					.weakHandler(this, "CallProgramPlayResult");
+			aq.ajax(cb);
 		}
 		/*
 		 * 怎么把数据保存在本地
@@ -940,8 +942,9 @@ public class VideoPlayerActivity extends Activity implements
 												TV_PLAY);
 										MobclickAgent.onEventEnd(mContext,
 												SHOW_PLAY);
-										Intent mIntent = new Intent();  
-										VideoPlayerActivity.this.setResult(FINISH_ACTTIVITY, mIntent); 
+										Intent mIntent = new Intent();
+										VideoPlayerActivity.this.setResult(
+												FINISH_ACTTIVITY, mIntent);
 										finish();
 									}
 								})
@@ -1125,4 +1128,50 @@ public class VideoPlayerActivity extends Activity implements
 		}
 
 	}
+
+	private void connect_TVChannel(String channel) {
+		if (android.os.Build.VERSION.SDK_INT <= 8)
+			return;
+		try {
+
+			URI uri = URI.create(Constant.TV_CHANNEL_URL);
+			mClient = new FayeClient(null, uri, channel);
+			mClient.setFayeListener(TVChannleListener);
+			mClient.connectToServer(null);
+		} catch (Exception ex) {
+		}
+	}
+
+	FayeListener TVChannleListener = new FayeListener() {
+
+		@Override
+		public void subscriptionFailedWithError(String error) {
+			Log.i("TVChannleListener", "subscriptionFailedWithError>>>" + error);
+
+		}
+
+		@Override
+		public void subscribedToChannel(String subscription) {
+			Log.i("TVChannleListener", "subscribedToChannel>>>" + subscription);
+
+		}
+
+		@Override
+		public void messageReceived(JSONObject json) {
+			Log.i("TVChannleListener", "messageReceived>>>" + json.toString());
+
+		}
+
+		@Override
+		public void disconnectedFromServer() {
+			Log.i("TVChannleListener", "disconnectedFromServer>>>");
+
+		}
+
+		@Override
+		public void connectedToServer() {
+			Log.i("TVChannleListener", "connectedToServer>>>");
+
+		}
+	};
 }

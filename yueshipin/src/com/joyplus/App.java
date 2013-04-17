@@ -1,54 +1,34 @@
 package com.joyplus;
 
 import java.io.File;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.json.JSONObject;
-
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Environment;
-import android.os.StrictMode;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 import com.joyplus.Adapters.CurrentPlayData;
@@ -64,6 +44,7 @@ public class App extends Application {
 	private final String TAG = "App";
 	private static final String NOT_VALID_LINK = "NULL";
 	private static final String FENGXING = "1";
+	
 
 	private static App instance;
 	public String UserID;
@@ -83,7 +64,7 @@ public class App extends Application {
 	private CurrentPlayData mCurrentPlayData;
 	private ReturnProgramView m_ReturnProgramView = null;
 	private int number = 0;
-
+    
 	public ReturnProgramView get_ReturnProgramView() {
 		return m_ReturnProgramView;
 	}
@@ -107,7 +88,6 @@ public class App extends Application {
 	public void setHeaders(Map<String, String> headers) {
 		this.headers = headers;
 	}
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -125,6 +105,7 @@ public class App extends Application {
 		Parse.initialize(this, Constant.Parse_AppId, Constant.Parse_ClientKey);
 
 		instance = this;
+
 	}
 
 	/**
@@ -586,56 +567,5 @@ public class App extends Application {
 			e.printStackTrace();
 		}
 	}
-//	class GetUrlTask extends AsyncTask<String, Void, String>{
-//    	//后面尖括号内分别是参数（例子里是线程休息时间），进度(publishProgress用到)，返回值 类型
-//    	
-//    	@Override
-//		protected void onPreExecute() {
-//    		//第一个执行方法
-//    		mURLPath = null;
-//			super.onPreExecute();
-//		}
-//    	
-//		@Override
-//		protected String doInBackground(String... params) {
-//			List<String> list = new ArrayList<String>();
-//			String dstUrl = params[0];
-//			if (BuildConfig.DEBUG)
-//				Log.i(TAG, "newATask--->>params : " + params[0] + params[1]);
-//			try {
-//				simulateFirfoxRequest(Constant.USER_AGENT_IOS, params, list);// 使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
-//
-//				dstUrl = list.get(list.size() - 1);
-//				if (BuildConfig.DEBUG)
-//					Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
-//				list.clear();
-//
-//				if (!dstUrl.equals(NOT_VALID_LINK)) {
-//					return dstUrl;
-//				}
-//			} catch (Exception e) {
-//				if (BuildConfig.DEBUG)
-//					Log.i(TAG, "TimeOut!!!!!! : " + e);
-//				e.printStackTrace();
-//			}
-//			return NOT_VALID_LINK;
-//		}
-//
-//		@Override
-//		protected void onProgressUpdate(Void... progress) {
-//			//这个函数在doInBackground调用publishProgress时触发，虽然调用时只有一个参数
-//			//但是这里取到的是一个数组,所以要用progesss[0]来取值
-//			//第n个参数就用progress[n]来取值
-//			super.onProgressUpdate(progress);
-//		}
-//
-//		@Override
-//		protected void onPostExecute(String result) {
-//			//doInBackground返回时触发，换句话说，就是doInBackground执行完后触发
-//			//这里的result就是上面doInBackground执行后的返回值，所以这里是"执行完毕"
-//			mURLPath = result;
-//			super.onPostExecute(result);
-//		}
-//    }
-
+	
 }
