@@ -93,7 +93,6 @@ public class MainTopRightDialog extends Activity  {
 				Constant.SINA_CONSUMER_SECRET);
 		weibo.setRedirectUrl("https://api.weibo.com/oauth2/default.html");
 		weibo.authorize(this, new AuthDialogListener());
-
 	}
 
 	// 第三方新浪登录
@@ -104,7 +103,7 @@ public class MainTopRightDialog extends Activity  {
 			uid = values.getString("uid");
 			token = values.getString("access_token");
 			expires_in = values.getString("expires_in");
-			System.out.println("expires_in=====>" + expires_in);
+//			System.out.println("expires_in=====>" + expires_in);
 			AccessToken accessToken = new AccessToken(token,
 					Constant.SINA_CONSUMER_SECRET);
 			accessToken.setExpiresIn(expires_in);
