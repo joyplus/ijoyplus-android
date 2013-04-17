@@ -221,20 +221,21 @@ public class Detail_Show extends Activity {
 	}
 
 	public static Bitmap drawableToBitmap(Drawable drawable) {
+		Drawable clone = drawable.getConstantState().newDrawable();
 		// 取 drawable 的长宽
-		int w = drawable.getIntrinsicWidth();
-		int h = drawable.getIntrinsicHeight();
+		int w = clone.getIntrinsicWidth();
+		int h = clone.getIntrinsicHeight();
 
 		// 取 drawable 的颜色格式
-		Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+		Bitmap.Config config = clone.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
 				: Bitmap.Config.RGB_565;
 		// 建立对应 bitmap
 		Bitmap bitmap = Bitmap.createBitmap(w, h, config);
 		// 建立对应 bitmap 的画布
 		Canvas canvas = new Canvas(bitmap);
-		drawable.setBounds(0, 0, w, h);
+		clone.setBounds(0, 0, w, h);
 		// 把 drawable 内容画到画布中
-		drawable.draw(canvas);
+		clone.draw(canvas);
 		return bitmap;
 	}
 

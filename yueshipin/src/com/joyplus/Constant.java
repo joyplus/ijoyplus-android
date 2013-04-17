@@ -113,4 +113,8 @@ IOS: ijoyplusios001bj
 		"hd2","3gp","flv"};
 	// APP_ID 替换为你的应用从官方网站申请到的合法appId
     public static final String APP_ID = "wxc8ea1cbc355fe2d0";
+   
+    //测试环境    云端投放 
+    public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
+    public static final String TV_CHANNEL_URL = "http://comettest.joyplus.tv:8080/bindtv";
 }

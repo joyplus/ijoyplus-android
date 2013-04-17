@@ -4,6 +4,7 @@
 
 package io.vov.vitamio.widget;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.androidquery.AQuery;
 import com.joyplus.App;
@@ -25,16 +28,15 @@ import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.StatisticsUtils;
 import com.joyplus.Adapters.CurrentPlayData;
-import com.joyplus.Adapters.Tab3Page1ListData;
-import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
-import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS.URLS;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.faye.FayeClient;
+import com.joyplus.faye.FayeClient.FayeListener;
+import com.umeng.analytics.MobclickAgent;
 
 import io.vov.utils.Log;
 import io.vov.utils.StringUtils;
-import android.R.integer;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -43,7 +45,6 @@ import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.VoicemailContract;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -55,20 +56,17 @@ import android.webkit.URLUtil;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
@@ -166,6 +164,18 @@ public class MediaController extends FrameLayout {
 	private int ShowQuality = 0;
 	private boolean mIsPausedByHuman = false;
 
+	// 视频云端投放信息
+	FayeClient mClient;
+	private String tv_channel;
+	private String user_id;
+	private String prod_id;// 视频ID
+	private int prod_type;// 视频类型,视频类别 1：电影，2：电视剧，3：综艺，131动漫
+	private String prod_name;// 视频名称，就是显示在播放器最左上角的名称
+	private String prod_url;// 视频播放地址
+	private String prod_src;// 视频来源
+	private long prod_time;// 视频开始播放时间 :秒*1000
+	private int prod_qua; // 720P ：0 还是1080P：1
+	private static final String ue_screencast_video_push = "云端推送视频";
 	// private boolean DLNAMODE = false;
 
 	public int getCurrentIndex() {
@@ -191,8 +201,11 @@ public class MediaController extends FrameLayout {
 		initController(context);
 	}
 
-	public MediaController(Context context) {
+	public MediaController(Context context, FayeClient mClient,String user_id,String channel) {
 		super(context);
+		this.mClient = mClient;
+		this.user_id = user_id;
+		this.tv_channel = channel;
 		if (!mFromXml && initController(context))
 			initFloatingWindow();
 	}
@@ -258,9 +271,9 @@ public class MediaController extends FrameLayout {
 				.findViewById(R.id.mediacontroller_play_pause);
 		mDlnaButton = (ImageButton) v.findViewById(R.id.mediacontroller_dlna);
 		mYunduanButton = (ImageButton) v.findViewById(R.id.yunduan_toufang);
-		if(app.GetServiceData("Binding_TV_Channal")!=null){
+		if (app.GetServiceData("Binding_TV_Channal") != null) {
 			mYunduanButton.setVisibility(View.VISIBLE);
-		}else{
+		} else {
 			mYunduanButton.setVisibility(View.INVISIBLE);
 		}
 		mReturnButton = (ImageButton) v.findViewById(R.id.imageButton1);
@@ -397,16 +410,26 @@ public class MediaController extends FrameLayout {
 					CurrentSource = i;
 
 					for (int j = 0; j < Constant.video_index.length; j++) {
-						if (PROD_SOURCE == null &&m_ReturnProgramView.tv.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+						if (PROD_SOURCE == null
+								&& m_ReturnProgramView.tv.episodes[index].down_urls[i].source
+										.trim().equalsIgnoreCase(
+												Constant.video_index[j])) {
 							String name = m_ReturnProgramView.tv.name;
-							title = "第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集";
-							mFileName.setText(name+title);
-							PROD_SOURCE =  GetSource(index,i);
-							
-							//yangzhg
-							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
-									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
-									m_ReturnProgramView.tv.episodes[CurrentIndex].name, 2);
+							title = "第"
+									+ m_ReturnProgramView.tv.episodes[CurrentIndex].name
+									+ "集";
+							mFileName.setText(name + title);
+							PROD_SOURCE = GetSource(index, i);
+
+							// yangzhg
+							StatisticsUtils
+									.StatisticsClicksShow(
+											new AQuery(mContext),
+											app,
+											m_ReturnProgramView.tv.id,
+											m_ReturnProgramView.tv.name,
+											m_ReturnProgramView.tv.episodes[CurrentIndex].name,
+											2);
 							break;
 						}
 					}
@@ -421,17 +444,25 @@ public class MediaController extends FrameLayout {
 
 					for (int j = 0; j < Constant.video_index.length; j++) {
 
-						if (PROD_SOURCE == null &&m_ReturnProgramView.show.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+						if (PROD_SOURCE == null
+								&& m_ReturnProgramView.show.episodes[index].down_urls[i].source
+										.trim().equalsIgnoreCase(
+												Constant.video_index[j])) {
 							String name = m_ReturnProgramView.show.name;
 							title = m_ReturnProgramView.show.episodes[index].name;
 
-							mFileName.setText(name+title);
-							PROD_SOURCE =  GetSource(index,i);
-							
-							//yangzhg
-							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
-									app, m_ReturnProgramView.show.id, m_ReturnProgramView.show.name,
-									m_ReturnProgramView.show.episodes[CurrentIndex].name, 3);
+							mFileName.setText(name + title);
+							PROD_SOURCE = GetSource(index, i);
+
+							// yangzhg
+							StatisticsUtils
+									.StatisticsClicksShow(
+											new AQuery(mContext),
+											app,
+											m_ReturnProgramView.show.id,
+											m_ReturnProgramView.show.name,
+											m_ReturnProgramView.show.episodes[CurrentIndex].name,
+											3);
 							break;
 						}
 					}
@@ -445,7 +476,7 @@ public class MediaController extends FrameLayout {
 
 		if (PROD_SOURCE != null)
 			mPlayer.setContinueVideoPath(title, PROD_SOURCE, false);
-		
+
 	}
 
 	// 给片源赋权值
@@ -1080,17 +1111,83 @@ public class MediaController extends FrameLayout {
 			// show(sDefaultTimeout);
 		}
 	};
-	
+
 	private View.OnClickListener mYunduanListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			if (mPlayer.isPlaying()) {
-				mPlayer.pause();
-				updatePausePlay();
-			}
-
+			doPauseResume();
+			show(sDefaultTimeout);
+			setYunduanMessage();
 		}
 	};
+
+	private void setYunduanMessage() {
+		switch (CurrentCategory) {
+		case 0:
+			prod_id = m_ReturnProgramView.movie.id;
+			prod_type = 1;
+			prod_name = m_ReturnProgramView.movie.name;
+			prod_url = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].url;
+			prod_src = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].source;
+			prod_time = mPlayer.getCurrentPosition()/1000;
+			if (m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].type
+					.equals("hd2")) {
+				prod_qua = 1;
+			} else {
+				prod_qua = 0;
+			}
+			break;
+		case 1:
+			prod_id = m_ReturnProgramView.tv.id;
+			prod_type = 2;
+			prod_name = m_ReturnProgramView.tv.name + "第"
+					+ m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集";
+			prod_url = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].url;
+			prod_src = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].source;
+			prod_time = mPlayer.getCurrentPosition()/1000;
+			if (m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].type
+					.equals("hd2")) {
+				prod_qua = 1;
+			} else {
+				prod_qua = 0;
+			}
+			break;
+		case 2:
+			prod_id = m_ReturnProgramView.show.id;
+			prod_type = 3;
+			prod_name = m_ReturnProgramView.show.name
+					+ m_ReturnProgramView.show.episodes[CurrentIndex].name;
+			prod_url = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].url;
+			prod_src = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].source;
+			prod_time = mPlayer.getCurrentPosition()/1000;
+			if (m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].type
+					.equals("hd2")) {
+				prod_qua = 1;
+			} else {
+				prod_qua = 0;
+			}
+			break;
+		}
+
+		JSONObject json = new JSONObject();
+		try {
+			json.put("push_type", "41");
+			json.put("tv_channel", tv_channel);
+			json.put("user_id", user_id);
+			json.put("prod_id", prod_id);
+			json.put("prod_type", prod_type);
+			json.put("prod_name", prod_name);
+			json.put("prod_url", prod_url);
+			json.put("prod_src", prod_src);
+			json.put("prod_time", prod_time);
+			json.put("prod_qua", prod_qua);
+			mClient.sendMessage(json);
+			MobclickAgent.onEvent(mContext, ue_screencast_video_push);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	private View.OnClickListener mReturnListener = new View.OnClickListener() {
 		@Override
@@ -1251,10 +1348,9 @@ public class MediaController extends FrameLayout {
 			long newposition = (mDuration * progress) / 1000;
 			String time = StringUtils.generateTime(newposition);
 			Log.d("newposition_time", time);
-			if (mInstantSeeking)
-			{
+			if (mInstantSeeking) {
 				mPlayer.seekTo(newposition);
-				
+
 			}
 			if (mInfoView != null)
 				mInfoView.setText(time);
@@ -1264,10 +1360,9 @@ public class MediaController extends FrameLayout {
 
 		@Override
 		public void onStopTrackingTouch(SeekBar bar) {
-			if (!mInstantSeeking)
-			{
+			if (!mInstantSeeking) {
 				mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
-//				mPlayer.pause();
+				// mPlayer.pause();
 			}
 			if (mInfoView != null) {
 				mInfoView.setText("");

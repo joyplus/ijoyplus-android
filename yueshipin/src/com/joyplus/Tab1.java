@@ -113,7 +113,6 @@ public class Tab1 extends Activity implements
 			Bundle bundle = data.getExtras();
 			String scanResult = bundle.getString("result"); //扫描结果
 			scanResult = scanResult.replace("joy", "");
-			
 			Intent intent = new Intent(this, Before_Binding.class);
 			intent.putExtra("SaoMiao_result", scanResult);
 			startActivity(intent);

@@ -79,7 +79,7 @@
         android:clickable="true"
         android:adjustViewBounds="true"
         android:padding="0dip"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
