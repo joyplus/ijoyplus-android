@@ -117,4 +117,5 @@ IOS: ijoyplusios001bj
     //测试环境    云端投放 
     public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
     public static final String TV_CHANNEL_URL = "http://comettest.joyplus.tv:8080/bindtv";
+    public static final String CHECK_BINDING = "http://comettest.joyplus.tv:8080/api/check_binding";
 }

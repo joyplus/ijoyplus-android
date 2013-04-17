@@ -36,6 +36,7 @@ import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Dlna.DlnaVideoPlay;
+import com.joyplus.Video.HttpThreadPoolUtils;
 import com.joyplus.Video.VideoPlayerActivity;
 
 import android.app.Activity;

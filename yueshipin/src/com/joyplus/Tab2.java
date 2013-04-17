@@ -1,9 +1,16 @@
 package com.joyplus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.zxing.activity.CaptureActivity;
 
 import android.app.ActivityGroup;
@@ -70,16 +77,49 @@ public class Tab2 extends ActivityGroup {
 
 	@Override
 	protected void onResume() {
-		if(app.GetServiceData("Binding_TV_Channal") != null){
+		if(app.GetServiceData("Binding_TV") != null){
 			aq.id(R.id.Binding_Click).visible();
 		}else{
 			aq.id(R.id.Binding_Click).gone();
 		}
+//		check_binding();
 		super.onResume();
 	}
 
-
-
+    private void check_binding(){
+    	String url = Constant.CHECK_BINDING;
+        String tv_channel = app.GetServiceData("Binding_TV_Channal");
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("app_key", Constant.APPKEY);// required string
+												// 申请应用时分配的AppKey。
+		params.put("tv_channel ",tv_channel);// required string
+															
+		params.put("user_id ",app.UserID);// required
+															
+		
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.SetHeader(app.getHeaders());
+		cb.params(params).url(url).type(JSONObject.class)
+				.weakHandler(this, "CallProgramPlayResult");
+		// cb.params(params).url(url);
+		aq.ajax(cb);
+    }
+    public void CallProgramPlayResult(String url, JSONObject json,
+			AjaxStatus status) {
+		try {
+			int result = Integer.valueOf(json.getString("status"));
+			switch(result){
+			case 1:
+				aq.id(R.id.Binding_Click).visible();
+			case 0:
+				aq.id(R.id.Binding_Click).gone();
+			}
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * 初始化动画
 	 */

@@ -85,6 +85,7 @@ public class MainTopRightDialog extends Activity  {
 		} else {
 			GotoSinaWeibo();
 		}
+		finish();
 	}
 
 	public void GotoSinaWeibo() {
@@ -273,6 +274,7 @@ public class MainTopRightDialog extends Activity  {
 			app.MyToast(mContext, "微信版本为： " + Integer.toHexString(wxSdkVersion) + "\n该版本不支持分享到朋友圈");
 			return;
 		}
+		api.openWXApp();
 		String url = "weixin.joyplus.tv/info.php?prod_id="+prod_id;// 收到分享的好友点击信息会跳转到这个地址去
 		WXWebpageObject localWXWebpageObject = new WXWebpageObject();
 		localWXWebpageObject.webpageUrl = url;

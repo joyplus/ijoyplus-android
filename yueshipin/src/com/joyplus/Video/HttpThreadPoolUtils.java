@@ -45,4 +45,7 @@ public class HttpThreadPoolUtils {
     {  
         return queue.size();  
     }   
+	public static void shutdown(){
+		httpthreadPool.shutdown();
+	}
 }

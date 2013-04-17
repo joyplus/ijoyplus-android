@@ -154,7 +154,8 @@ public class Before_Binding extends Activity {
 			}
 			pb.dismiss();
 			if (push_type.equals("32") && userid.equals(user_id)&& result.equals("success")) {
-				app.SaveServiceData("Binding_TV_Channal", macAddress);
+				app.SaveServiceData("Binding_TV_Channal", tv_channel);
+				app.SaveServiceData("Binding_TV", "success");
 				message.what = 1;
 				MobclickAgent.onEvent(mContext, ue_screencast_binded);
 				Log.i("TVChannleListener", "messageReceived>>>" + json.toString());

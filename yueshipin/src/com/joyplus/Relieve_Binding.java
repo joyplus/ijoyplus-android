@@ -64,7 +64,7 @@ public class Relieve_Binding extends Activity {
 							et.put("push_type", "33");
 							et.put("tv_channel", tv_channel);
 							mClient.sendMessage(et);
-							app.DeleteServiceData("Binding_TV_Channal");
+							app.DeleteServiceData("Binding_TV");
 							app.MyToast(Relieve_Binding.this, "已解除绑定");
 							MobclickAgent.onEvent(mContext, ue_screencast_unbinded);
 							finish();
