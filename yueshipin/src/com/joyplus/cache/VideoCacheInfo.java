@@ -11,6 +11,7 @@ public class VideoCacheInfo {
 	private String create_date = null;
 	private String prod_subname = null;
 	private String last_playtime = null;
+	private String comments = null;
 	
 	public VideoCacheInfo()
 	{
@@ -18,7 +19,7 @@ public class VideoCacheInfo {
 	}
 	
 	public VideoCacheInfo(String prod_id, String prod_value, String prod_type,
-			String create_date, String prod_subname, String last_playtime) {
+			String create_date, String prod_subname, String last_playtime,String comments) {
 		super();
 		this.prod_id = prod_id;
 		this.prod_value = prod_value;
@@ -26,6 +27,7 @@ public class VideoCacheInfo {
 		this.create_date = create_date;
 		this.prod_subname = prod_subname;
 		this.last_playtime = last_playtime;
+		this.comments = comments;
 	}
 	
 	public String getProd_id() {
@@ -75,13 +77,21 @@ public class VideoCacheInfo {
 	public void setLast_playtime(String last_playtime) {
 		this.last_playtime = last_playtime;
 	}
-
+	
+	public String getComments()
+	{
+		return comments;
+	}
+	public void setComments(String comments)
+	{
+		this.comments = comments;
+	}
 	@Override
 	public String toString() {
 		return "videoCacheInfo [prod_id=" + prod_id + ", prod_value="
 				+ prod_value + ", prod_type=" + prod_type + ", create_date="
 				+ create_date + ", prod_subname=" + prod_subname
-				+ ", last_playtime=" + last_playtime + "]";
+				+ ", last_playtime=" + last_playtime + ",comments="+comments+"]";
 	}
 	
 }

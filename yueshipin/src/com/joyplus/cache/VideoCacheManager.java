@@ -34,5 +34,10 @@ public class VideoCacheManager {
 	public VideoCacheInfo getVideoCache(String prod_id) {
 		return Dao_Cache.getInstance(context).getOneInfo(prod_id);
 	}
-
+	
+	//保存当前的影评到缓存
+	public void saveVideoCacheComments(String comments,String prod_id)
+	{
+		Dao_Cache.getInstance(context).updateOneInfoComments(comments, prod_id);
+	}
 }

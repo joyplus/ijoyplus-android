@@ -278,7 +278,6 @@ public class VideoPlayerActivity extends Activity implements
 
 			if (playProdId != null)
 				GetServiceData();
-			// }
 		}
 
 		mvediohandler = new Handler() {
