@@ -533,6 +533,10 @@ public class Detail_TV extends Activity {
 				aq.id(R.id.button20).clickable(false);
 			}
 		}
+		else
+		{
+			GetServiceData();
+		}
 	}
 
 	public void OnClickImageView(View v) {
