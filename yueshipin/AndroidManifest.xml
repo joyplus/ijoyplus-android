@@ -258,6 +258,11 @@
             android:name=".Relieve_Binding"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
+        <receiver android:name="com.joyplus.faye.FayeReceiver">
+            <intent-filter >
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
         <service android:name="com.joyplus.faye.FayeService">
             
         </service>

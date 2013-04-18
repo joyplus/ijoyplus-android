@@ -48,6 +48,7 @@ public class Tab1 extends Activity implements
 	private int isLastisNext = 1;
 	private static String POPULAR_TOP_LIST = "悦单";
 	Context mContext;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,13 +57,13 @@ public class Tab1 extends Activity implements
 		aq = new AQuery(this);
 		mContext = this;
 		dataStruct = new ArrayList();
-		
-		
+
 		UmengUpdateAgent.setUpdateOnlyWifi(false);
 		UmengUpdateAgent.setOnDownloadListener(null);
 		UmengUpdateAgent.update(this);
-		Parse.initialize(this, "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB", "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl");
-		
+		Parse.initialize(this, "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB",
+				"YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl");
+
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
@@ -93,31 +94,32 @@ public class Tab1 extends Activity implements
 	}
 
 	public void OnClickTab1TopLeft(View v) {
-		
+
 		Intent i = new Intent(this, Search.class);
 		startActivity(i);
 	}
 
-	
-
 	public void OnClickSaoMiaoTopRight(View v) {
-		Intent openCameraIntent = new Intent(Tab1.this,CaptureActivity.class);
+		Intent openCameraIntent = new Intent(Tab1.this, CaptureActivity.class);
 		startActivityForResult(openCameraIntent, Sao_Yi_Sao);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		//处理扫描结果（在界面上显示）
+		// 处理扫描结果（在界面上显示）
 		if (resultCode == Sao_Yi_Sao) {
 			Bundle bundle = data.getExtras();
-			String scanResult = bundle.getString("result"); //扫描结果
-			scanResult = scanResult.replace("joy", "");
-			Intent intent = new Intent(this, Before_Binding.class);
-			intent.putExtra("SaoMiao_result", scanResult);
-			startActivity(intent);
+			String scanResult = bundle.getString("result"); // 扫描结果
+			if (scanResult.startsWith("joy")) {
+				scanResult = scanResult.replace("joy", "");
+				Intent intent = new Intent(this, Before_Binding.class);
+				intent.putExtra("SaoMiao_result", scanResult);
+				startActivity(intent);
+			}
 		}
 	}
+
 	@Override
 	protected void onDestroy() {
 		if (aq != null)
@@ -127,7 +129,7 @@ public class Tab1 extends Activity implements
 
 	@Override
 	public void onResume() {
-		
+
 		super.onResume();
 		MobclickAgent.onEventBegin(mContext, POPULAR_TOP_LIST);
 		MobclickAgent.onResume(this);
@@ -192,12 +194,11 @@ public class Tab1 extends Activity implements
 				Tab1Adapter.notifyDataSetChanged();
 			}
 			return;
-			
-		} else
-		{
+
+		} else {
 			NotifyDataAnalysisFinished();
 		}
-		
+
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 			Tab1ListData m_Tab1ListData = new Tab1ListData();
 			m_Tab1ListData.Pic_ID = m_ReturnTops.tops[i].id;
@@ -252,8 +253,8 @@ public class Tab1 extends Activity implements
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR||json == null)  {
+
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR || json == null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -296,13 +297,13 @@ public class Tab1 extends Activity implements
 	private Tab1ListAdapter getAdapter() {
 		if (Tab1Adapter == null) {
 			ArrayList arraylist = dataStruct;
-			Tab1ListAdapter listviewdetailadapter = new Tab1ListAdapter(Tab1.this,
-					arraylist);
+			Tab1ListAdapter listviewdetailadapter = new Tab1ListAdapter(
+					Tab1.this, arraylist);
 			Tab1Adapter = listviewdetailadapter;
 		} else {
 			ArrayList arraylist1 = dataStruct;
-			Tab1ListAdapter listviewdetailadapter1 = new Tab1ListAdapter(Tab1.this,
-					arraylist1);
+			Tab1ListAdapter listviewdetailadapter1 = new Tab1ListAdapter(
+					Tab1.this, arraylist1);
 			Tab1Adapter = listviewdetailadapter1;
 		}
 		return Tab1Adapter;
@@ -363,7 +364,7 @@ public class Tab1 extends Activity implements
 
 		}
 	}
-	
+
 	public void GetServiceData(int index) {
 		String url = Constant.BASE_URL + "tops" + "?page_num="
 				+ Integer.toString(index) + "&page_size=30";

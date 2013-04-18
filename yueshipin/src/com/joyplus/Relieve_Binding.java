@@ -39,14 +39,14 @@ public class Relieve_Binding extends Activity {
 		mContext = this;
 		user_id = app.UserID;
 		macAddress = app.GetServiceData("Binding_TV_Channal");
-		tv_channel = Constant.TV_CHANNEL + macAddress;
+		tv_channel = "/screencast/" + macAddress;
 
 		pb = new ProgressDialog(this);
 		pb.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		pb.setCanceledOnTouchOutside(false);
 		pb.setCancelable(true);
 
-		connect_TVChannel(tv_channel, user_id);
+		connect_TVChannel(tv_channel);
 
 		ImageButton relieveBinding = (ImageButton) findViewById(R.id.relieve_binding);
 		relieveBinding.setOnClickListener(new OnClickListener() {
@@ -62,7 +62,7 @@ public class Relieve_Binding extends Activity {
 							JSONObject et = new JSONObject();
 							et.put("user_id", user_id);
 							et.put("push_type", "33");
-							et.put("tv_channel", tv_channel);
+							et.put("tv_channel", macAddress);
 							mClient.sendMessage(et);
 							app.DeleteServiceData("Binding_TV");
 							app.MyToast(Relieve_Binding.this, "已解除绑定");
@@ -93,7 +93,7 @@ public class Relieve_Binding extends Activity {
 
 	}
 
-	private void connect_TVChannel(String channel, String user_id) {
+	private void connect_TVChannel(String channel) {
 		if (android.os.Build.VERSION.SDK_INT <= 8)
 			return;
 		try {

@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.joyplus.faye.FayeClient;
 import com.joyplus.faye.FayeClient.FayeListener;
+import com.joyplus.faye.FayeService;
 import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
@@ -48,8 +49,9 @@ public class Before_Binding extends Activity {
 		pb.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		pb.setCanceledOnTouchOutside(false);
 		pb.setCancelable(true);
-
-		connect_TVChannel(tv_channel, user_id);
+        
+//        FayeService.F
+		connect_TVChannel(tv_channel);
 
 		ImageButton confirmBinding = (ImageButton) findViewById(R.id.confirm_binding);
 		confirmBinding.setOnClickListener(new OnClickListener() {
@@ -66,7 +68,7 @@ public class Before_Binding extends Activity {
 						JSONObject et = new JSONObject();
 						et.put("user_id", user_id);
 						et.put("push_type", "31");
-						et.put("tv_channel", tv_channel);
+						et.put("tv_channel", "CHANNEL_TV_"+macAddress);
 						mClient.sendMessage(et);
 						MobclickAgent.onEvent(mContext, ue_screencast_binding);
 					} catch (JSONException e) {
@@ -107,7 +109,7 @@ public class Before_Binding extends Activity {
 
 	}
 
-	private void connect_TVChannel(String channel, String user_id) {
+	private void connect_TVChannel(String channel) {
 		if (android.os.Build.VERSION.SDK_INT <= 8)
 			return;
 		try {
@@ -154,7 +156,7 @@ public class Before_Binding extends Activity {
 			}
 			pb.dismiss();
 			if (push_type.equals("32") && userid.equals(user_id)&& result.equals("success")) {
-				app.SaveServiceData("Binding_TV_Channal", tv_channel);
+				app.SaveServiceData("Binding_TV_Channal", "CHANNEL_TV_"+macAddress);
 				app.SaveServiceData("Binding_TV", "success");
 				message.what = 1;
 				MobclickAgent.onEvent(mContext, ue_screencast_binded);
