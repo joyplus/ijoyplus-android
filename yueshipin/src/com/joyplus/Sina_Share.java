@@ -146,7 +146,6 @@ public class Sina_Share extends Activity {
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "ShareResult");
 		aq.progress(R.id.progress).ajax(cb);
-
 	}
 
 	public void ShareResult(String url, JSONObject json, AjaxStatus status) {
