@@ -82,6 +82,7 @@ public class MainTopRightDialog extends Activity  {
 			Intent i = new Intent(this, Sina_Share.class);
 			i.putExtra("prod_name", prod_name);
 			startActivity(i);
+			MainTopRightDialog.this.finish();
 		} else {
 			GotoSinaWeibo();
 		}

@@ -146,12 +146,13 @@ public class Sina_Share extends Activity {
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "ShareResult");
 		aq.progress(R.id.progress).ajax(cb);
+		aq.id(R.id.imageButton1).clickable(false);
+		app.MyToast(this, "分享成功!");
+		finish();
 	}
 
 	public void ShareResult(String url, JSONObject json, AjaxStatus status) {
         MobclickAgent.onEvent(mContext, ue_sina_share);
-		app.MyToast(this, "分享成功!");
-		finish();
 	}
 
 	@Override
