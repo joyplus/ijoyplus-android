@@ -81,6 +81,7 @@ import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.faye.FayeClient;
 import com.joyplus.faye.FayeClient.FayeListener;
+import com.joyplus.faye.FayeService;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
 import com.umeng.analytics.MobclickAgent;
@@ -187,8 +188,8 @@ public class VideoPlayerActivity extends Activity implements
 
 		String user_id = app.UserID;
 		String macAddress = app.GetServiceData("Binding_TV_Channal");
-		String tv_channel = Constant.TV_CHANNEL + macAddress;
-		connect_TVChannel(tv_channel);
+		String tv_channel = "/screencast/" + macAddress;
+		FayeService.FayeByService(mContext, tv_channel);
 		InitPlayData();
 		// 每次播放时及时把播放的flag清除为0
 		if (app.use2G3G) {

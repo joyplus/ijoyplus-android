@@ -33,6 +33,7 @@ import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.faye.FayeClient;
 import com.joyplus.faye.FayeClient.FayeListener;
+import com.joyplus.faye.FayeService;
 import com.umeng.analytics.MobclickAgent;
 
 import io.vov.utils.Log;
@@ -271,7 +272,7 @@ public class MediaController extends FrameLayout {
 				.findViewById(R.id.mediacontroller_play_pause);
 		mDlnaButton = (ImageButton) v.findViewById(R.id.mediacontroller_dlna);
 		mYunduanButton = (ImageButton) v.findViewById(R.id.yunduan_toufang);
-		if (app.GetServiceData("Binding_TV_Channal") != null) {
+		if (app.GetServiceData("Binding_TV") != null) {
 			mYunduanButton.setVisibility(View.VISIBLE);
 		} else {
 			mYunduanButton.setVisibility(View.INVISIBLE);
@@ -1181,7 +1182,7 @@ public class MediaController extends FrameLayout {
 			json.put("prod_src", prod_src);
 			json.put("prod_time", prod_time);
 			json.put("prod_qua", prod_qua);
-			mClient.sendMessage(json);
+			FayeService.SendMessageService(mContext, json, user_id);
 			MobclickAgent.onEvent(mContext, ue_screencast_video_push);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
