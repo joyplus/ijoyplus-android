@@ -97,8 +97,8 @@ public class Detail_Show extends Activity {
 	private String PROD_URI = null;
 	private String download_index = null;
 	private int page_num = 0;
-	private int m_FavorityNum = 0;
-	private int m_SupportNum = 0;
+	private int m_FavorityNum;
+	private int m_SupportNum;
 
 	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;

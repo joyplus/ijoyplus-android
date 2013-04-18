@@ -70,8 +70,8 @@ public class Detail_Movie extends Activity {
 	public String DOWNLOAD_SOURCE = null;
 	private String PROD_URI = null;
 	private String download_index = "movie";
-	private int m_FavorityNum = 0;
-	private int m_SupportNum = 0;
+	private int m_FavorityNum;
+	private int m_SupportNum;
 
 	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;
