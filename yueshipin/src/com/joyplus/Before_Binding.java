@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.joyplus.faye.FayeClient;
 import com.joyplus.faye.FayeClient.FayeListener;
-import com.joyplus.faye.FayeService;
+//import com.joyplus.faye.FayeService;
 import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
