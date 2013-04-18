@@ -546,10 +546,21 @@ public class Detail_TV extends Activity {
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		android.util.Log.i("yanyuchuang",status.getCode()+"");
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR||json == null||!json.has("tv")) {
+		//||json == null||!json.has("tv")
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
+			if (cacheInfoTemp == null) {
+				aq.id(R.id.none_net).visible();
+			}
+			return;
+		}
+		if(json == null||!json.has("tv"))
+		{
+			aq.id(R.id.ProgressText).gone();
+			app.MyToast(aq.getContext(),
+					getResources().getString(R.string.networkispoor));
 			if (cacheInfoTemp == null) {
 				aq.id(R.id.none_net).visible();
 			}
