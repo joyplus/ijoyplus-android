@@ -75,10 +75,11 @@ public class MainTopRightDialog extends Activity  {
 			Intent i = new Intent(this, Sina_Share.class);
 			i.putExtra("prod_name", prod_name);
 			startActivity(i);
+			MainTopRightDialog.this.finish();
 		} else {
 			GotoSinaWeibo();
 		}
-		finish();
+//		finish();
 	}
 
 	public void GotoSinaWeibo() {
@@ -262,10 +263,11 @@ public class MainTopRightDialog extends Activity  {
 							if (json.getString("nickname").trim().length() > 0) {
 								app.SaveServiceData("UserInfo", json.toString());
 								app.MyToast(getApplicationContext(), "新浪微博已绑定");
-								//打开新浪分享
+								
 								Intent i = new Intent(MainTopRightDialog.this, Sina_Share.class);
 								i.putExtra("prod_name", prod_name);
 								startActivity(i);
+								MainTopRightDialog.this.finish();
 							}
 						} catch (JSONException e) {
 							e.printStackTrace();

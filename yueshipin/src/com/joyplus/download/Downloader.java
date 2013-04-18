@@ -97,6 +97,7 @@ public class Downloader {
 			connection.disconnect();
 			// 本地访问文件
 			RandomAccessFile accessFile = new RandomAccessFile(localfile, "rwd");
+//			RandomAccessFile accessFile = new RandomAccessFile(file_path, "rwd");
 			accessFile.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -186,6 +187,7 @@ public class Downloader {
 				connection.setRequestProperty("Range", "bytes=" + compeleteSize
 						+ "-" + (fileSize - 1));// 后面的
 				randomAccessFile = new RandomAccessFile(localfile, "rwd");
+//				randomAccessFile = new RandomAccessFile(file_path, "rwd");
 				randomAccessFile.seek(compeleteSize);
 				inputstream = connection.getInputStream();
 				// 将要下载的文件写到保存在保存路径下的文件

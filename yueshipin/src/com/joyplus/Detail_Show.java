@@ -426,11 +426,22 @@ public class Detail_Show extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR || json == null
-				|| !json.has("show")) {
+		android.util.Log.i("yanyuchuang",status.getCode()+"");
+		// || json == null|| !json.has("show")
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
+			if (cacheInfoTemp == null) {
+				aq.id(R.id.none_net).visible();
+			}
+			return;
+		}
+		if(json == null|| !json.has("show"))
+		{
+			aq.id(R.id.ProgressText).gone();
+			app.MyToast(aq.getContext(),
+					getResources().getString(R.string.networkispoor));
 			if (cacheInfoTemp == null) {
 				aq.id(R.id.none_net).visible();
 			}
@@ -520,7 +531,7 @@ public class Detail_Show extends Activity {
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-
+		cb.timeout(60*1000);
 		cb.SetHeader(app.getHeaders());
 		if (cacheInfoTemp == null) {
 			aq.id(R.id.ProgressText).visible();

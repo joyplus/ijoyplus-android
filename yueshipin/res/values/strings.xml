@@ -24,6 +24,7 @@
     <string name=" ok">退出</string>
     <string name="  cancel">取消</string>
     <string name=" networknotwork">哎呀，你的网络好像有问题，请重试！</string>
+    <string name="networkispoor">亲，您的网络不给力哟！</string>
     <string name=" tv_string1">&#60;&#x0020;前15集</string>
     <string name=" tv_string2">后15集&#x0020;&#62;</string>
     <string name="movieviewlabel">Movies</string>

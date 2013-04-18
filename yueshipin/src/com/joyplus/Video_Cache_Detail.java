@@ -262,16 +262,25 @@ public class Video_Cache_Detail extends Activity {
 		// TODO Auto-generated method stub
 		data = Dao.getInstance(Video_Cache_Detail.this).getInfosOfProd_id(
 				prod_id);
-//		if (isnotChecked) {
-//			for (int i = 0; i < data.size(); i++) {
-//				File file = new File(data.get(i).getFilePath());
-//				if (!file.exists()) {
-//					data.remove(i);
-//					Dao.getInstance(Video_Cache_Detail.this).delete(data.get(i).getProd_id());
-//				}
-//			}
-//			isnotChecked = false;
-//		}
+		if (isnotChecked) {
+			for (int i = 0; i < data.size(); i++) {
+				File file = new File(data.get(i).getFilePath());
+				if (!file.exists()) {
+					//直接删除更彻底
+					Dao.getInstance(Video_Cache_Detail.this).updataInfoState("remove", data.get(i).getProd_id(),
+							data.get(i).getMy_index());
+				}
+				else
+				{
+					if(data.get(i).getDownload_state().equalsIgnoreCase("remove"))
+					{
+						Dao.getInstance(Video_Cache_Detail.this).updataInfoState("pause", data.get(i).getProd_id(),
+								data.get(i).getMy_index());
+					}
+				}
+			}
+			isnotChecked = false;
+		}
 		adapter.refresh(data);
 		if (data.isEmpty()) {
 			aq.id(R.id.none_cache).visible();
