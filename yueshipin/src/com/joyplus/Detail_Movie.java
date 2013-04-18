@@ -462,6 +462,7 @@ public class Detail_Movie extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
+		android.util.Log.i("yanyuchuang",status.getCode()+"");
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR || json == null||!json.has("movie")) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -555,6 +556,7 @@ public class Detail_Movie extends Activity {
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 		cb.SetHeader(app.getHeaders());
+		cb.timeout(60*1000);
 		if (cacheInfoTemp == null) {
 			aq.id(R.id.ProgressText).visible();
 			aq.progress(R.id.progress).ajax(cb);

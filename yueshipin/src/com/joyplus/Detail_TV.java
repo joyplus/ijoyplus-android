@@ -545,6 +545,7 @@ public class Detail_TV extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
+		android.util.Log.i("yanyuchuang",status.getCode()+"");
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR||json == null||!json.has("tv")) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -627,7 +628,7 @@ public class Detail_TV extends Activity {
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-
+		cb.timeout(60*1000);
 		cb.SetHeader(app.getHeaders());
 		if (cacheInfoTemp == null) {
 			aq.id(R.id.ProgressText).visible();
