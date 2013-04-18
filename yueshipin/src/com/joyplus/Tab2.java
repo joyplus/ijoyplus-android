@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.yixia.zi.utils.Log;
 import com.zxing.activity.CaptureActivity;
 
 import android.app.ActivityGroup;
@@ -79,39 +80,40 @@ public class Tab2 extends ActivityGroup {
 		} else {
 			aq.id(R.id.Binding_Click).gone();
 		}
-		check_binding();
+//		check_binding();
 		super.onResume();
 	}
 
-	private void check_binding() {
-		String tv_channel = app.GetServiceData("Binding_TV_Channal");
-		String url = Constant.CHECK_BINDING + "?tv_channel=" + tv_channel
-				+ "&user_id=" + app.UserID;
-		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.SetHeader(app.getHeaders());
-		cb.url(url).type(JSONObject.class)
-				.weakHandler(this, "CallProgramPlayResult");
-		aq.ajax(cb);
-	}
+//	private void check_binding() {
+//		String tv_channel = app.GetServiceData("Binding_TV_Channal");
+//		String url = Constant.CHECK_BINDING + "?tv_channel=" + tv_channel
+//				+ "&user_id=" + app.UserID;
+//		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+//		cb.SetHeader(app.getHeaders());
+//		cb.url(url).type(JSONObject.class)
+//				.weakHandler(this, "CallProgramPlayResult");
+//		aq.ajax(cb);
+//	}
 
-	public void CallProgramPlayResult(String url, JSONObject json,
-			AjaxStatus status) {
-		try {
-			int result = Integer.valueOf(json.getString("status"));
-			switch (result) {
-			case 1:
-				aq.id(R.id.Binding_Click).visible();
-				break;
-			case 0:
-				aq.id(R.id.Binding_Click).gone();
-				break;
-			}
-
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	public void CallProgramPlayResult(String url, JSONObject json,
+//			AjaxStatus status) {
+//		Log.i("check_binding", "status>>>"+json);
+//		try {
+//			int result = Integer.valueOf(json.getString("status"));
+//			switch (result) {
+//			case 1:
+//				aq.id(R.id.Binding_Click).visible();
+//				break;
+//			case 0:
+//				aq.id(R.id.Binding_Click).gone();
+//				break;
+//			}
+//
+//		} catch (JSONException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * 初始化动画
@@ -352,6 +354,11 @@ public class Tab2 extends ActivityGroup {
 			String scanResult = bundle.getString("result"); // 扫描结果
 			if (scanResult.startsWith("joy")) {
 				scanResult = scanResult.replace("joy", "");
+				String bindingchannel = app.GetServiceData("Binding_TV_Channal").replace("CHANNEL_TV_", "");
+				if(scanResult.equals(bindingchannel) && app.GetServiceData("Binding_TV")!=null){
+					app.MyToast(Tab2.this, "该设备已绑定");
+					return;
+				}
 				Intent intent = new Intent(this, Before_Binding.class);
 				intent.putExtra("SaoMiao_result", scanResult);
 				startActivity(intent);
