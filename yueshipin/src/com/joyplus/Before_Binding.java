@@ -33,7 +33,6 @@ public class Before_Binding extends Activity {
 	Context mContext;
 	private static final String ue_screencast_binded = "绑定成功";
 	private static final String ue_screencast_binding = "发出绑定消息";
-	private static final String ue_screencast_unbinded = "解除绑定事件";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +54,6 @@ public class Before_Binding extends Activity {
 		pb.setCanceledOnTouchOutside(false);
 		pb.setCancelable(true);
 
-		
-
 		ImageButton confirmBinding = (ImageButton) findViewById(R.id.confirm_binding);
 		confirmBinding.setOnClickListener(new OnClickListener() {
 
@@ -69,14 +66,13 @@ public class Before_Binding extends Activity {
 					return;
 				}
 				if (tv_channel != null && user_id != null) {
-					
 					FayeService.FayeByService(mContext, tv_channel);
 					new Handler().postDelayed(new Runnable() {
 
 						@Override
 						public void run() {
 							try {
-								
+
 								JSONObject et = new JSONObject();
 								et.put("user_id", user_id);
 								et.put("push_type", "31");
@@ -85,13 +81,23 @@ public class Before_Binding extends Activity {
 										user_id);
 								MobclickAgent.onEvent(mContext,
 										ue_screencast_binding);
-					
+
 							} catch (JSONException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
 					}, 500);
+
+					new Handler().postDelayed(new Runnable() {
+
+						@Override
+						public void run() {
+							pb.dismiss();
+							app.MyToast(Before_Binding.this, "绑定失败");
+							finish();
+						}
+					}, 8000);
 				}
 
 			}
@@ -137,6 +143,7 @@ public class Before_Binding extends Activity {
 	// } catch (Exception ex) {
 	// }
 	// }
+
 
 	public void OnClickTab1TopLeft(View v) {
 		finish();

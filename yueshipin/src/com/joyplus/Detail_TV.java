@@ -84,6 +84,7 @@ public class Detail_TV extends Activity {
 
 	private String prod_id = null;
 	private String prod_name = null;
+	private String prod_type = null;
 	private String PROD_SOURCE = null;
 	public String DOWNLOAD_SOURCE = null;
 	private String PROD_URI = null;
@@ -153,7 +154,7 @@ public class Detail_TV extends Activity {
 		Intent intent = getIntent();
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
-
+		prod_type = intent.getStringExtra("prod_type");
 		if (prod_name != null)
 			aq.id(R.id.program_name).text(prod_name);
 
@@ -891,7 +892,7 @@ public class Detail_TV extends Activity {
 				bundle.putInt("CurrentIndex", current_index);
 				bundle.putInt("CurrentCategory",1);
 				bundle.putString("PROD_SOURCE",PROD_SOURCE);
-				bundle.putString("prod_type", "2");
+				bundle.putString("prod_type", prod_type);
 				bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
@@ -1192,7 +1193,7 @@ public class Detail_TV extends Activity {
 							bundle.putInt("CurrentIndex", index);
 							bundle.putInt("CurrentCategory",1);
 							bundle.putString("PROD_SOURCE",PROD_SOURCE);
-							bundle.putString("prod_type", "2");
+							bundle.putString("prod_type", prod_type);
 							bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
@@ -1501,7 +1502,7 @@ public class Detail_TV extends Activity {
 		params.put("prod_subname", Integer.toString(episodesNum));// required
 																	// string
 																	// 视频的集数
-		params.put("prod_type", 2);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
+		params.put("prod_type", prod_type);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
 		params.put("playback_time", 0);// _time required int 上次播放时间，单位：秒
 		params.put("duration", 0);// required int 视频时长， 单位：秒
 

@@ -92,14 +92,14 @@ public class Main extends TabActivity {
 			startService(intent);
 		}
 
-		if (app.GetServiceData("Binding_TV") != null) {
+//		if (app.GetServiceData("Binding_TV") != null) {
 
 			Intent service = new Intent(Main.this, FayeService.class);
 			startService(service);
 			check_binding(app.GetServiceData("Binding_TV_Channal"),
 					app.GetServiceData("Binding_Userid"), app.getHeaders());
 
-		}
+//		}
 
 		PushService.subscribe(this, "", Main.class);
 		PushService.subscribe(this, "CHANNEL_ANDROID", Main.class);
@@ -466,8 +466,7 @@ public class Main extends TabActivity {
 				app.DeleteServiceData("Binding_TV");
 				showDialog();
 			}
-			if (status.equals("check_bind")
-					&& app.GetServiceData("Binding_TV") != null) {
+			if (status.equals("check_bind")) {
 				check_binding(app.GetServiceData("Binding_TV_Channal"),
 						app.GetServiceData("Binding_Userid"), app.getHeaders());
 			}
