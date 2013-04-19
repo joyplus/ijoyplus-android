@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 import com.joyplus.faye.FayeClient;
 import com.joyplus.faye.FayeService;
-import com.joyplus.faye.FayeClient.FayeListener;
 import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
@@ -68,27 +67,6 @@ public class Before_Binding extends Activity {
 					app.MyToast(Before_Binding.this, "您的网络有问题！");
 					pb.dismiss();
 					return;
-				}
-				if(app.GetServiceData("Binding_TV") != null){
-					FayeService.FayeByService(mContext, "/screencast/"+app.GetServiceData("Binding_TV_Channal"));
-					new Handler().postDelayed(new Runnable() {
-
-						@Override
-						public void run() {
-							try {
-								JSONObject json = new JSONObject();
-								json.put("user_id", user_id);
-								json.put("push_type", "33");
-								json.put("tv_channel", app.GetServiceData("Binding_TV_Channal"));
-								FayeService.SendMessageService(mContext, json,user_id);
-								MobclickAgent.onEvent(mContext,
-										ue_screencast_unbinded);
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}, 500);
 				}
 				if (tv_channel != null && user_id != null) {
 					

@@ -59,7 +59,8 @@ public class Main extends TabActivity {
 	CheckBindDingReceiver bindingReceiver;
 	Context mContext;
 	Handler locationHandler;
-    private boolean DialogIsViewed = false;
+	private boolean DialogIsViewed = false;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -95,8 +96,7 @@ public class Main extends TabActivity {
 
 			Intent service = new Intent(Main.this, FayeService.class);
 			startService(service);
-			check_binding(mContext,
-					app.GetServiceData("Binding_TV_Channal"),
+			check_binding(app.GetServiceData("Binding_TV_Channal"),
 					app.GetServiceData("Binding_Userid"), app.getHeaders());
 
 		}
@@ -466,10 +466,16 @@ public class Main extends TabActivity {
 				app.DeleteServiceData("Binding_TV");
 				showDialog();
 			}
+			if (status.equals("check_bind")
+					&& app.GetServiceData("Binding_TV") != null) {
+				check_binding(app.GetServiceData("Binding_TV_Channal"),
+						app.GetServiceData("Binding_Userid"), app.getHeaders());
+			}
 		}
 	}
+
 	private void showDialog() {
-		if(DialogIsViewed)
+		if (DialogIsViewed)
 			return;
 		AlertDialog.Builder builder = new Builder(Main.this);
 		builder.setTitle("提示");
@@ -486,7 +492,7 @@ public class Main extends TabActivity {
 		builder.create().show();
 	}
 
-	private void check_binding(Context context, String userid, String channel,
+	private void check_binding(String userid, String channel,
 			Map<String, String> headers) {
 		String url = Constant.CHECK_BINDING + "?tv_channel=" + channel
 				+ "&user_id=" + userid;
@@ -498,22 +504,23 @@ public class Main extends TabActivity {
 		aq.ajax(cb);
 
 	}
-	 public  void CallProgramPlayResult(String url, JSONObject json,
-		 AjaxStatus status) {
-		 try {
-		 int result = Integer.valueOf(json.getString("status"));
-		 switch (result) {
-		 case 1:
-		 break;
-		 case 0:
-			 app.DeleteServiceData("Binding_TV");
-			 showDialog();
-		 break;
-		 }
-		
-		 } catch (JSONException e) {
-		 e.printStackTrace();
-		 }
-		 }
-		
+
+	public void CallProgramPlayResult(String url, JSONObject json,
+			AjaxStatus status) {
+		try {
+			int result = Integer.valueOf(json.getString("status"));
+			switch (result) {
+			case 1:
+				break;
+			case 0:
+				app.DeleteServiceData("Binding_TV");
+				showDialog();
+				break;
+			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

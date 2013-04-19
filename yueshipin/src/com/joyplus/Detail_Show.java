@@ -642,7 +642,7 @@ public class Detail_Show extends Activity {
 			return;
 		}
 
-		if(player_select==null)
+		if(player_select==null && m_ReturnProgramView.show.episodes.length <= 200)
 		{
 			{
 				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -720,7 +720,7 @@ public class Detail_Show extends Activity {
 					bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				if(player_select.equalsIgnoreCase("third"))
+				if("third".equalsIgnoreCase(player_select)|| m_ReturnProgramView.show.episodes.length > 200)
 				{
 					Intent it = new Intent(Intent.ACTION_VIEW);
 					Uri uri = Uri.parse(PROD_SOURCE);
@@ -850,7 +850,7 @@ public class Detail_Show extends Activity {
 				}
 			}
 		}
-		if(player_select==null)
+		if(player_select==null && m_ReturnProgramView.show.episodes.length <= 200)
 		{
 			{
 				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -941,7 +941,7 @@ public class Detail_Show extends Activity {
 					bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				if(player_select.equalsIgnoreCase("third"))
+				if("third".equalsIgnoreCase(player_select)|| m_ReturnProgramView.show.episodes.length > 200)
 				{
 					Intent it = new Intent(Intent.ACTION_VIEW);
 					Uri uri = Uri.parse(PROD_SOURCE);

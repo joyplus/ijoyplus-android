@@ -753,7 +753,7 @@ public class Detail_TV extends Activity {
 			return;
 		}
 
-		if(player_select==null)
+		if(player_select==null && m_ReturnProgramView.tv.episodes.length <= 200)
 		{
 			{
 				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -895,7 +895,7 @@ public class Detail_TV extends Activity {
 				bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				if(player_select.equalsIgnoreCase("third"))
+				if("third".equalsIgnoreCase(player_select) || m_ReturnProgramView.tv.episodes.length > 200)
 				{
 					Intent it = new Intent(Intent.ACTION_VIEW);
 					Uri uri = Uri.parse(PROD_SOURCE);
@@ -1052,7 +1052,7 @@ public class Detail_TV extends Activity {
 
 		final int index = Integer.parseInt(v.getTag().toString());
 
-		if(player_select==null)
+		if(player_select==null &&  m_ReturnProgramView.tv.episodes.length <= 200)
 		{
 			{
 				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -1196,7 +1196,7 @@ public class Detail_TV extends Activity {
 							bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				if(player_select.equalsIgnoreCase("third"))
+				if("third".equalsIgnoreCase(player_select)|| m_ReturnProgramView.tv.episodes.length > 200)
 				{
 					Intent it = new Intent(Intent.ACTION_VIEW);
 					Uri uri = Uri.parse(PROD_SOURCE);
