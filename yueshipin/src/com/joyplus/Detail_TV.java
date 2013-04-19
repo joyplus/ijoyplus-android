@@ -95,13 +95,13 @@ public class Detail_TV extends Activity {
 	private int m_FavorityNum;
 	private int m_SupportNum;
 	public List<DownloadInfo> data;
-	
+
 	private String player_select;
 	private PopupWindow popup_player_select = null;
-	
+
 	private PopupWindow popup_report = null;
 	private PopupWindow popupReviewDetail = null;
-	private String invalid_type = null; 
+	private String invalid_type = null;
 	private String problemContext = null;
 	CheckBox checkbox1;
 	CheckBox checkbox2;
@@ -111,13 +111,13 @@ public class Detail_TV extends Activity {
 	CheckBox checkbox6;
 	CheckBox checkbox7;
 	EditText problem_edit;
-	
+
 	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;
 	private int isLastisNext = 2;
 	private int mLastY = 0;
 	// 标示当前有多少个按钮被点击了
-	private HashSet <Integer>download_indexs = new HashSet<Integer>();
+	private HashSet<Integer> download_indexs = new HashSet<Integer>();
 
 	// added by yyc,in order to flag the playing tv's index btn
 	Drawable focuse = null;
@@ -154,7 +154,11 @@ public class Detail_TV extends Activity {
 		Intent intent = getIntent();
 		prod_id = intent.getStringExtra("prod_id");
 		prod_name = intent.getStringExtra("prod_name");
-		prod_type = intent.getStringExtra("prod_type");
+		if (intent.getStringExtra("prod_type") != null) {
+			prod_type = intent.getStringExtra("prod_type");
+		}else{
+			prod_type = "2";
+		}
 		if (prod_name != null)
 			aq.id(R.id.program_name).text(prod_name);
 
@@ -173,8 +177,8 @@ public class Detail_TV extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					if (mLastY == mScrollView.getScrollY()) {
 						// TODO
-//						if (mScrollView.getScrollY() != 0)
-//							ShowMoreComments();
+						// if (mScrollView.getScrollY() != 0)
+						// ShowMoreComments();
 					} else {
 						mLastY = mScrollView.getScrollY();
 					}
@@ -182,7 +186,7 @@ public class Detail_TV extends Activity {
 				return false;
 			}
 		});
-		
+
 		cacheManager = new VideoCacheManager(Detail_TV.this);
 		cacheInfo = new VideoCacheInfo();
 		playrecordmanager = new PlayRecordManager(Detail_TV.this);
@@ -289,18 +293,18 @@ public class Detail_TV extends Activity {
 		super.onResume();
 		MobclickAgent.onEventBegin(mContext, TV_DETAIL);
 		MobclickAgent.onResume(this);
-		
-		if (prod_id != null)
-		{
+
+		if (prod_id != null) {
 			// ReadSettingData
-			SharedPreferences myPreference = this.getSharedPreferences(MY_SETTING,
-					Context.MODE_PRIVATE);
+			SharedPreferences myPreference = this.getSharedPreferences(
+					MY_SETTING, Context.MODE_PRIVATE);
 			if (myPreference != null) {
 				String temp = null;
 				if (prod_id != null) {
 					temp = myPreference.getString(prod_id, "");
 				}
-				if (temp != "") // myPreference.getString's return value is "",not
+				if (temp != "") // myPreference.getString's return value is
+								// "",not
 								// null
 				{
 					current_index = Integer.parseInt(temp);
@@ -308,7 +312,7 @@ public class Detail_TV extends Activity {
 			}
 			CheckSaveData();
 		}
-			
+
 	}
 
 	@Override
@@ -397,7 +401,7 @@ public class Detail_TV extends Activity {
 				for (i = 0; i < m_ReturnProgramView.tv.episodes.length
 						&& i < 15; i++) {
 					m_j = Integer.toString(i + 4);// m_ReturnProgramView.tv.episodes[i].name;
-//					String str = m_ReturnProgramView.tv.episodes[i].name;
+					// String str = m_ReturnProgramView.tv.episodes[i].name;
 					Button m_button = (Button) this.findViewById(getResources()
 							.getIdentifier("tv_button" + m_j, "id",
 									getPackageName()));
@@ -492,12 +496,10 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
 					aq.id(R.id.button20).clickable(false);
 				}
-				if(cacheManager!=null&&cacheInfoTemp!=null)
-				{
-					
+				if (cacheManager != null && cacheInfoTemp != null) {
+
 					String temp = cacheInfoTemp.getComments();
-					if(temp!=null&&temp.toString().length()>10)
-					{
+					if (temp != null && temp.toString().length() > 10) {
 						ObjectMapper mapper = new ObjectMapper();
 						m_ReturnProgramReviews = null;
 						try {
@@ -514,28 +516,21 @@ public class Detail_TV extends Activity {
 							e.printStackTrace();
 						}
 						// 创建数据源对象
-						if(m_ReturnProgramReviews==null)
-						{
+						if (m_ReturnProgramReviews == null) {
 							GetReviews();
 						}
 						ShowComments();
-					}
-					else
-					{
+					} else {
 						GetReviews();
 					}
-				}
-				else
-				{
+				} else {
 					GetReviews();
 				}
 			} else {
 				aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
 				aq.id(R.id.button20).clickable(false);
 			}
-		}
-		else
-		{
+		} else {
 			GetServiceData();
 		}
 	}
@@ -546,8 +541,8 @@ public class Detail_TV extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-//		android.util.Log.i("yanyuchuang",status.getCode()+"");
-		//||json == null||!json.has("tv")
+		// android.util.Log.i("yanyuchuang",status.getCode()+"");
+		// ||json == null||!json.has("tv")
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -557,8 +552,7 @@ public class Detail_TV extends Activity {
 			}
 			return;
 		}
-		if(json == null||!json.has("tv"))
-		{
+		if (json == null || !json.has("tv")) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networkispoor));
@@ -584,7 +578,7 @@ public class Detail_TV extends Activity {
 			InitData();
 			aq.id(R.id.ProgressText).gone();
 			aq.id(R.id.scrollView1).visible();
-//			TV_String = json.toString();
+			// TV_String = json.toString();
 
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -640,7 +634,7 @@ public class Detail_TV extends Activity {
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-		cb.timeout(60*1000);
+		cb.timeout(60 * 1000);
 		cb.SetHeader(app.getHeaders());
 		if (cacheInfoTemp == null) {
 			aq.id(R.id.ProgressText).visible();
@@ -754,29 +748,27 @@ public class Detail_TV extends Activity {
 			return;
 		}
 
-		if(player_select==null && m_ReturnProgramView.tv.episodes.length <= 200)
-		{
+		if (player_select == null
+				&& m_ReturnProgramView.tv.episodes.length <= 200) {
 			{
 				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-				final ViewGroup menuView = (ViewGroup) mLayoutInflater
-						.inflate(R.layout.player_select, null, true);
+				final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+						R.layout.player_select, null, true);
 				popup_player_select = new PopupWindow(menuView,
-						LayoutParams.WRAP_CONTENT,
-						LayoutParams.WRAP_CONTENT, true);
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+						true);
 				Button default_btn = (Button) menuView
 						.findViewById(R.id.neizhibtn);
-				default_btn
-						.setOnClickListener(new Button.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								// TODO Auto-generated method stub
-								player_select = "default";
-								app.SaveServiceData("player_select",
-										"default");
-								popup_player_select.dismiss();
-								StartIntentToPlayer();
-							}
-						});
+				default_btn.setOnClickListener(new Button.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						player_select = "default";
+						app.SaveServiceData("player_select", "default");
+						popup_player_select.dismiss();
+						StartIntentToPlayer();
+					}
+				});
 				Button third_btn = (Button) menuView
 						.findViewById(R.id.disanfangbtn);
 				third_btn.setOnClickListener(new Button.OnClickListener() {
@@ -785,28 +777,23 @@ public class Detail_TV extends Activity {
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						player_select = "third";
-						app.SaveServiceData("player_select","third");
+						app.SaveServiceData("player_select", "third");
 						popup_player_select.dismiss();
 						StartIntentToPlayer();
-						}
+					}
 				});
-				popup_player_select
-						.setBackgroundDrawable(new BitmapDrawable());
-				popup_player_select
-						.showAtLocation(Detail_TV.this
-								.findViewById(R.id.parent),
-								Gravity.CENTER | Gravity.CENTER, 0, 40);
+				popup_player_select.setBackgroundDrawable(new BitmapDrawable());
+				popup_player_select.showAtLocation(
+						Detail_TV.this.findViewById(R.id.parent),
+						Gravity.CENTER | Gravity.CENTER, 0, 40);
 				popup_player_select.update();
 			}
-		}
-		else
-		{
+		} else {
 			StartIntentToPlayer();
 		}
 	}
-	
-	public void StartIntentToPlayer()
-	{
+
+	public void StartIntentToPlayer() {
 		app.checkUserSelect(Detail_TV.this);
 		if (app.use2G3G) {
 			// 电视剧type为2 ，sbuname 为当前集数
@@ -815,21 +802,20 @@ public class Detail_TV extends Activity {
 				app.MyToast(this, "暂无播放链接!");
 				return;
 			}
-			
+
 			playrecordinfo = playrecordmanager.getPlayRecord(prod_id);
 			current_time = 0;
 			if (playrecordinfo != null
 					&& playrecordinfo.getLast_playtime() != null
 					&& playrecordinfo.getLast_playtime().length() > 0) {
-				current_time = Long.parseLong(playrecordinfo
-						.getLast_playtime());
-				current_index = Integer.parseInt(playrecordinfo.getProd_subname())-1;
-			}
-			else
-			{
+				current_time = Long
+						.parseLong(playrecordinfo.getLast_playtime());
+				current_index = Integer.parseInt(playrecordinfo
+						.getProd_subname()) - 1;
+			} else {
 				current_index = 0;
 			}
-			
+
 			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
 					(current_index + 1) + "", 2);
 			SharedPreferences myPreference = this.getSharedPreferences(
@@ -878,40 +864,39 @@ public class Detail_TV extends Activity {
 							break;
 					}
 				}
-			} 
-				if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+			}
+			if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 				SaveToServer(2, PROD_URI, 1);
-				Intent intent = new Intent(this,Webview_Play.class);
+				Intent intent = new Intent(this, Webview_Play.class);
 				Bundle bundle = new Bundle();
 				bundle.putString("PROD_URI", PROD_URI);
 				bundle.putString("NAME", m_ReturnProgramView.tv.name);
-				bundle.putString("prod_subname", m_ReturnProgramView.tv.episodes[current_index].name);
-				
-			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-				bundle.putString("prod_id", prod_id);
-				bundle.putInt("CurrentIndex", current_index);
-				bundle.putInt("CurrentCategory",1);
-				bundle.putString("PROD_SOURCE",PROD_SOURCE);
-				bundle.putString("prod_type", prod_type);
-				bundle.putLong("current_time", current_time);
+				bundle.putString("prod_subname",
+						m_ReturnProgramView.tv.episodes[current_index].name);
+
+				if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+					bundle.putString("prod_id", prod_id);
+					bundle.putInt("CurrentIndex", current_index);
+					bundle.putInt("CurrentCategory", 1);
+					bundle.putString("PROD_SOURCE", PROD_SOURCE);
+					bundle.putString("prod_type", prod_type);
+					bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				if("third".equalsIgnoreCase(player_select) || m_ReturnProgramView.tv.episodes.length > 200)
-				{
+				if ("third".equalsIgnoreCase(player_select)
+						|| m_ReturnProgramView.tv.episodes.length > 200) {
 					Intent it = new Intent(Intent.ACTION_VIEW);
 					Uri uri = Uri.parse(PROD_SOURCE);
 					it.setDataAndType(uri, "video/*");
 					startActivity(it);
-				}
-				else
-				{
+				} else {
 					startActivity(intent);
 				}
-				
+
 			}
 		}
 	}
-	
+
 	// OnClickNext15
 	public void OnClickNext15(View v) {
 		String m_j = null;
@@ -970,17 +955,17 @@ public class Detail_TV extends Activity {
 			}
 		}
 	}
-	
-	public void OnClickMoreReviews(View v)
-	{
-		String url = "http://movie.douban.com/subject/"+m_ReturnProgramView.tv.douban_id+"/reviews";
+
+	public void OnClickMoreReviews(View v) {
+		String url = "http://movie.douban.com/subject/"
+				+ m_ReturnProgramView.tv.douban_id + "/reviews";
 		Intent intent = new Intent();
 		intent.setAction("android.intent.action.VIEW");
 		Uri content_url = Uri.parse(url);
 		intent.setData(content_url);
 		startActivity(intent);
 	}
-	
+
 	public void OnClickPre15(View v) {
 		String m_j = null;
 		int j = 0;
@@ -1053,29 +1038,27 @@ public class Detail_TV extends Activity {
 
 		final int index = Integer.parseInt(v.getTag().toString());
 
-		if(player_select==null &&  m_ReturnProgramView.tv.episodes.length <= 200)
-		{
+		if (player_select == null
+				&& m_ReturnProgramView.tv.episodes.length <= 200) {
 			{
 				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-				final ViewGroup menuView = (ViewGroup) mLayoutInflater
-						.inflate(R.layout.player_select, null, true);
+				final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+						R.layout.player_select, null, true);
 				popup_player_select = new PopupWindow(menuView,
-						LayoutParams.WRAP_CONTENT,
-						LayoutParams.WRAP_CONTENT, true);
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+						true);
 				Button default_btn = (Button) menuView
 						.findViewById(R.id.neizhibtn);
-				default_btn
-						.setOnClickListener(new Button.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								// TODO Auto-generated method stub
-								player_select = "default";
-								app.SaveServiceData("player_select",
-										"default");
-								popup_player_select.dismiss();
-								StartIntentToPlayerTv(index);
-							}
-						});
+				default_btn.setOnClickListener(new Button.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						player_select = "default";
+						app.SaveServiceData("player_select", "default");
+						popup_player_select.dismiss();
+						StartIntentToPlayerTv(index);
+					}
+				});
 				Button third_btn = (Button) menuView
 						.findViewById(R.id.disanfangbtn);
 				third_btn.setOnClickListener(new Button.OnClickListener() {
@@ -1084,29 +1067,24 @@ public class Detail_TV extends Activity {
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						player_select = "third";
-						app.SaveServiceData("player_select","third");
+						app.SaveServiceData("player_select", "third");
 						popup_player_select.dismiss();
 						StartIntentToPlayerTv(index);
-						}
+					}
 				});
-				popup_player_select
-						.setBackgroundDrawable(new BitmapDrawable());
-				popup_player_select
-						.showAtLocation(Detail_TV.this
-								.findViewById(R.id.parent),
-								Gravity.CENTER | Gravity.CENTER, 0, 40);
+				popup_player_select.setBackgroundDrawable(new BitmapDrawable());
+				popup_player_select.showAtLocation(
+						Detail_TV.this.findViewById(R.id.parent),
+						Gravity.CENTER | Gravity.CENTER, 0, 40);
 				popup_player_select.update();
 			}
-		}
-		else
-		{
+		} else {
 			StartIntentToPlayerTv(index);
 		}
-		
+
 	}
-	
-	public void StartIntentToPlayerTv(int index)
-	{
+
+	public void StartIntentToPlayerTv(int index) {
 		app.checkUserSelect(Detail_TV.this);
 		if (app.use2G3G) {
 			current_index = index;
@@ -1170,48 +1148,47 @@ public class Detail_TV extends Activity {
 					}
 				}
 			}
-				if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+			if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 				SaveToServer(2, PROD_URI, index + 1);
-				Intent intent = new Intent(this,Webview_Play.class);
+				Intent intent = new Intent(this, Webview_Play.class);
 				Bundle bundle = new Bundle();
 				bundle.putString("PROD_URI", PROD_URI);
 				bundle.putString("NAME", m_ReturnProgramView.tv.name);
-				bundle.putString("prod_subname", m_ReturnProgramView.tv.episodes[current_index].name);
-				
-			if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-				mCurrentPlayData.CurrentIndex = index;
-				playrecordinfo = playrecordmanager.getPlayRecord(prod_id,
-						Integer.toString(index + 1));
-				current_time = 0;
-				if (playrecordinfo != null
-						&& playrecordinfo.getLast_playtime() != null
-						&& playrecordinfo.getLast_playtime().length() > 0) {
-					current_time = Long.parseLong(playrecordinfo
-							.getLast_playtime());
-				}
-							bundle.putString("prod_id", prod_id);
-							bundle.putInt("CurrentIndex", index);
-							bundle.putInt("CurrentCategory",1);
-							bundle.putString("PROD_SOURCE",PROD_SOURCE);
-							bundle.putString("prod_type", prod_type);
-							bundle.putLong("current_time", current_time);
+				bundle.putString("prod_subname",
+						m_ReturnProgramView.tv.episodes[current_index].name);
+
+				if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+					mCurrentPlayData.CurrentIndex = index;
+					playrecordinfo = playrecordmanager.getPlayRecord(prod_id,
+							Integer.toString(index + 1));
+					current_time = 0;
+					if (playrecordinfo != null
+							&& playrecordinfo.getLast_playtime() != null
+							&& playrecordinfo.getLast_playtime().length() > 0) {
+						current_time = Long.parseLong(playrecordinfo
+								.getLast_playtime());
+					}
+					bundle.putString("prod_id", prod_id);
+					bundle.putInt("CurrentIndex", index);
+					bundle.putInt("CurrentCategory", 1);
+					bundle.putString("PROD_SOURCE", PROD_SOURCE);
+					bundle.putString("prod_type", prod_type);
+					bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				if("third".equalsIgnoreCase(player_select)|| m_ReturnProgramView.tv.episodes.length > 200)
-				{
+				if ("third".equalsIgnoreCase(player_select)
+						|| m_ReturnProgramView.tv.episodes.length > 200) {
 					Intent it = new Intent(Intent.ACTION_VIEW);
 					Uri uri = Uri.parse(PROD_SOURCE);
 					it.setDataAndType(uri, "video/*");
 					startActivity(it);
-				}
-				else
-				{
+				} else {
 					startActivity(intent);
 				}
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void videoSourceSort(int source_index) {
 		if (m_ReturnProgramView.tv.episodes[source_index].down_urls != null) {
@@ -1273,43 +1250,42 @@ public class Detail_TV extends Activity {
 		}
 	}
 
-//	//
-//	public void CallVideoPlayActivity() {
+	// //
+	// public void CallVideoPlayActivity() {
 	//
-//		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-//			GetVideoSource(0, PROD_SOURCE);
-//
-//		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-//			GetVideoSource(1, PROD_URI);
-//
-//			Intent intent = new Intent();
-//			intent.setAction("android.intent.action.VIEW");
-//			Uri content_url = Uri.parse(PROD_URI);
-//			intent.setData(content_url);
-//			startActivity(intent);
-//		}
-//	}
+	// if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+	// GetVideoSource(0, PROD_SOURCE);
+	//
+	// } else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+	// GetVideoSource(1, PROD_URI);
+	//
+	// Intent intent = new Intent();
+	// intent.setAction("android.intent.action.VIEW");
+	// Uri content_url = Uri.parse(PROD_URI);
+	// intent.setData(content_url);
+	// startActivity(intent);
+	// }
+	// }
 
 	//
-//	public void CallVideoPlayActivity() {
-//
-//		if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
-//			GetVideoSource(0, PROD_SOURCE);
-//
-//		} else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
-//			GetVideoSource(1, PROD_URI);
-//
-//			Intent intent = new Intent();
-//			intent.setAction("android.intent.action.VIEW");
-//			Uri content_url = Uri.parse(PROD_URI);
-//			intent.setData(content_url);
-//			startActivity(intent);
-//		}
-//	}
+	// public void CallVideoPlayActivity() {
+	//
+	// if (PROD_SOURCE != null && PROD_SOURCE.trim().length() > 0) {
+	// GetVideoSource(0, PROD_SOURCE);
+	//
+	// } else if (PROD_URI != null && PROD_URI.trim().length() > 0) {
+	// GetVideoSource(1, PROD_URI);
+	//
+	// Intent intent = new Intent();
+	// intent.setAction("android.intent.action.VIEW");
+	// Uri content_url = Uri.parse(PROD_URI);
+	// intent.setData(content_url);
+	// startActivity(intent);
+	// }
+	// }
 
 	public void ShowComments() {
-		if(m_ReturnProgramReviews == null)
-		{
+		if (m_ReturnProgramReviews == null) {
 			aq.id(R.id.imageView_comment).gone();
 		}
 		LinearLayout review1 = (LinearLayout) findViewById(R.id.review1);
@@ -1327,8 +1303,8 @@ public class Detail_TV extends Activity {
 				review2.setVisibility(View.VISIBLE);
 				review3.setVisibility(View.VISIBLE);
 			}
-			if(m_ReturnProgramReviews.reviews.length>0&&m_ReturnProgramView.tv.douban_id!=null)
-			{
+			if (m_ReturnProgramReviews.reviews.length > 0
+					&& m_ReturnProgramView.tv.douban_id != null) {
 				aq.id(R.id.moreReviews).visible();
 			}
 		}
@@ -1373,7 +1349,8 @@ public class Detail_TV extends Activity {
 						@Override
 						public void onGlobalLayout() {
 							// TODO Auto-generated method stub
-//							ViewTreeObserver obs = review2Content.getViewTreeObserver();
+							// ViewTreeObserver obs =
+							// review2Content.getViewTreeObserver();
 							if (review2Content.getLineCount() > 5) {
 								int lineEndIndex = review2Content.getLayout()
 										.getLineEnd(4);
@@ -1396,7 +1373,8 @@ public class Detail_TV extends Activity {
 						@Override
 						public void onGlobalLayout() {
 							// TODO Auto-generated method stub
-//							ViewTreeObserver obs = review3Content.getViewTreeObserver();
+							// ViewTreeObserver obs =
+							// review3Content.getViewTreeObserver();
 							if (review3Content.getLineCount() > 5) {
 								int lineEndIndex = review3Content.getLayout()
 										.getLineEnd(4);
@@ -1414,25 +1392,24 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickReviewComments(View v) {
-		if(popupReviewDetail!=null)
-		{
+		if (popupReviewDetail != null) {
 			popupReviewDetail.dismiss();
 		}
 		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 		final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
 				R.layout.reviews, null, true);
-		TextView title = (TextView)menuView.findViewById(R.id.title);
-		TextView content = (TextView)menuView.findViewById(R.id.content);
-		title.setText(m_ReturnProgramReviews.reviews[Integer.parseInt(v.getTag()
-						.toString())].title);
-		content.setText(m_ReturnProgramReviews.reviews[Integer.parseInt(v.getTag()
-						.toString())].comments);
-		popupReviewDetail = new PopupWindow(menuView, LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT, true);
+		TextView title = (TextView) menuView.findViewById(R.id.title);
+		TextView content = (TextView) menuView.findViewById(R.id.content);
+		title.setText(m_ReturnProgramReviews.reviews[Integer.parseInt(v
+				.getTag().toString())].title);
+		content.setText(m_ReturnProgramReviews.reviews[Integer.parseInt(v
+				.getTag().toString())].comments);
+		popupReviewDetail = new PopupWindow(menuView,
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
 		popupReviewDetail.setBackgroundDrawable(new BitmapDrawable());
 		popupReviewDetail.setAnimationStyle(R.style.PopupAnimation);
-		popupReviewDetail.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-				| Gravity.CENTER, 0, 40);
+		popupReviewDetail.showAtLocation(findViewById(R.id.parent),
+				Gravity.CENTER | Gravity.CENTER, 0, 40);
 		popupReviewDetail.update();
 	}
 
@@ -1451,7 +1428,7 @@ public class Detail_TV extends Activity {
 
 		cb.SetHeader(app.getHeaders());
 
-//		aq.id(R.id.ProgressText).visible();
+		// aq.id(R.id.ProgressText).visible();
 		aq.ajax(cb);
 	}
 
@@ -1466,8 +1443,7 @@ public class Detail_TV extends Activity {
 				m_ReturnProgramReviews = null;
 			m_ReturnProgramReviews = mapper.readValue(json.toString(),
 					ReturnProgramReviews.class);
-			if(json!=null&&cacheManager!=null)
-			{
+			if (json != null && cacheManager != null) {
 				cacheManager.saveVideoCacheComments(json.toString(), prod_id);
 			}
 			// 创建数据源对象
@@ -1502,7 +1478,8 @@ public class Detail_TV extends Activity {
 		params.put("prod_subname", Integer.toString(episodesNum));// required
 																	// string
 																	// 视频的集数
-		params.put("prod_type", prod_type);// required int 视频类别 1：电影，2：电视剧，3：综艺，4：视频
+		params.put("prod_type", prod_type);// required int 视频类别
+											// 1：电影，2：电视剧，3：综艺，4：视频
 		params.put("playback_time", 0);// _time required int 上次播放时间，单位：秒
 		params.put("duration", 0);// required int 视频时长， 单位：秒
 
@@ -1745,7 +1722,8 @@ public class Detail_TV extends Activity {
 				v.setBackgroundDrawable(download_been);
 				v.setEnabled(false);
 				((Button) v).setTextColor(Color.WHITE);// 设置颜色和文字的位置
-				((Button) v).setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+				((Button) v)
+						.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 				if (!download_indexs.contains(index)) {
 					download_indexs.add(index);
 				}
@@ -1849,9 +1827,8 @@ public class Detail_TV extends Activity {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
-	public void popupReportProblem()
-	{
+
+	public void popupReportProblem() {
 		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 		final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
 				R.layout.report_problem, null, true);
@@ -1869,40 +1846,34 @@ public class Detail_TV extends Activity {
 		popup_report.setBackgroundDrawable(new BitmapDrawable());
 		popup_report.setAnimationStyle(R.style.PopupAnimation);
 		popup_report.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-				| Gravity.CENTER,0, 40);
+				| Gravity.CENTER, 0, 40);
 		popup_report.update();
 	}
-	
-	public void OnClickCloseReprot(View v)
-	{
+
+	public void OnClickCloseReprot(View v) {
 		popup_report.dismiss();
 	}
-	
-	public void OnClickSubmitProblem(View v)
-	{
+
+	public void OnClickSubmitProblem(View v) {
 		initInvalid_type();
-		if(invalid_type==null)
-		{	
+		if (invalid_type == null) {
 			problemContext = problem_edit.getText().toString();
-			if(problemContext==null||problemContext.length()<1)
-			{
-				Toast.makeText(Detail_TV.this, "亲，必须选择一个理由啊！", Toast.LENGTH_LONG).show();
+			if (problemContext == null || problemContext.length() < 1) {
+				Toast.makeText(Detail_TV.this, "亲，必须选择一个理由啊！",
+						Toast.LENGTH_LONG).show();
 				return;
 			}
 		}
 		String url = Constant.BASE_URL + "program/invalid";
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("prod_id", prod_id);
-		if(problemContext==null||problemContext.length()<1)
-		{
+		if (problemContext == null || problemContext.length() < 1) {
 			params.put("invalid_type", invalid_type);
-		}
-		else
-		{
+		} else {
 			params.put("invalid_type", 8);
 			params.put("memo", problemContext);
 		}
-		
+
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.SetHeader(app.getHeaders());
 
@@ -1913,83 +1884,55 @@ public class Detail_TV extends Activity {
 				Toast.LENGTH_LONG).show();
 		popup_report.dismiss();
 	}
-	public void initInvalid_type()
-	{
-		if(checkbox1.isChecked())
-		{
-			if(invalid_type==null)
-			{
+
+	public void initInvalid_type() {
+		if (checkbox1.isChecked()) {
+			if (invalid_type == null) {
 				invalid_type = "1";
-			}
-			else
-			{
-				invalid_type = invalid_type+","+"1";
+			} else {
+				invalid_type = invalid_type + "," + "1";
 			}
 		}
-		if(checkbox2.isChecked())
-		{
-			if(invalid_type==null)
-			{
+		if (checkbox2.isChecked()) {
+			if (invalid_type == null) {
 				invalid_type = "2";
-			}
-			else
-			{
-				invalid_type = invalid_type+","+"2";
+			} else {
+				invalid_type = invalid_type + "," + "2";
 			}
 		}
-		if(checkbox3.isChecked())
-		{
-			if(invalid_type==null)
-			{
+		if (checkbox3.isChecked()) {
+			if (invalid_type == null) {
 				invalid_type = "3";
-			}
-			else
-			{
-				invalid_type = invalid_type+","+"3";
+			} else {
+				invalid_type = invalid_type + "," + "3";
 			}
 		}
-		if(checkbox4.isChecked())
-		{
-			if(invalid_type==null)
-			{
+		if (checkbox4.isChecked()) {
+			if (invalid_type == null) {
 				invalid_type = "4";
-			}
-			else
-			{
-				invalid_type = invalid_type+","+"4";
+			} else {
+				invalid_type = invalid_type + "," + "4";
 			}
 		}
-		if(checkbox5.isChecked())
-		{
-			if(invalid_type==null)
-			{
+		if (checkbox5.isChecked()) {
+			if (invalid_type == null) {
 				invalid_type = "5";
-			}
-			else
-			{
-				invalid_type = invalid_type+","+"5";
+			} else {
+				invalid_type = invalid_type + "," + "5";
 			}
 		}
-		if(checkbox6.isChecked())
-		{
-			if(invalid_type==null)
-			{
+		if (checkbox6.isChecked()) {
+			if (invalid_type == null) {
 				invalid_type = "6";
-			}
-			else
-			{
-				invalid_type = invalid_type+","+"6";
+			} else {
+				invalid_type = invalid_type + "," + "6";
 			}
 		}
-		if(checkbox7.isChecked())
-		{
-			if(invalid_type==null)
-			{
+		if (checkbox7.isChecked()) {
+			if (invalid_type == null) {
 				invalid_type = "7";
-			}
-			else
-			{
-				invalid_type = invalid_type+","+"7";
+			} else {
+				invalid_type = invalid_type + "," + "7";
 			}
 		}
 	}

@@ -162,7 +162,7 @@ public class VideoPlayerActivity extends Activity implements
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		android.util.Log.i("player_yy","onCreate");
+		android.util.Log.i("player_yy", "onCreate");
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
 
@@ -300,7 +300,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void InitPlayData() {
-		android.util.Log.i("player_yy","InitPlayData");
+		android.util.Log.i("player_yy", "InitPlayData");
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 
@@ -311,7 +311,12 @@ public class VideoPlayerActivity extends Activity implements
 		playVideoUrl = mPath;
 		playProdId = bundle.getString("prod_id");
 		playProdSubName = bundle.getString("prod_subname");
-		playProdType = Integer.parseInt(bundle.getString("prod_type"));
+		if (bundle.getString("prod_type") != null) {
+			try {
+				playProdType = Integer.parseInt(bundle.getString("prod_type"));
+			} finally {
+			}
+		}
 		if (playProdType == 2 || playProdType == 131) {
 			tvsubname = playProdSubName;
 			playProdSubName = "第" + playProdSubName + "集";
@@ -592,7 +597,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void GetServiceData() {
-		android.util.Log.i("player_yy","GetServiceData");
+		android.util.Log.i("player_yy", "GetServiceData");
 		String url = Constant.BASE_URL + "program/view?prod_id=" + playProdId;
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
@@ -834,7 +839,7 @@ public class VideoPlayerActivity extends Activity implements
 				m_bitrate;
 
 		public void run() {
-			android.util.Log.i("player_yy","mRunnable");
+			android.util.Log.i("player_yy", "mRunnable");
 			TextView RX = (TextView) findViewById(R.id.textViewRate);
 
 			// long txBytes = TrafficStats.getTotalTxBytes()- mStartTX;
