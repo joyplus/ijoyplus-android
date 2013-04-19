@@ -224,6 +224,7 @@ public class MediaController extends FrameLayout {
 	}
 
 	private void initFloatingWindow() {
+		android.util.Log.i("player_yy","initFloatingWindow");
 		mWindow = new PopupWindow(mContext);
 		// mWindow.setFocusable(false);
 		mWindow.setFocusable(true);
