@@ -6,7 +6,7 @@
     android:clickable="true"
     android:gravity="center"
     android:minHeight="80dp" >
-/
+
 
     <TextView
         android:id="@+id/load_more_tv"

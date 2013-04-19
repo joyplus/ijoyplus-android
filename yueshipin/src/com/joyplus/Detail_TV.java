@@ -91,8 +91,8 @@ public class Detail_TV extends Activity {
 	private String tv_source = null;
 	private int current_download_pagenum = 0;
 	private int page_num = 0;
-	private int m_FavorityNum = 0;
-	private int m_SupportNum = 0;
+	private int m_FavorityNum;
+	private int m_SupportNum;
 	public List<DownloadInfo> data;
 	
 	private String player_select;
@@ -545,7 +545,7 @@ public class Detail_TV extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		android.util.Log.i("yanyuchuang",status.getCode()+"");
+//		android.util.Log.i("yanyuchuang",status.getCode()+"");
 		//||json == null||!json.has("tv")
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();

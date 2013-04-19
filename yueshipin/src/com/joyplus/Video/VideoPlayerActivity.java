@@ -110,7 +110,6 @@ public class VideoPlayerActivity extends Activity implements
 	public static final int VideoPlay = 0;
 	private boolean IsPlaying = false;
 	public Handler fHanlder;
-
 	FayeClient mClient;
 	/** 最大声音 */
 	private int mMaxVolume;
@@ -170,7 +169,7 @@ public class VideoPlayerActivity extends Activity implements
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-
+		android.util.Log.i("player_yy","onCreate");
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
 
@@ -308,6 +307,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void InitPlayData() {
+		android.util.Log.i("player_yy","InitPlayData");
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 
@@ -599,6 +599,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void GetServiceData() {
+		android.util.Log.i("player_yy","GetServiceData");
 		String url = Constant.BASE_URL + "program/view?prod_id=" + playProdId;
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
@@ -840,7 +841,7 @@ public class VideoPlayerActivity extends Activity implements
 				m_bitrate;
 
 		public void run() {
-
+			android.util.Log.i("player_yy","mRunnable");
 			TextView RX = (TextView) findViewById(R.id.textViewRate);
 
 			// long txBytes = TrafficStats.getTotalTxBytes()- mStartTX;

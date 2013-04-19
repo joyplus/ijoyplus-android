@@ -153,6 +153,14 @@ public class Sina_Share extends Activity {
 
 	public void ShareResult(String url, JSONObject json, AjaxStatus status) {
         MobclickAgent.onEvent(mContext, ue_sina_share);
+        if(status.getCode()==AjaxStatus.TRANSFORM_ERROR)
+        {
+        	app.MyToast(this, "分享失败!");
+        }
+        else
+        {
+        	
+        }
 	}
 
 	@Override

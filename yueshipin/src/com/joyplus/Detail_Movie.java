@@ -70,8 +70,8 @@ public class Detail_Movie extends Activity {
 	public String DOWNLOAD_SOURCE = null;
 	private String PROD_URI = null;
 	private String download_index = "movie";
-	private int m_FavorityNum = 0;
-	private int m_SupportNum = 0;
+	private int m_FavorityNum;
+	private int m_SupportNum;
 
 	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;
@@ -462,7 +462,7 @@ public class Detail_Movie extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		android.util.Log.i("yanyuchuang",status.getCode()+"");
+//		android.util.Log.i("yanyuchuang",status.getCode()+"");
 		// || json == null||!json.has("movie")
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
