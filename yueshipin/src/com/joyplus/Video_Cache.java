@@ -184,7 +184,8 @@ public class Video_Cache extends Activity {
 						Intent intent = new Intent(Video_Cache.this,
 								VideoPlayerActivity.class);
 						Bundle bundle = new Bundle();
-						bundle.putString("path", localfile);
+//						bundle.putString("path", localfile);
+						bundle.putString("path", info.getFilePath());
 						bundle.putString("title", info.getMy_name());
 						bundle.putString("prod_id", info.getProd_id());
 						bundle.putString("prod_type", "1");
@@ -261,9 +262,10 @@ public class Video_Cache extends Activity {
 												+ tempdata.get(i).getMy_index()
 												+ ".mp4").pause();
 							}
-							File file = new File(Constant.PATH_VIDEO
-									+ tempdata.get(i).getProd_id() + "_"
-									+ tempdata.get(i).getMy_index() + ".mp4");
+//							File file = new File(Constant.PATH_VIDEO
+//									+ tempdata.get(i).getProd_id() + "_"
+//									+ tempdata.get(i).getMy_index() + ".mp4");
+							File file = new File(tempdata.get(i).getFilePath());
 							if (file.exists()) {
 								file.delete();
 							}

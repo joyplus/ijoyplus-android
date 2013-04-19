@@ -174,7 +174,8 @@ public class Video_Cache_Detail extends Activity {
 					Intent intent = new Intent(Video_Cache_Detail.this,
 							VideoPlayerActivity.class);
 					Bundle bundle = new Bundle();
-					bundle.putString("path", localfile);
+//					bundle.putString("path", localfile);
+					bundle.putString("path", info.getFilePath());
 					bundle.putString("title", info.getMy_name());
 					bundle.putString("prod_id", info.getProd_id());
 					bundle.putLong("current_time", 0);
@@ -246,9 +247,10 @@ public class Video_Cache_Detail extends Activity {
 						}
 						Dao.getInstance(Video_Cache_Detail.this).delete(
 								info.getProd_id(), info.getMy_index());
-						File file = new File(Constant.PATH_VIDEO
-								+ info.getProd_id() + "_" + info.getMy_index()
-								+ ".mp4");
+//						File file = new File(Constant.PATH_VIDEO
+//								+ info.getProd_id() + "_" + info.getMy_index()
+//								+ ".mp4");
+						File file = new File(info.getFilePath());
 						if (file.exists()) {
 							file.delete();
 						}

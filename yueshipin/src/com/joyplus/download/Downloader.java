@@ -59,7 +59,7 @@ public class Downloader {
 		if (isFirst(prod_id)) {
 			Log.v("TAG", "isFirst");
 			init();
-			file_path = localfile;
+//			file_path = localfile;
 			infos = new ArrayList<DownloadInfo>();
 			DownloadInfo info = new DownloadInfo(compeleteSize, fileSize,
 					prod_id, my_index, urlstr, urlposter, my_name,
@@ -71,11 +71,12 @@ public class Downloader {
 		} else {
 			// 得到数据库中已有的urlstr的下载器的具体信息
 			infos = Dao.getInstance(context).getInfos(prod_id, my_index);
-			file_path = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+//			file_path = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
 			int compeleteSize = 0;
 			for (DownloadInfo info : infos) {
 				compeleteSize += info.getCompeleteSize();
 				fileSize = info.getFileSize();
+				file_path = info.getFilePath();
 			}
 			return new DownloadInfo(compeleteSize, fileSize, prod_id, my_index,
 					urlstr, urlposter, my_name, download_state,file_path);
@@ -86,7 +87,8 @@ public class Downloader {
 	 * 初始化
 	 */
 	private void init() {
-		localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+//		localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+		file_path = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
 		try {
 			URL url = new URL(urlstr);
 			HttpURLConnection connection = (HttpURLConnection) url
@@ -96,8 +98,8 @@ public class Downloader {
 			fileSize = connection.getContentLength();
 			connection.disconnect();
 			// 本地访问文件
-			RandomAccessFile accessFile = new RandomAccessFile(localfile, "rwd");
-//			RandomAccessFile accessFile = new RandomAccessFile(file_path, "rwd");
+//			RandomAccessFile accessFile = new RandomAccessFile(localfile, "rwd");
+			RandomAccessFile accessFile = new RandomAccessFile(file_path, "rwd");
 			accessFile.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -174,7 +176,8 @@ public class Downloader {
 		@Override
 		public void run() {
 			// 标记此线程为true
-			localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+//			localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+			
 			HttpURLConnection connection = null;
 			RandomAccessFile randomAccessFile = null;
 			InputStream inputstream = null;
@@ -186,8 +189,8 @@ public class Downloader {
 				// 设置范围，格式为Range：bytes x-y;
 				connection.setRequestProperty("Range", "bytes=" + compeleteSize
 						+ "-" + (fileSize - 1));// 后面的
-				randomAccessFile = new RandomAccessFile(localfile, "rwd");
-//				randomAccessFile = new RandomAccessFile(file_path, "rwd");
+//				randomAccessFile = new RandomAccessFile(localfile, "rwd");
+				randomAccessFile = new RandomAccessFile(file_path, "rwd");
 				randomAccessFile.seek(compeleteSize);
 				inputstream = connection.getInputStream();
 				// 将要下载的文件写到保存在保存路径下的文件

@@ -19,7 +19,7 @@ public class Constant {
 app_key:
 
 Android:ijoyplusandroid0001bj
-
+ 
 IOS: ijoyplusios001bj
 
 
