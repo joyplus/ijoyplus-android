@@ -24,7 +24,7 @@ public class FayeService extends Service {
 	private static String user_id = null;
 	protected Handler hanlder;
 	static AQuery aq;
-
+    private static boolean IsConnected = false;
 	public static void FayeByService(Context context, String channel) {
 
 		// this.mJson = json;
@@ -36,7 +36,9 @@ public class FayeService extends Service {
 	public static void SendMessageService(Context mcontext, JSONObject json,
 			String userid) {
 		user_id = userid;
+		if(IsConnected){
 		mClient.sendMessage(json);
+		}
 
 	}
 
@@ -136,12 +138,14 @@ public class FayeService extends Service {
 
 				@Override
 				public void disconnectedFromServer() {
+					IsConnected = false;
 					Log.i("TVChannleListener", "disconnectedFromServer>>>");
 
 				}
 
 				@Override
 				public void connectedToServer() {
+					IsConnected = true;
 					Log.i("TVChannleListener", "connectedToServer>>>");
 
 				}

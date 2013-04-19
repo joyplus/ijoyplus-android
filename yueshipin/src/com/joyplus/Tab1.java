@@ -100,6 +100,10 @@ public class Tab1 extends Activity implements
 	}
 
 	public void OnClickSaoMiaoTopRight(View v) {
+		if (app.GetServiceData("Binding_TV") != null) {
+			app.MyToast(this, "请先注销已绑定的悦视频TV版");
+			return;
+		}
 		Intent openCameraIntent = new Intent(Tab1.this, CaptureActivity.class);
 		startActivityForResult(openCameraIntent, Sao_Yi_Sao);
 	}
@@ -113,14 +117,20 @@ public class Tab1 extends Activity implements
 			String scanResult = bundle.getString("result"); // 扫描结果
 			if (scanResult.startsWith("joy")) {
 				scanResult = scanResult.replace("joy", "");
-				String bindingchannel = app.GetServiceData("Binding_TV_Channal").replace("CHANNEL_TV_", "");
-				if(scanResult.equals(bindingchannel) && app.GetServiceData("Binding_TV")!=null){
-					app.MyToast(Tab1.this, "该设备已绑定");
-					return;
+				if (app.GetServiceData("Binding_TV_Channal") != null) {
+					String bindingchannel = app.GetServiceData(
+							"Binding_TV_Channal").replace("CHANNEL_TV_", "");
+					if (scanResult.equals(bindingchannel)
+							&& app.GetServiceData("Binding_TV") != null) {
+						app.MyToast(Tab1.this, "该设备已绑定");
+						return;
+					}
 				}
 				Intent intent = new Intent(this, Before_Binding.class);
 				intent.putExtra("SaoMiao_result", scanResult);
 				startActivity(intent);
+			}else{
+				app.MyToast(this, "请扫描悦视频TV版的\"我的悦视频\"中的二维码哦");
 			}
 		}
 	}

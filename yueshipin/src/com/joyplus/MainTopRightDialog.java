@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.joyplus.faye.FayeService;
 import com.joyplus.weibo.api.RequestListener;
 import com.joyplus.weibo.api.UsersAPI;
 import com.joyplus.weibo.net.AccessToken;
@@ -33,6 +34,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -51,6 +53,7 @@ public class MainTopRightDialog extends Activity  {
 	private static String ue_wechat_social_share = "微信朋友圈分享";
 	private String prod_id = null;
     private Context mContext;
+    private String ue_screencast_unbinded = "解除绑定事件";
     private static final int TIMELINE_SUPPORTED_VERSION = 0x21020001;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -270,7 +273,9 @@ public class MainTopRightDialog extends Activity  {
 							if (json.getString("nickname").trim().length() > 0) {
 								app.SaveServiceData("UserInfo", json.toString());
 								app.MyToast(getApplicationContext(), "新浪微博已绑定");
-								//
+								if (app.GetServiceData("Binding_TV") != null) {
+									relieve_binding();
+								}
 								MainTopRightDialog.this.finish();
 							}
 						} catch (JSONException e) {
@@ -380,6 +385,35 @@ public class MainTopRightDialog extends Activity  {
 			// j = bitmap.getHeight();
 		}
 	}
+	public void relieve_binding() {
+
+		FayeService.FayeByService(mContext,
+				"/screencast/" + app.GetServiceData("Binding_TV_Channal"));
+		new Handler().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					JSONObject et = new JSONObject();
+					et.put("user_id", app.GetServiceData("Binding_Userid"));
+					et.put("push_type", "33");
+					et.put("tv_channel",
+							app.GetServiceData("Binding_TV_Channal"));
+					FayeService.SendMessageService(mContext, et,
+							app.GetServiceData("Binding_Userid"));
+					app.DeleteServiceData("Binding_Userid");
+					app.DeleteServiceData("Binding_TV");
+					MobclickAgent.onEvent(mContext, ue_screencast_unbinded );
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}, 500);
+
+	}
+	
 	private PackageInfo packageInfo;
 	public boolean checkWeixinInstall(){
 	

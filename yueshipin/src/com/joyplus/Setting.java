@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,6 +35,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.bodong.dianju.sdk.DianJuPlatform;
+import com.joyplus.faye.FayeService;
 import com.joyplus.weibo.api.RequestListener;
 import com.joyplus.weibo.api.UsersAPI;
 import com.joyplus.weibo.net.AccessToken;
@@ -59,12 +61,14 @@ public class Setting extends Activity {
 	private String token = null;
 	private String expires_in = null;
 	private PopupWindow popup_player_select = null;
-	
-	//应用推荐
+
+	// 应用推荐
 	public static ExchangeDataService preloadDataService;
-	private static String SETTING  = "设置";
-	private static String RECOMMAND_APP  = "精品推荐";
+	private static String SETTING = "设置";
+	private static String RECOMMAND_APP = "精品推荐";
 	Context mContext;
+	protected String ue_screencast_unbinded = "解除绑定事件";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -74,30 +78,34 @@ public class Setting extends Activity {
 		mContext = this;
 		UMFeedbackService.enableNewReplyNotification(this,
 				NotificationType.AlertDialog);
-		//appRecommend();
-		ViewGroup fatherLayout = (ViewGroup)findViewById(R.id.ad);
+		// appRecommend();
+		ViewGroup fatherLayout = (ViewGroup) findViewById(R.id.ad);
 		InnerListView listView = (InnerListView) this.findViewById(R.id.list);
 		listView.setMaxHeight(400);
-		ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView1);
+		ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView1);
 		listView.setParentScrollView(scrollView);
-		
-		//赋值preloadDataService,添加newTips 回调
-	    preloadDataService = new ExchangeDataService();
-	    preloadDataService.preloadData(Setting.this, new NTipsChangedListener() {
-	        @Override
-	        public void onChanged(int flag) {
-	           // TextView view = (TextView) root.findViewById(R.id.umeng_example_xp_container_tips);
-	            if(flag == -1){
-	                //没有new广告
-	            }else if(flag > 1){
-	                //第一页new广告数量
-	            }else if(flag == 0){
-	                //第一页全部为new 广告
-	            }
-	        };
-	    }, ExchangeConstants.type_container);
-	    ExchangeDataService exchangeDataService = preloadDataService != null ?preloadDataService : new ExchangeDataService("");
-	    ExchangeViewManager exchangeViewManager = new ExchangeViewManager(this,new ExchangeDataService());
+
+		// 赋值preloadDataService,添加newTips 回调
+		preloadDataService = new ExchangeDataService();
+		preloadDataService.preloadData(Setting.this,
+				new NTipsChangedListener() {
+					@Override
+					public void onChanged(int flag) {
+						// TextView view = (TextView)
+						// root.findViewById(R.id.umeng_example_xp_container_tips);
+						if (flag == -1) {
+							// 没有new广告
+						} else if (flag > 1) {
+							// 第一页new广告数量
+						} else if (flag == 0) {
+							// 第一页全部为new 广告
+						}
+					};
+				}, ExchangeConstants.type_container);
+		ExchangeDataService exchangeDataService = preloadDataService != null ? preloadDataService
+				: new ExchangeDataService("");
+		ExchangeViewManager exchangeViewManager = new ExchangeViewManager(this,
+				new ExchangeDataService());
 		exchangeViewManager.addView(fatherLayout, listView);
 		MobclickAgent.onEventBegin(mContext, RECOMMAND_APP);
 		aq.id(R.id.button7).gone();
@@ -120,14 +128,10 @@ public class Setting extends Activity {
 			aq.id(R.id.checkBox1).getCheckBox().setChecked(true);
 		else
 			aq.id(R.id.checkBox1).getCheckBox().setChecked(false);
-		if(app.GetServiceData("player_select")!=null)
-		{
-			if(app.GetServiceData("player_select").equalsIgnoreCase("third"))
-			{
+		if (app.GetServiceData("player_select") != null) {
+			if (app.GetServiceData("player_select").equalsIgnoreCase("third")) {
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(true);
-			}
-			else
-			{
+			} else {
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
 			}
 		}
@@ -155,13 +159,12 @@ public class Setting extends Activity {
 		finish();
 
 	}
-	
-	//打开应用推荐
-	public void OnClickRecommend(View v)
-	{
-		DianJuPlatform.openOfferWall(Setting.this);//可以打开广告墙
+
+	// 打开应用推荐
+	public void OnClickRecommend(View v) {
+		DianJuPlatform.openOfferWall(Setting.this);// 可以打开广告墙
 	}
-	
+
 	public void OnClickMianZhe(View v) {
 		Intent intent = new Intent(this, Z_About_mianzhe.class);
 		try {
@@ -174,19 +177,19 @@ public class Setting extends Activity {
 
 	public void OnClickGuanzhu(View v) {
 		if (app.GetServiceData("Sina_Access_Token") != null) {
-					String m_PostURL = "https://api.weibo.com/2/friendships/create.json";
+			String m_PostURL = "https://api.weibo.com/2/friendships/create.json";
 
-					Map<String, Object> params = new HashMap<String, Object>();
-					params.put("access_token", app.GetServiceData("Sina_Access_Token"));
-					params.put("screen_name", "悦视频");
-					// save to local
-					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-					cb.header("User-Agent",
-							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-					cb.params(params).url(m_PostURL).type(JSONObject.class)
-							.weakHandler(this, "GuanzhuResult");
-					aq.ajax(cb);
-		
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("access_token", app.GetServiceData("Sina_Access_Token"));
+			params.put("screen_name", "悦视频");
+			// save to local
+			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+			cb.header("User-Agent",
+					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+			cb.params(params).url(m_PostURL).type(JSONObject.class)
+					.weakHandler(this, "GuanzhuResult");
+			aq.ajax(cb);
+
 		} else {
 			String m_URI = "http://weibo.com/signup/signup.php?inviteCode=3058636171";
 			Intent intent = new Intent();
@@ -211,37 +214,29 @@ public class Setting extends Activity {
 			app.MyToast(this, "你已关注过了，谢谢!");
 		}
 	}
-	
-	//第三方播放器
-	public void OnClickSettingPlayer(View v)
-	{
-	
-		if(app.GetServiceData("player_select")!=null)
-		{
-			if(app.GetServiceData("player_select").equalsIgnoreCase("third"))
-			{
-				app.SaveServiceData("player_select","default");
+
+	// 第三方播放器
+	public void OnClickSettingPlayer(View v) {
+
+		if (app.GetServiceData("player_select") != null) {
+			if (app.GetServiceData("player_select").equalsIgnoreCase("third")) {
+				app.SaveServiceData("player_select", "default");
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
-			}
-			else if(app.GetServiceData("player_select").equalsIgnoreCase("default"))
-			{
-				app.SaveServiceData("player_select","third");
+			} else if (app.GetServiceData("player_select").equalsIgnoreCase(
+					"default")) {
+				app.SaveServiceData("player_select", "third");
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(true);
 			}
 		}
-		if(app.GetServiceData("player_select")!=null)
-		{
-			if(app.GetServiceData("player_select").equalsIgnoreCase("third"))
-			{
+		if (app.GetServiceData("player_select") != null) {
+			if (app.GetServiceData("player_select").equalsIgnoreCase("third")) {
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(true);
-			}
-			else
-			{
+			} else {
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
 			}
 		}
 	}
-	
+
 	public void OnClickClearMemery(View v) {
 		BitmapAjaxCallback.clearCache();
 		app.MyToast(this, "清除缓存成功");
@@ -323,12 +318,12 @@ public class Setting extends Activity {
 
 		}
 	}
+
 	protected void ReGenerateUuid() {
 		// TODO Auto-generated method stub
 		String macAddress = null;
 		WifiManager wifiMgr = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-		WifiInfo info = (null == wifiMgr ? null : wifiMgr
-				.getConnectionInfo());
+		WifiInfo info = (null == wifiMgr ? null : wifiMgr.getConnectionInfo());
 		if (info != null) {
 			macAddress = info.getMacAddress();
 			// 2. 通过调用 service account/generateUIID把UUID传递到服务器
@@ -351,7 +346,10 @@ public class Setting extends Activity {
 		if (json != null) {
 			app.SaveServiceData("UserInfo", json.toString());
 			try {
-				app.UserID = json.getString("user_id").trim();//原来为user_id
+				app.UserID = json.getString("user_id").trim();// 原来为user_id
+				if (app.GetServiceData("Binding_TV") != null) {
+					relieve_binding();
+				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -359,12 +357,12 @@ public class Setting extends Activity {
 
 		} else {
 			// ajax error, show error code
-			if (status.getCode() == AjaxStatus.NETWORK_ERROR) 
-			app.MyToast(aq.getContext(),
-					getResources().getString(R.string.networknotwork));
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(aq.getContext(),
+						getResources().getString(R.string.networknotwork));
 		}
 	}
-	
+
 	// 第三方新浪登录
 	class AuthDialogListener implements WeiboDialogListener {
 
@@ -386,9 +384,8 @@ public class Setting extends Activity {
 			 */
 			IsBindWeibo();
 		}
-		
-		public void IsBindWeibo()
-		{
+
+		public void IsBindWeibo() {
 			String m_PostURL = Constant.BASE_URL + "account/validateThirdParty";
 
 			Map<String, Object> params = new HashMap<String, Object>();
@@ -400,36 +397,31 @@ public class Setting extends Activity {
 			cb.SetHeader(app.getHeaders());
 			cb.params(params).url(m_PostURL).type(JSONObject.class)
 					.weakHandler(this, "IsHasBindWeiboResult");
-			aq.ajax(cb);	
+			aq.ajax(cb);
 		}
-		
+
 		public void IsHasBindWeiboResult(String url, JSONObject json,
-			AjaxStatus status)
-		{
+				AjaxStatus status) {
 			if (json != null) {
 				try {
-					if(json.has("user_id"))
-					{
-						if(json.getString("user_id")!=null)
-						{
-							//app.DeleteServiceData("UserInfo");
+					if (json.has("user_id")) {
+						if (json.getString("user_id") != null) {
+							// app.DeleteServiceData("UserInfo");
 							app.UserID = json.getString("user_id");
 							Map<String, String> headers = app.getHeaders();
 							headers.remove("user_id");
 							headers.put("user_id", app.UserID);
 							app.setHeaders(headers);
-							//将这个UserID保存在本地
+							// 将这个UserID保存在本地
 							UploadSinaHeadAndScreen_nameUrl(token, uid);
 						}
 					}
-					if(json.has("res_code"))
-					{
-						if(json.getString("res_code")!=null)
-						{
+					if (json.has("res_code")) {
+						if (json.getString("res_code") != null) {
 							UploadSinaHeadAndScreen_nameUrl(token, uid);
 						}
 					}
-					
+
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -437,10 +429,10 @@ public class Setting extends Activity {
 
 			} else {
 				// ajax error, show error code
-				
+
 			}
 		}
-		
+
 		@Override
 		public void onError(DialogError e) {
 			app.MyToast(getApplicationContext(),
@@ -461,19 +453,20 @@ public class Setting extends Activity {
 
 	public boolean UploadSinaHeadAndScreen_nameUrl(String access_token,
 			final String uid) {
-		com.joyplus.weibo.net.Oauth2AccessToken oToken = new com.joyplus.weibo.net.Oauth2AccessToken(token, Constant.SINA_CONSUMER_SECRET);
+		com.joyplus.weibo.net.Oauth2AccessToken oToken = new com.joyplus.weibo.net.Oauth2AccessToken(
+				token, Constant.SINA_CONSUMER_SECRET);
 		UsersAPI userAPI = new UsersAPI(oToken);
 		userAPI.show(Long.parseLong(uid), new RequestListener() {
 			@Override
 			public void onIOException(IOException e) {
-				
+
 			}
-			
+
 			@Override
 			public void onError(com.joyplus.weibo.api.WeiboException e) {
-				
+
 			}
-			
+
 			@Override
 			public void onComplete(String response) {
 				try {
@@ -482,7 +475,8 @@ public class Setting extends Activity {
 					String screen_name = json.optString("screen_name");
 					// normal
 					if (head_url != null && screen_name != null) {
-						String m_PostURL = Constant.BASE_URL + "account/bindAccount";
+						String m_PostURL = Constant.BASE_URL
+								+ "account/bindAccount";
 
 						Map<String, Object> params = new HashMap<String, Object>();
 						params.put("source_id", uid);
@@ -502,19 +496,22 @@ public class Setting extends Activity {
 					e.printStackTrace();
 				}
 			}
-			
+
 			@SuppressWarnings("unused")
 			public void AccountBindAccountResult(String url, JSONObject json,
 					AjaxStatus status) {
 				if (json != null) {
 					try {
-						if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
+						if (json.getString("res_code").trim()
+								.equalsIgnoreCase("00000")) {
 							// reload the userinfo
-							String url2 = Constant.BASE_URL + "user/view?userid="
-									+ app.UserID;
+							String url2 = Constant.BASE_URL
+									+ "user/view?userid=" + app.UserID;
 							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-							cb.url(url2).type(JSONObject.class)
-									.weakHandler(this, "AccountBindAccountResult3");
+							cb.url(url2)
+									.type(JSONObject.class)
+									.weakHandler(this,
+											"AccountBindAccountResult3");
 							cb.SetHeader(app.getHeaders());
 							aq.ajax(cb);
 						}
@@ -525,8 +522,9 @@ public class Setting extends Activity {
 
 				} else {
 					// ajax error, show error code
-					if (status.getCode() == AjaxStatus.NETWORK_ERROR) 
-					app.MyToast(getApplicationContext(), getResources().getString(R.string.networknotwork));
+					if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+						app.MyToast(getApplicationContext(), getResources()
+								.getString(R.string.networknotwork));
 				}
 			}
 
@@ -538,19 +536,52 @@ public class Setting extends Activity {
 						if (json.getString("nickname").trim().length() > 0) {
 							app.SaveServiceData("UserInfo", json.toString());
 							app.MyToast(getApplicationContext(), "新浪微博已绑定");
+							if (app.GetServiceData("Binding_TV") != null) {
+								relieve_binding();
+							}
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 
 				} else {
-					if (status.getCode() == AjaxStatus.NETWORK_ERROR) 
-					app.MyToast(getApplicationContext(), getResources().getString(R.string.networknotwork));
+					if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+						app.MyToast(getApplicationContext(), getResources()
+								.getString(R.string.networknotwork));
 				}
 			}
-			
+
 		});
-		
+
 		return false;
+	}
+
+	public void relieve_binding() {
+
+		FayeService.FayeByService(mContext,
+				"/screencast/" + app.GetServiceData("Binding_TV_Channal"));
+		new Handler().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					JSONObject et = new JSONObject();
+					et.put("user_id", app.GetServiceData("Binding_Userid"));
+					et.put("push_type", "33");
+					et.put("tv_channel",
+							app.GetServiceData("Binding_TV_Channal"));
+					FayeService.SendMessageService(mContext, et,
+							app.GetServiceData("Binding_Userid"));
+					app.DeleteServiceData("Binding_Userid");
+					app.DeleteServiceData("Binding_TV");
+					MobclickAgent.onEvent(mContext, ue_screencast_unbinded);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}, 500);
+
 	}
 }

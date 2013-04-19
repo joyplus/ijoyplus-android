@@ -26,7 +26,6 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
@@ -43,7 +42,6 @@ import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.TrafficStats;
 import android.net.http.AndroidHttpClient;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -55,12 +53,9 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -71,12 +66,10 @@ import com.joyplus.App;
 import com.joyplus.BuildConfig;
 import com.joyplus.Constant;
 import com.joyplus.R;
-import com.joyplus.Webview_Play;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
-import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS.URLS;
 import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.faye.FayeClient;
@@ -169,7 +162,7 @@ public class VideoPlayerActivity extends Activity implements
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		android.util.Log.i("player_yy","onCreate");
+		android.util.Log.i("player_yy", "onCreate");
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
 
@@ -307,7 +300,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void InitPlayData() {
-		android.util.Log.i("player_yy","InitPlayData");
+		android.util.Log.i("player_yy", "InitPlayData");
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 
@@ -318,7 +311,12 @@ public class VideoPlayerActivity extends Activity implements
 		playVideoUrl = mPath;
 		playProdId = bundle.getString("prod_id");
 		playProdSubName = bundle.getString("prod_subname");
-		playProdType = Integer.parseInt(bundle.getString("prod_type"));
+		if (bundle.getString("prod_type") != null) {
+			try {
+				playProdType = Integer.parseInt(bundle.getString("prod_type"));
+			} finally {
+			}
+		}
 		if (playProdType == 2 || playProdType == 131) {
 			tvsubname = playProdSubName;
 			playProdSubName = "第" + playProdSubName + "集";
@@ -599,7 +597,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void GetServiceData() {
-		android.util.Log.i("player_yy","GetServiceData");
+		android.util.Log.i("player_yy", "GetServiceData");
 		String url = Constant.BASE_URL + "program/view?prod_id=" + playProdId;
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
@@ -841,7 +839,7 @@ public class VideoPlayerActivity extends Activity implements
 				m_bitrate;
 
 		public void run() {
-			android.util.Log.i("player_yy","mRunnable");
+			android.util.Log.i("player_yy", "mRunnable");
 			TextView RX = (TextView) findViewById(R.id.textViewRate);
 
 			// long txBytes = TrafficStats.getTotalTxBytes()- mStartTX;

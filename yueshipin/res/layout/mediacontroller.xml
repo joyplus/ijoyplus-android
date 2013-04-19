@@ -147,7 +147,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/mediacontroller_dlna"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="41dp"
+                android:layout_marginLeft="20dp"
                 android:background="@drawable/yunduan_bofang"
                 android:visibility="invisible"/>
             <ImageButton

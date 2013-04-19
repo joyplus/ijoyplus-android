@@ -21,8 +21,16 @@ public class FayeReceiver extends BroadcastReceiver{
 			else if(!noConnectivity) {
 				Intent serviceIntent = new Intent(context, FayeService.class);          
 		        context.startService(serviceIntent);  
+		        
+		        Intent broad = new Intent();
+		        broad.putExtra("status", "check_bind");
+		        broad.setAction("com.joyplus.check_binding");
+		        context.sendBroadcast(broad);
+		        
 			}
 		}
 	}
 
 }
+
+

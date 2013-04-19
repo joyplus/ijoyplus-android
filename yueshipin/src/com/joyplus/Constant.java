@@ -8,7 +8,10 @@ public class Constant {
 //	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
 //	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
 //	public static String APPKEY = "ijoyplus_android_0001";
-
+	   //正式环境  云端投放
+//	public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
+//  public static final String TV_CHANNEL_URL = "http://comet.joyplus.tv:8080/bindtv";
+//  public static final String CHECK_BINDING = "http://comet.joyplus.tv:8080/api/check_binding";
 	/*
 	 * test:
 	 * 新的测试环境：
@@ -26,6 +29,11 @@ IOS: ijoyplusios001bj
 2：cms cms-test.yue001.com/manager/index.php
 
 	 */
+	 //测试环境    云端投放 
+    public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
+    public static final String TV_CHANNEL_URL = "http://comettest.joyplus.tv:8000/bindtv";
+    public static final String CHECK_BINDING = "http://comettest.joyplus.tv:8000/api/check_binding";
+    
 	public static boolean TestEnv = true;
 	public static final String BASE_URL = "http://apitest.yue001.com/joyplus-service/index.php/";
 	public static String DEFAULT_APPKEY = "ijoyplus_android_0001bj";
@@ -114,8 +122,6 @@ IOS: ijoyplusios001bj
 	// APP_ID 替换为你的应用从官方网站申请到的合法appId
     public static final String APP_ID = "wxc8ea1cbc355fe2d0";
    
-    //测试环境    云端投放 
-    public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
-    public static final String TV_CHANNEL_URL = "http://comettest.joyplus.tv:8080/bindtv";
-    public static final String CHECK_BINDING = "http://comettest.joyplus.tv:8080/api/check_binding";
+   
+ 
 }
