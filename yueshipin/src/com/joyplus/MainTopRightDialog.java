@@ -95,6 +95,8 @@ public class MainTopRightDialog extends Activity  {
 
 			@Override
 			public void onComplete(Bundle values) {
+				
+				
 				uid = values.getString("uid");
 				token = values.getString("access_token");
 				expires_in = values.getString("expires_in");
@@ -106,10 +108,15 @@ public class MainTopRightDialog extends Activity  {
 				// save access_token
 				app.SaveServiceData("Sina_Access_Token", token);
 				app.SaveServiceData("Sina_Access_UID", uid);
+				
+				Intent i = new Intent(MainTopRightDialog.this, Sina_Share.class);
+				i.putExtra("prod_name", prod_name);
+				startActivity(i);
 				/*
 				 * 判断当前的微博账户是否已经绑定
 				 */
 				IsBindWeibo();
+				
 			}
 			
 			public void IsBindWeibo()
@@ -263,10 +270,7 @@ public class MainTopRightDialog extends Activity  {
 							if (json.getString("nickname").trim().length() > 0) {
 								app.SaveServiceData("UserInfo", json.toString());
 								app.MyToast(getApplicationContext(), "新浪微博已绑定");
-								
-								Intent i = new Intent(MainTopRightDialog.this, Sina_Share.class);
-								i.putExtra("prod_name", prod_name);
-								startActivity(i);
+								//
 								MainTopRightDialog.this.finish();
 							}
 						} catch (JSONException e) {

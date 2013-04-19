@@ -462,7 +462,7 @@ public class Detail_Movie extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		android.util.Log.i("yanyuchuang",status.getCode()+"");
+//		android.util.Log.i("yanyuchuang",status.getCode()+"");
 		// || json == null||!json.has("movie")
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
