@@ -512,6 +512,7 @@ public class Main extends TabActivity {
 			int result = Integer.valueOf(json.getString("status"));
 			switch (result) {
 			case 1:
+				app.SaveServiceData("Binding_TV", "success");
 				break;
 			case 0:
 				app.DeleteServiceData("Binding_TV");
