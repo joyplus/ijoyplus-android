@@ -234,6 +234,7 @@ public class VideoView extends SurfaceView implements
 	}
 
 	public void setVideoPath(String path) {
+		android.util.Log.i("player_yy","setVideoPath");
 		Uri uri = Uri.parse(path);
 		setVideoURI(uri);
 	}
@@ -265,7 +266,6 @@ public class VideoView extends SurfaceView implements
 	private void openVideo() {
 		if (mUri == null || mSurfaceHolder == null)
 			return;
-
 		Intent i = new Intent("com.android.music.musicservicecommand");
 		i.putExtra("command", "pause");
 		mContext.sendBroadcast(i);
