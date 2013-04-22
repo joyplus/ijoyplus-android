@@ -132,9 +132,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		aq = new AQuery(this);
 		mCurrentPlayData = new CurrentPlayData();
 		aq.id(R.id.Layout1).gone();
-		
-		
-		
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -222,7 +219,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		dataStruct = new ArrayList();
 		Tab3Page1Adapter = new Tab3Page1ListAdapter();
 		ItemsListView.setAdapter(Tab3Page1Adapter);
-
 		CheckSaveData();
 		MobclickAgent.onResume(this);
 	}

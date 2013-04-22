@@ -368,14 +368,15 @@ public class Setting extends Activity {
 
 		@Override
 		public void onComplete(Bundle values) {
+			android.util.Log.i("sinaweibo","onComplete");
 			uid = values.getString("uid");
 			token = values.getString("access_token");
 			expires_in = values.getString("expires_in");
-			android.util.Log.i("expires_in=====>",expires_in);
 			AccessToken accessToken = new AccessToken(token,
 					Constant.SINA_CONSUMER_SECRET);
 			accessToken.setExpiresIn(expires_in);
 			Weibo.getInstance().setAccessToken(accessToken);
+			android.util.Log.i("sinaweibo","Weibo.getInstance().setAccessToken(accessToken)");
 			// save access_token
 			app.SaveServiceData("Sina_Access_Token", token);
 			app.SaveServiceData("Sina_Access_UID", uid);
@@ -386,6 +387,7 @@ public class Setting extends Activity {
 		}
 
 		public void IsBindWeibo() {
+			android.util.Log.i("sinaweibo","IsBindWeibo");
 			String m_PostURL = Constant.BASE_URL + "account/validateThirdParty";
 
 			Map<String, Object> params = new HashMap<String, Object>();

@@ -163,7 +163,7 @@ public class VideoPlayerActivity extends Activity implements
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		android.util.Log.i("player_yy", "onCreate");
+//		android.util.Log.i("player_yy", "onCreate");
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
 
@@ -214,7 +214,7 @@ public class VideoPlayerActivity extends Activity implements
 			aq.id(R.id.textViewRate).text(
 					"Your device does not support traffic stat monitoring.");
 		} else {
-			mHandler.postDelayed(mRunnable, 1000);
+			mHandler.postDelayed(mRunnable, 1000);//test,yy
 		}
 
 		mMediaController = new MediaController(this, mClient, user_id,
@@ -276,12 +276,17 @@ public class VideoPlayerActivity extends Activity implements
 
 		mvediohandler = new Handler() {
 			public void handleMessage(Message msg) {
+//				android.util.Log.i("player_yy",msg.what+"");
 				switch (msg.what) {
 				case VideoPlay:
 					videoplay(msg.obj.toString());
-				}
+					break;
+			     default:					
+			    	 android.util.Log.i("player_yy","error");
 			}
+		}
 		};
+		
 
 	}
 
@@ -301,7 +306,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void InitPlayData() {
-		android.util.Log.i("player_yy", "InitPlayData");
+//		android.util.Log.i("player_yy", "InitPlayData");
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 
@@ -349,6 +354,7 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, TV_PLAY);
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		MobclickAgent.onPause(this);
+		mHandler.removeCallbacks(mRunnable);//yy
 		if (mVideoView != null) {
 			/*
 			 * 获取当前播放时间和总时间,将播放时间和总时间放在服务器上
@@ -591,7 +597,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void GetServiceData() {
-		android.util.Log.i("player_yy", "GetServiceData");
+//		android.util.Log.i("player_yy", "GetServiceData");
 		String url = Constant.BASE_URL + "program/view?prod_id=" + playProdId;
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
@@ -606,6 +612,7 @@ public class VideoPlayerActivity extends Activity implements
 	// 初始化list数据函数
 	public void GetServiceDataResult(String url, JSONObject json,
 			AjaxStatus status) {
+//		android.util.Log.i("player_yy", "GetServiceDataResult");
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -634,6 +641,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	private void videoplay(String mPath) {
+//		android.util.Log.i("player_yy","videoplay");
 		if (IsPlaying)
 			return;
 		if (mMediaController != null) {
@@ -650,8 +658,8 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	private void GetRedirectURL() {
+//		android.util.Log.i("player_yy", "GetRedirectURL");
 		String PROD_SOURCE = null;
-
 		mCurrentPlayData.CurrentCategory = playProdType - 1;
 		switch (playProdType) {
 		case 1: {
@@ -725,8 +733,6 @@ public class VideoPlayerActivity extends Activity implements
 										MobclickAgent.onEventBegin(mContext,
 												TV_PLAY);
 									}
-									// if (PROD_SOURCE != null)
-									// break;
 								}
 							}
 						// if (PROD_SOURCE != null)
@@ -780,6 +786,7 @@ public class VideoPlayerActivity extends Activity implements
 	// 给片源赋权值
 	@SuppressWarnings("unchecked")
 	public void videoSourceSort(DOWN_URLS[] down_urls) {
+		
 		if (down_urls != null) {
 			for (int j = 0; j < down_urls.length; j++) {
 				if (down_urls[j].source.equalsIgnoreCase("letv")) {
@@ -833,9 +840,7 @@ public class VideoPlayerActivity extends Activity implements
 				m_bitrate;
 
 		public void run() {
-			android.util.Log.i("player_yy", "mRunnable");
 			TextView RX = (TextView) findViewById(R.id.textViewRate);
-
 			// long txBytes = TrafficStats.getTotalTxBytes()- mStartTX;
 			// TX.setText(Long.toString(txBytes));
 			long rxBytes = TrafficStats.getTotalRxBytes() - mStartRX;
@@ -971,6 +976,7 @@ public class VideoPlayerActivity extends Activity implements
 
 		public HttpTread(String url, String sourceId, int CurrentSource,
 				int CurrentQuality, int ShowQuality, String pROD_SOURCE) {
+//			android.util.Log.i("player_yy", "HttpThreadPoolUtils.HttpTread");
 			this.CurrentSource = CurrentSource;
 			this.CurrentQuality = CurrentQuality;
 			this.ShowQuality = ShowQuality;
@@ -979,6 +985,7 @@ public class VideoPlayerActivity extends Activity implements
 
 		@Override
 		public void run() {
+//			android.util.Log.i("player_yy", "HttpThreadPoolUtils.run");//到了这个地方一次
 			if (IsPlaying)
 				return;
 			List<String> list = new ArrayList<String>();
@@ -992,7 +999,7 @@ public class VideoPlayerActivity extends Activity implements
 				if (BuildConfig.DEBUG)
 					Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
 				list.clear();
-
+//				android.util.Log.i("player_yy", "HttpThreadPoolUtils.run1");
 				if (!dstUrl.equalsIgnoreCase(NOT_VALID_LINK)) {
 					mCurrentPlayData.CurrentSource = CurrentSource;
 					mCurrentPlayData.CurrentQuality = CurrentQuality;
@@ -1000,6 +1007,7 @@ public class VideoPlayerActivity extends Activity implements
 					Message message = mvediohandler.obtainMessage(VideoPlay,
 							dstUrl);
 					mvediohandler.sendMessage(message);
+//					android.util.Log.i("player_yy", "HttpThreadPoolUtils.run2");
 				}
 			} catch (Exception e) {
 				if (BuildConfig.DEBUG)
