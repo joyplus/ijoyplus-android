@@ -410,6 +410,7 @@ public class VideoPlayerActivity extends Activity implements
 
 	@Override
 	protected void onDestroy() {
+		m_ReturnProgramView = null;
 		if (aq != null)
 			aq.dismiss();
 		// github.com/joyplus/ijoyplus-android.git

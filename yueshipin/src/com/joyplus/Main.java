@@ -491,7 +491,7 @@ public class Main extends TabActivity {
 		builder.create().show();
 	}
 
-	private void check_binding(String userid, String channel,
+	private void check_binding(String channel, String userid,
 			Map<String, String> headers) {
 		if(userid == null || channel == null)
 			return;
@@ -510,13 +510,13 @@ public class Main extends TabActivity {
 			AjaxStatus status) {
 		try {
 			int result = Integer.valueOf(json.getString("status"));
+			Log.i("check", "status>>>"+result);
 			switch (result) {
 			case 1:
 				app.SaveServiceData("Binding_TV", "success");
 				break;
 			case 0:
 				app.DeleteServiceData("Binding_TV");
-				showDialog();
 				break;
 			}
 

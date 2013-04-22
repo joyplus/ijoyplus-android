@@ -75,6 +75,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	VideoCacheManager cacheManager;
 	PlayRecordInfo playrecordinfo;
 	PlayRecordManager playrecordmanager;
+	private String player_select = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +132,9 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		aq = new AQuery(this);
 		mCurrentPlayData = new CurrentPlayData();
 		aq.id(R.id.Layout1).gone();
+		
+		
+		
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -214,6 +218,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
+		player_select  = app.GetServiceData("player_select");
 		dataStruct = new ArrayList();
 		Tab3Page1Adapter = new Tab3Page1ListAdapter();
 		ItemsListView.setAdapter(Tab3Page1Adapter);
@@ -422,6 +427,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					Log.e(TAG, "Call Detail_Movie failed", ex);
 				}
 				break;
+			case 131:
 			case 2:
 				//让本地数据跟服务器上的数据同步
 				playrecordinfo.setProd_id(m_Tab3Page1ListData.Pro_ID);
@@ -479,7 +485,14 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		bundle.putLong("current_time", current_play_time);
 		intent.putExtras(bundle);
 		try {
+			if ("third".equalsIgnoreCase(player_select)){
+				Intent it = new Intent(Intent.ACTION_VIEW);
+				Uri uri = Uri.parse(m_uri);
+				it.setDataAndType(uri, "video/*");
+				startActivity(it);
+			}else{
 			startActivity(intent);
+			}
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "mp4 fail", ex);
 		}
@@ -515,15 +528,16 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 						ReturnUserPlayHistories.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						isLastisNext = 1;
-						GetServiceData(isLastisNext);
-					}
-				}, 2000);
+				isLastisNext = 1;
+				GetServiceData(isLastisNext);
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						isLastisNext = 1;
+//						GetServiceData(isLastisNext);
+//					}
+//				}, 2000);
 				
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
@@ -613,6 +627,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					holder.textView04.setText("");
 				}
 				break;
+			case 131:
 			case 2:
 				if (m_Tab3Page1ListData.Pro_name1 != null
 						&& m_Tab3Page1ListData.Pro_name1.length() > 0) {
