@@ -371,7 +371,7 @@ public class Setting extends Activity {
 			uid = values.getString("uid");
 			token = values.getString("access_token");
 			expires_in = values.getString("expires_in");
-			System.out.println("expires_in=====>" + expires_in);
+			android.util.Log.i("expires_in=====>",expires_in);
 			AccessToken accessToken = new AccessToken(token,
 					Constant.SINA_CONSUMER_SECRET);
 			accessToken.setExpiresIn(expires_in);
