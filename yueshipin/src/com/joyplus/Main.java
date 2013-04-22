@@ -493,6 +493,8 @@ public class Main extends TabActivity {
 
 	private void check_binding(String userid, String channel,
 			Map<String, String> headers) {
+		if(userid == null || channel == null)
+			return;
 		String url = Constant.CHECK_BINDING + "?tv_channel=" + channel
 				+ "&user_id=" + userid;
 		Log.i("", "url>>>" + url);
