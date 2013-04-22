@@ -338,14 +338,14 @@ public class MyListView extends ListView implements OnScrollListener, OnClickLis
 		{
 			case IListViewState.LVS_NORMAL:
 			{
-				Log.e("!!!!!!!!!!!", "convert to IListViewState.LVS_NORMAL");
+//				Log.e("!!!!!!!!!!!", "convert to IListViewState.LVS_NORMAL");
 				mArrowImageView.clearAnimation();
 				mArrowImageView.setImageResource(R.drawable.arrow);
 			}
 				break;
 			case IListViewState.LVS_PULL_REFRESH:
 			{
-				Log.e("!!!!!!!!!!!", "convert to IListViewState.LVS_PULL_REFRESH");
+//				Log.e("!!!!!!!!!!!", "convert to IListViewState.LVS_PULL_REFRESH");
 				mHeadProgressBar.setVisibility(View.GONE);
 				mArrowImageView.setVisibility(View.VISIBLE);
 				mRefreshTextview.setText("下拉可以刷新");
@@ -362,7 +362,7 @@ public class MyListView extends ListView implements OnScrollListener, OnClickLis
 				break;
 			case IListViewState.LVS_RELEASE_REFRESH:
 			{
-				Log.e("!!!!!!!!!!!", "convert to IListViewState.LVS_RELEASE_REFRESH");
+//				Log.e("!!!!!!!!!!!", "convert to IListViewState.LVS_RELEASE_REFRESH");
 				mHeadProgressBar.setVisibility(View.GONE);
 				mArrowImageView.setVisibility(View.VISIBLE);
 				mRefreshTextview.setText("松开获取更多");
@@ -372,7 +372,7 @@ public class MyListView extends ListView implements OnScrollListener, OnClickLis
 				break;
 			case IListViewState.LVS_LOADING:
 			{
-				Log.e("!!!!!!!!!!!", "convert to IListViewState.LVS_LOADING");
+//				Log.e("!!!!!!!!!!!", "convert to IListViewState.LVS_LOADING");
 				mHeadProgressBar.setVisibility(View.VISIBLE);
 				mArrowImageView.clearAnimation();
 				mArrowImageView.setVisibility(View.GONE);

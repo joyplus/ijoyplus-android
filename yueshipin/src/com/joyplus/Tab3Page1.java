@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -125,7 +126,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		cacheInfo = new VideoCacheInfo();
 		playrecordmanager = new PlayRecordManager(Tab3Page1.this);//播放记录
 		playrecordinfo = new PlayRecordInfo();
-//		、
 		
 		app = (App) getApplication();
 		aq = new AQuery(this);

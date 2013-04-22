@@ -87,8 +87,8 @@ public class Downloader {
 	 * 初始化
 	 */
 	private void init() {
-//		localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
-		file_path = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+		localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+//		file_path = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
 		try {
 			URL url = new URL(urlstr);
 			HttpURLConnection connection = (HttpURLConnection) url
@@ -98,8 +98,8 @@ public class Downloader {
 			fileSize = connection.getContentLength();
 			connection.disconnect();
 			// 本地访问文件
-//			RandomAccessFile accessFile = new RandomAccessFile(localfile, "rwd");
-			RandomAccessFile accessFile = new RandomAccessFile(file_path, "rwd");
+			RandomAccessFile accessFile = new RandomAccessFile(localfile, "rwd");
+//			RandomAccessFile accessFile = new RandomAccessFile(file_path, "rwd");
 			accessFile.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -176,7 +176,7 @@ public class Downloader {
 		@Override
 		public void run() {
 			// 标记此线程为true
-//			localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+			localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
 			
 			HttpURLConnection connection = null;
 			RandomAccessFile randomAccessFile = null;
@@ -184,13 +184,13 @@ public class Downloader {
 			try {
 				URL url = new URL(urlstr);
 				connection = (HttpURLConnection) url.openConnection();
-				connection.setConnectTimeout(20000);
+				connection.setConnectTimeout(60*1000);
 				connection.setRequestMethod("GET");
 				// 设置范围，格式为Range：bytes x-y;
 				connection.setRequestProperty("Range", "bytes=" + compeleteSize
 						+ "-" + (fileSize - 1));// 后面的
-//				randomAccessFile = new RandomAccessFile(localfile, "rwd");
-				randomAccessFile = new RandomAccessFile(file_path, "rwd");
+				randomAccessFile = new RandomAccessFile(localfile, "rwd");
+//				randomAccessFile = new RandomAccessFile(file_path, "rwd");
 				randomAccessFile.seek(compeleteSize);
 				inputstream = connection.getInputStream();
 				// 将要下载的文件写到保存在保存路径下的文件
@@ -229,8 +229,8 @@ public class Downloader {
 								prod_id, my_index);
 						return;
 					}
-					Log.i("Downloader:compeleteSize",Integer.toString(compeleteSize));
-					Log.i("Downloader:fileSize", Integer.toString(fileSize));
+					android.util.Log.i("Downloader:compeleteSize",Integer.toString(compeleteSize));
+					android.util.Log.i("Downloader:fileSize", Integer.toString(fileSize));
 				}
 			} catch (Exception e) {
 				state = STOP;
