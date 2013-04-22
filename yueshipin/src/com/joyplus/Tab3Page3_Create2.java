@@ -185,12 +185,12 @@ public class Tab3Page3_Create2 extends Activity {
 		if (BangDanAdapter == null) {
 			ArrayList arraylist = dataStruct;
 			BangDanListAdapter listviewdetailadapter = new BangDanListAdapter(
-					this, arraylist);
+					Tab3Page3_Create2.this, arraylist);
 			BangDanAdapter = listviewdetailadapter;
 		} else {
 			ArrayList arraylist1 = dataStruct;
 			BangDanListAdapter listviewdetailadapter1 = new BangDanListAdapter(
-					this, arraylist1);
+					Tab3Page3_Create2.this, arraylist1);
 			BangDanAdapter = listviewdetailadapter1;
 		}
 		return BangDanAdapter;
