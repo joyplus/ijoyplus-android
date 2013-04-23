@@ -1046,6 +1046,7 @@ public class VideoView extends SurfaceView implements
 		setVideoPath(mPath);
 		if (PlayContinue)
 			seekTo(saveTime);
+		mMediaController.setYunduanMessage("411");
 	}
 
 	@Override

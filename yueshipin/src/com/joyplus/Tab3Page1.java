@@ -215,7 +215,6 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		player_select  = app.GetServiceData("player_select");
 		dataStruct = new ArrayList();
 		Tab3Page1Adapter = new Tab3Page1ListAdapter();
 		ItemsListView.setAdapter(Tab3Page1Adapter);
@@ -464,6 +463,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	}
 
 	public void CallVideoPlayActivity(String prod_id, String m_uri, String title) {
+		player_select  = app.GetServiceData("player_select");
 		app.IfSupportFormat(m_uri);
 
 		app.setCurrentPlayData(mCurrentPlayData);

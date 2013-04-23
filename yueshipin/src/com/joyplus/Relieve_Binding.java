@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import com.joyplus.faye.FayeClient;
 import com.joyplus.faye.FayeService;
+import com.joyplus.widget.WaitingDialog;
 import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
@@ -23,7 +24,7 @@ public class Relieve_Binding extends Activity {
 
 	private String user_id = null;
 	App app;
-	ProgressDialog pb;
+	WaitingDialog pb;
 	Handler mhandler;
 	Context mContext;
 	private static final String ue_screencast_unbinded = "解除绑定事件";
@@ -39,11 +40,13 @@ public class Relieve_Binding extends Activity {
 		macAddress = app.GetServiceData("Binding_TV_Channal");
 		tv_channel = "/screencast/" + macAddress;
 
-		pb = new ProgressDialog(this);
-		pb.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		pb.setCanceledOnTouchOutside(false);
-		pb.setCancelable(true);
-
+//		pb = new ProgressDialog(this);
+//		pb.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//		pb.setCanceledOnTouchOutside(false);
+//		pb.setCancelable(true);
+		 pb = new WaitingDialog(mContext);
+		 pb.setDialogWindowStyle();
+		 pb.setCanceledOnTouchOutside(false);
 
 		ImageButton relieveBinding = (ImageButton) findViewById(R.id.relieve_binding);
 		relieveBinding.setOnClickListener(new OnClickListener() {

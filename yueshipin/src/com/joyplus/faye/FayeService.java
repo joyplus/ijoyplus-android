@@ -9,6 +9,8 @@ import org.json.JSONObject;
 import com.androidquery.AQuery;
 import com.joyplus.Constant;
 import com.joyplus.faye.FayeClient.FayeListener;
+import com.umeng.analytics.MobclickAgent;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +26,8 @@ public class FayeService extends Service {
 	private static String user_id = null;
 	protected Handler hanlder;
 	static AQuery aq;
-    private static boolean IsConnected = false;
+	private static boolean IsConnected = false;
+
 	public static void FayeByService(Context context, String channel) {
 
 		// this.mJson = json;
@@ -36,9 +39,21 @@ public class FayeService extends Service {
 	public static void SendMessageService(Context mcontext, JSONObject json,
 			String userid) {
 		user_id = userid;
-		if(IsConnected){
-		mClient.sendMessage(json);
+		if (IsConnected) {
+			new Handler().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						mClient.connectToServer(null);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}, 500);
 		}
+		mClient.sendMessage(json);
 
 	}
 
@@ -76,11 +91,12 @@ public class FayeService extends Service {
 
 	private static void connect_TVChannel(final Context mContext,
 			String tv_channel) {
+		Handler handler = new Handler();
 		if (android.os.Build.VERSION.SDK_INT <= 8)
 			return;
 		try {
 			URI uri = URI.create(Constant.TV_CHANNEL_URL);
-			mClient = new FayeClient(null, uri, tv_channel);
+			mClient = new FayeClient(handler, uri, tv_channel);
 			mClient.connectToServer(null);
 			mClient.setFayeListener(new FayeListener() {
 
@@ -131,7 +147,11 @@ public class FayeService extends Service {
 							intent.setAction("com.joyplus.check_binding");
 						}
 						break;
-					case 42:
+					case 42: // 确认投放
+						if (userid.equals(user_id)) {
+							intent.putExtra("yunduan", "success");
+							intent.setAction("com.joyplus.yunduan");
+						}
 						break;
 					}
 					mContext.sendBroadcast(intent);
@@ -141,6 +161,7 @@ public class FayeService extends Service {
 				@Override
 				public void disconnectedFromServer() {
 					IsConnected = false;
+					// mClient.connectToServer(null);
 					Log.i("TVChannleListener", "disconnectedFromServer>>>");
 
 				}

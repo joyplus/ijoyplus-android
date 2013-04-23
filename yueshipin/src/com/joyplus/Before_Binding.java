@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import com.joyplus.faye.FayeClient;
 import com.joyplus.faye.FayeService;
+import com.joyplus.widget.WaitingDialog;
 import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
@@ -28,7 +29,7 @@ public class Before_Binding extends Activity {
 
 	private String user_id = null;
 	App app;
-	ProgressDialog pb;
+    WaitingDialog pb;
 	Handler mhandler;
 	Context mContext;
 	private static final String ue_screencast_binded = "绑定成功";
@@ -49,11 +50,15 @@ public class Before_Binding extends Activity {
 		macAddress = intent.getStringExtra("SaoMiao_result");
 		tv_channel = Constant.TV_CHANNEL + macAddress;
 
-		pb = new ProgressDialog(this);
-		pb.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		pb.setCanceledOnTouchOutside(false);
-		pb.setCancelable(true);
-
+//		pb = new ProgressDialog(this);
+//		pb.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//		pb.setCanceledOnTouchOutside(false);
+//		pb.setCancelable(true);
+		
+		 pb = new WaitingDialog(mContext);
+		 pb.setDialogWindowStyle();
+		 pb.setCanceledOnTouchOutside(false);
+		 
 		ImageButton confirmBinding = (ImageButton) findViewById(R.id.confirm_binding);
 		confirmBinding.setOnClickListener(new OnClickListener() {
 

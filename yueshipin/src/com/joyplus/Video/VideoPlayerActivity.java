@@ -32,10 +32,12 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -69,6 +71,7 @@ import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
+import com.joyplus.Main.CheckBindDingReceiver;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.cache.VideoCacheInfo;
@@ -146,10 +149,12 @@ public class VideoPlayerActivity extends Activity implements
 	private static final int FINISH_ACTTIVITY = 10;
 	public static boolean IsFinish = false;
 	public static boolean IsYunduanPlay = false;
-	
+
 	String user_id = null;
 	String macAddress = null;
 	String tv_channel = null;
+	String prod_url = null;
+	YunduanReceiver bindingReceiver;
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
@@ -169,7 +174,7 @@ public class VideoPlayerActivity extends Activity implements
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-//		android.util.Log.i("player_yy", "onCreate");
+		// android.util.Log.i("player_yy", "onCreate");
 		if (!LibsChecker.checkVitamioLibs(this, R.string.init_decoders))
 			return;
 
@@ -188,7 +193,10 @@ public class VideoPlayerActivity extends Activity implements
 		user_id = app.UserID;
 		macAddress = app.GetServiceData("Binding_TV_Channal");
 		tv_channel = "/screencast/" + macAddress;
-		FayeService.FayeByService(mContext, tv_channel);
+		if (macAddress != null) {
+			FayeService.FayeByService(mContext, tv_channel);
+			registerBinding();
+		}
 		InitPlayData();
 		// 每次播放时及时把播放的flag清除为0
 		if (app.use2G3G) {
@@ -220,7 +228,7 @@ public class VideoPlayerActivity extends Activity implements
 			aq.id(R.id.textViewRate).text(
 					"Your device does not support traffic stat monitoring.");
 		} else {
-			mHandler.postDelayed(mRunnable, 1000);//test,yy
+			mHandler.postDelayed(mRunnable, 1000);// test,yy
 		}
 
 		mMediaController = new MediaController(this, mClient, user_id,
@@ -282,17 +290,16 @@ public class VideoPlayerActivity extends Activity implements
 
 		mvediohandler = new Handler() {
 			public void handleMessage(Message msg) {
-//				android.util.Log.i("player_yy",msg.what+"");
+				// android.util.Log.i("player_yy",msg.what+"");
 				switch (msg.what) {
 				case VideoPlay:
 					videoplay(msg.obj.toString());
 					break;
-			     default:					
-			    	 android.util.Log.i("player_yy","error");
+				default:
+					android.util.Log.i("player_yy", "error");
+				}
 			}
-		}
 		};
-		
 
 	}
 
@@ -312,7 +319,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void InitPlayData() {
-//		android.util.Log.i("player_yy", "InitPlayData");
+		// android.util.Log.i("player_yy", "InitPlayData");
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 
@@ -360,7 +367,7 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, TV_PLAY);
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		MobclickAgent.onPause(this);
-		mHandler.removeCallbacks(mRunnable);//yy
+		mHandler.removeCallbacks(mRunnable);// yy
 		if (mVideoView != null) {
 			/*
 			 * 获取当前播放时间和总时间,将播放时间和总时间放在服务器上
@@ -368,7 +375,7 @@ public class VideoPlayerActivity extends Activity implements
 			current_time = mVideoView.getCurrentPosition();
 			total_time = mVideoView.getDuration();
 			if (URLUtil.isNetworkUrl(mPath))
-				SaveToServer(current_time / 1000, total_time/1000);
+				SaveToServer(current_time / 1000, total_time / 1000);
 
 			if (current_time > 0) {
 
@@ -379,9 +386,15 @@ public class VideoPlayerActivity extends Activity implements
 						if (Constant.select_index > -1) {
 							tvsubname = Integer
 									.toString(Constant.select_index + 1);// 更新本地数据库
-							SharedPreferences myPreference = this.getSharedPreferences("myTvSetting",Context.MODE_PRIVATE);
-							myPreference.edit()
-							.putString(playProdId,Integer.toString(Constant.select_index)).commit();
+							SharedPreferences myPreference = this
+									.getSharedPreferences("myTvSetting",
+											Context.MODE_PRIVATE);
+							myPreference
+									.edit()
+									.putString(
+											playProdId,
+											Integer.toString(Constant.select_index))
+									.commit();
 						}
 						playrecordinfo.setProd_subname(tvsubname);
 						playrecordinfo.setLast_playtime(current_time + "");
@@ -422,10 +435,11 @@ public class VideoPlayerActivity extends Activity implements
 
 	@Override
 	protected void onDestroy() {
+		IsYunduanPlay = false;
 		m_ReturnProgramView = null;
+		unregisterBinding();
 		if (aq != null)
 			aq.dismiss();
-		// github.com/joyplus/ijoyplus-android.git
 		if (mVideoView != null) {
 			mVideoView.stopPlayback();
 		}
@@ -459,6 +473,7 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		Intent mIntent = new Intent();
 		VideoPlayerActivity.this.setResult(FINISH_ACTTIVITY, mIntent);
+		sendQuitMessage();
 		finish();
 
 	}
@@ -499,7 +514,8 @@ public class VideoPlayerActivity extends Activity implements
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {
-			float mOldX = e1.getX(), mOldY = e1.getY();
+			float mOldX = e1.getX();
+			float mOldY = e1.getY();
 			int y = (int) e2.getRawY();
 			Display disp = getWindowManager().getDefaultDisplay();
 			int windowWidth = disp.getWidth();
@@ -603,7 +619,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	public void GetServiceData() {
-//		android.util.Log.i("player_yy", "GetServiceData");
+		// android.util.Log.i("player_yy", "GetServiceData");
 		String url = Constant.BASE_URL + "program/view?prod_id=" + playProdId;
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
@@ -618,7 +634,7 @@ public class VideoPlayerActivity extends Activity implements
 	// 初始化list数据函数
 	public void GetServiceDataResult(String url, JSONObject json,
 			AjaxStatus status) {
-//		android.util.Log.i("player_yy", "GetServiceDataResult");
+		// android.util.Log.i("player_yy", "GetServiceDataResult");
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -647,7 +663,7 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	private void videoplay(String mPath) {
-//		android.util.Log.i("player_yy","videoplay");
+		// android.util.Log.i("player_yy","videoplay");
 		if (IsPlaying)
 			return;
 		if (mMediaController != null) {
@@ -659,12 +675,13 @@ public class VideoPlayerActivity extends Activity implements
 		}
 		if (mPath != null && mPath.length() > 0) {
 			IsPlaying = true;
+			prod_url = mPath;
 			mVideoView.setVideoPath(mPath);
 		}
 	}
 
 	private void GetRedirectURL() {
-//		android.util.Log.i("player_yy", "GetRedirectURL");
+		// android.util.Log.i("player_yy", "GetRedirectURL");
 		String PROD_SOURCE = null;
 		mCurrentPlayData.CurrentCategory = playProdType - 1;
 		switch (playProdType) {
@@ -792,7 +809,7 @@ public class VideoPlayerActivity extends Activity implements
 	// 给片源赋权值
 	@SuppressWarnings("unchecked")
 	public void videoSourceSort(DOWN_URLS[] down_urls) {
-		
+
 		if (down_urls != null) {
 			for (int j = 0; j < down_urls.length; j++) {
 				if (down_urls[j].source.equalsIgnoreCase("letv")) {
@@ -873,7 +890,7 @@ public class VideoPlayerActivity extends Activity implements
 		params.put("prod_id", playProdId);// required string
 											// 视频id
 		params.put("prod_name", playProdName);// required
-		if (playProdType != 3)// string 视频名字
+		if (playProdType != 3 && playProdType != 1)// string 视频名字
 		{
 			if (Constant.select_index > -1) {
 				params.put("prod_subname",
@@ -905,10 +922,11 @@ public class VideoPlayerActivity extends Activity implements
 				.weakHandler(this, "CallProgramPlayResult");
 		aq.ajax(cb);
 	}
-		/*
-		 * 怎么把数据保存在本地
-		 */
-//	}
+
+	/*
+	 * 怎么把数据保存在本地
+	 */
+	// }
 
 	public void CallProgramPlayResult(String url, JSONObject json,
 			AjaxStatus status) {
@@ -942,6 +960,7 @@ public class VideoPlayerActivity extends Activity implements
 										Intent mIntent = new Intent();
 										VideoPlayerActivity.this.setResult(
 												FINISH_ACTTIVITY, mIntent);
+										sendQuitMessage();
 										finish();
 									}
 								})
@@ -959,20 +978,23 @@ public class VideoPlayerActivity extends Activity implements
 		}
 		return super.dispatchKeyEvent(event);
 	}
-	
+
 	private void sendQuitMessage() {
+		if (!IsYunduanPlay)
+			return;
 		try {
 			JSONObject json = new JSONObject();
 			json.put("push_type", "409");
 			json.put("tv_channel", tv_channel);
 			json.put("user_id", user_id);
 			json.put("prod_id", playProdId);
-//			json.put("prod_url", prod_url);
+			json.put("prod_url", prod_url);
 			FayeService.SendMessageService(mContext, json, user_id);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
+
 	/**
 	 * id 对应播放源 letv 0、fengxing 1、qiyi 2、youku 3、sinahd 4、 sohu 5、56 6、qq 7、pptv
 	 * 8、m1905 9. 启动一个异步任务，把网络相关放在此任务中 重定向新的链接，直到拿到资源URL
@@ -995,7 +1017,7 @@ public class VideoPlayerActivity extends Activity implements
 
 		public HttpTread(String url, String sourceId, int CurrentSource,
 				int CurrentQuality, int ShowQuality, String pROD_SOURCE) {
-//			android.util.Log.i("player_yy", "HttpThreadPoolUtils.HttpTread");
+			// android.util.Log.i("player_yy", "HttpThreadPoolUtils.HttpTread");
 			this.CurrentSource = CurrentSource;
 			this.CurrentQuality = CurrentQuality;
 			this.ShowQuality = ShowQuality;
@@ -1004,7 +1026,8 @@ public class VideoPlayerActivity extends Activity implements
 
 		@Override
 		public void run() {
-//			android.util.Log.i("player_yy", "HttpThreadPoolUtils.run");//到了这个地方一次
+			// android.util.Log.i("player_yy",
+			// "HttpThreadPoolUtils.run");//到了这个地方一次
 			if (IsPlaying)
 				return;
 			List<String> list = new ArrayList<String>();
@@ -1018,7 +1041,7 @@ public class VideoPlayerActivity extends Activity implements
 				if (BuildConfig.DEBUG)
 					Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
 				list.clear();
-//				android.util.Log.i("player_yy", "HttpThreadPoolUtils.run1");
+				// android.util.Log.i("player_yy", "HttpThreadPoolUtils.run1");
 				if (!dstUrl.equalsIgnoreCase(NOT_VALID_LINK)) {
 					mCurrentPlayData.CurrentSource = CurrentSource;
 					mCurrentPlayData.CurrentQuality = CurrentQuality;
@@ -1026,7 +1049,8 @@ public class VideoPlayerActivity extends Activity implements
 					Message message = mvediohandler.obtainMessage(VideoPlay,
 							dstUrl);
 					mvediohandler.sendMessage(message);
-//					android.util.Log.i("player_yy", "HttpThreadPoolUtils.run2");
+					// android.util.Log.i("player_yy",
+					// "HttpThreadPoolUtils.run2");
 				}
 			} catch (Exception e) {
 				if (BuildConfig.DEBUG)
@@ -1140,5 +1164,35 @@ public class VideoPlayerActivity extends Activity implements
 			}
 		}
 
+	}
+
+	/* 注册监听 */
+	private void registerBinding() {
+		bindingReceiver = new YunduanReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("com.joyplus.yunduan");
+		registerReceiver(bindingReceiver, filter);
+
+	}
+
+	/* 取消监听 */
+	private void unregisterBinding() {
+		if (bindingReceiver != null) {
+			this.unregisterReceiver(bindingReceiver);
+		}
+	}
+
+	/* Broadcast监听 */
+	public class YunduanReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Bundle bundle = intent.getExtras();
+			String status = bundle.getString("yunduan");
+			Log.i("YunduanReceiver", "result>>>>>" + status);
+			if ("success".equals(status)) {
+				IsYunduanPlay = true;
+			}
+		}
 	}
 }

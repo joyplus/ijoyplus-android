@@ -172,7 +172,7 @@ public class MediaController extends FrameLayout {
 	private String prod_name;// 视频名称，就是显示在播放器最左上角的名称
 	private String prod_url;// 视频播放地址
 	private String prod_src;// 视频来源
-	private long prod_time;// 视频开始播放时间 :秒*1000
+	private float prod_time;// 视频开始播放时间 :秒*1000
 	private int prod_qua; // 720P ：0 还是1080P：1
 	private static final String ue_screencast_video_push = "云端推送视频";
 
@@ -1119,11 +1119,11 @@ public class MediaController extends FrameLayout {
 		public void onClick(View v) {
 			// doPauseResume();
 			// show(sDefaultTimeout);
-//			sendYunduanMessage();
+			setYunduanMessage(null);
 		}
 	};
 
-	private void sendYunduanMessage() {
+	public void setYunduanMessage(String type) {
 		switch (CurrentCategory) {
 		case 0:
 			prod_id = m_ReturnProgramView.movie.id;
@@ -1170,10 +1170,10 @@ public class MediaController extends FrameLayout {
 			}
 			break;
 		}
+		
 
 		JSONObject json = new JSONObject();
 		try {
-			json.put("push_type", "41");
 			json.put("tv_channel", tv_channel);
 			json.put("user_id", user_id);
 			json.put("prod_id", prod_id);
@@ -1183,14 +1183,29 @@ public class MediaController extends FrameLayout {
 			json.put("prod_src", prod_src);
 			json.put("prod_time", prod_time);
 			json.put("prod_qua", prod_qua);
-			FayeService.SendMessageService(mContext, json, user_id);
-			MobclickAgent.onEvent(mContext, ue_screencast_video_push);
+			if(type == null){
+				json.put("push_type", "41");
+				sendYunduanMessage(json);
+				}else{
+					json.put("push_type", type);
+					sendSelectMessage(json);
+				}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
-
+    private void sendYunduanMessage(JSONObject json){
+    	FayeService.SendMessageService(mContext, json, user_id);
+		MobclickAgent.onEvent(mContext, ue_screencast_video_push);
+    }
+    private void sendSelectMessage(JSONObject json){
+    	if(!VideoPlayerActivity.IsYunduanPlay)
+    		return;
+    	FayeService.SendMessageService(mContext, json, user_id);
+		MobclickAgent.onEvent(mContext, ue_screencast_video_push);
+    }
 	private View.OnClickListener mReturnListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -1223,7 +1238,7 @@ public class MediaController extends FrameLayout {
 				long current = mPlayer.getCurrentPosition();
 				if (current >= 30000)// 30s
 					mPlayer.seekTo(current - 30000);
-//				sendSeekChangedMessage(current - 30000);
+				sendSeekChangedMessage((current - 30000)/1000);
 			}
 		}
 	};
@@ -1321,16 +1336,18 @@ public class MediaController extends FrameLayout {
 		if (mPlayer.isPlaying()) {
 			mIsPausedByHuman = true;
 			mPlayer.pause();
-//			sendPauseMessage();
+			sendPauseMessage();
 		} else {
 			mIsPausedByHuman = false;
 			mPlayer.start();
-//			sendPlayMessage();
+			sendPlayMessage();
 		}
 		updatePausePlay();
 	}
 
 	private void sendPlayMessage() {
+		if(!VideoPlayerActivity.IsYunduanPlay)
+			return;
 		try {
 			JSONObject json = new JSONObject();
 			json.put("push_type", "403");
@@ -1345,6 +1362,8 @@ public class MediaController extends FrameLayout {
 	}
 
 	private void sendPauseMessage() {
+		if(!VideoPlayerActivity.IsYunduanPlay)
+			return;
 		try {
 			JSONObject json = new JSONObject();
 			json.put("push_type", "405");
@@ -1384,7 +1403,7 @@ public class MediaController extends FrameLayout {
 			Log.d("newposition_time", time);
 			if (mInstantSeeking) {
 				mPlayer.seekTo(newposition);
-
+				sendSeekChangedMessage(newposition/1000);
 			}
 			if (mInfoView != null)
 				mInfoView.setText(time);
@@ -1396,7 +1415,7 @@ public class MediaController extends FrameLayout {
 		public void onStopTrackingTouch(SeekBar bar) {
 			if (!mInstantSeeking) {
 				mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
-//				sendSeekChangedMessage(mDuration * bar.getProgress() / 1000);
+				
 				// mPlayer.pause();
 			}
 			if (mInfoView != null) {
@@ -1415,7 +1434,9 @@ public class MediaController extends FrameLayout {
 		}
 	};
 
-	private void sendSeekChangedMessage(long time) {
+	private void sendSeekChangedMessage(float time) {
+		if(!VideoPlayerActivity.IsYunduanPlay)
+			return;
 		try {
 			JSONObject json = new JSONObject();
 			json.put("push_type", "407");
