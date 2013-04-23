@@ -131,6 +131,8 @@ public class FayeService extends Service {
 							intent.setAction("com.joyplus.check_binding");
 						}
 						break;
+					case 42:
+						break;
 					}
 					mContext.sendBroadcast(intent);
 

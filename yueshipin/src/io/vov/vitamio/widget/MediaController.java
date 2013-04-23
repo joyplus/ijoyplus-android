@@ -4,7 +4,6 @@
 
 package io.vov.vitamio.widget;
 
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +31,6 @@ import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.faye.FayeClient;
-import com.joyplus.faye.FayeClient.FayeListener;
 import com.joyplus.faye.FayeService;
 import com.umeng.analytics.MobclickAgent;
 
@@ -177,6 +175,7 @@ public class MediaController extends FrameLayout {
 	private long prod_time;// 视频开始播放时间 :秒*1000
 	private int prod_qua; // 720P ：0 还是1080P：1
 	private static final String ue_screencast_video_push = "云端推送视频";
+
 	// private boolean DLNAMODE = false;
 
 	public int getCurrentIndex() {
@@ -202,7 +201,8 @@ public class MediaController extends FrameLayout {
 		initController(context);
 	}
 
-	public MediaController(Context context, FayeClient mClient,String user_id,String channel) {
+	public MediaController(Context context, FayeClient mClient, String user_id,
+			String channel) {
 		super(context);
 		this.mClient = mClient;
 		this.user_id = user_id;
@@ -224,7 +224,7 @@ public class MediaController extends FrameLayout {
 	}
 
 	private void initFloatingWindow() {
-		android.util.Log.i("player_yy","initFloatingWindow");
+		android.util.Log.i("player_yy", "initFloatingWindow");
 		mWindow = new PopupWindow(mContext);
 		// mWindow.setFocusable(false);
 		mWindow.setFocusable(true);
@@ -1117,13 +1117,13 @@ public class MediaController extends FrameLayout {
 	private View.OnClickListener mYunduanListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			doPauseResume();
-			show(sDefaultTimeout);
-			setYunduanMessage();
+			// doPauseResume();
+			// show(sDefaultTimeout);
+//			sendYunduanMessage();
 		}
 	};
 
-	private void setYunduanMessage() {
+	private void sendYunduanMessage() {
 		switch (CurrentCategory) {
 		case 0:
 			prod_id = m_ReturnProgramView.movie.id;
@@ -1131,7 +1131,7 @@ public class MediaController extends FrameLayout {
 			prod_name = m_ReturnProgramView.movie.name;
 			prod_url = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].url;
 			prod_src = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].source;
-			prod_time = mPlayer.getCurrentPosition()/1000;
+			prod_time = mPlayer.getCurrentPosition() / 1000;
 			if (m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].type
 					.equals("hd2")) {
 				prod_qua = 1;
@@ -1146,7 +1146,7 @@ public class MediaController extends FrameLayout {
 					+ m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集";
 			prod_url = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].url;
 			prod_src = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].source;
-			prod_time = mPlayer.getCurrentPosition()/1000;
+			prod_time = mPlayer.getCurrentPosition() / 1000;
 			if (m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].type
 					.equals("hd2")) {
 				prod_qua = 1;
@@ -1161,7 +1161,7 @@ public class MediaController extends FrameLayout {
 					+ m_ReturnProgramView.show.episodes[CurrentIndex].name;
 			prod_url = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].url;
 			prod_src = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].source;
-			prod_time = mPlayer.getCurrentPosition()/1000;
+			prod_time = mPlayer.getCurrentPosition() / 1000;
 			if (m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].type
 					.equals("hd2")) {
 				prod_qua = 1;
@@ -1223,6 +1223,7 @@ public class MediaController extends FrameLayout {
 				long current = mPlayer.getCurrentPosition();
 				if (current >= 30000)// 30s
 					mPlayer.seekTo(current - 30000);
+//				sendSeekChangedMessage(current - 30000);
 			}
 		}
 	};
@@ -1320,11 +1321,42 @@ public class MediaController extends FrameLayout {
 		if (mPlayer.isPlaying()) {
 			mIsPausedByHuman = true;
 			mPlayer.pause();
+//			sendPauseMessage();
 		} else {
 			mIsPausedByHuman = false;
 			mPlayer.start();
+//			sendPlayMessage();
 		}
 		updatePausePlay();
+	}
+
+	private void sendPlayMessage() {
+		try {
+			JSONObject json = new JSONObject();
+			json.put("push_type", "403");
+			json.put("tv_channel", tv_channel);
+			json.put("user_id", user_id);
+			json.put("prod_id", prod_id);
+			json.put("prod_url", prod_url);
+			FayeService.SendMessageService(mContext, json, user_id);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void sendPauseMessage() {
+		try {
+			JSONObject json = new JSONObject();
+			json.put("push_type", "405");
+			json.put("tv_channel", tv_channel);
+			json.put("user_id", user_id);
+			json.put("prod_id", prod_id);
+			json.put("prod_url", prod_url);
+			FayeService.SendMessageService(mContext, json, user_id);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
@@ -1364,6 +1396,7 @@ public class MediaController extends FrameLayout {
 		public void onStopTrackingTouch(SeekBar bar) {
 			if (!mInstantSeeking) {
 				mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
+//				sendSeekChangedMessage(mDuration * bar.getProgress() / 1000);
 				// mPlayer.pause();
 			}
 			if (mInfoView != null) {
@@ -1381,6 +1414,22 @@ public class MediaController extends FrameLayout {
 			// mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
 		}
 	};
+
+	private void sendSeekChangedMessage(long time) {
+		try {
+			JSONObject json = new JSONObject();
+			json.put("push_type", "407");
+			json.put("tv_channel", tv_channel);
+			json.put("user_id", user_id);
+			json.put("prod_id", prod_id);
+			json.put("prod_url", prod_url);
+			json.put("prod_time", time);
+			FayeService.SendMessageService(mContext, json, user_id);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void setEnabled(boolean enabled) {

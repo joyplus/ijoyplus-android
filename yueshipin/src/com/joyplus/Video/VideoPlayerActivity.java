@@ -26,6 +26,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
@@ -144,6 +145,11 @@ public class VideoPlayerActivity extends Activity implements
 	private int playProdType = 0;// 视频类别 1：电影，2：电视剧，3：综艺，4：视频
 	private static final int FINISH_ACTTIVITY = 10;
 	public static boolean IsFinish = false;
+	public static boolean IsYunduanPlay = false;
+	
+	String user_id = null;
+	String macAddress = null;
+	String tv_channel = null;
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
@@ -179,9 +185,9 @@ public class VideoPlayerActivity extends Activity implements
 		playrecordmanager = new PlayRecordManager(VideoPlayerActivity.this);
 		playrecordinfo = new PlayRecordInfo();
 
-		String user_id = app.UserID;
-		String macAddress = app.GetServiceData("Binding_TV_Channal");
-		String tv_channel = "/screencast/" + macAddress;
+		user_id = app.UserID;
+		macAddress = app.GetServiceData("Binding_TV_Channal");
+		tv_channel = "/screencast/" + macAddress;
 		FayeService.FayeByService(mContext, tv_channel);
 		InitPlayData();
 		// 每次播放时及时把播放的flag清除为0
@@ -953,7 +959,20 @@ public class VideoPlayerActivity extends Activity implements
 		}
 		return super.dispatchKeyEvent(event);
 	}
-
+	
+	private void sendQuitMessage() {
+		try {
+			JSONObject json = new JSONObject();
+			json.put("push_type", "409");
+			json.put("tv_channel", tv_channel);
+			json.put("user_id", user_id);
+			json.put("prod_id", playProdId);
+//			json.put("prod_url", prod_url);
+			FayeService.SendMessageService(mContext, json, user_id);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * id 对应播放源 letv 0、fengxing 1、qiyi 2、youku 3、sinahd 4、 sohu 5、56 6、qq 7、pptv
 	 * 8、m1905 9. 启动一个异步任务，把网络相关放在此任务中 重定向新的链接，直到拿到资源URL
@@ -1122,50 +1141,4 @@ public class VideoPlayerActivity extends Activity implements
 		}
 
 	}
-
-	private void connect_TVChannel(String channel) {
-		if (android.os.Build.VERSION.SDK_INT <= 8)
-			return;
-		try {
-
-			URI uri = URI.create(Constant.TV_CHANNEL_URL);
-			mClient = new FayeClient(null, uri, channel);
-			mClient.setFayeListener(TVChannleListener);
-			mClient.connectToServer(null);
-		} catch (Exception ex) {
-		}
-	}
-
-	FayeListener TVChannleListener = new FayeListener() {
-
-		@Override
-		public void subscriptionFailedWithError(String error) {
-			Log.i("TVChannleListener", "subscriptionFailedWithError>>>" + error);
-
-		}
-
-		@Override
-		public void subscribedToChannel(String subscription) {
-			Log.i("TVChannleListener", "subscribedToChannel>>>" + subscription);
-
-		}
-
-		@Override
-		public void messageReceived(JSONObject json) {
-			Log.i("TVChannleListener", "messageReceived>>>" + json.toString());
-
-		}
-
-		@Override
-		public void disconnectedFromServer() {
-			Log.i("TVChannleListener", "disconnectedFromServer>>>");
-
-		}
-
-		@Override
-		public void connectedToServer() {
-			Log.i("TVChannleListener", "connectedToServer>>>");
-
-		}
-	};
 }

@@ -1,17 +1,8 @@
 package com.joyplus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
-import com.yixia.zi.utils.Log;
 import com.zxing.activity.CaptureActivity;
 
 import android.app.ActivityGroup;
