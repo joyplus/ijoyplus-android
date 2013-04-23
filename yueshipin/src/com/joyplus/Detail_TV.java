@@ -1724,10 +1724,8 @@ public class Detail_TV extends Activity {
 				((Button) v).setTextColor(Color.WHITE);// 设置颜色和文字的位置
 				((Button) v)
 						.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-				if (!download_indexs.contains(index)) {
-					download_indexs.add(index);
-				}
-				System.out.println(download_indexs);
+				download_indexs.add(index);
+				android.util.Log.i("download_indexs",download_indexs.toString());
 			} else {
 				Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
 						.show();
@@ -1801,7 +1799,7 @@ public class Detail_TV extends Activity {
 					m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 				}
 			}
-			System.out.println(download_indexs);
+			android.util.Log.i("download_indexs",download_indexs.toString());
 			if (download_indexs.contains(m_j)) {
 				m_button.setBackgroundDrawable(download_been);
 				m_button.setEnabled(false);
