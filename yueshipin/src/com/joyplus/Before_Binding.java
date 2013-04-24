@@ -50,11 +50,6 @@ public class Before_Binding extends Activity {
 		macAddress = intent.getStringExtra("SaoMiao_result");
 		tv_channel = Constant.TV_CHANNEL + macAddress;
 
-//		pb = new ProgressDialog(this);
-//		pb.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//		pb.setCanceledOnTouchOutside(false);
-//		pb.setCancelable(true);
-		
 		 pb = new WaitingDialog(mContext);
 		 pb.setDialogWindowStyle();
 		 pb.setCanceledOnTouchOutside(false);
@@ -99,7 +94,6 @@ public class Before_Binding extends Activity {
 						@Override
 						public void run() {
 							pb.dismiss();
-							app.MyToast(Before_Binding.this, "绑定失败");
 							finish();
 						}
 					}, 8000);
