@@ -543,6 +543,7 @@ public class Detail_TV extends Activity {
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		// android.util.Log.i("yanyuchuang",status.getCode()+"");
 		// ||json == null||!json.has("tv")
+		android.util.Log.i("JSONObject.AjaxStatus",status.getCode()+"");
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -553,12 +554,13 @@ public class Detail_TV extends Activity {
 			return;
 		}
 		if (json == null || !json.has("tv")) {
-			aq.id(R.id.ProgressText).gone();
-			app.MyToast(aq.getContext(),
-					getResources().getString(R.string.networkispoor));
-			if (cacheInfoTemp == null) {
-				aq.id(R.id.none_net).visible();
-			}
+//			aq.id(R.id.ProgressText).gone();
+//			app.MyToast(aq.getContext(),
+//					getResources().getString(R.string.networkispoor));
+//			if (cacheInfoTemp == null) {
+//				aq.id(R.id.none_net).visible();
+//			}
+			GetServiceData();
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
@@ -634,7 +636,7 @@ public class Detail_TV extends Activity {
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-		cb.timeout(60 * 1000);
+		cb.timeout(30 * 1000);
 		cb.SetHeader(app.getHeaders());
 		if (cacheInfoTemp == null) {
 			aq.id(R.id.ProgressText).visible();
@@ -738,6 +740,11 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickReportProblem(View v) {
+		if(!app.isNetworkAvailable())
+		{
+			app.MyToast(this, "您当前网络有问题!");
+			return;
+		}
 		popupReportProblem();
 	}
 
@@ -747,7 +754,13 @@ public class Detail_TV extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-
+		
+		if(!app.isNetworkAvailable())
+		{
+			app.MyToast(this, "您当前网络有问题!");
+			return;
+		}
+		
 		if (player_select == null
 				&& m_ReturnProgramView.tv.episodes.length <= 200) {
 			{
@@ -1037,7 +1050,13 @@ public class Detail_TV extends Activity {
 	public void OnClickTVPlay(View v) {
 
 		final int index = Integer.parseInt(v.getTag().toString());
-
+		
+		if(!app.isNetworkAvailable())
+		{
+			app.MyToast(this, "您当前网络有问题!");
+			return;
+		}
+		
 		if (player_select == null
 				&& m_ReturnProgramView.tv.episodes.length <= 200) {
 			{
@@ -1548,6 +1567,11 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickCacheDown(View v) {
+		if(!app.isNetworkAvailable())
+		{
+			app.MyToast(this, "您当前网络有问题!");
+			return;
+		}
 		popupview = OpenDownloadPapup();
 	}
 
