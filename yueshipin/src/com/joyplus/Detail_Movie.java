@@ -462,8 +462,7 @@ public class Detail_Movie extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-//		android.util.Log.i("yanyuchuang",status.getCode()+"");
-		// || json == null||!json.has("movie")
+		android.util.Log.i("JSONObject.AjaxStatus",status.getCode()+"");
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -476,11 +475,12 @@ public class Detail_Movie extends Activity {
 		if(json == null||!json.has("movie"))
 		{
 			aq.id(R.id.ProgressText).gone();
-			app.MyToast(aq.getContext(),
-					getResources().getString(R.string.networkispoor));
-			if (cacheInfoTemp == null) {
-				aq.id(R.id.none_net).visible();
-			}
+//			app.MyToast(aq.getContext(),
+//					getResources().getString(R.string.networkispoor));
+//			if (cacheInfoTemp == null) {
+//				aq.id(R.id.none_net).visible();
+//			}
+			GetServiceData();
 			return;
 		}
 		ObjectMapper mapper = new ObjectMapper();
@@ -567,7 +567,7 @@ public class Detail_Movie extends Activity {
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 		cb.SetHeader(app.getHeaders());
-		cb.timeout(60*1000);
+		cb.timeout(30*1000);
 		if (cacheInfoTemp == null) {
 			aq.id(R.id.ProgressText).visible();
 			aq.progress(R.id.progress).ajax(cb);
@@ -617,6 +617,11 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void OnClickCacheDown(View v) {
+		if(!app.isNetworkAvailable())
+		{
+			app.MyToast(this, "您当前网络有问题!");
+			return;
+		}
 		app.checkUserSelect(Detail_Movie.this);
 		if (app.use2G3G) {
 			if (DOWNLOAD_SOURCE != null) {
@@ -644,6 +649,11 @@ public class Detail_Movie extends Activity {
 
 	// 看服务列表到底是什么东西,为什么不行
 	public void OnClickReportProblem(View v) {
+		if(!app.isNetworkAvailable())
+		{
+			app.MyToast(this, "您当前网络有问题!");
+			return;
+		}
 		popupReportProblem();
 	}
 
@@ -718,7 +728,11 @@ public class Detail_Movie extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		
+		if(!app.isNetworkAvailable())
+		{
+			app.MyToast(this, "您当前网络有问题!");
+			return;
+		}
 		if(player_select==null)
 		{
 			{
