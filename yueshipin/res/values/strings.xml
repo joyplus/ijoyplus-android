@@ -54,9 +54,7 @@
     <string name="VideoView_error_text_unknown">Sorry, this video cannot be played.</string>
     <string name="VideoView_error_button">OK</string>
     <string name="mediacontroller_play_pause">Play/Pause</string>
-    <string name="pull_to_refresh_pull_label">下拉刷新</string>
-    <string name="pull_to_refresh_release_label">松开后刷新</string>
-    <string name="pull_to_refresh_refreshing_label">刷新...</string>
+ 
     <string name="mianze_words">\t任何用户在使用悦视频客户端服务之前，均应仔细阅读本声明（未成年人应当在其法定监护人陪同下阅读），用户可以选择不使用悦视频客户端服务，一旦使用，既被视为对本声明全部内容的认可和接受。
 
 \n\n\t1. 任何通过悦视频显示或下载的资源和产品均系聚合引擎技术自动搜录第三方网站所有者制作或提供的内容，悦视频中的所有材料、信息和产品仅按“原样”提供，我公司对其合法性、准确性、真实性、适用性、安全性等概不负责，也无法负责；并且悦视频自动搜录的内容不代表我公司之任何意见和主张，也不代表我公司同意或支持第三方网站上的任何内容、主张或立场。

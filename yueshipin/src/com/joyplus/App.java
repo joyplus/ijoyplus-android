@@ -35,8 +35,6 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.download.Downloader;
-import com.joyplus.weibo.net.Weibo;
-import com.joyplus.weibo.net.WeiboDialogListener;
 import com.parse.Parse;
 
 
@@ -48,9 +46,7 @@ public class App extends Application {
 
 	private static App instance;
 	public String UserID;
-	private Weibo Weibo; // 用于weibodiallog2中
 	private String url = ""; // 用于weibodiallog2中
-	private WeiboDialogListener WeiboDialogListener;// weibo监听器，用于weibodiallog2中
 	public static int percentDown = 0;
 	public static String urlDown = null;
 	public List prodIdList = new ArrayList();
@@ -132,14 +128,7 @@ public class App extends Application {
 		return instance.getResources();
 	}
 
-	public void setWeibo(Weibo Weibo) {
-		this.Weibo = Weibo;
-	}
-
-	public Weibo getWeibo() {
-		return Weibo;
-	}
-
+	
 	public void seturl(String url) {
 		this.url = url;
 	}
@@ -162,14 +151,6 @@ public class App extends Application {
 
 	public String geturlDown() {
 		return urlDown;
-	}
-
-	public WeiboDialogListener getWeiboDialogListener() {
-		return WeiboDialogListener;
-	}
-
-	public void setWeiboDialogListener(WeiboDialogListener WeiboDialogListener) {
-		this.WeiboDialogListener = WeiboDialogListener;
 	}
 
 	public String getURLPath() {
