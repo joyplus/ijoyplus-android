@@ -1572,6 +1572,13 @@ public class Detail_TV extends Activity {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
+		if(downloadpopup!=null)
+		{
+			downloadpopup.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
+					| Gravity.CENTER, 0, 78);
+			downloadpopup.update();
+			return;
+		}
 		popupview = OpenDownloadPapup();
 	}
 
@@ -1824,11 +1831,11 @@ public class Detail_TV extends Activity {
 				}
 			}
 			android.util.Log.i("download_indexs",download_indexs.toString());
-			if (download_indexs.contains(m_j)) {
-				m_button.setBackgroundDrawable(download_been);
-				m_button.setEnabled(false);
-				m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
-				m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+			if (download_indexs.contains(Integer.parseInt(m_j))) {
+			m_button.setBackgroundDrawable(download_been);
+			m_button.setEnabled(false);
+			m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
+			m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 			}
 			m_button.setVisibility(View.VISIBLE);
 		}
