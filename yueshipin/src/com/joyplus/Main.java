@@ -50,7 +50,7 @@ public class Main extends TabActivity {
 	private String TAB_1 = "Tab1";
 	private String TAB_2 = "Tab2";
 	private String TAB_3 = "Tab3";
-	private String TAB_4 = "Tab4";
+	private String TAB_4 = "Tab4";   
 	private TabHost mTabHost;
 
 	private Intent mTab1, mTab2, mTab3, mTab4;
