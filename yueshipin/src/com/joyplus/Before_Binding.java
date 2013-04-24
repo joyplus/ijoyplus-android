@@ -29,7 +29,7 @@ public class Before_Binding extends Activity {
 
 	private String user_id = null;
 	App app;
-    WaitingDialog pb;
+	WaitingDialog pb;
 	Handler mhandler;
 	Context mContext;
 	private static final String ue_screencast_binded = "绑定成功";
@@ -50,10 +50,10 @@ public class Before_Binding extends Activity {
 		macAddress = intent.getStringExtra("SaoMiao_result");
 		tv_channel = Constant.TV_CHANNEL + macAddress;
 
-		 pb = new WaitingDialog(mContext);
-		 pb.setDialogWindowStyle();
-		 pb.setCanceledOnTouchOutside(false);
-		 
+		pb = new WaitingDialog(mContext);
+		pb.setDialogWindowStyle();
+		pb.setCanceledOnTouchOutside(false);
+
 		ImageButton confirmBinding = (ImageButton) findViewById(R.id.confirm_binding);
 		confirmBinding.setOnClickListener(new OnClickListener() {
 
@@ -94,6 +94,9 @@ public class Before_Binding extends Activity {
 						@Override
 						public void run() {
 							pb.dismiss();
+							if (app.GetServiceData("Binding_TV") == null) {
+								app.MyToast(Before_Binding.this, "绑定失败");
+							}
 							finish();
 						}
 					}, 8000);
@@ -142,7 +145,6 @@ public class Before_Binding extends Activity {
 	// } catch (Exception ex) {
 	// }
 	// }
-
 
 	public void OnClickTab1TopLeft(View v) {
 		finish();
