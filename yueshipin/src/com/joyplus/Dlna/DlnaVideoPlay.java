@@ -94,7 +94,8 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dlna_video_play2);
-
+		//保持常亮
+		findViewById(R.id.layout).setKeepScreenOn(true);
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		isPlaying = false;

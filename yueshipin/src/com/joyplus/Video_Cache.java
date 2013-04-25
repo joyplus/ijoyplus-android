@@ -185,6 +185,7 @@ public class Video_Cache extends Activity {
 								VideoPlayerActivity.class);
 						Bundle bundle = new Bundle();
 						bundle.putString("path", localfile);
+//						bundle.putString("path", info.getFilePath());
 						bundle.putString("title", info.getMy_name());
 						bundle.putString("prod_id", info.getProd_id());
 						bundle.putString("prod_type", "1");
@@ -247,12 +248,13 @@ public class Video_Cache extends Activity {
 					public void onClick(DialogInterface dialog, int which) {
 						// 删除数据库数据,从新显示
 						DownloadInfo info = data.get(item);
+						//调用暂停
 						tempdata = Dao.getInstance(Video_Cache.this)
 								.getInfosOfProd_id(info.getProd_id());
 						for (int i = 0; i < tempdata.size(); i++) {
 							if (App.downloaders.get(Constant.PATH_VIDEO
 									+ tempdata.get(i).getProd_id() + "_"
-									+ tempdata.get(i) + ".mp4") != null) {
+									+ tempdata.get(i).getMy_index() + ".mp4") != null) {
 								App.downloaders.get(
 										Constant.PATH_VIDEO
 												+ tempdata.get(i).getProd_id()
@@ -263,6 +265,7 @@ public class Video_Cache extends Activity {
 							File file = new File(Constant.PATH_VIDEO
 									+ tempdata.get(i).getProd_id() + "_"
 									+ tempdata.get(i).getMy_index() + ".mp4");
+//							File file = new File(tempdata.get(i).getFilePath());
 							if (file.exists()) {
 								file.delete();
 							}
@@ -280,21 +283,38 @@ public class Video_Cache extends Activity {
 		// TODO Auto-generated method stub
 
 		data = Dao.getInstance(Video_Cache.this).getDownloadInfosGroup();
-		if (isnotChecked) {
-			for (int i = 0; i < data.size(); i++) {
-				String localfile = Constant.PATH_VIDEO
-						+ data.get(i).getProd_id() + "_"
-						+ data.get(i).getMy_index() + ".mp4";
-				File file = new File(localfile);
-				if (!file.exists()) {
-					data.remove(i);
-				}
-			}
-			isnotChecked = false;
-		}
+//		if (isnotChecked) {
+//			for (int i = 0; i < data.size(); i++) {
+//				File file = new File(data.get(i).getFilePath());
+//				if (!file.exists()) {
+//					//直接删除更彻底
+//					Dao.getInstance(Video_Cache.this).updataInfoState("remove", data.get(i).getProd_id(),
+//							data.get(i).getMy_index());
+//				}
+//				else
+//				{
+//					if(data.get(i).getDownload_state().equalsIgnoreCase("remove"))
+//					{
+//						Dao.getInstance(Video_Cache.this).updataInfoState("pause", data.get(i).getProd_id(),
+//								data.get(i).getMy_index());
+//					}
+//				}
+//			}
+//			isnotChecked = false;
+//		}
+		
+//		for(int j = data.size()-1;j>-1;j--)
+//		{
+//			if(data.get(j).getDownload_state().equalsIgnoreCase("remove"))
+//			{
+//				data.remove(j);
+//			}
+//		}
 		adapter.refresh(data);
 		if (data.isEmpty()) {
 			aq.id(R.id.none_cache).visible();
+		}else{
+			aq.id(R.id.none_cache).gone();
 		}
 	}
 

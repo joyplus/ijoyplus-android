@@ -5,10 +5,13 @@ import android.os.Environment;
 public class Constant {
 
 	// 正式环境
-//	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
-//	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
-//	public static String APPKEY = "ijoyplus_android_0001";
-
+	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
+	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
+	public static String APPKEY = "ijoyplus_android_0001";
+	   //正式环境  云端投放
+	public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
+  public static final String TV_CHANNEL_URL = "http://comet.joyplus.tv:8080/bindtv";
+  public static final String CHECK_BINDING = "http://comet.joyplus.tv:8080/api/check_binding";
 	/*
 	 * test:
 	 * 新的测试环境：
@@ -19,17 +22,22 @@ public class Constant {
 app_key:
 
 Android:ijoyplusandroid0001bj
-
+ 
 IOS: ijoyplusios001bj
 
 
 2：cms cms-test.yue001.com/manager/index.php
 
 	 */
-	public static boolean TestEnv = true;
-	public static final String BASE_URL = "http://apitest.yue001.com/joyplus-service/index.php/";
-	public static String DEFAULT_APPKEY = "ijoyplus_android_0001bj";
-	public static String APPKEY = "ijoyplus_android_0001bj";
+	 //测试环境    云端投放 
+//    public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
+//    public static final String TV_CHANNEL_URL = "http://comettest.joyplus.tv:8000/bindtv";
+//    public static final String CHECK_BINDING = "http://comettest.joyplus.tv:8000/api/check_binding";
+    
+	public static boolean TestEnv = false;
+//	public static final String BASE_URL = "http://apitest.yue001.com/joyplus-service/index.php/";
+//	public static String DEFAULT_APPKEY = "ijoyplus_android_0001bj";
+//	public static String APPKEY = "ijoyplus_android_0001bj";
 
 	public static final String USER_AGENT_IOS = 
 			"Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7";
@@ -55,12 +63,12 @@ IOS: ijoyplusios001bj
 	public static String SINA_REDIRECTURL = "https://api.weibo.com/oauth2/default.html";
 
 	// Test Env
-	public static String Parse_AppId = "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB";
-	public static String Parse_ClientKey = "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl";
+//	public static String Parse_AppId = "5FNbLx7dnRAx3knxV4rOdaLMRJMByqfKjWQRQakT";
+//	public static String Parse_ClientKey = "RZHrZVn6MK8VGZxfpeshrC2tpxpzzMOZjU0rSS6X";
 	
 	//Production Env
-//	public static String Parse_AppId = "UBgv7IjGR8i6AN0nS4diS48oQTk6YErFi3LrjK4P";
-//	public static String Parse_ClientKey = "Y2lKxqco7mN3qBmZ05S8jxSP8nhN92hSN4OHDZR8";
+	public static String Parse_AppId = "UBgv7IjGR8i6AN0nS4diS48oQTk6YErFi3LrjK4P";
+	public static String Parse_ClientKey = "Y2lKxqco7mN3qBmZ05S8jxSP8nhN92hSN4OHDZR8";
 	
 	public final static int MSG_DMR_CHANGED = 0;
 	public final static int MSG_PUSH_LOCAL_FILE = 1;
@@ -113,4 +121,7 @@ IOS: ijoyplusios001bj
 		"hd2","3gp","flv"};
 	// APP_ID 替换为你的应用从官方网站申请到的合法appId
     public static final String APP_ID = "wxc8ea1cbc355fe2d0";
+   
+   
+ 
 }

@@ -38,7 +38,8 @@ public class Detail_BangDan extends Activity implements
 	private ReturnTops m_ReturnTops = null;
 	private String BangDan_id = null;
 	private String BangDan_name = null;
-
+    private String Prod_type = null;
+    
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private BangDanListAdapter BangDanAdapter;
@@ -51,6 +52,7 @@ public class Detail_BangDan extends Activity implements
 		Intent intent = getIntent();
 		BangDan_id = intent.getStringExtra("BangDan_id");
 		BangDan_name = intent.getStringExtra("BangDan_name");
+		Prod_type = intent.getStringExtra("prod_type");
 		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
@@ -174,7 +176,7 @@ public class Detail_BangDan extends Activity implements
 		// app.MyToast(this, m_BangDanListData.Pic_name, Toast.LENGTH_LONG)
 		// .show();
 		Intent intent = new Intent();
-		// 1：电影，2：电视剧，3：综艺，4：视频
+		// 1：电影，2：电视剧，3：综艺，4：视频  131:动漫
 		switch (Integer.valueOf(m_BangDanListData.prod_type)) {
 		case 1:
 			intent.setClass(this, Detail_Movie.class);
@@ -191,6 +193,7 @@ public class Detail_BangDan extends Activity implements
 			intent.setClass(this, Detail_TV.class);
 			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
 			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
+			intent.putExtra("prod_type", m_BangDanListData.prod_type);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException ex) {

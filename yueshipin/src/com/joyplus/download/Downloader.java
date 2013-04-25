@@ -25,6 +25,7 @@ public class Downloader {
 	private String urlposter;// 下载文件的图片
 	private String my_name;// 下载文件的名字
 	private String download_state;// 下载文件的大小
+	private String file_path;
 	private Context context;
 	private List<DownloadInfo> infos;// 存放下载信息类的集合
 	private static final int INIT = 1;// 定义三种下载的状态：初始化状态，正在下载状态，暂停状态
@@ -58,10 +59,11 @@ public class Downloader {
 		if (isFirst(prod_id)) {
 			Log.v("TAG", "isFirst");
 			init();
+//			file_path = localfile;
 			infos = new ArrayList<DownloadInfo>();
 			DownloadInfo info = new DownloadInfo(compeleteSize, fileSize,
 					prod_id, my_index, urlstr, urlposter, my_name,
-					download_state);
+					download_state,file_path);
 			infos.add(info);
 			// 保存infos中的数据到数据库
 			Dao.getInstance(context).saveInfos(infos);
@@ -69,14 +71,15 @@ public class Downloader {
 		} else {
 			// 得到数据库中已有的urlstr的下载器的具体信息
 			infos = Dao.getInstance(context).getInfos(prod_id, my_index);
-			Log.v("TAG", "not isFirst size=" + infos.size());
+//			file_path = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
 			int compeleteSize = 0;
 			for (DownloadInfo info : infos) {
 				compeleteSize += info.getCompeleteSize();
 				fileSize = info.getFileSize();
+				file_path = info.getFilePath();
 			}
 			return new DownloadInfo(compeleteSize, fileSize, prod_id, my_index,
-					urlstr, urlposter, my_name, download_state);
+					urlstr, urlposter, my_name, download_state,file_path);
 		}
 	}
 
@@ -85,6 +88,7 @@ public class Downloader {
 	 */
 	private void init() {
 		localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+//		file_path = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
 		try {
 			URL url = new URL(urlstr);
 			HttpURLConnection connection = (HttpURLConnection) url
@@ -95,6 +99,7 @@ public class Downloader {
 			connection.disconnect();
 			// 本地访问文件
 			RandomAccessFile accessFile = new RandomAccessFile(localfile, "rwd");
+//			RandomAccessFile accessFile = new RandomAccessFile(file_path, "rwd");
 			accessFile.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -172,18 +177,20 @@ public class Downloader {
 		public void run() {
 			// 标记此线程为true
 			localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+			
 			HttpURLConnection connection = null;
 			RandomAccessFile randomAccessFile = null;
 			InputStream inputstream = null;
 			try {
 				URL url = new URL(urlstr);
 				connection = (HttpURLConnection) url.openConnection();
-				connection.setConnectTimeout(20000);
+				connection.setConnectTimeout(60*1000);
 				connection.setRequestMethod("GET");
 				// 设置范围，格式为Range：bytes x-y;
 				connection.setRequestProperty("Range", "bytes=" + compeleteSize
 						+ "-" + (fileSize - 1));// 后面的
 				randomAccessFile = new RandomAccessFile(localfile, "rwd");
+//				randomAccessFile = new RandomAccessFile(file_path, "rwd");
 				randomAccessFile.seek(compeleteSize);
 				inputstream = connection.getInputStream();
 				// 将要下载的文件写到保存在保存路径下的文件
@@ -222,9 +229,8 @@ public class Downloader {
 								prod_id, my_index);
 						return;
 					}
-					Log.i("Downloader:compeleteSize",
-							Integer.toString(compeleteSize));
-					Log.i("Downloader:fileSize", Integer.toString(fileSize));
+					android.util.Log.i("Downloader:compeleteSize",Integer.toString(compeleteSize));
+					android.util.Log.i("Downloader:fileSize", Integer.toString(fileSize));
 				}
 			} catch (Exception e) {
 				state = STOP;

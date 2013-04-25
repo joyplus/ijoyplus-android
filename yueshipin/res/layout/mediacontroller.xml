@@ -19,8 +19,9 @@
             android:layout_centerVertical="true"
             android:text="热血高校热血高校热血高校"
             android:ellipsize="end"
+            android:textSize="20sp"
             android:singleLine="true"
-            android:maxEms = "9"
+            android:maxEms = "6"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
 
@@ -38,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:text="视频来源："
                 android:textColor="@color/white"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 android:layout_toRightOf="@id/imageButton1"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="13dp"
@@ -141,7 +142,14 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="77dp"
                 android:background="@drawable/player_route" />
-
+             <ImageButton android:id="@+id/yunduan_toufang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/mediacontroller_dlna"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/yunduan_bofang"
+                android:visibility="invisible"/>
             <ImageButton
                 android:id="@+id/mediacontroller_play_pause"
                 android:layout_width="wrap_content"

@@ -172,9 +172,9 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 		}
 		if(isLastisNext == 1)
 		{
-			for(int i = 0;i<dataStruct.size();i++)
+			for(int j = dataStruct.size()-1;j>-1;j--)
 			{
-				dataStruct.remove(i);
+				dataStruct.remove(j);
 			}
 			dataStruct.clear();
 		}

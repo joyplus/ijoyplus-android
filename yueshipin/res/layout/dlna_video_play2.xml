@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
-    android:background="@drawable/player_tou_fang" >
+    android:background="@drawable/player_tou_fang"
+    android:id="@+id/layout" >
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
@@ -18,9 +19,9 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="热血高校热血高校热血高校"
-             android:ellipsize="end"
-              android:singleLine="true"
-              android:maxEms = "9"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:maxEms = "9"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
 

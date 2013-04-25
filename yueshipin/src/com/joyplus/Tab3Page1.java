@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +16,10 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +47,10 @@ import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Adapters.Tab3Page1ListData;
 import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.cache.VideoCacheInfo;
+import com.joyplus.cache.VideoCacheManager;
+import com.joyplus.playrecord.PlayRecordInfo;
+import com.joyplus.playrecord.PlayRecordManager;
 import com.umeng.analytics.MobclickAgent;
 
 public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
@@ -60,7 +67,16 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	private long current_play_time = 0;
 	Tab3Page1ListData tempPlayHistoryData = null;
 	private CurrentPlayData mCurrentPlayData;
-
+	/*
+	 * playHistoryData
+	 */
+	VideoCacheInfo cacheInfo;
+	VideoCacheInfo cacheInfoTemp;
+	VideoCacheManager cacheManager;
+	PlayRecordInfo playrecordinfo;
+	PlayRecordManager playrecordmanager;
+	private String player_select = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -106,6 +122,12 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 
 			}
 		});
+		
+		cacheManager = new VideoCacheManager(Tab3Page1.this);//电影的
+		cacheInfo = new VideoCacheInfo();
+		playrecordmanager = new PlayRecordManager(Tab3Page1.this);//播放记录
+		playrecordinfo = new PlayRecordInfo();
+		
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		mCurrentPlayData = new CurrentPlayData();
@@ -149,7 +171,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					// 1：电影，2：电视剧，3：综艺，4：视频
 					mCurrentPlayData.prod_id = m_Tab3Page1ListData.Pro_ID;
 					mCurrentPlayData.CurrentCategory =m_Tab3Page1ListData.Pro_type-1;
-					if(m_Tab3Page1ListData.Pro_type == 2 || m_Tab3Page1ListData.Pro_type ==3)
+					if(m_Tab3Page1ListData.Pro_type == 2 || m_Tab3Page1ListData.Pro_type ==131)
 						mCurrentPlayData.CurrentIndex = Integer.parseInt(m_Tab3Page1ListData.Pro_name1) -1;
 					
 					CallVideoPlayActivity(m_Tab3Page1ListData.Pro_ID,
@@ -196,9 +218,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		dataStruct = new ArrayList();
 		Tab3Page1Adapter = new Tab3Page1ListAdapter();
 		ItemsListView.setAdapter(Tab3Page1Adapter);
-		isLastisNext = 1;
 		CheckSaveData();
-		GetServiceData(isLastisNext);
 		MobclickAgent.onResume(this);
 	}
 
@@ -224,14 +244,13 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		String url = Constant.BASE_URL + "user/playHistories" + "?page_num="
 				+ Integer.toString(index) + "&page_size=10";
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-		//String str = app.UserID;
+		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListDataForHistory");
 		cb.SetHeader(app.getHeaders());
 		aq.ajax(cb);
 	}
 
 	// 初始化list数据函数
-	public void InitListData(String url, JSONObject json, AjaxStatus status) {
+	public void InitListDataForHistory(String url, JSONObject json, AjaxStatus status) {
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR&&app.GetServiceData("user_Histories")==null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -277,9 +296,10 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		}
 		if(isLastisNext == 1)
 		{
-			for(int i = 0;i<dataStruct.size();i++)
+			//考虑会不会越界
+			for(int j=dataStruct.size()-1;j>-1;j--)
 			{
-				dataStruct.remove(i);
+				dataStruct.remove(j);
 			}
 			dataStruct.clear();
 		}
@@ -387,6 +407,12 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 			// 1：电影，2：电视剧，3：综艺，4：视频
 			switch (m_Tab3Page1ListData.Pro_type) {
 			case 1:
+				//让本地数据跟服务器上的数据同步
+				cacheInfo.setLast_playtime(Integer.toString(m_Tab3Page1ListData.Pro_time*1000));
+				cacheInfo.setProd_id(m_Tab3Page1ListData.Pro_ID);
+				cacheInfo.setProd_type(Integer.toString(m_Tab3Page1ListData.Pro_type));
+				cacheManager.saveVideoCache(cacheInfo);
+				
 				intent.setClass(this, Detail_Movie.class);
 				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
 				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
@@ -396,7 +422,13 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					Log.e(TAG, "Call Detail_Movie failed", ex);
 				}
 				break;
+			case 131:
 			case 2:
+				//让本地数据跟服务器上的数据同步
+				playrecordinfo.setProd_id(m_Tab3Page1ListData.Pro_ID);
+				playrecordinfo.setProd_subname(m_Tab3Page1ListData.Pro_name1);	
+				playrecordinfo.setLast_playtime(Integer.toString(m_Tab3Page1ListData.Pro_time*1000));
+				playrecordmanager.savePlayRecord(playrecordinfo);
 				intent.setClass(this, Detail_TV.class);
 				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
 				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
@@ -407,6 +439,12 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 				}
 				break;
 			case 3:
+				//让本地数据跟服务器上的数据同步
+				playrecordinfo.setProd_id(m_Tab3Page1ListData.Pro_ID);
+				playrecordinfo.setProd_subname(m_Tab3Page1ListData.Pro_name1);	
+				playrecordinfo.setLast_playtime(Integer.toString(m_Tab3Page1ListData.Pro_time*1000));
+				playrecordmanager.savePlayRecord(playrecordinfo);
+				
 				intent.setClass(this, Detail_Show.class);
 				intent.putExtra("prod_id", m_Tab3Page1ListData.Pro_ID);
 				intent.putExtra("prod_name", m_Tab3Page1ListData.Pro_name);
@@ -425,6 +463,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	}
 
 	public void CallVideoPlayActivity(String prod_id, String m_uri, String title) {
+		player_select  = app.GetServiceData("player_select");
 		app.IfSupportFormat(m_uri);
 
 		app.setCurrentPlayData(mCurrentPlayData);
@@ -442,7 +481,14 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 		bundle.putLong("current_time", current_play_time);
 		intent.putExtras(bundle);
 		try {
+			if ("third".equalsIgnoreCase(player_select)){
+				Intent it = new Intent(Intent.ACTION_VIEW);
+				Uri uri = Uri.parse(m_uri);
+				it.setDataAndType(uri, "video/*");
+				startActivity(it);
+			}else{
 			startActivity(intent);
+			}
 		} catch (ActivityNotFoundException ex) {
 			Log.e(TAG, "mp4 fail", ex);
 		}
@@ -478,15 +524,16 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 						ReturnUserPlayHistories.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						isLastisNext = 1;
-						GetServiceData(isLastisNext);
-					}
-				}, 2000);
+				isLastisNext = 1;
+				GetServiceData(isLastisNext);
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						isLastisNext = 1;
+//						GetServiceData(isLastisNext);
+//					}
+//				}, 2000);
 				
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
@@ -576,6 +623,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					holder.textView04.setText("");
 				}
 				break;
+			case 131:
 			case 2:
 				if (m_Tab3Page1ListData.Pro_name1 != null
 						&& m_Tab3Page1ListData.Pro_name1.length() > 0) {
@@ -600,7 +648,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 					if ((m_Tab3Page1ListData.Pro_time > 0)
 							&& (m_Tab3Page1ListData.Pro_duration > m_Tab3Page1ListData.Pro_time)) {
 						holder.textView03
-								.setText("第"+m_Tab3Page1ListData.Pro_name1+"期");
+								.setText(m_Tab3Page1ListData.Pro_name1);
 						holder.textView04
 								.setText(stringForTime(m_Tab3Page1ListData.Pro_time*1000));
 					} else {

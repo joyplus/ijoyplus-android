@@ -269,6 +269,7 @@ public class ReturnProgramView {
 		public String id;
 		public String area;
 		public String total_comment_number;
+		public String douban_id;
 
 		public int current_play;
 
@@ -293,6 +294,7 @@ public class ReturnProgramView {
 		public String id;
 		public String area;
 		public String total_comment_number;
+		public String douban_id;
 
 		public EPISODES[] episodes;
 
@@ -315,6 +317,7 @@ public class ReturnProgramView {
 		public String id;
 		public String area;
 		public String total_comment_number;
+		public String douban_id;//加的豆瓣id
 
 		public EPISODES[] episodes;
 
