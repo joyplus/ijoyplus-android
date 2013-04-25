@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.joyplus"
-    android:versionCode="9"
-    android:versionName="0.9.10alpha" >
+    android:versionCode="10"
+    android:versionName="1.0alpha" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -59,11 +59,10 @@
             </intent-filter>
             <intent-filter>
                 <data
-                    android:scheme="http" 
                     android:host="ums.bz"
-                    android:port="80"
                     android:path="/7J5Q4k/"
-                    />
+                    android:port="80"
+                    android:scheme="http" />
 
                 <action android:name="android.intent.action.VIEW" />
 
@@ -74,7 +73,8 @@
         <activity
             android:name=".Search"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar"
+             >
         </activity>
         <activity
             android:name=".Setting"
@@ -127,6 +127,11 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
+            android:name=".Tab2Page4"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
             android:name=".Tab3"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
@@ -137,27 +142,12 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
-            android:name=".Tab3Page1_more"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
             android:name=".Tab3Page2"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
-            android:name=".Tab3Page2_more"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
             android:name=".Tab3Page3"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".Tab3Page3_more"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
@@ -236,6 +226,10 @@
             android:name=".MainTopRightDialog"
             android:theme="@style/MyDialogStyleTop" >
         </activity>
+        <activity
+            android:name=".Webview_Play"
+            android:screenOrientation="landscape" >
+        </activity>
 
         <service
             android:name=".Dlna.DlnaSelectDevice"
@@ -249,7 +243,29 @@
         <activity
             android:name="com.umeng.fb.ui.FeedbackConversation"
             android:configChanges="keyboard" />
-
+        <activity
+            android:name="com.zxing.activity.CaptureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name=".Before_Binding"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".Relieve_Binding"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <receiver android:name="com.joyplus.faye.FayeReceiver">
+            <intent-filter >
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+        <service android:name="com.joyplus.faye.FayeService">
+            
+        </service>
         <service
             android:name="com.umeng.common.net.DownloadingService"
             android:exported="true"
@@ -262,6 +278,33 @@
             android:process=":DownloadingService" >
         </service>
 
+        
+        <activity
+            android:name="com.umeng.socialize.view.CommentActivity"
+            android:configChanges="orientation|keyboard"
+            android:theme="@style/Theme.UMDefault" >
+        </activity>
+        <activity
+            android:name="com.umeng.socialize.view.ShareActivity"
+            android:configChanges="orientation|keyboard"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@style/Theme.UMDialog"
+            android:windowSoftInputMode="stateVisible|adjustResize" >
+        </activity>
+        <activity
+            android:name="com.umeng.socialize.view.CommentDetail"
+            android:configChanges="orientation|keyboard"
+            android:noHistory="true"
+            android:theme="@style/Theme.UMDefault" >
+        </activity>
+        <activity
+            android:name="com.umeng.socialize.view.CommentDetailNoMap"
+            android:configChanges="orientation|keyboard"
+            android:noHistory="true"
+            android:theme="@style/Theme.UMDefault" >
+        </activity>
+        
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="50937e6c5270151fc8000003" >

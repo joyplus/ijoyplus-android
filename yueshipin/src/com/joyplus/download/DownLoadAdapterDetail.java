@@ -97,23 +97,23 @@ private static final int MAX = 100;
 			if(info.getDownload_state().equalsIgnoreCase("wait"))
 			{
 				holder.resouceDownloadState.setText("等待下载");
-//				aqtemp.id(R.id.down_wait).visible();
-//				aqtemp.id(R.id.down_pause).gone();
-//				aqtemp.id(R.id.down_downing).gone();
+				aqtemp.id(R.id.down_wait).visible();
+				aqtemp.id(R.id.down_pause).gone();
+				aqtemp.id(R.id.down_downing).gone();
 			}
 			else if(info.getDownload_state().equalsIgnoreCase("downloading"))
 			{
 				holder.resouceDownloadState.setText("正在下载");
-//				aqtemp.id(R.id.down_wait).gone();
-//				aqtemp.id(R.id.down_pause).gone();
-//				aqtemp.id(R.id.down_downing).visible();
+				aqtemp.id(R.id.down_wait).gone();
+				aqtemp.id(R.id.down_pause).gone();
+				aqtemp.id(R.id.down_downing).visible();
 			}
 			else if(info.getDownload_state().equalsIgnoreCase("pause"))
 			{
 				holder.resouceDownloadState.setText("暂停下载");
-//				aqtemp.id(R.id.down_wait).gone();
-//				aqtemp.id(R.id.down_pause).visible();
-//				aqtemp.id(R.id.down_downing).gone();
+				aqtemp.id(R.id.down_wait).gone();
+				aqtemp.id(R.id.down_pause).visible();
+				aqtemp.id(R.id.down_downing).gone();
 			}
 			holder.resourceDownProgress.setMax(MAX);
 			if(filesize == 0)
@@ -127,10 +127,16 @@ private static final int MAX = 100;
 			holder.resourcePercentDown.setText((percent)+"%");
 			if(info.getCompeleteSize()==info.getFileSize())
 			{
-				holder.resouceDownloadState.setText("");
-				holder.resourcePercentDown.setText("");
-				aqtemp.id(R.id.downloadprogress).gone();
-				aqtemp.id(R.id.state_layer).gone();
+				if(info.getFileSize()>10)//过滤掉文件长度为零的情况
+				{
+					holder.resouceDownloadState.setText("");
+					holder.resourcePercentDown.setText("");
+					aqtemp.id(R.id.downloadprogress).gone();
+					aqtemp.id(R.id.state_layer).gone();
+					aqtemp.id(R.id.down_wait).gone();
+					aqtemp.id(R.id.down_pause).gone();
+					aqtemp.id(R.id.down_downing).gone();
+				}
 			}
 			aqtemp.id(R.id.movieImageview).image(posterurl,true,true);
 		}

@@ -6,6 +6,8 @@ package io.vov.vitamio.widget;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.http.Header;
@@ -15,6 +17,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.androidquery.AQuery;
 import com.joyplus.App;
@@ -23,15 +27,15 @@ import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.StatisticsUtils;
 import com.joyplus.Adapters.CurrentPlayData;
-import com.joyplus.Adapters.Tab3Page1ListData;
-import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
-import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS.URLS;
+import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.faye.FayeClient;
+import com.joyplus.faye.FayeService;
+import com.umeng.analytics.MobclickAgent;
 
 import io.vov.utils.Log;
 import io.vov.utils.StringUtils;
-import android.R.integer;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -40,7 +44,6 @@ import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.VoicemailContract;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -52,20 +55,17 @@ import android.webkit.URLUtil;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
@@ -98,15 +98,13 @@ import android.widget.TextView;
  * Functions like show() and hide() have no effect when MediaController is
  * created in an xml layout.
  */
-public class MediaController extends FrameLayout  {
+public class MediaController extends FrameLayout {
 	private final String TAG = "App";
 	private App app;
 	private MediaPlayerControl mPlayer;
 	private ReturnProgramView m_ReturnProgramView = null;
 	private Context mContext;
 	private PopupWindow mWindow;
-//	private PopupWindow mWindowBottomRight;
-//	private PopupWindow mWindowTopRight;
 	private ListView lv_group;
 	private RadioButton lv_radio0;
 	private RadioButton lv_radio1;
@@ -127,8 +125,6 @@ public class MediaController extends FrameLayout  {
 	private String mSubName;
 	private long mDuration;
 	private boolean mShowing;
-	private boolean mTopRightShowing = false;
-	private boolean mBottomRightShowing = false;
 	private boolean mDragging;
 	private boolean mInstantSeeking = true;
 	private static final int sDefaultTimeout = 3000;
@@ -140,6 +136,7 @@ public class MediaController extends FrameLayout  {
 	private boolean mFromXml = false;
 	private ImageButton mPauseButton;
 	private ImageButton mDlnaButton;
+	private ImageButton mYunduanButton;
 	private ImageButton mReturnButton;
 	private ImageButton mReduceButton;
 	private ImageButton mPreButton;
@@ -147,18 +144,16 @@ public class MediaController extends FrameLayout  {
 	private ImageButton mQualityButton;
 	private ImageButton mSelectButton;
 	private ImageView videosource;
-	private TextView mTextView1;
-	private TextView mTextView2;
 	private TextView mTextViewDownloadRate;
 	private TextView videosource_tv;
-	
-	private RelativeLayout mTopBlockLayout;//播放器顶部模块
-	private RelativeLayout mBottomBlockLayout;//播放器底部模块
-	
+
+	private RelativeLayout mTopBlockLayout;// 播放器顶部模块
+	private RelativeLayout mBottomBlockLayout;// 播放器底部模块
+
 	private AudioManager mAM;
-	
+
 	private CurrentPlayData mCurrentPlayData;
-	
+
 	private int CurrentCategory = 0;
 
 	private int CurrentIndex = 0;
@@ -167,24 +162,37 @@ public class MediaController extends FrameLayout  {
 	private int CurrentQuality = 0;
 	private int ShowQuality = 0;
 	private boolean mIsPausedByHuman = false;
-	
-//	private boolean DLNAMODE = false;
+
+	// 视频云端投放信息
+	private String tv_channel;
+	private String user_id;
+	private String prod_id;// 视频ID
+	private int prod_type;// 视频类型,视频类别 1：电影，2：电视剧，3：综艺，131动漫
+	private String prod_name;// 视频名称，就是显示在播放器最左上角的名称
+	private String prod_url;// 视频播放地址
+	private String prod_src;// 视频来源
+	private float prod_time;// 视频开始播放时间 :秒*1000
+	private int prod_qua; // 720P ：0 还是1080P：1
+	private static final String ue_screencast_video_push = "云端推送视频";
+
+	// private boolean DLNAMODE = false;
 
 	public int getCurrentIndex() {
 		return CurrentIndex;
 	}
-	
+
 	public int getCurrentCategory() {
 		return CurrentCategory;
 	}
-	
+
 	public boolean ismIsPausedByHuman() {
 		return mIsPausedByHuman;
 	}
-	
-	public void setApp(App app){
+
+	public void setApp(App app) {
 		this.app = app;
 	}
+
 	public MediaController(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mRoot = this;
@@ -192,8 +200,11 @@ public class MediaController extends FrameLayout  {
 		initController(context);
 	}
 
-	public MediaController(Context context) {
+	public MediaController(Context context, String user_id,
+			String channel) {
 		super(context);
+		this.user_id = user_id;
+		this.tv_channel = channel;
 		if (!mFromXml && initController(context))
 			initFloatingWindow();
 	}
@@ -211,14 +222,14 @@ public class MediaController extends FrameLayout  {
 	}
 
 	private void initFloatingWindow() {
+		android.util.Log.i("player_yy", "initFloatingWindow");
 		mWindow = new PopupWindow(mContext);
-//		mWindow.setFocusable(false);
+		// mWindow.setFocusable(false);
 		mWindow.setFocusable(true);
 		mWindow.setBackgroundDrawable(null);
 		mWindow.setOutsideTouchable(true);
 		mAnimStyle = android.R.style.Animation;
-		
-		
+
 	}
 
 	/**
@@ -236,8 +247,8 @@ public class MediaController extends FrameLayout  {
 			mWindow.setContentView(mRoot);
 			mWindow.setWidth(android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 			mWindow.setHeight(android.view.ViewGroup.LayoutParams.MATCH_PARENT);
-			
-//			initPopWindows();
+
+			// initPopWindows();
 
 		}
 		initControllerView(mRoot);
@@ -259,6 +270,12 @@ public class MediaController extends FrameLayout  {
 		mPauseButton = (ImageButton) v
 				.findViewById(R.id.mediacontroller_play_pause);
 		mDlnaButton = (ImageButton) v.findViewById(R.id.mediacontroller_dlna);
+		mYunduanButton = (ImageButton) v.findViewById(R.id.yunduan_toufang);
+		if (app.GetServiceData("Binding_TV") != null) {
+			mYunduanButton.setVisibility(View.VISIBLE);
+		} else {
+			mYunduanButton.setVisibility(View.INVISIBLE);
+		}
 		mReturnButton = (ImageButton) v.findViewById(R.id.imageButton1);
 		mReduceButton = (ImageButton) v.findViewById(R.id.imageButton2);
 		mPreButton = (ImageButton) v.findViewById(R.id.imageButton3);
@@ -266,43 +283,42 @@ public class MediaController extends FrameLayout  {
 		mQualityButton = (ImageButton) v.findViewById(R.id.imageButton5);
 		mSelectButton = (ImageButton) v.findViewById(R.id.imageButton6);
 
-		videosource = (ImageView)v.findViewById(R.id.videosource_img);
-		videosource_tv = (TextView)v.findViewById(R.id.videosource_tv);
-		
-		mTextView1 = (TextView) v.findViewById(R.id.textView1);
-		mTextView2 = (TextView) v.findViewById(R.id.textView2);
-		mTextViewDownloadRate = (TextView) v.findViewById(R.id.textViewDownloadRate);
-		mimageView33 =  v.findViewById(R.id.imageView33);
+		videosource = (ImageView) v.findViewById(R.id.videosource_img);
+		videosource_tv = (TextView) v.findViewById(R.id.videosource_tv);
+
+		// mTextView1 = (TextView) v.findViewById(R.id.textView1);
+		// mTextView2 = (TextView) v.findViewById(R.id.textView2);
+		mTextViewDownloadRate = (TextView) v
+				.findViewById(R.id.textViewDownloadRate);
+		mimageView33 = v.findViewById(R.id.imageView33);
 		mViewTopRight = v.findViewById(R.id.relativeLayoutTopRight);
 		mViewBottomRight = v.findViewById(R.id.relativeLayoutBottomRight);
-		
+
 		mTopBlockLayout = (RelativeLayout) v.findViewById(R.id.relativeLayout1);
-		mBottomBlockLayout = (RelativeLayout) v.findViewById(R.id.relativeLayoutBottom);
-		
+		mBottomBlockLayout = (RelativeLayout) v
+				.findViewById(R.id.relativeLayoutBottom);
+
 		lv_group = (ListView) v.findViewById(R.id.listView1);
 		// 加载数据
 		dataStruct = new ArrayList<String>();
 
-//		dataStruct.add("第一�?);
-//		dataStruct.add("第二�?);
-//		dataStruct.add("第三�?);
-//		dataStruct.add("第四�?);
 		groupAdapter = new GroupAdapter(mContext, dataStruct);
-//		lv_group.setItemsCanFocus(false);  
+		// lv_group.setItemsCanFocus(false);
 		lv_group.setAdapter(groupAdapter);
 
-		if (lv_group != null){
+		if (lv_group != null) {
 			lv_group.setOnItemClickListener(new OnItemClickListener() {
-		 			@Override
-		 			public void onItemClick(AdapterView<?> parent, View view,
-		 					int position, long id) {
-		 					
-		 					OnClickSelect(position);
-		 			}
-		 		});
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+
+					OnClickSelect(position);
+				}
+			});
 			lv_group.setOnScrollListener(new OnScrollListener() {
 				@Override
-				public void onScrollStateChanged(AbsListView view, int scrollState) {
+				public void onScrollStateChanged(AbsListView view,
+						int scrollState) {
 					switch (scrollState) {
 					// 当滚动时
 					case OnScrollListener.SCROLL_STATE_IDLE:
@@ -320,25 +336,29 @@ public class MediaController extends FrameLayout  {
 		}
 		RadioGroup radioGroup = (RadioGroup) v.findViewById(R.id.radioGroup1);
 		if (radioGroup != null) {
-			lv_radio0 = (RadioButton)v.findViewById(R.id.radio0);
-			lv_radio1 = (RadioButton)v.findViewById(R.id.radio1);
-			lv_radio2 = (RadioButton)v.findViewById(R.id.radio2);
-//			CurrentQuality = 1;
-//			lv_radio1.setChecked(true);
+			lv_radio0 = (RadioButton) v.findViewById(R.id.radio0);
+			lv_radio1 = (RadioButton) v.findViewById(R.id.radio1);
+			lv_radio2 = (RadioButton) v.findViewById(R.id.radio2);
+			// CurrentQuality = 1;
+			// lv_radio1.setChecked(true);
 			radioGroup.setOnCheckedChangeListener(mRadioGroupListener);
 			if (m_ReturnProgramView != null) {
 				mHandler.removeMessages(FADE_OUT);
 				mHandler.sendEmptyMessageDelayed(SHOW_PRODDATA, 100);
 			}
 		}
-		
+
 		if (mPauseButton != null) {
 			mPauseButton.requestFocus();
 			mPauseButton.setOnClickListener(mPauseListener);
 		}
-		if (mDlnaButton != null){
-//			mDlnaButton.setVisibility(View.INVISIBLE);
+		if (mDlnaButton != null) {
+			// mDlnaButton.setVisibility(View.INVISIBLE);
 			mDlnaButton.setOnClickListener(mDlnaListener);
+		}
+		if (mYunduanButton != null) {
+			// mDlnaButton.setVisibility(View.INVISIBLE);
+			mYunduanButton.setOnClickListener(mYunduanListener);
 		}
 
 		if (mReturnButton != null)
@@ -369,15 +389,14 @@ public class MediaController extends FrameLayout  {
 			mFileName.setText(mTitle);
 
 	}
+
 	public void OnClickSelect(int index) {
 		mPlayer.pause();
-		
-	
 		CurrentIndex = index;
 		Constant.select_index = index;
 		groupAdapter.notifyDataSetChanged();
 		lv_group.invalidate();
-				
+
 		String PROD_SOURCE = null;
 		String title = null;
 
@@ -386,97 +405,181 @@ public class MediaController extends FrameLayout  {
 			break;
 		case 1:
 			if (m_ReturnProgramView.tv.episodes[index].down_urls != null) {
+				videoSourceSort(m_ReturnProgramView.tv.episodes[index].down_urls);
 				for (int i = 0; i < m_ReturnProgramView.tv.episodes[index].down_urls.length; i++) {
 					CurrentSource = i;
-					
+
 					for (int j = 0; j < Constant.video_index.length; j++) {
-						if (PROD_SOURCE == null &&m_ReturnProgramView.tv.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
-							title = "第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集";
-							mFileName.setText(title);
-							PROD_SOURCE =  GetSource(index,i);
-							
-							//yangzhg
-							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
-									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
-									m_ReturnProgramView.tv.episodes[CurrentIndex].name, 2);
+						if (PROD_SOURCE == null
+								&& m_ReturnProgramView.tv.episodes[index].down_urls[i].source
+										.trim().equalsIgnoreCase(
+												Constant.video_index[j])) {
+							String name = m_ReturnProgramView.tv.name;
+							title = "第"
+									+ m_ReturnProgramView.tv.episodes[CurrentIndex].name
+									+ "集";
+							mFileName.setText(name + title);
+							PROD_SOURCE = GetSource(index, i);
+
+							// yangzhg
+							StatisticsUtils
+									.StatisticsClicksShow(
+											new AQuery(mContext),
+											app,
+											m_ReturnProgramView.tv.id,
+											m_ReturnProgramView.tv.name,
+											m_ReturnProgramView.tv.episodes[CurrentIndex].name,
+											2);
 							break;
 						}
-					}			
+					}
 				}
 			}
 			break;
 		case 2:
 			if (m_ReturnProgramView.show.episodes[index].down_urls != null) {
+				videoSourceSort(m_ReturnProgramView.show.episodes[index].down_urls);
 				for (int i = 0; i < m_ReturnProgramView.show.episodes[index].down_urls.length; i++) {
 					CurrentSource = i;
-					
+
 					for (int j = 0; j < Constant.video_index.length; j++) {
-						if (PROD_SOURCE == null &&m_ReturnProgramView.show.episodes[index].down_urls[i].source.trim().equalsIgnoreCase(Constant.video_index[j])) {
+
+						if (PROD_SOURCE == null
+								&& m_ReturnProgramView.show.episodes[index].down_urls[i].source
+										.trim().equalsIgnoreCase(
+												Constant.video_index[j])) {
+							String name = m_ReturnProgramView.show.name;
 							title = m_ReturnProgramView.show.episodes[index].name;
-							mFileName.setText(title);
-							PROD_SOURCE =  GetSource(index,i);
-							
-							//yangzhg
-							StatisticsUtils.StatisticsClicksShow(new AQuery(mContext),
-									app, m_ReturnProgramView.tv.id, m_ReturnProgramView.tv.name,
-									m_ReturnProgramView.tv.episodes[CurrentIndex].name, 3);
+
+							mFileName.setText(name + title);
+							PROD_SOURCE = GetSource(index, i);
+
+							// yangzhg
+							StatisticsUtils
+									.StatisticsClicksShow(
+											new AQuery(mContext),
+											app,
+											m_ReturnProgramView.show.id,
+											m_ReturnProgramView.show.name,
+											m_ReturnProgramView.show.episodes[CurrentIndex].name,
+											3);
 							break;
 						}
-					}			
+					}
 				}
 
 			}
 			break;
 		}
-		
+
 		ShowQuality();
-		
-		if (PROD_SOURCE != null )
-			mPlayer.setContinueVideoPath(title,PROD_SOURCE,false);
-	}
-	private String GetSource(int proi_index, int sourceIndex){
-	 String PROD_SOURCE = null;
-	 switch (CurrentCategory) {
-	case 0:
-		break;
-	case 1:
-		for (int k = 0; k < m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
-			CurrentQuality = k;
-			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls[k];
-			if (CurrentURLS != null && CurrentURLS.url != null && app.CheckUrlIsValidFromServer(CurrentURLS.url.trim(),"1")) {
-					for (int i = 0; i < Constant.quality_index.length; i++) {
-						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
-							PROD_SOURCE = CurrentURLS.url.trim();
-							break;
-						}
-					}
-			}
-			if (PROD_SOURCE != null )
-				break;
-		}
-		break;
-	case 2:
-		for (int k = 0; k < m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
-			CurrentQuality = k;
-			ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls[k];
-			if (CurrentURLS != null && CurrentURLS.url != null && app.CheckUrlIsValidFromServer(CurrentURLS.url.trim(),"1")) {
-					for (int i = 0; i < Constant.quality_index.length; i++) {
-						if (PROD_SOURCE == null && CurrentURLS.type.trim().equalsIgnoreCase(Constant.quality_index[i])) {
-							PROD_SOURCE = CurrentURLS.url.trim();
-							break;
-						}
-					}
-			}
-			if (PROD_SOURCE != null )
-				break;
-		}
-	break;
+
+		if (PROD_SOURCE != null)
+			mPlayer.setContinueVideoPath(title, PROD_SOURCE, false);
 
 	}
-	
-	return PROD_SOURCE;
-	 
- }
+
+	// 给片源赋权值
+	public void videoSourceSort(DOWN_URLS[] down_urls) {
+		if (down_urls != null) {
+			for (int j = 0; j < down_urls.length; j++) {
+				if (down_urls[j].source.equalsIgnoreCase("letv")) {
+					down_urls[j].index = 0;
+				} else if (down_urls[j].source.equalsIgnoreCase("fengxing")) {
+					down_urls[j].index = 1;
+				} else if (down_urls[j].source.equalsIgnoreCase("qiyi")) {
+					down_urls[j].index = 2;
+				} else if (down_urls[j].source.equalsIgnoreCase("youku")) {
+					down_urls[j].index = 3;
+				} else if (down_urls[j].source.equalsIgnoreCase("sinahd")) {
+					down_urls[j].index = 4;
+				} else if (down_urls[j].source.equalsIgnoreCase("sohu")) {
+					down_urls[j].index = 5;
+				} else if (down_urls[j].source.equalsIgnoreCase("56")) {
+					down_urls[j].index = 6;
+				} else if (down_urls[j].source.equalsIgnoreCase("qq")) {
+					down_urls[j].index = 7;
+				} else if (down_urls[j].source.equalsIgnoreCase("pptv")) {
+					down_urls[j].index = 8;
+				} else if (down_urls[j].source.equalsIgnoreCase("m1905")) {
+					down_urls[j].index = 9;
+				}
+			}
+			if (down_urls.length > 1) {
+				Arrays.sort(down_urls, new EComparatorIndex());
+			}
+		}
+	}
+
+	// 将片源排序
+	class EComparatorIndex implements Comparator {
+
+		@Override
+		public int compare(Object first, Object second) {
+			// TODO Auto-generated method stub
+			int first_name = ((DOWN_URLS) first).index;
+			int second_name = ((DOWN_URLS) second).index;
+			if (first_name - second_name < 0) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+	}
+
+	private String GetSource(int proi_index, int sourceIndex) {
+		String PROD_SOURCE = null;
+		switch (CurrentCategory) {
+		case 0:
+			break;
+		case 1:
+			for (int k = 0; k < m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
+				CurrentQuality = k;
+				ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls[k];
+				if (CurrentURLS != null
+						&& CurrentURLS.url != null
+						&& app.CheckUrlIsValidFromServer(
+								CurrentURLS.url.trim(), "1")) {
+					for (int i = 0; i < Constant.quality_index.length; i++) {
+						if (PROD_SOURCE == null
+								&& CurrentURLS.type.trim().equalsIgnoreCase(
+										Constant.quality_index[i])) {
+							PROD_SOURCE = CurrentURLS.url.trim();
+							break;
+						}
+					}
+				}
+				if (PROD_SOURCE != null)
+					break;
+			}
+			break;
+		case 2:
+			for (int k = 0; k < m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
+				CurrentQuality = k;
+				ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls[k];
+				if (CurrentURLS != null
+						&& CurrentURLS.url != null
+						&& app.CheckUrlIsValidFromServer(
+								CurrentURLS.url.trim(), "1")) {
+					for (int i = 0; i < Constant.quality_index.length; i++) {
+						if (PROD_SOURCE == null
+								&& CurrentURLS.type.trim().equalsIgnoreCase(
+										Constant.quality_index[i])) {
+							PROD_SOURCE = CurrentURLS.url.trim();
+							break;
+						}
+					}
+				}
+				if (PROD_SOURCE != null)
+					break;
+			}
+			break;
+
+		}
+
+		return PROD_SOURCE;
+
+	}
 
 	public void ShowCurrentPlayData(CurrentPlayData mCurrentPlayData) {
 		CurrentCategory = mCurrentPlayData.CurrentCategory;
@@ -497,16 +600,18 @@ public class MediaController extends FrameLayout  {
 		switch (CurrentCategory) {
 		case 0:
 			for (int k = 0; k < m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; k++) {
-				if(m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type.equalsIgnoreCase(Constant.quality_index[index])){
+				if (m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type
+						.equalsIgnoreCase(Constant.quality_index[index])) {
 					CurrentURLS = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[k];
 					break;
 				}
 			}
-			
+
 			break;
 		case 1:
 			for (int k = 0; k < m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; k++) {
-				if(m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type.equalsIgnoreCase(Constant.quality_index[index])){
+				if (m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type
+						.equalsIgnoreCase(Constant.quality_index[index])) {
 					CurrentURLS = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[k];
 					break;
 				}
@@ -514,83 +619,86 @@ public class MediaController extends FrameLayout  {
 			break;
 		case 2:
 			for (int k = 0; k < m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; k++) {
-				if(m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type.equalsIgnoreCase(Constant.quality_index[index])){
+				if (m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[k].type
+						.equalsIgnoreCase(Constant.quality_index[index])) {
 					CurrentURLS = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[k];
 					break;
 				}
 			}
-			
+
 			break;
 
 		}
-		
-		if (CurrentURLS != null && CurrentURLS.url != null)  {
-					PROD_SOURCE = CurrentURLS.url.trim();
-//					app.CheckUrlIsValidFromServer(PROD_SOURCE,"1");
+
+		if (CurrentURLS != null && CurrentURLS.url != null) {
+			PROD_SOURCE = CurrentURLS.url.trim();
+			// app.CheckUrlIsValidFromServer(PROD_SOURCE,"1");
 		}
 		if (PROD_SOURCE != null)
-			mPlayer.setContinueVideoPath(null,PROD_SOURCE,true);
+			mPlayer.setContinueVideoPath(null, PROD_SOURCE, true);
 	}
 
-	public void setDownloadRate(int rate){
-		if(mTextViewDownloadRate != null)
-			mTextViewDownloadRate.setText(Integer.toString(rate)+"kb/s");
+	public void setDownloadRate(int rate) {
+		if (mTextViewDownloadRate != null)
+			mTextViewDownloadRate.setText(Integer.toString(rate) + "kb/s");
 	}
+
 	public void setMediaPlayer(MediaPlayerControl player) {
 		mPlayer = player;
 		updatePausePlay();
 	}
-	public void setVideoSource(){
-		String source = null ;
-		switch(CurrentCategory){
+
+	public void setVideoSource() {
+		String source = null;
+		switch (CurrentCategory) {
 		case 0:
 			source = m_ReturnProgramView.movie.episodes[0].down_urls[CurrentSource].source;
-			if(source.equalsIgnoreCase("wangpan")){
-				source =  m_ReturnProgramView.movie.episodes[0].video_urls[CurrentSource].source;
+			if (source.equalsIgnoreCase("wangpan")) {
+				source = m_ReturnProgramView.movie.episodes[0].video_urls[CurrentSource].source;
 			}
 			break;
 		case 1:
 			source = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].source;
-			if(source.equalsIgnoreCase("wangpan")){
-				source =  m_ReturnProgramView.tv.episodes[CurrentIndex].video_urls[CurrentSource].source;
+			if (source.equalsIgnoreCase("wangpan")) {
+				source = m_ReturnProgramView.tv.episodes[CurrentIndex].video_urls[CurrentSource].source;
 			}
 			break;
 		case 2:
 			source = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].source;
-			if(source.equalsIgnoreCase("wangpan")){
-				source =  m_ReturnProgramView.show.episodes[CurrentIndex].video_urls[CurrentSource].source;
+			if (source.equalsIgnoreCase("wangpan")) {
+				source = m_ReturnProgramView.show.episodes[CurrentIndex].video_urls[CurrentSource].source;
 			}
- 			break;
+			break;
 		}
-		if(source != null){
+		if (source != null) {
 			videosource_tv.setVisibility(View.VISIBLE);
 		}
-        
-		if(source.equalsIgnoreCase("letv") || source.equalsIgnoreCase("le_tv_fee")){
+
+		if (source.equalsIgnoreCase("letv")
+				|| source.equalsIgnoreCase("le_tv_fee")) {
 			videosource.setBackgroundResource(R.drawable.logo_letv);
-		}else if(source.equalsIgnoreCase("fengxing")){
+		} else if (source.equalsIgnoreCase("fengxing")) {
 			videosource.setBackgroundResource(R.drawable.logo_fengxing);
-		}else if(source.equalsIgnoreCase("qiyi")){
+		} else if (source.equalsIgnoreCase("qiyi")) {
 			videosource.setBackgroundResource(R.drawable.logo_qiyi);
-		}else if(source.equalsIgnoreCase("youku")){
+		} else if (source.equalsIgnoreCase("youku")) {
 			videosource.setBackgroundResource(R.drawable.logo_youku);
-		}else if(source.equalsIgnoreCase("sinahd")){
+		} else if (source.equalsIgnoreCase("sinahd")) {
 			videosource.setBackgroundResource(R.drawable.logo_sinahd);
-		}else if(source.equalsIgnoreCase("sohu")){
+		} else if (source.equalsIgnoreCase("sohu")) {
 			videosource.setBackgroundResource(R.drawable.logo_sohu);
-		}else if(source.equalsIgnoreCase("56")){
+		} else if (source.equalsIgnoreCase("56")) {
 			videosource.setBackgroundResource(R.drawable.logo_56);
-		}else if(source.equalsIgnoreCase("qq")){
+		} else if (source.equalsIgnoreCase("qq")) {
 			videosource.setBackgroundResource(R.drawable.logo_qq);
-		}else if(source.equalsIgnoreCase("pptv")){
+		} else if (source.equalsIgnoreCase("pptv")) {
 			videosource.setBackgroundResource(R.drawable.logo_pptv);
-		}else if(source.equalsIgnoreCase("m1905")){
+		} else if (source.equalsIgnoreCase("m1905")) {
 			videosource.setBackgroundResource(R.drawable.logo_m1905);
-		}else{
+		} else {
 			videosource.setBackgroundResource(R.drawable.logo_pptv);
 		}
 	}
-
 
 	/**
 	 * Control the action when the seekbar dragged by user
@@ -613,73 +721,86 @@ public class MediaController extends FrameLayout  {
 	 */
 	public void setFileName(String name) {
 		this.mTitle = name;
-//		if (mFileName != null)
-//			mFileName.setText(mTitle);
+		// if (mFileName != null)
+		// mFileName.setText(mTitle);
 	}
-	public void DisableButtom(){
+
+	public void DisableButtom() {
 		mNextButton.setVisibility(View.INVISIBLE);
 		mTextViewDownloadRate.setVisibility(View.INVISIBLE);
 		mimageView33.setVisibility(View.INVISIBLE);
 		mQualityButton.setVisibility(View.INVISIBLE);
 		mSelectButton.setVisibility(View.INVISIBLE);
 	}
+
 	public void setSubName(String name) {
 		this.mSubName = name;
 	}
-	private void ShowQuality(){
-		
+
+	private void ShowQuality() {
+
 		lv_radio0.setVisibility(View.INVISIBLE);
 		lv_radio1.setVisibility(View.INVISIBLE);
 		lv_radio2.setVisibility(View.INVISIBLE);
 
 		switch (CurrentCategory) {
 		case 0:
-			for(int i = 0; i<m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls.length;i++){
-				if(m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("mp4"))
+			for (int i = 0; i < m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; i++) {
+				if (m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("mp4"))
 					lv_radio1.setVisibility(View.VISIBLE);
-				
-				if(m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("flv"))
+
+				if (m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("flv"))
 					lv_radio0.setVisibility(View.VISIBLE);
-				
-				if(m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("hd2"))
+
+				if (m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("hd2"))
 					lv_radio2.setVisibility(View.VISIBLE);
 			}
 			break;
 		case 1:
-			for(int i = 0; i<m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls.length;i++){
-				if(m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("mp4"))
+			for (int i = 0; i < m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; i++) {
+				if (m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("mp4"))
 					lv_radio1.setVisibility(View.VISIBLE);
-				
-				if(m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("flv"))
+
+				if (m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("flv"))
 					lv_radio0.setVisibility(View.VISIBLE);
-				
-				if(m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("hd2"))
+
+				if (m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("hd2"))
 					lv_radio2.setVisibility(View.VISIBLE);
 			}
 			break;
 		case 2:
-			for(int i = 0; i<m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls.length;i++){
-				if(m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("mp4"))
+			for (int i = 0; i < m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls.length; i++) {
+				if (m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("mp4"))
 					lv_radio1.setVisibility(View.VISIBLE);
-				
-				if(m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("flv"))
+
+				if (m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("flv"))
 					lv_radio0.setVisibility(View.VISIBLE);
-				
-				if(m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type.equalsIgnoreCase("hd2"))
+
+				if (m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("hd2"))
 					lv_radio2.setVisibility(View.VISIBLE);
 			}
 			break;
 
 		}
 	}
+
 	public void setProd_Data(ReturnProgramView m_ReturnProgramView) {
 		this.m_ReturnProgramView = m_ReturnProgramView;
 		if (this.m_ReturnProgramView != null) {
 			if (m_ReturnProgramView.movie != null) {
 				CurrentCategory = 0;
-				if(mNextButton != null)
+				if (mNextButton != null)
 					mNextButton.setVisibility(View.INVISIBLE);
-				if(mSelectButton != null)
+				if (mSelectButton != null)
 					mSelectButton.setVisibility(View.INVISIBLE);
 			} else if (m_ReturnProgramView.tv != null) {
 				CurrentCategory = 1;
@@ -687,21 +808,23 @@ public class MediaController extends FrameLayout  {
 					this.mSubName = mSubName.replace("第", "");
 					this.mSubName = mSubName.replace("集", "").trim();
 				}
-//				mFileName.setText(mTitle+"第" + m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集");
+				// mFileName.setText(mTitle+"第" +
+				// m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集");
 				if (dataStruct != null) {
 					for (int i = 0; i < m_ReturnProgramView.tv.episodes.length; i++) {
-//						if(mSubName.equalsIgnoreCase(m_ReturnProgramView.tv.episodes[i].name))
-						dataStruct.add("第" + Integer.toString(i+1) + "集");
+						// if(mSubName.equalsIgnoreCase(m_ReturnProgramView.tv.episodes[i].name))
+						dataStruct.add("第" + Integer.toString(i + 1) + "集");
 						String str = m_ReturnProgramView.tv.episodes[i].name;
 					}
 					groupAdapter.notifyDataSetChanged();
 				}
 			} else if (m_ReturnProgramView.show != null) {
 				CurrentCategory = 2;
-//				mFileName.setText(mTitle +"-"+m_ReturnProgramView.show.episodes[CurrentIndex].name);
+				// mFileName.setText(mTitle
+				// +"-"+m_ReturnProgramView.show.episodes[CurrentIndex].name);
 				if (dataStruct != null) {
 					for (int i = 0; i < m_ReturnProgramView.show.episodes.length; i++) {
-//						if(mSubName.equalsIgnoreCase(m_ReturnProgramView.show.episodes[i].name))
+						// if(mSubName.equalsIgnoreCase(m_ReturnProgramView.show.episodes[i].name))
 						dataStruct
 								.add(m_ReturnProgramView.show.episodes[i].name);
 					}
@@ -711,23 +834,27 @@ public class MediaController extends FrameLayout  {
 			}
 			ShowQuality();
 		}
-		//ShowQuality
-		if(Constant.player_quality_index[ShowQuality].equalsIgnoreCase("flv") ||
-				Constant.player_quality_index[ShowQuality].equalsIgnoreCase("3gp"))
+		// ShowQuality
+		if (Constant.player_quality_index[ShowQuality].equalsIgnoreCase("flv")
+				|| Constant.player_quality_index[ShowQuality]
+						.equalsIgnoreCase("3gp"))
 			lv_radio0.setChecked(true);
-		else 	if(Constant.player_quality_index[ShowQuality].equalsIgnoreCase("mp4") )
+		else if (Constant.player_quality_index[ShowQuality]
+				.equalsIgnoreCase("mp4"))
 			lv_radio1.setChecked(true);
-		else 	if(Constant.player_quality_index[ShowQuality].equalsIgnoreCase("hd2") )
+		else if (Constant.player_quality_index[ShowQuality]
+				.equalsIgnoreCase("hd2"))
 			lv_radio2.setChecked(true);
-//		if (CurrentQuality == 3) {
-////			if (lv_radio2.getVisibility() == View.VISIBLE)
-////				lv_radio2.setChecked(true);
-////			else if (lv_radio1.getVisibility() == View.VISIBLE)
-//				lv_radio0.setChecked(true);
-////			else if (lv_radio0.getVisibility() == View.VISIBLE)
-////				lv_radio0.setChecked(true);
-//		}
+		// if (CurrentQuality == 3) {
+		// // if (lv_radio2.getVisibility() == View.VISIBLE)
+		// // lv_radio2.setChecked(true);
+		// // else if (lv_radio1.getVisibility() == View.VISIBLE)
+		// lv_radio0.setChecked(true);
+		// // else if (lv_radio0.getVisibility() == View.VISIBLE)
+		// // lv_radio0.setChecked(true);
+		// }
 	}
+
 	/**
 	 * Set the View to hold some information when interact with the
 	 * MediaController
@@ -814,30 +941,9 @@ public class MediaController extends FrameLayout  {
 	}
 
 	public void hideNow() {
-//		hide();
-//		if (mAnchor == null)
-//			return;
-//
-//		if (mShowing) {
-//			try {
-//				if (mFromXml)
-//					setVisibility(View.GONE);
-//				else
-//					mWindow.dismiss();
-//				if (mViewBottomRight.getVisibility() == View.VISIBLE)
-//					mViewBottomRight.setVisibility(View.GONE);
-//
-//				if (mViewTopRight.getVisibility() == View.VISIBLE)
-//					mViewTopRight.setVisibility(View.GONE);
-//			} catch (IllegalArgumentException ex) {
-//				Log.d("MediaController already removed");
-//			}
-//			mShowing = false;
-//			if (mHiddenListener != null)
-//				mHiddenListener.onHidden();
-//		}
+
 	}
-	
+
 	public void hide() {
 		if (mAnchor == null)
 			return;
@@ -859,7 +965,7 @@ public class MediaController extends FrameLayout  {
 			}
 			mShowing = false;
 			if (mHiddenListener != null)
-				mHiddenListener.onHidden();
+				mHiddenListener.onHidden();// 方便调试不隐藏，yy
 		}
 	}
 
@@ -906,7 +1012,7 @@ public class MediaController extends FrameLayout  {
 				updateBottomRight();
 				break;
 			}
-			
+
 		}
 	};
 
@@ -921,8 +1027,8 @@ public class MediaController extends FrameLayout  {
 				long pos = 1000L * position / duration;
 				mSeekBar.setProgress((int) pos);
 			}
-//			int percent = mPlayer.getBufferPercentage();
-//			mSeekBar.setSecondaryProgress(percent * 10);
+			// int percent = mPlayer.getBufferPercentage();
+			// mSeekBar.setSecondaryProgress(percent * 10);
 		}
 
 		mDuration = duration;
@@ -937,13 +1043,14 @@ public class MediaController extends FrameLayout  {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-//		show(sDefaultTimeout);
-		if(mShowing) {
-			
-			float locationY =  event.getY();
-			if(locationY >= mTopBlockLayout.getHeight() 
-					&& locationY <= ((float)getHeight()) - mBottomBlockLayout.getHeight()) {
-				
+		// show(sDefaultTimeout);
+		if (mShowing) {
+
+			float locationY = event.getY();
+			if (locationY >= mTopBlockLayout.getHeight()
+					&& locationY <= ((float) getHeight())
+							- mBottomBlockLayout.getHeight()) {
+
 				hide();
 			}
 		}
@@ -998,36 +1105,128 @@ public class MediaController extends FrameLayout  {
 				mPlayer.pause();
 				updatePausePlay();
 			}
-//			DLNAMODE = true;
+			// DLNAMODE = true;
 			mPlayer.gotoDlnaVideoPlay();
 			// doPauseResume();
 			// show(sDefaultTimeout);
 		}
 	};
 
+	private View.OnClickListener mYunduanListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			// doPauseResume();
+			// show(sDefaultTimeout);
+			setYunduanMessage(null);
+		}
+	};
+
+	public void setYunduanMessage(String type) {
+		switch (CurrentCategory) {
+		case 0:
+			prod_id = m_ReturnProgramView.movie.id;
+			prod_type = 1;
+			prod_name = m_ReturnProgramView.movie.name;
+			prod_url = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].url;
+			prod_src = m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].source;
+			prod_time = mPlayer.getCurrentPosition() / 1000;
+			if (m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].type
+					.equals("hd2")) {
+				prod_qua = 1;
+			} else {
+				prod_qua = 0;
+			}
+			break;
+		case 1:
+			prod_id = m_ReturnProgramView.tv.id;
+			prod_type = 2;
+			prod_name = m_ReturnProgramView.tv.name + "第"
+					+ m_ReturnProgramView.tv.episodes[CurrentIndex].name + "集";
+			prod_url = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].url;
+			prod_src = m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].source;
+			prod_time = mPlayer.getCurrentPosition() / 1000;
+			if (m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].type
+					.equals("hd2")) {
+				prod_qua = 1;
+			} else {
+				prod_qua = 0;
+			}
+			break;
+		case 2:
+			prod_id = m_ReturnProgramView.show.id;
+			prod_type = 3;
+			prod_name = m_ReturnProgramView.show.name
+					+ m_ReturnProgramView.show.episodes[CurrentIndex].name;
+			prod_url = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].url;
+			prod_src = m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].source;
+			prod_time = mPlayer.getCurrentPosition() / 1000;
+			if (m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[CurrentQuality].type
+					.equals("hd2")) {
+				prod_qua = 1;
+			} else {
+				prod_qua = 0;
+			}
+			break;
+		}
+		
+
+		JSONObject json = new JSONObject();
+		try {
+			json.put("tv_channel", tv_channel);
+			json.put("user_id", user_id);
+			json.put("prod_id", prod_id);
+			json.put("prod_type", prod_type);
+			json.put("prod_name", prod_name);
+			json.put("prod_url", prod_url);
+			json.put("prod_src", prod_src);
+			json.put("prod_time", prod_time);
+			json.put("prod_qua", prod_qua);
+			if(type == null){
+				json.put("push_type", "41");
+				sendYunduanMessage(json);
+				}else{
+					json.put("push_type", type);
+					sendSelectMessage(json);
+				}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+    private void sendYunduanMessage(JSONObject json){
+    	FayeService.SendMessageService(mContext, json, user_id);
+		MobclickAgent.onEvent(mContext, ue_screencast_video_push);
+    }
+    private void sendSelectMessage(JSONObject json){
+    	if(!VideoPlayerActivity.IsYunduanPlay)
+    		return;
+    	FayeService.SendMessageService(mContext, json, user_id);
+		MobclickAgent.onEvent(mContext, ue_screencast_video_push);
+    }
 	private View.OnClickListener mReturnListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-//			if(DLNAMODE)
-//				DLNAMODE = false;
-//			else
-				mPlayer.OnComplete();
+			// if(DLNAMODE)
+			// DLNAMODE = false;
+			// else
+			VideoPlayerActivity.IsFinish = true;
+			mPlayer.OnComplete();
 		}
 	};
 	private View.OnClickListener mReduceListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			int mLayout = mPlayer.GetCurrentVideoLayout();
-			if(mLayout == VideoView.VIDEO_LAYOUT_SCALE){
+			if (mLayout == VideoView.VIDEO_LAYOUT_SCALE) {
 				mLayout = VideoView.VIDEO_LAYOUT_ZOOM;
 				mReduceButton.setBackgroundResource(R.drawable.player_full);
-			}
-			else {
+			} else {
 				mLayout = VideoView.VIDEO_LAYOUT_SCALE;
 				mReduceButton.setBackgroundResource(R.drawable.player_reduce);
 			}
 			mPlayer.setVideoLayout(mLayout, 0);
-			
+
 		}
 	};
 	private View.OnClickListener mPreListener = new View.OnClickListener() {
@@ -1037,25 +1236,26 @@ public class MediaController extends FrameLayout  {
 				long current = mPlayer.getCurrentPosition();
 				if (current >= 30000)// 30s
 					mPlayer.seekTo(current - 30000);
+				sendSeekChangedMessage((current - 30000)/1000);
 			}
 		}
 	};
 	private View.OnClickListener mNextListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			 switch (CurrentCategory) {
-				case 0:
-					break;
-				case 1:
-					
-					OnClickSelect(++CurrentIndex);
-					break;
-				case 2:
-					
-					OnClickSelect(++CurrentIndex);
+			switch (CurrentCategory) {
+			case 0:
+				break;
+			case 1:
+
+				OnClickSelect(++CurrentIndex);
+				break;
+			case 2:
+
+				OnClickSelect(++CurrentIndex);
 				break;
 
-				}
+			}
 		}
 	};
 	private RadioGroup.OnCheckedChangeListener mRadioGroupListener = new RadioGroup.OnCheckedChangeListener() {
@@ -1065,17 +1265,17 @@ public class MediaController extends FrameLayout  {
 			switch (checkedId) {
 
 			case R.id.radio0:
-				if(ShowQuality != 0){
+				if (ShowQuality != 0) {
 					SelectQuality(0);
 				}
 				break;
 			case R.id.radio1:
-				if(ShowQuality != 1){
+				if (ShowQuality != 1) {
 					SelectQuality(1);
 				}
 				break;
 			case R.id.radio2:
-				if(ShowQuality != 2){
+				if (ShowQuality != 2) {
 					SelectQuality(2);
 				}
 				break;
@@ -1090,7 +1290,7 @@ public class MediaController extends FrameLayout  {
 		public void onClick(View v) {
 			mHandler.removeMessages(FADE_OUT);
 			mHandler.sendEmptyMessageDelayed(SHOW_BOTTOMRIGHT, 500);
-		
+
 		}
 	};
 	private View.OnClickListener mSelectListener = new View.OnClickListener() {
@@ -1098,63 +1298,28 @@ public class MediaController extends FrameLayout  {
 		public void onClick(View v) {
 			mHandler.removeMessages(FADE_OUT);
 			mHandler.sendEmptyMessageDelayed(SHOW_TOPRIGHT, 500);
-			
+
 		}
 	};
 
-	private void updateBottomRight(){
-		if (mViewBottomRight.getVisibility() == View.VISIBLE) 
+	private void updateBottomRight() {
+		if (mViewBottomRight.getVisibility() == View.VISIBLE)
 			mViewBottomRight.setVisibility(View.GONE);
-		else 
+		else
 			mViewBottomRight.setVisibility(View.VISIBLE);
 		mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
 				sDefaultTimeout);
-//		if (mRoot.getVisibility() == View.VISIBLE) {
-//			mHandler.removeMessages(FADE_OUT);
-//			
-//
-//			if (!mBottomRightShowing) {
-//				mBottomRightShowing = true;
-//				mWindowBottomRight.showAtLocation(mAnchor, Gravity.RIGHT
-//						| Gravity.BOTTOM, 28, 82);
-////				mWindowBottomRight.showAtLocation(mRoot.findViewById(R.id.imageButton5), Gravity.RIGHT
-////						| Gravity.BOTTOM, 0, 0);
-//
-//			}
-//			if (mViewBottomRight.getVisibility() == View.VISIBLE)
-//				mViewBottomRight.setVisibility(View.GONE);
-//			else
-//				mViewBottomRight.setVisibility(View.VISIBLE);
-//			
-//			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
-//					sDefaultTimeout);
-//		}
 	}
-	private void updateTopRight(){
-		if (mViewTopRight.getVisibility() == View.VISIBLE) 
+
+	private void updateTopRight() {
+		if (mViewTopRight.getVisibility() == View.VISIBLE)
 			mViewTopRight.setVisibility(View.GONE);
-		else 
+		else
 			mViewTopRight.setVisibility(View.VISIBLE);
 		mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
 				sDefaultTimeout);
-//		if (mRoot.getVisibility() == View.VISIBLE) {
-//			mHandler.removeMessages(FADE_OUT);
-//			
-//			if (!mTopRightShowing) {
-//				mTopRightShowing = true;
-//				 mWindowTopRight.showAtLocation(mAnchor, Gravity.RIGHT|Gravity.TOP, 25, 70);
-////				mWindowTopRight.showAtLocation(mRoot.findViewById(R.id.imageButton6), Gravity.RIGHT
-////						| Gravity.TOP, 0, 0);
-//			}
-//			if (mViewTopRight.getVisibility() == View.VISIBLE)
-//				mViewTopRight.setVisibility(View.GONE);
-//			else
-//				mViewTopRight.setVisibility(View.VISIBLE);
-//			
-//			mHandler.sendMessageDelayed(mHandler.obtainMessage(FADE_OUT),
-//					sDefaultTimeout);
-//		}
 	}
+
 	private void updatePausePlay() {
 		if (mRoot == null || mPauseButton == null)
 			return;
@@ -1169,14 +1334,47 @@ public class MediaController extends FrameLayout  {
 		if (mPlayer.isPlaying()) {
 			mIsPausedByHuman = true;
 			mPlayer.pause();
-		}else {
+			sendPauseMessage();
+		} else {
 			mIsPausedByHuman = false;
 			mPlayer.start();
+			sendPlayMessage();
 		}
 		updatePausePlay();
 	}
-	
-	
+
+	private void sendPlayMessage() {
+		if(!VideoPlayerActivity.IsYunduanPlay)
+			return;
+		try {
+			JSONObject json = new JSONObject();
+			json.put("push_type", "403");
+			json.put("tv_channel", tv_channel);
+			json.put("user_id", user_id);
+			json.put("prod_id", prod_id);
+			json.put("prod_url", prod_url);
+			FayeService.SendMessageService(mContext, json, user_id);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void sendPauseMessage() {
+		if(!VideoPlayerActivity.IsYunduanPlay)
+			return;
+		try {
+			JSONObject json = new JSONObject();
+			json.put("push_type", "405");
+			json.put("tv_channel", tv_channel);
+			json.put("user_id", user_id);
+			json.put("prod_id", prod_id);
+			json.put("prod_url", prod_url);
+			FayeService.SendMessageService(mContext, json, user_id);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
 		@Override
@@ -1200,8 +1398,11 @@ public class MediaController extends FrameLayout  {
 
 			long newposition = (mDuration * progress) / 1000;
 			String time = StringUtils.generateTime(newposition);
-			if (mInstantSeeking)
+			Log.d("newposition_time", time);
+			if (mInstantSeeking) {
 				mPlayer.seekTo(newposition);
+				sendSeekChangedMessage(newposition/1000);
+			}
 			if (mInfoView != null)
 				mInfoView.setText(time);
 			if (mCurrentTime != null)
@@ -1210,22 +1411,44 @@ public class MediaController extends FrameLayout  {
 
 		@Override
 		public void onStopTrackingTouch(SeekBar bar) {
-			if (!mInstantSeeking)
+			if (!mInstantSeeking) {
 				mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
+				
+				// mPlayer.pause();
+			}
 			if (mInfoView != null) {
 				mInfoView.setText("");
 				mInfoView.setVisibility(View.GONE);
 			}
+
 			show(sDefaultTimeout);
 			mHandler.removeMessages(SHOW_PROGRESS);
 			mAM.setStreamMute(AudioManager.STREAM_MUSIC, false);
 			mDragging = false;
 			mHandler.sendEmptyMessageDelayed(SHOW_PROGRESS, 1000);
-//			mSeekBar.setMax( duration);
-//			mSeekBar.setProgress(position);
-//			mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
+			// mSeekBar.setMax( duration);
+			// mSeekBar.setProgress(position);
+			// mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
 		}
 	};
+
+	private void sendSeekChangedMessage(float time) {
+		if(!VideoPlayerActivity.IsYunduanPlay)
+			return;
+		try {
+			JSONObject json = new JSONObject();
+			json.put("push_type", "407");
+			json.put("tv_channel", tv_channel);
+			json.put("user_id", user_id);
+			json.put("prod_id", prod_id);
+			json.put("prod_url", prod_url);
+			json.put("prod_time", time);
+			FayeService.SendMessageService(mContext, json, user_id);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
@@ -1301,129 +1524,150 @@ public class MediaController extends FrameLayout  {
 
 		/**
 		 * 检查urlLink文本是否正常
+		 * 
 		 * @param urlLink
 		 * @return
 		 */
 		private boolean CheckUrl(String urlLink) {
-			
-			//url本身不正�?直接返回
-			   if (urlLink == null || urlLink.length() <= 0) {     
-				   
-				    return false;                   
-				  }   else {
-					  
-					  if(!URLUtil.isValidUrl(urlLink)) {
-						  
-						  return false;
-					  }
-				  }
-			   
-			   return true;
+
+			// url本身不正�?直接返回
+			if (urlLink == null || urlLink.length() <= 0) {
+
+				return false;
+			} else {
+
+				if (!URLUtil.isValidUrl(urlLink)) {
+
+					return false;
+				}
+			}
+
+			return true;
 		}
-		
+
 		/**
-		 * 启动一个异步任务，把网络相关放在此任务�?		 * 重定向新的链接，直到拿到资源URL
+		 * 启动一个异步任务，把网络相关放在此任务�? * 重定向新的链接，直到拿到资源URL
 		 * 
-		 * 注意：因为网络或者服务器原因，重定向时间有可能比较长
-		 * 因此需要较长时间等�?		 * @param url
-		 * @return 字符�?		 */
+		 * 注意：因为网络或者服务器原因，重定向时间有可能比较长 因此需要较长时间等�? * @param url
+		 * 
+		 * @return 字符�?
+		 */
 		private String newATask(String url) {
-			
-			AsyncTask<String,Void,String> aynAsyncTask = new AsyncTask<String, Void, String>(){
+
+			AsyncTask<String, Void, String> aynAsyncTask = new AsyncTask<String, Void, String>() {
 
 				@Override
 				protected String doInBackground(String... params) {
 					// TODO Auto-generated method stub
-					
+
 					List<String> list = new ArrayList<String>();
 					String dstUrl = null;
 					try {
-						simulateFirfoxRequest(Constant.USER_AGENT_IOS,params[0] ,list);//使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
-						
+						simulateFirfoxRequest(Constant.USER_AGENT_IOS,
+								params[0], list);// 使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
+
 						dstUrl = list.get(list.size() - 1);
-						if(BuildConfig.DEBUG) Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
+						if (BuildConfig.DEBUG)
+							Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
 						list.clear();
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
-						if(BuildConfig.DEBUG) Log.i(TAG, "TimeOut!!!!!! : " + e);
+						if (BuildConfig.DEBUG)
+							Log.i(TAG, "TimeOut!!!!!! : " + e);
 						e.printStackTrace();
 					}
-					
+
 					return dstUrl;
 				}
-				
+
 			}.execute(url);
 			try {
-				String redirectUrl = aynAsyncTask.get();//从异步任务中获取结果
-				
+				String redirectUrl = aynAsyncTask.get();// 从异步任务中获取结果
+
 				return redirectUrl;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			return null;
 		}
-		
+
 		/**
 		 * 模拟火狐浏览器给服务器发送不同请求，有火狐本身请求，IOS请求，Android请求
-		 * @param userAgent firfox ios android
-		 * @param srcUrl 原始地址【可能可以播放，可能需要跳转�?		 * @param list 存储播放地址
+		 * 
+		 * @param userAgent
+		 *            firfox ios android
+		 * @param srcUrl
+		 *            原始地址【可能可以播放，可能需要跳转�? * @param list 存储播放地址
 		 */
-		private void simulateFirfoxRequest(String userAgent,String srcUrl , List<String> list) {
-			//模拟火狐ios发用请求  使用userAgent
-			AndroidHttpClient mAndroidHttpClient = AndroidHttpClient.newInstance(userAgent);
-			
-			HttpParams httpParams =  mAndroidHttpClient.getParams();
-			//连接时间最�?秒，可以更改
+		private void simulateFirfoxRequest(String userAgent, String srcUrl,
+				List<String> list) {
+			// 模拟火狐ios发用请求 使用userAgent
+			AndroidHttpClient mAndroidHttpClient = AndroidHttpClient
+					.newInstance(userAgent);
+
+			HttpParams httpParams = mAndroidHttpClient.getParams();
+			// 连接时间最�?秒，可以更改
 			HttpConnectionParams.setConnectionTimeout(httpParams, 3000 * 1);
-					
+
 			try {
 				URL url = new URL(srcUrl);
 				HttpGet mHttpGet = new HttpGet(url.toURI());
 				HttpResponse response = mAndroidHttpClient.execute(mHttpGet);
-				
-				//限定连接时间
-				
+
+				// 限定连接时间
+
 				StatusLine statusLine = response.getStatusLine();
 				int status = statusLine.getStatusCode();
-				
-				if(BuildConfig.DEBUG) Log.i(TAG, "HTTP STATUS : " + status);
-				
-				//如果拿到资源直接返回url  如果没有拿到资源，并且要进行跳转,那就使用递归跳转
-				if(status != HttpStatus.SC_OK) {
-					if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK   start");
-					
-					if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK start");
-					if(status == HttpStatus.SC_MOVED_PERMANENTLY ||//网址被永久移�?							status == HttpStatus.SC_MOVED_TEMPORARILY ||//网址暂时性移�?							status ==HttpStatus.SC_SEE_OTHER ||//重新定位资源
-							status == HttpStatus.SC_TEMPORARY_REDIRECT) {//暂时定向
-						
-						Header header = response.getFirstHeader("Location");//拿到重新定位后的header
-						String location = header.getValue();//从header重新取出信息
+
+				if (BuildConfig.DEBUG)
+					Log.i(TAG, "HTTP STATUS : " + status);
+
+				// 如果拿到资源直接返回url 如果没有拿到资源，并且要进行跳转,那就使用递归跳转
+				if (status != HttpStatus.SC_OK) {
+					if (BuildConfig.DEBUG)
+						Log.i(TAG, "NOT OK   start");
+
+					if (BuildConfig.DEBUG)
+						Log.i(TAG, "NOT OK start");
+					if (status == HttpStatus.SC_MOVED_PERMANENTLY || // 网址被永久移�?
+																		// status
+																		// ==
+																		// HttpStatus.SC_MOVED_TEMPORARILY
+																		// ||//网址暂时性移�?
+																		// status
+																		// ==HttpStatus.SC_SEE_OTHER
+																		// ||//重新定位资源
+							status == HttpStatus.SC_TEMPORARY_REDIRECT) {// 暂时定向
+
+						Header header = response.getFirstHeader("Location");// 拿到重新定位后的header
+						String location = header.getValue();// 从header重新取出信息
 						list.add(location);
-						
-						mAndroidHttpClient.close();//关闭此次连接
-						
-						if(BuildConfig.DEBUG) Log.i(TAG, "Location: " + location);
-						//进行下一次递归
-						simulateFirfoxRequest(userAgent,location , list);
+
+						mAndroidHttpClient.close();// 关闭此次连接
+
+						if (BuildConfig.DEBUG)
+							Log.i(TAG, "Location: " + location);
+						// 进行下一次递归
+						simulateFirfoxRequest(userAgent, location, list);
 					} else {
-						//如果地址真的不存在，那就往里面加NULL字符�?						list.add("NULL");
+						// 如果地址真的不存在，那就往里面加NULL字符�? list.add("NULL");
 					}
-					
+
 				} else {
 					list.add(srcUrl);
 					mAndroidHttpClient.close();
 				}
-				
-				
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				if(BuildConfig.DEBUG) Log.i(TAG, "NOT OK" + e);
+				if (BuildConfig.DEBUG)
+					Log.i(TAG, "NOT OK" + e);
 				mAndroidHttpClient.close();
 				e.printStackTrace();
 			}
-			
+
 		}
 
 	}
@@ -1456,8 +1700,9 @@ public class MediaController extends FrameLayout  {
 		void setVideoLayout(int layout, float aspectRatio);
 
 		int GetCurrentVideoLayout();
-		
-		 void setContinueVideoPath(String Title, String path,boolean PlayContinue);
+
+		void setContinueVideoPath(String Title, String path,
+				boolean PlayContinue);
 
 	}
 }

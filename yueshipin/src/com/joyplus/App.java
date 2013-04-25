@@ -1,12 +1,10 @@
 package com.joyplus;
 
 import java.io.File;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.http.Header;
@@ -16,54 +14,39 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.json.JSONObject;
-
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.androidquery.util.AQUtility;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.download.Downloader;
-import com.joyplus.weibo.net.Weibo;
-import com.joyplus.weibo.net.WeiboDialogListener;
 import com.parse.Parse;
 
-@SuppressLint("DefaultLocale")
+
 public class App extends Application {
 	private final String TAG = "App";
 	private static final String NOT_VALID_LINK = "NULL";
 	private static final String FENGXING = "1";
+	
 
 	private static App instance;
 	public String UserID;
-	private Weibo Weibo; // 用于weibodiallog2中
 	private String url = ""; // 用于weibodiallog2中
-	private WeiboDialogListener WeiboDialogListener;// weibo监听器，用于weibodiallog2中
 	public static int percentDown = 0;
 	public static String urlDown = null;
 	public List prodIdList = new ArrayList();
@@ -76,8 +59,8 @@ public class App extends Application {
 	private Map<String, String> headers;
 	private CurrentPlayData mCurrentPlayData;
 	private ReturnProgramView m_ReturnProgramView = null;
-    private int number = 0;
-	
+	private int number = 0;
+    
 	public ReturnProgramView get_ReturnProgramView() {
 		return m_ReturnProgramView;
 	}
@@ -101,14 +84,14 @@ public class App extends Application {
 	public void setHeaders(Map<String, String> headers) {
 		this.headers = headers;
 	}
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
 		File cacheDir = new File(Constant.PATH);
-		if (cacheDir.exists())
-			AQUtility.setCacheDir(cacheDir);
+		if (!cacheDir.exists())
+			cacheDir.mkdirs();
+		AQUtility.setCacheDir(cacheDir);
 		// 创建一个目录
 		File destDir = new File(Constant.PATH_VIDEO);
 		if (!destDir.exists()) {
@@ -118,6 +101,7 @@ public class App extends Application {
 		Parse.initialize(this, Constant.Parse_AppId, Constant.Parse_ClientKey);
 
 		instance = this;
+
 	}
 
 	/**
@@ -144,14 +128,7 @@ public class App extends Application {
 		return instance.getResources();
 	}
 
-	public void setWeibo(Weibo Weibo) {
-		this.Weibo = Weibo;
-	}
-
-	public Weibo getWeibo() {
-		return Weibo;
-	}
-
+	
 	public void seturl(String url) {
 		this.url = url;
 	}
@@ -174,14 +151,6 @@ public class App extends Application {
 
 	public String geturlDown() {
 		return urlDown;
-	}
-
-	public WeiboDialogListener getWeiboDialogListener() {
-		return WeiboDialogListener;
-	}
-
-	public void setWeiboDialogListener(WeiboDialogListener WeiboDialogListener) {
-		this.WeiboDialogListener = WeiboDialogListener;
 	}
 
 	public String getURLPath() {
@@ -212,15 +181,16 @@ public class App extends Application {
 	public boolean CheckUrlIsValidFromServer(String url, String id) {
 
 		if (CheckUrl(url)) {
-
+			
+//            GetUrlTask geturl  = new GetUrlTask();
+//            geturl.execute(new String[]{url, "" + id });
 			mURLPath = newATask(url, id);
-
-			if (CheckUrl(mURLPath)) {
+           
+            if (CheckUrl(mURLPath)) {
 
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -230,14 +200,13 @@ public class App extends Application {
 	public void checkUserSelect(Context context) {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if(connectivityManager!=null)
-		{
-			NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+		if (connectivityManager != null) {
+			NetworkInfo activeNetInfo = connectivityManager
+					.getActiveNetworkInfo();
 			if (activeNetInfo != null
 					&& activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {
 				use2G3G = true;
-			}else
-			{
+			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(context);
 				builder.setTitle("温馨提醒")
 						.setMessage("播放视频会消耗大量流量，您确定要在非WiFi环境下播放吗？")
@@ -251,10 +220,8 @@ public class App extends Application {
 								}).setNegativeButton("取消", null).create();
 				builder.show();
 			}
-		}
-		else
-		{
-			Toast.makeText(context, "哎呀,你的网络好像有问题",Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(context, "哎呀,你的网络好像有问题", Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -277,29 +244,6 @@ public class App extends Application {
 		}
 		return false;
 	}
-
-	// //获取路径
-	// public String getpath() {
-	// Dev_MountInfo dev = Dev_MountInfo.getInstance();
-	//
-	// PackageManager pm = getPackageManager();
-	//
-	// ApplicationInfo appInfo = null;
-	// try {
-	// appInfo = pm.getApplicationInfo(getPackageName(), 0);
-	// } catch (NameNotFoundException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// String path = "";
-	// if ((appInfo.flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE) != 0) {
-	//
-	// path = dev.getExternalInfo().getPath();
-	// } else {
-	// path = dev.getInternalInfo().getPath();
-	// }
-	// return path;
-	// }
 
 	public boolean IfIncludeM3U(String Url) {
 		for (int i = 0; i < Constant.video_dont_support_extensions.length; i++) {
@@ -331,23 +275,21 @@ public class App extends Application {
 		SharedPreferences sharedata = getSharedPreferences("ServiceData", 0);
 		return sharedata.getString(where, null);
 	}
-	
-	
+
 	public void SaveSearchData(String where, String Data) {
 		SharedPreferences sharerecord = getSharedPreferences("recordnumber", 0);
 		SharedPreferences.Editor recorddata = getSharedPreferences(
 				"recordnumber", 0).edit();
-		
-		
+
 		SharedPreferences.Editor sharedatab = getSharedPreferences(
 				"SearchData", 0).edit();
 		number = sharerecord.getInt("number", number);
-		if(number < 10){
-		number++;
-		recorddata.putInt("number", number);
-		sharedatab.putString(String.valueOf(number), Data);
-//		sharedatab.putString(where, Data);
-		}else{
+		if (number < 10) {
+			number++;
+			recorddata.putInt("number", number);
+			sharedatab.putString(String.valueOf(number), Data);
+			// sharedatab.putString(where, Data);
+		} else {
 			number = 1;
 			recorddata.putInt("number", number);
 			sharedatab.putString(String.valueOf(number), Data);
@@ -449,6 +391,7 @@ public class App extends Application {
 	 * @param id
 	 * @return 字符串
 	 */
+	
 	private String newATask(String url, String sourceId) {
 
 		AsyncTask<String, Void, String> aynAsyncTask = new AsyncTask<String, Void, String>() {
@@ -473,7 +416,6 @@ public class App extends Application {
 						return dstUrl;
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					if (BuildConfig.DEBUG)
 						Log.i(TAG, "TimeOut!!!!!! : " + e);
 					e.printStackTrace();
@@ -525,7 +467,7 @@ public class App extends Application {
 
 		HttpParams httpParams = mAndroidHttpClient.getParams();
 		// 连接时间最长5秒，可以更改
-		HttpConnectionParams.setConnectionTimeout(httpParams, 60000 * 1);
+		HttpConnectionParams.setConnectionTimeout(httpParams, 20000);
 
 		try {
 			URL url = new URL(srcUrl);
@@ -537,13 +479,28 @@ public class App extends Application {
 			StatusLine statusLine = response.getStatusLine();
 			int status = statusLine.getStatusCode();
 
+			Header headertop = response.getFirstHeader("Content-Type");// 拿到重新定位后的header
+			String type = headertop.getValue().toLowerCase();// 从header重新取出信息
+			Header header_length = response.getFirstHeader("Content-Length");
+			String lengthStr = header_length.getValue();
+			int length = 0;
+			try {
+				length = Integer.parseInt(lengthStr);
+			} finally {
+			}
+			
 			if (BuildConfig.DEBUG)
 				Log.i(TAG, "HTTP STATUS : " + status);
 
 			// 如果资源来源为风行，那就对url进行重定向 如果不是就只是简单判断
 			// 风行资源id 为 1
 			// 如果拿到资源直接返回url 如果没有拿到资源，并且要进行跳转,那就使用递归跳转
-			if (status != HttpStatus.SC_OK) {
+			if(!type.startsWith("text/html") && status >= 200 && status <= 299
+					&& length > 100){
+				// 正确的话直接返回，不进行下面的步骤
+				mAndroidHttpClient.close();
+				list.add(srcUrl);
+			}else if (status > 299 && status < 400) {
 				if (BuildConfig.DEBUG)
 					Log.i(TAG, "NOT OK   start");
 
@@ -579,10 +536,6 @@ public class App extends Application {
 				// mAndroidHttpClient.close();
 				// list.add(NOT_VALID_LINK);
 				// }
-			} else {
-				// 正确的话直接返回，不进行下面的步骤
-				mAndroidHttpClient.close();
-				list.add(srcUrl);
 			}
 
 		} catch (Exception e) {
@@ -595,4 +548,5 @@ public class App extends Application {
 			e.printStackTrace();
 		}
 	}
+	
 }

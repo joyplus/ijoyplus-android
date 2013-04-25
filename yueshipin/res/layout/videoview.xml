@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" 
     android:background="@color/black"
-    android:id="@+id/layout">
+    android:orientation="vertical" >
 
     <io.vov.vitamio.widget.VideoView
         android:id="@+id/surface_view"
@@ -57,8 +57,7 @@
         android:id="@+id/relativeLayout_preload"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" 
-     >
+        android:orientation="vertical" >
 
         <ImageView
             android:id="@+id/layout_preload_bg"
@@ -79,10 +78,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|center_horizontal"
+                android:ellipsize="end"
+                android:maxEms="15"
+                android:singleLine="true"
                 android:text="热血高校热血高校热血高校热血高校热血高校"
-                 android:ellipsize="end"
-              android:singleLine="true"
-              android:maxEms = "15"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/white" />
 
@@ -136,7 +135,6 @@
                 android:minEms="5"
                 android:text="100kb/s"
                 android:textColor="@color/grey" />
-
         </LinearLayout>
 
         <TextView

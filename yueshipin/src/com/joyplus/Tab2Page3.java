@@ -8,17 +8,18 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
+//import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ListView;
+//import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AbsListView.OnScrollListener;
+//import android.widget.AbsListView.OnScrollListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -29,8 +30,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab2Page3ListAdapter;
 import com.joyplus.Adapters.Tab2Page3ListData;
 import com.joyplus.Service.Return.ReturnTops;
-import com.joyplus.widget.MyListView;
-import com.joyplus.widget.MyListView.OnRefreshListener;
+//import com.joyplus.widget.MyListView;
+//import com.joyplus.widget.MyListView.OnRefreshListener;
 import com.joyplus.widget.RefreshListView;
 
 //,RefreshListView.IOnLoadMoreListener
@@ -48,13 +49,15 @@ public class Tab2Page3 extends Activity implements
 	private RefreshDataAsynTask mRefreshAsynTask;
 	private LoadMoreDataAsynTask mLoadMoreAsynTask;
 	private int isLastisNext = 1;
-
+	private static String POPULAR_SHOW_TOP_LIST = "综艺悦榜";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab2page3);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		// 获取listview对象
 		ItemsListView = (RefreshListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
@@ -115,18 +118,6 @@ public class Tab2Page3 extends Activity implements
 		
 	}
 
-	
-	public void OnClickTab1TopLeft(View v) {
-		Intent i = new Intent(this, Search.class);
-		startActivity(i);
-
-	}
-
-	public void OnClickTab1TopRight(View v) {
-		Intent i = new Intent(this, Setting.class);
-		startActivity(i);
-
-	}
 
 	@Override
 	protected void onDestroy() {
@@ -138,12 +129,14 @@ public class Tab2Page3 extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, POPULAR_SHOW_TOP_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, POPULAR_SHOW_TOP_LIST);
 		MobclickAgent.onPause(this);
 	}
 
