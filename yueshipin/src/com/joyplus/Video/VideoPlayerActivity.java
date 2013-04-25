@@ -108,7 +108,6 @@ public class VideoPlayerActivity extends Activity implements
 	public static final int VideoPlay = 0;
 	private boolean IsPlaying = false;
 	public Handler fHanlder;
-	FayeClient mClient;
 	/** 最大声音 */
 	private int mMaxVolume;
 	/** 当前声音 */
@@ -231,7 +230,7 @@ public class VideoPlayerActivity extends Activity implements
 			mHandler.postDelayed(mRunnable, 1000);// test,yy
 		}
 
-		mMediaController = new MediaController(this, mClient, user_id,
+		mMediaController = new MediaController(this, user_id,
 				tv_channel);
 
 		if (mTitle != null && mTitle.length() > 0) {

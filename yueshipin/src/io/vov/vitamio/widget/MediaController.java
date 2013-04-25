@@ -164,7 +164,6 @@ public class MediaController extends FrameLayout {
 	private boolean mIsPausedByHuman = false;
 
 	// 视频云端投放信息
-	FayeClient mClient;
 	private String tv_channel;
 	private String user_id;
 	private String prod_id;// 视频ID
@@ -201,10 +200,9 @@ public class MediaController extends FrameLayout {
 		initController(context);
 	}
 
-	public MediaController(Context context, FayeClient mClient, String user_id,
+	public MediaController(Context context, String user_id,
 			String channel) {
 		super(context);
-		this.mClient = mClient;
 		this.user_id = user_id;
 		this.tv_channel = channel;
 		if (!mFromXml && initController(context))
