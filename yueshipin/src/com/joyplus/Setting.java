@@ -76,7 +76,7 @@ public class Setting extends Activity {
 		mContext = this;
 		UMFeedbackService.enableNewReplyNotification(this,
 				NotificationType.AlertDialog);
-		// appRecommend();
+//		 appRecommend();
 		ViewGroup fatherLayout = (ViewGroup) findViewById(R.id.ad);
 		InnerListView listView = (InnerListView) this.findViewById(R.id.list);
 		listView.setMaxHeight(400);

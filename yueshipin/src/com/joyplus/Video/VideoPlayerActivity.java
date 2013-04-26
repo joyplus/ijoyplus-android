@@ -449,6 +449,10 @@ public class VideoPlayerActivity extends Activity implements
 			}
 		}
 		super.onDestroy();
+		if(mHandler!=null)
+		{
+			mHandler.removeCallbacks(mRunnable);
+		}
 	}
 
 	@Override
