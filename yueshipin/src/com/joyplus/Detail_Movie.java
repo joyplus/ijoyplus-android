@@ -1,6 +1,7 @@
 package com.joyplus;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,7 +17,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -27,13 +27,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -59,7 +59,9 @@ import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadTask;
-import com.parse.PushService;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.SaveCallback;
 import com.umeng.analytics.MobclickAgent;
 
 public class Detail_Movie extends Activity {
@@ -612,7 +614,7 @@ public class Detail_Movie extends Activity {
 	private void subscribeFav() {
 //		PushService.subscribe(this, "CHANNEL_PROD_" + prod_id, Detail_Movie.class);
 //		PushService.setDefaultPushCallback(this, Main.class);
-
+//		parseconnect();
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -626,6 +628,36 @@ public class Detail_Movie extends Activity {
 		aq.ajax(cb);
 	}
 
+//	private void parseconnect() {
+//		ParseInstallation installtion = ParseInstallation.getCurrentInstallation();
+//		ArrayList array = (ArrayList) installtion.get("channels"); 
+//		installtion.put("channels", Arrays.asList("channels", "flying"));
+//		installtion.saveInBackground(new SaveCallback() {
+//			
+//			@Override
+//			public void done(ParseException arg0) {
+//				if(arg0 == null){
+//
+//				}
+//				
+//			}
+//		});
+//		ParseObject gameScore = new ParseObject("GameScore");
+//		gameScore.put("score", 1337);
+//		gameScore.put("playerName", "Sean Plott");
+//		gameScore.put("cheatMode", false);
+//		gameScore.saveInBackground(new SaveCallback() {
+//			
+//			@Override
+//			public void done(ParseException e) {
+//				if(e == null){
+//					
+//				}
+//				
+//			}
+//		});
+		
+//	}
 	public void OnClickCacheDown(View v) {
 		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");

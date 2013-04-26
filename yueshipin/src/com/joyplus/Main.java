@@ -30,7 +30,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TabHost;
 import com.androidquery.AQuery;
@@ -60,7 +59,6 @@ public class Main extends TabActivity {
 	CheckBindDingReceiver bindingReceiver;
 	Context mContext;
 	Handler locationHandler;
-	private Handler mHandler = new Handler();
 	private boolean DialogIsViewed = false;
 
 	@Override
@@ -94,20 +92,19 @@ public class Main extends TabActivity {
 			startService(intent);
 		}
 
-////		if (app.GetServiceData("Binding_TV") != null) {
-//
-//			Intent service = new Intent(Main.this, FayeService.class);
-//			startService(service);
-//			check_binding(app.GetServiceData("Binding_TV_Channal"),
-//					app.GetServiceData("Binding_Userid"), app.getHeaders());
-//
-////		}
-//
-//		PushService.subscribe(this, "", Main.class);
-//		PushService.subscribe(this, "CHANNEL_ANDROID", Main.class);
-//		PushService.setDefaultPushCallback(this, Main.class);
-		mHandler.postDelayed(mRunnable, 2000);
-//		new MyThread(Main.this).start();
+//		if (app.GetServiceData("Binding_TV") != null) {
+
+			Intent service = new Intent(Main.this, FayeService.class);
+			startService(service);
+			check_binding(app.GetServiceData("Binding_TV_Channal"),
+					app.GetServiceData("Binding_Userid"), app.getHeaders());
+
+//		}
+
+		PushService.subscribe(this, "", Main.class);
+		PushService.subscribe(this, "CHANNEL_ANDROID", Main.class);
+//		PushService.subscribe(this, "CHANNEL_PROD_1010181", Main.class);
+		PushService.setDefaultPushCallback(this, Main.class);
 		if (!Constant.TestEnv)
 			ReadLocalAppKey();
 
@@ -121,7 +118,7 @@ public class Main extends TabActivity {
 			mianzeDialog.show();
 		}
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		try {
@@ -243,6 +240,7 @@ public class Main extends TabActivity {
 
 		// 需要在退出程序时调用平台的destroy方法关闭SDK
 		DianJuPlatform.destroy(this);
+
 		if (aq != null)
 			aq.dismiss();
 		if (android.os.Build.VERSION.SDK_INT >= 14) {
@@ -251,10 +249,8 @@ public class Main extends TabActivity {
 			stopService(i);
 		}
 		stopService(new Intent(Main.this, FayeService.class));
-		mHandler.removeCallbacks(mRunnable);
 		unregisterBinding();
 		super.onDestroy();
-		
 	}
 
 	@Override
@@ -374,20 +370,7 @@ public class Main extends TabActivity {
 			// 解决没有网络时程序不能关闭的问题
 		}
 	}
-	
-	private final Runnable mRunnable = new Runnable() {
-		public void run() {
-			Intent service = new Intent(Main.this, FayeService.class);
-			startService(service);
-			check_binding(app.GetServiceData("Binding_TV_Channal"),
-					app.GetServiceData("Binding_Userid"), app.getHeaders());
 
-			PushService.subscribe(Main.this, "", Main.class);
-			PushService.subscribe(Main.this, "CHANNEL_ANDROID", Main.class);
-			PushService.setDefaultPushCallback(Main.this, Main.class);
-		}
-	};
-	
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
@@ -421,29 +404,7 @@ public class Main extends TabActivity {
 		}
 		return super.dispatchKeyEvent(event);
 	}
-	
-//	class MyThread extends Thread{
-//		private Context context;
-//		public MyThread(Context context)
-//		{
-//			this.context = context;
-//		}
-//		@Override
-//		public void run() {
-//			// TODO Auto-generated method stub
-//			Intent service = new Intent(Main.this, FayeService.class);
-//			context.startService(service);
-//			check_binding(app.GetServiceData("Binding_TV_Channal"),
-//					app.GetServiceData("Binding_Userid"), app.getHeaders());
-//
-//			PushService.subscribe(context, "", Main.class);
-//			PushService.subscribe(context, "CHANNEL_ANDROID", Main.class);
-//			PushService.setDefaultPushCallback(context, Main.class);
-//			
-//		}
-//		
-//	}
-	
+
 	// 免责声明对话框
 
 	public class MianZeDialog extends Dialog {
