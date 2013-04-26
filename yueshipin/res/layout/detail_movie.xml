@@ -263,6 +263,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/playmovie"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="75dip"
+                        android:textColor="@android:color/white"
                         android:onClick="OnClickPlay" />
                 </LinearLayout>
 

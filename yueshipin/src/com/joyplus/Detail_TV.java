@@ -74,6 +74,7 @@ import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
+import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 
 public class Detail_TV extends Activity {
@@ -496,6 +497,11 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
 					aq.id(R.id.button20).clickable(false);
 				}
+				if (m_ReturnProgramView.tv.episodes[0].down_urls == null
+						|| m_ReturnProgramView.tv.episodes[0].down_urls[0].source == null) {
+					aq.id(R.id.button1).background(R.drawable.xiangkanmovie);
+					aq.id(R.id.button1).text("(" + m_FavorityNum + ")");
+				}
 				if (cacheManager != null && cacheInfoTemp != null) {
 
 					String temp = cacheInfoTemp.getComments();
@@ -658,7 +664,9 @@ public class Detail_TV extends Activity {
 					m_FavorityNum++;
 					aq.id(R.id.button2).text(
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
-					app.MyToast(this, "收藏成功!");
+					aq.id(R.id.button1).text(
+							"(" + Integer.toString(m_FavorityNum) + ")");
+					app.MyToast(this, "操作成功!");
 				} else
 					app.MyToast(this, "已收藏!");
 			} catch (JSONException e) {
@@ -677,6 +685,13 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickFavorityNum(View v) {
+		
+		subscribeFav();
+	}
+
+	private void subscribeFav(){
+//		PushService.subscribe(this, "CHANNEL_PROD_" + prod_id, Main.class);
+//		PushService.setDefaultPushCallback(this, Main.class);
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -689,9 +704,7 @@ public class Detail_TV extends Activity {
 				.weakHandler(this, "CallServiceFavorityResult");
 
 		aq.ajax(cb);
-
 	}
-
 	public void CallServiceResultSupportNum(String url, JSONObject json,
 			AjaxStatus status) {
 
@@ -801,7 +814,11 @@ public class Detail_TV extends Activity {
 						Gravity.CENTER | Gravity.CENTER, 0, 40);
 				popup_player_select.update();
 			}
-		} else {
+		} else if(m_ReturnProgramView.tv.episodes[0].down_urls == null
+				|| m_ReturnProgramView.tv.episodes[0].down_urls[0].source == null){
+			subscribeFav();
+		}
+		else{
 			StartIntentToPlayer();
 		}
 	}

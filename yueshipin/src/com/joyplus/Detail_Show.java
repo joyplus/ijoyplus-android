@@ -70,6 +70,7 @@ import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
+import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 
 public class Detail_Show extends Activity {
@@ -362,7 +363,11 @@ public class Detail_Show extends Activity {
 				aq.id(R.id.cache_button9).background(R.drawable.zan_wu_xia_zai);
 				aq.id(R.id.cache_button9).clickable(false);
 			}
-
+			if (m_ReturnProgramView.show.episodes[0].down_urls == null
+					|| m_ReturnProgramView.show.episodes[0].down_urls[0].source == null) {
+				aq.id(R.id.button1).background(R.drawable.xiangkanmovie);
+				aq.id(R.id.button1).text("(" + m_FavorityNum + ")");
+			}
 			if(cacheManager!=null&&cacheInfoTemp!=null)
 			{
 				
@@ -541,7 +546,9 @@ public class Detail_Show extends Activity {
 					m_FavorityNum++;
 					aq.id(R.id.button2).text(
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
-					app.MyToast(this, "收藏成功!");
+					aq.id(R.id.button1).text(
+							"(" + Integer.toString(m_FavorityNum) + ")");
+					app.MyToast(this, "操作成功!");
 				} else
 					app.MyToast(this, "已收藏!");
 				// Toast.makeText(Detail_Show.this,json.getString("res_code"),Toast.LENGTH_LONG).show();
@@ -561,6 +568,12 @@ public class Detail_Show extends Activity {
 	}
 
 	public void OnClickFavorityNum(View v) {
+		subscribeFav();
+	}
+
+	private void subscribeFav(){
+//		PushService.subscribe(this, "CHANNEL_PROD_" + prod_id, Main.class);
+//		PushService.setDefaultPushCallback(this, Main.class);
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -574,7 +587,6 @@ public class Detail_Show extends Activity {
 
 		aq.ajax(cb);
 	}
-
 	public void CallServiceResultSupportNum(String url, JSONObject json,
 			AjaxStatus status) {
 
@@ -687,8 +699,11 @@ public class Detail_Show extends Activity {
 				popup_player_select.update();
 			}
 		}
-		else
-		{
+		else if(m_ReturnProgramView.show.episodes[0].down_urls == null
+				|| m_ReturnProgramView.show.episodes[0].down_urls[0].source == null){
+			subscribeFav();
+		}
+		else{
 			StartIntentToPlayer();
 		}
 	}
