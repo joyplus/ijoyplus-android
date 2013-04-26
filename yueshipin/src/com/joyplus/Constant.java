@@ -9,6 +9,7 @@ public class Constant {
 //	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
 //	public static String APPKEY = "ijoyplus_android_0001";
 	   //正式环境  云端投放
+//	   //正式环境  云端投放
 //	public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
 //  public static final String TV_CHANNEL_URL = "http://comet.joyplus.tv:8080/bindtv";
 //  public static final String CHECK_BINDING = "http://comet.joyplus.tv:8080/api/check_binding";
