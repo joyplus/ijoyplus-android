@@ -752,6 +752,9 @@ public class VideoView extends SurfaceView implements
 		} else if (mCurrentState == STATE_SUSPEND_UNSUPPORTED) {
 			openVideo();
 		}
+		//判断是否有设备可用
+		CheckDlnaDevice();
+		android.util.Log.i("app.DlnaDeviceFalg",app.DlnaDeviceFlag+"VidewView");
 	}
 
 	@Override
@@ -925,6 +928,21 @@ public class VideoView extends SurfaceView implements
 		return mCanSeekForward;
 	}
 
+	/*
+	 * 判断dlna当前设备是否可
+	 */
+	public void CheckDlnaDevice()
+	{
+		if (android.os.Build.VERSION.SDK_INT >= 14) {
+			if (mMyService != null) {
+				ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
+				if(mDmrCache.size()>=0)
+				{
+					app.DlnaDeviceFlag = true;
+				}
+			}
+		}
+	}
 	@Override
 	public void gotoDlnaVideoPlay() {
 		if (android.os.Build.VERSION.SDK_INT >= 14) {
