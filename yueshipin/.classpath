@@ -7,6 +7,6 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="libs/androidquery.jar"/>
 	<classpathentry kind="lib" path="libs/dianju1.00.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/android4.0"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
