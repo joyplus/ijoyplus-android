@@ -592,9 +592,7 @@ public class Detail_Movie extends Activity {
 						aq.id(R.id.button1).text(
 								"(" + Integer.toString(m_FavorityNum) + ")");
 					}
-					// app.MyToast(this, "收藏成功!");
 					app.MyToast(mContext, "操作成功");
-					// subscribedToChannel();
 				} else
 					app.MyToast(this, "已收藏!");
 			} catch (JSONException e) {

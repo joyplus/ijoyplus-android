@@ -546,7 +546,6 @@ public class Detail_Show extends Activity {
 					app.MyToast(this, "操作成功!");
 				} else
 					app.MyToast(this, "已收藏!");
-				// Toast.makeText(Detail_Show.this,json.getString("res_code"),Toast.LENGTH_LONG).show();
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
