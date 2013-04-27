@@ -191,6 +191,8 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 //			mStackAgent.Destroy();
 //		}
 //		handler.removeCallbacks(updatesb);
+		mMyService.setServiceClient(null);
+      	mMyService = null;
    		unregisterReceiver(volumeReceiver);
    		unbindService(mServiceConnection);
 		super.onDestroy();

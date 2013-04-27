@@ -16,29 +16,13 @@ import io.vov.vitamio.MediaPlayer.OnSubtitleUpdateListener;
 import io.vov.vitamio.MediaPlayer.OnVideoSizeChangedListener;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-
 import com.dlcs.dlna.Stack.MediaRenderer;
 import com.joyplus.App;
-import com.joyplus.BuildConfig;
-import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.Dlna.DlnaVideoPlay;
-import com.joyplus.Video.HttpThreadPoolUtils;
-import com.joyplus.Video.VideoPlayerActivity;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -47,9 +31,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.net.http.AndroidHttpClient;
-import android.os.AsyncTask;
-import android.text.format.Time;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -57,14 +38,10 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
 import android.webkit.URLUtil;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
@@ -234,7 +211,6 @@ public class VideoView extends SurfaceView implements
 	}
 
 	public void setVideoPath(String path) {
-		android.util.Log.i("player_yy","setVideoPath");
 		Uri uri = Uri.parse(path);
 		setVideoURI(uri);
 	}
@@ -266,6 +242,7 @@ public class VideoView extends SurfaceView implements
 	private void openVideo() {
 		if (mUri == null || mSurfaceHolder == null)
 			return;
+
 		Intent i = new Intent("com.android.music.musicservicecommand");
 		i.putExtra("command", "pause");
 		mContext.sendBroadcast(i);
@@ -321,6 +298,7 @@ public class VideoView extends SurfaceView implements
 
 	public void setServiceConnection(DlnaSelectDevice mMyService) {
 		this.mMyService = mMyService;
+		CheckDlnaDevice();
 	}
 
 	private void attachMediaController() {
@@ -948,6 +926,21 @@ public class VideoView extends SurfaceView implements
 		return mCanSeekForward;
 	}
 
+	/*
+	 * 判断dlna当前设备是否可
+	 */
+	public void CheckDlnaDevice()
+	{
+		if (android.os.Build.VERSION.SDK_INT >= 14) {
+			if (mMyService != null) {
+				ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
+				if(mDmrCache.size()>=0)
+				{
+					app.DlnaDeviceFlag = true;
+				}
+			}
+		}
+	}
 	@Override
 	public void gotoDlnaVideoPlay() {
 		if (android.os.Build.VERSION.SDK_INT >= 14) {
@@ -1046,7 +1039,6 @@ public class VideoView extends SurfaceView implements
 		setVideoPath(mPath);
 		if (PlayContinue)
 			seekTo(saveTime);
-		mMediaController.setYunduanMessage("411");
 	}
 
 	@Override

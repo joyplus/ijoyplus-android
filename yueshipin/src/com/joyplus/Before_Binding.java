@@ -16,10 +16,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class Before_Binding extends Activity {
 	FayeClient mClient;
@@ -93,12 +94,12 @@ public class Before_Binding extends Activity {
 
 						@Override
 						public void run() {
-							pb.dismiss();
-							if (app.GetServiceData("Binding_TV") == null) {
-								app.MyToast(Before_Binding.this, "绑定失败");
+							if (app.GetServiceData("Binding_TV") == null && pb.isShowing()) {
+								Toast.makeText(Before_Binding.this, "绑定失败",Toast.LENGTH_LONG).show();
 							}
+							pb.dismiss();
 							finish();
-						}
+						}					
 					}, 8000);
 				}
 

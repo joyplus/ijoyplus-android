@@ -10,7 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
@@ -63,7 +63,6 @@ public class Tab1 extends Activity implements
 		UmengUpdateAgent.update(this);
 		Parse.initialize(this, "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB",
 				"YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl");
-
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器

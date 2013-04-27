@@ -6,7 +6,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import com.dlcs.dlna.IMrcpListener;
 import com.dlcs.dlna.Mrcp;
 import com.dlcs.dlna.Stack;

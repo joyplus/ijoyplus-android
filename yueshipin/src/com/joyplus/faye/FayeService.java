@@ -16,7 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
+import com.joyplus.widget.Log;
 
 public class FayeService extends Service {
 	public static final String CONNECTIVITY_ACTION = "net.changed";
@@ -26,7 +26,8 @@ public class FayeService extends Service {
 	private static String user_id = null;
 	protected Handler hanlder;
 	static AQuery aq;
-	private static boolean IsConnected = false;
+//	private static boolean IsConnected = false;
+	private static boolean IsBind = false;
 
 	public static void FayeByService(Context context, String channel) {
 
@@ -39,20 +40,20 @@ public class FayeService extends Service {
 	public static void SendMessageService(Context mcontext, JSONObject json,
 			String userid) {
 		user_id = userid;
-		if (IsConnected) {
-			new Handler().postDelayed(new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						mClient.connectToServer(null);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}, 500);
-		}
+		// if (!IsConnected) {
+		// new Handler().postDelayed(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// try {
+		// mClient.connectToServer(null);
+		// } catch (Exception e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		// }, 500);
+		// }
 		mClient.sendMessage(json);
 
 	}
@@ -134,6 +135,7 @@ public class FayeService extends Service {
 					switch (push_type) {
 					case 32: // 确认绑定
 						if (userid.equals(user_id) && result.equals("success")) {
+							IsBind = true;
 							intent.putExtra("status", "success");
 							intent.setAction("com.joyplus.update_before_binding");
 						} else if (!userid.equals(user_id)) {
@@ -143,6 +145,7 @@ public class FayeService extends Service {
 						break;
 					case 33: // 取消绑定
 						if (userid.equals(user_id)) {
+							IsBind = false;
 							intent.putExtra("status", "fail");
 							intent.setAction("com.joyplus.check_binding");
 						}
@@ -160,15 +163,17 @@ public class FayeService extends Service {
 
 				@Override
 				public void disconnectedFromServer() {
-					IsConnected = false;
-					// mClient.connectToServer(null);
+//					IsConnected = false;
+					if (IsBind) {
+						mClient.connectToServer(null);
+					}
 					Log.i("TVChannleListener", "disconnectedFromServer>>>");
 
 				}
 
 				@Override
 				public void connectedToServer() {
-					IsConnected = true;
+//					IsConnected = true;
 					Log.i("TVChannleListener", "connectedToServer>>>");
 
 				}
