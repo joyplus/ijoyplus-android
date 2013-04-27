@@ -28,7 +28,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;

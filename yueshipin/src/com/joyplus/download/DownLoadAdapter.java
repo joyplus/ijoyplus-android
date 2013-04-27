@@ -9,7 +9,7 @@ import com.joyplus.R.id;
 
 import android.content.Context;
 import android.text.TextPaint;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;

@@ -5,7 +5,7 @@ package com.joyplus.faye;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.TextUtils;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.HttpStatus;

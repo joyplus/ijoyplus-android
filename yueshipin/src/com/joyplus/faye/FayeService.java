@@ -16,7 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
+import com.joyplus.widget.Log;
 
 public class FayeService extends Service {
 	public static final String CONNECTIVITY_ACTION = "net.changed";
