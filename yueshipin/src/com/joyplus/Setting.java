@@ -19,7 +19,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
@@ -76,7 +76,7 @@ public class Setting extends Activity {
 		mContext = this;
 		UMFeedbackService.enableNewReplyNotification(this,
 				NotificationType.AlertDialog);
-		// appRecommend();
+//		 appRecommend();
 		ViewGroup fatherLayout = (ViewGroup) findViewById(R.id.ad);
 		InnerListView listView = (InnerListView) this.findViewById(R.id.list);
 		listView.setMaxHeight(400);

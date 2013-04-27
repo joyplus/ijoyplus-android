@@ -28,7 +28,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -74,6 +74,7 @@ import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
+import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 
 public class Detail_TV extends Activity {
@@ -156,7 +157,7 @@ public class Detail_TV extends Activity {
 		prod_name = intent.getStringExtra("prod_name");
 		if (intent.getStringExtra("prod_type") != null) {
 			prod_type = intent.getStringExtra("prod_type");
-		}else{
+		} else {
 			prod_type = "2";
 		}
 		if (prod_name != null)
@@ -496,6 +497,12 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
 					aq.id(R.id.button20).clickable(false);
 				}
+				if (m_ReturnProgramView.tv.episodes[0].down_urls == null
+						|| m_ReturnProgramView.tv.episodes[0].down_urls[0].urls.length <= 0) {
+					aq.id(R.id.button1).gone();
+					aq.id(R.id.xiangkan_num).visible();
+					aq.id(R.id.xiangkan_num).text("  (" + m_FavorityNum + ")");
+				}
 				if (cacheManager != null && cacheInfoTemp != null) {
 
 					String temp = cacheInfoTemp.getComments();
@@ -543,7 +550,7 @@ public class Detail_TV extends Activity {
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		// android.util.Log.i("yanyuchuang",status.getCode()+"");
 		// ||json == null||!json.has("tv")
-		android.util.Log.i("JSONObject.AjaxStatus",status.getCode()+"");
+		android.util.Log.i("JSONObject.AjaxStatus", status.getCode() + "");
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -554,12 +561,12 @@ public class Detail_TV extends Activity {
 			return;
 		}
 		if (json == null || !json.has("tv")) {
-//			aq.id(R.id.ProgressText).gone();
-//			app.MyToast(aq.getContext(),
-//					getResources().getString(R.string.networkispoor));
-//			if (cacheInfoTemp == null) {
-//				aq.id(R.id.none_net).visible();
-//			}
+			// aq.id(R.id.ProgressText).gone();
+			// app.MyToast(aq.getContext(),
+			// getResources().getString(R.string.networkispoor));
+			// if (cacheInfoTemp == null) {
+			// aq.id(R.id.none_net).visible();
+			// }
 			GetServiceData();
 			return;
 		}
@@ -658,6 +665,11 @@ public class Detail_TV extends Activity {
 					m_FavorityNum++;
 					aq.id(R.id.button2).text(
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
+					if (m_ReturnProgramView.tv.episodes[0].down_urls == null
+							|| m_ReturnProgramView.tv.episodes[0].down_urls[0].urls.length <= 0) {
+						aq.id(R.id.xiangkan_num).text(
+								"  (" + Integer.toString(m_FavorityNum) + ")");
+					}
 					app.MyToast(this, "收藏成功!");
 				} else
 					app.MyToast(this, "已收藏!");
@@ -677,6 +689,7 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickFavorityNum(View v) {
+
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -689,8 +702,8 @@ public class Detail_TV extends Activity {
 				.weakHandler(this, "CallServiceFavorityResult");
 
 		aq.ajax(cb);
-
 	}
+
 
 	public void CallServiceResultSupportNum(String url, JSONObject json,
 			AjaxStatus status) {
@@ -740,27 +753,67 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickReportProblem(View v) {
-		if(!app.isNetworkAvailable())
-		{
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
 		popupReportProblem();
 	}
+	 public void OnClickXiangkan(View v){ 
+	    	String url = Constant.BASE_URL + "program/favority";
 
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("prod_id", prod_id);
+
+			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+			cb.SetHeader(app.getHeaders());
+
+			cb.params(params).url(url).type(JSONObject.class)
+					.weakHandler(this, "CallServiceXiangkanResult");
+			aq.ajax(cb);
+
+	    }
+	    public void CallServiceXiangkanResult(String url, JSONObject json,
+				AjaxStatus status) {
+
+			if (json != null) {
+				try {
+					// woof is "00000",now "20024",by yyc
+					if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
+						m_FavorityNum++;
+						aq.id(R.id.button2).text(
+								"收藏(" + Integer.toString(m_FavorityNum) + ")");
+							aq.id(R.id.xiangkan_num).text(
+									"  (" + Integer.toString(m_FavorityNum) + ")");
+						app.MyToast(mContext, "操作成功");
+					} else
+						app.MyToast(this, "想看的影片已加入收藏列表");
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				// ajax error, show error code
+				if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+					app.MyToast(aq.getContext(),
+							getResources().getString(R.string.networknotwork));
+			}
+
+		
+			
+		}
 	public void OnClickPlay(View v) {
 		if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
 				.equalsIgnoreCase("1")) {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		
-		if(!app.isNetworkAvailable())
-		{
+
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
-		
+
 		if (player_select == null
 				&& m_ReturnProgramView.tv.episodes.length <= 200) {
 			{
@@ -1050,13 +1103,12 @@ public class Detail_TV extends Activity {
 	public void OnClickTVPlay(View v) {
 
 		final int index = Integer.parseInt(v.getTag().toString());
-		
-		if(!app.isNetworkAvailable())
-		{
+
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
-		
+
 		if (player_select == null
 				&& m_ReturnProgramView.tv.episodes.length <= 200) {
 			{
@@ -1567,15 +1619,13 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickCacheDown(View v) {
-		if(!app.isNetworkAvailable())
-		{
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
-		if(downloadpopup!=null)
-		{
-			downloadpopup.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-					| Gravity.CENTER, 0, 78);
+		if (downloadpopup != null) {
+			downloadpopup.showAtLocation(findViewById(R.id.parent),
+					Gravity.CENTER | Gravity.CENTER, 0, 78);
 			downloadpopup.update();
 			return;
 		}
@@ -1756,7 +1806,8 @@ public class Detail_TV extends Activity {
 				((Button) v)
 						.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 				download_indexs.add(index);
-				android.util.Log.i("download_indexs",download_indexs.toString());
+				android.util.Log.i("download_indexs",
+						download_indexs.toString());
 			} else {
 				Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
 						.show();
@@ -1830,12 +1881,12 @@ public class Detail_TV extends Activity {
 					m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 				}
 			}
-			android.util.Log.i("download_indexs",download_indexs.toString());
+			android.util.Log.i("download_indexs", download_indexs.toString());
 			if (download_indexs.contains(Integer.parseInt(m_j))) {
-			m_button.setBackgroundDrawable(download_been);
-			m_button.setEnabled(false);
-			m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
-			m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+				m_button.setBackgroundDrawable(download_been);
+				m_button.setEnabled(false);
+				m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
+				m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 			}
 			m_button.setVisibility(View.VISIBLE);
 		}

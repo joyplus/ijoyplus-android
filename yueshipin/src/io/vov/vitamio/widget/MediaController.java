@@ -270,6 +270,15 @@ public class MediaController extends FrameLayout {
 		mPauseButton = (ImageButton) v
 				.findViewById(R.id.mediacontroller_play_pause);
 		mDlnaButton = (ImageButton) v.findViewById(R.id.mediacontroller_dlna);
+		
+		if(app.DlnaDeviceFlag)
+		{
+			mDlnaButton.setVisibility(View.VISIBLE);	
+		}
+		else
+		{
+			mDlnaButton.setVisibility(View.INVISIBLE);
+		}
 		mYunduanButton = (ImageButton) v.findViewById(R.id.yunduan_toufang);
 		if (app.GetServiceData("Binding_TV") != null) {
 			mYunduanButton.setVisibility(View.VISIBLE);
@@ -1328,6 +1337,16 @@ public class MediaController extends FrameLayout {
 			mPauseButton.setBackgroundResource(R.drawable.player_pause);
 		else
 			mPauseButton.setBackgroundResource(R.drawable.player_play);
+		
+		if(app.DlnaDeviceFlag)
+		{
+			mDlnaButton.setVisibility(View.VISIBLE);	
+		}
+		else
+		{
+			mDlnaButton.setVisibility(View.INVISIBLE);
+		}
+		android.util.Log.i("app.DlnaDeviceFalg",app.DlnaDeviceFlag+"");
 	}
 
 	private void doPauseResume() {

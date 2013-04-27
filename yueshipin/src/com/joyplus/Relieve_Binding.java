@@ -9,7 +9,6 @@ import com.joyplus.widget.WaitingDialog;
 import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,11 +39,7 @@ public class Relieve_Binding extends Activity {
 		macAddress = app.GetServiceData("Binding_TV_Channal");
 		tv_channel = "/screencast/" + macAddress;
 
-//		pb = new ProgressDialog(this);
-//		pb.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//		pb.setCanceledOnTouchOutside(false);
-//		pb.setCancelable(true);
-		 pb = new WaitingDialog(mContext);
+		pb = new WaitingDialog(mContext);
 		 pb.setDialogWindowStyle();
 		 pb.setCanceledOnTouchOutside(false);
 
@@ -71,7 +66,6 @@ public class Relieve_Binding extends Activity {
 								FayeService.SendMessageService(mContext, et,
 										user_id);
 								app.DeleteServiceData("Binding_TV");
-//								app.MyToast(Relieve_Binding.this, "已解除绑定");
 								MobclickAgent.onEvent(mContext,
 										ue_screencast_unbinded);
 								pb.dismiss();

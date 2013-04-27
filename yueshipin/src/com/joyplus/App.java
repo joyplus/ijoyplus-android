@@ -24,7 +24,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.Gravity;
 import android.webkit.URLUtil;
 import android.widget.Toast;
@@ -60,6 +60,7 @@ public class App extends Application {
 	private CurrentPlayData mCurrentPlayData;
 	private ReturnProgramView m_ReturnProgramView = null;
 	private int number = 0;
+	public boolean DlnaDeviceFlag = false;
     
 	public ReturnProgramView get_ReturnProgramView() {
 		return m_ReturnProgramView;
@@ -87,7 +88,6 @@ public class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
 		File cacheDir = new File(Constant.PATH);
 		if (!cacheDir.exists())
 			cacheDir.mkdirs();
@@ -101,7 +101,7 @@ public class App extends Application {
 		Parse.initialize(this, Constant.Parse_AppId, Constant.Parse_ClientKey);
 
 		instance = this;
-
+		
 	}
 
 	/**
