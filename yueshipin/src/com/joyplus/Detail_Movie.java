@@ -34,6 +34,8 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -59,9 +61,7 @@ import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadTask;
-import com.parse.ParseException;
-import com.parse.ParseInstallation;
-import com.parse.SaveCallback;
+import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 
 public class Detail_Movie extends Activity {
