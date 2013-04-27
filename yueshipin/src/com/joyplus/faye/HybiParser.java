@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 
-import android.util.Log;
+import com.joyplus.widget.Log;
 
 public class HybiParser {
 

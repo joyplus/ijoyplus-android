@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import android.util.Log;
+import com.joyplus.widget.Log;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;

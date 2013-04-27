@@ -19,7 +19,7 @@ package com.zxing.camera;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import com.joyplus.widget.Log;
 
 final class AutoFocusCallback implements Camera.AutoFocusCallback {
 

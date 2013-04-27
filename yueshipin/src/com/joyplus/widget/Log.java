@@ -1,5 +1,10 @@
 package com.joyplus.widget;
 
+/**
+ * @author yyc
+ *
+ */
+
 public final class Log {
 	
 	private static boolean mbLoggable = true; 

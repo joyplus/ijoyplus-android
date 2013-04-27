@@ -27,7 +27,7 @@ package com.joyplus.faye;
  */
 
 import android.os.Handler;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

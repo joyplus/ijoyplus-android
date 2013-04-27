@@ -3,7 +3,7 @@ package com.joyplus.download;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import com.joyplus.widget.Log;
 
 /**
  * 建立一个数据库帮助类

@@ -24,7 +24,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.Gravity;
 import android.webkit.URLUtil;
 import android.widget.Toast;

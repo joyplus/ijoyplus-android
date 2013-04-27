@@ -13,7 +13,7 @@ import com.joyplus.Constant;
 import android.content.Context;
 import android.content.Intent;
 //import android.media.audiofx.BassBoost.Settings;
-import android.util.Log;
+import com.joyplus.widget.Log;
 
 public class Downloader {
 	private String urlstr;// 下载的地址
@@ -57,7 +57,7 @@ public class Downloader {
 
 	public DownloadInfo getDownloaderInfors() {
 		if (isFirst(prod_id)) {
-			Log.v("TAG", "isFirst");
+			Log.i("TAG", "isFirst");
 			init();
 //			file_path = localfile;
 			infos = new ArrayList<DownloadInfo>();

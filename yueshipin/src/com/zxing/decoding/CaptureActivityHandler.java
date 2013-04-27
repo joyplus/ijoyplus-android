@@ -25,7 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import com.joyplus.widget.Log;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
