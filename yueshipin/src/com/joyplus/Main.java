@@ -51,7 +51,7 @@ public class Main extends TabActivity {
 	private String TAB_1 = "Tab1";
 	private String TAB_2 = "Tab2";
 	private String TAB_3 = "Tab3";
-	private String TAB_4 = "Tab4";   
+	private String TAB_4 = "Tab4";
 	private TabHost mTabHost;
 
 	private Intent mTab1, mTab2, mTab3, mTab4;
@@ -94,20 +94,20 @@ public class Main extends TabActivity {
 			startService(intent);
 		}
 
-////		if (app.GetServiceData("Binding_TV") != null) {
-//
-//			Intent service = new Intent(Main.this, FayeService.class);
-//			startService(service);
-//			check_binding(app.GetServiceData("Binding_TV_Channal"),
-//					app.GetServiceData("Binding_Userid"), app.getHeaders());
-//
-////		}
-//
-//		PushService.subscribe(this, "", Main.class);
-//		PushService.subscribe(this, "CHANNEL_ANDROID", Main.class);
-//		PushService.setDefaultPushCallback(this, Main.class);
+		// // if (app.GetServiceData("Binding_TV") != null) {
+		//
+		// Intent service = new Intent(Main.this, FayeService.class);
+		// startService(service);
+		// check_binding(app.GetServiceData("Binding_TV_Channal"),
+		// app.GetServiceData("Binding_Userid"), app.getHeaders());
+		//
+		// // }
+		//
+		PushService.subscribe(this, "", Main.class);
+		PushService.subscribe(this, "CHANNEL_ANDROID", Main.class);
+		PushService.setDefaultPushCallback(this, Main.class);
 		mHandler.postDelayed(mRunnable, 2000);
-//		new MyThread(Main.this).start();
+		// new MyThread(Main.this).start();
 		if (!Constant.TestEnv)
 			ReadLocalAppKey();
 
@@ -121,7 +121,7 @@ public class Main extends TabActivity {
 			mianzeDialog.show();
 		}
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		try {
@@ -254,7 +254,7 @@ public class Main extends TabActivity {
 		mHandler.removeCallbacks(mRunnable);
 		unregisterBinding();
 		super.onDestroy();
-		
+
 	}
 
 	@Override
@@ -374,20 +374,22 @@ public class Main extends TabActivity {
 			// 解决没有网络时程序不能关闭的问题
 		}
 	}
-	
+
 	private final Runnable mRunnable = new Runnable() {
 		public void run() {
-			Intent service = new Intent(Main.this, FayeService.class);
-			startService(service);
-			check_binding(app.GetServiceData("Binding_TV_Channal"),
-					app.GetServiceData("Binding_Userid"), app.getHeaders());
+			if (app.GetServiceData("Binding_TV") != null) {
+				Intent service = new Intent(Main.this, FayeService.class);
+				startService(service);
+				check_binding(app.GetServiceData("Binding_TV_Channal"),
+						app.GetServiceData("Binding_Userid"), app.getHeaders());
+			}
 
-			PushService.subscribe(Main.this, "", Main.class);
-			PushService.subscribe(Main.this, "CHANNEL_ANDROID", Main.class);
-			PushService.setDefaultPushCallback(Main.this, Main.class);
+			// PushService.subscribe(Main.this, "", Main.class);
+			// PushService.subscribe(Main.this, "CHANNEL_ANDROID", Main.class);
+			// PushService.setDefaultPushCallback(Main.this, Main.class);
 		}
 	};
-	
+
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
@@ -421,29 +423,29 @@ public class Main extends TabActivity {
 		}
 		return super.dispatchKeyEvent(event);
 	}
-	
-//	class MyThread extends Thread{
-//		private Context context;
-//		public MyThread(Context context)
-//		{
-//			this.context = context;
-//		}
-//		@Override
-//		public void run() {
-//			// TODO Auto-generated method stub
-//			Intent service = new Intent(Main.this, FayeService.class);
-//			context.startService(service);
-//			check_binding(app.GetServiceData("Binding_TV_Channal"),
-//					app.GetServiceData("Binding_Userid"), app.getHeaders());
-//
-//			PushService.subscribe(context, "", Main.class);
-//			PushService.subscribe(context, "CHANNEL_ANDROID", Main.class);
-//			PushService.setDefaultPushCallback(context, Main.class);
-//			
-//		}
-//		
-//	}
-	
+
+	// class MyThread extends Thread{
+	// private Context context;
+	// public MyThread(Context context)
+	// {
+	// this.context = context;
+	// }
+	// @Override
+	// public void run() {
+	// // TODO Auto-generated method stub
+	// Intent service = new Intent(Main.this, FayeService.class);
+	// context.startService(service);
+	// check_binding(app.GetServiceData("Binding_TV_Channal"),
+	// app.GetServiceData("Binding_Userid"), app.getHeaders());
+	//
+	// PushService.subscribe(context, "", Main.class);
+	// PushService.subscribe(context, "CHANNEL_ANDROID", Main.class);
+	// PushService.setDefaultPushCallback(context, Main.class);
+	//
+	// }
+	//
+	// }
+
 	// 免责声明对话框
 
 	public class MianZeDialog extends Dialog {
@@ -533,7 +535,7 @@ public class Main extends TabActivity {
 
 	private void check_binding(String channel, String userid,
 			Map<String, String> headers) {
-		if(userid == null || channel == null)
+		if (userid == null || channel == null)
 			return;
 		String url = Constant.CHECK_BINDING + "?tv_channel=" + channel
 				+ "&user_id=" + userid;
@@ -550,7 +552,7 @@ public class Main extends TabActivity {
 			AjaxStatus status) {
 		try {
 			int result = Integer.valueOf(json.getString("status"));
-			Log.i("check", "status>>>"+result);
+			Log.i("check", "status>>>" + result);
 			switch (result) {
 			case 1:
 				app.SaveServiceData("Binding_TV", "success");
