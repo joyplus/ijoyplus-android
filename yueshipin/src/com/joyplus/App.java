@@ -88,7 +88,6 @@ public class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Log.setLoggable(false);
 		File cacheDir = new File(Constant.PATH);
 		if (!cacheDir.exists())
 			cacheDir.mkdirs();
