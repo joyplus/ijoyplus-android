@@ -298,6 +298,7 @@ public class VideoView extends SurfaceView implements
 
 	public void setServiceConnection(DlnaSelectDevice mMyService) {
 		this.mMyService = mMyService;
+		CheckDlnaDevice();
 	}
 
 	private void attachMediaController() {
@@ -752,9 +753,6 @@ public class VideoView extends SurfaceView implements
 		} else if (mCurrentState == STATE_SUSPEND_UNSUPPORTED) {
 			openVideo();
 		}
-		//判断是否有设备可用
-		CheckDlnaDevice();
-		android.util.Log.i("app.DlnaDeviceFalg",app.DlnaDeviceFlag+"VidewView");
 	}
 
 	@Override
