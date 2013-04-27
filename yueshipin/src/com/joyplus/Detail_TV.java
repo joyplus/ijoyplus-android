@@ -498,9 +498,10 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button20).clickable(false);
 				}
 				if (m_ReturnProgramView.tv.episodes[0].down_urls == null
-						|| m_ReturnProgramView.tv.episodes[0].down_urls[0].source == null) {
-					aq.id(R.id.button1).background(R.drawable.xiangkanmovie);
-					aq.id(R.id.button1).text("(" + m_FavorityNum + ")");
+						|| m_ReturnProgramView.tv.episodes[0].down_urls[0].urls.length <= 0) {
+					aq.id(R.id.button1).gone();
+					aq.id(R.id.xiangkan_num).visible();
+					aq.id(R.id.xiangkan_num).text("  (" + m_FavorityNum + ")");
 				}
 				if (cacheManager != null && cacheInfoTemp != null) {
 
@@ -665,11 +666,11 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button2).text(
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
 					if (m_ReturnProgramView.tv.episodes[0].down_urls == null
-							|| m_ReturnProgramView.tv.episodes[0].down_urls[0].source == null) {
-						aq.id(R.id.button1).text(
-								"(" + Integer.toString(m_FavorityNum) + ")");
+							|| m_ReturnProgramView.tv.episodes[0].down_urls[0].urls.length <= 0) {
+						aq.id(R.id.xiangkan_num).text(
+								"  (" + Integer.toString(m_FavorityNum) + ")");
 					}
-					app.MyToast(this, "操作成功!");
+					app.MyToast(this, "收藏成功!");
 				} else
 					app.MyToast(this, "已收藏!");
 			} catch (JSONException e) {
@@ -689,12 +690,6 @@ public class Detail_TV extends Activity {
 
 	public void OnClickFavorityNum(View v) {
 
-		subscribeFav();
-	}
-
-	private void subscribeFav() {
-		// PushService.subscribe(this, "CHANNEL_PROD_" + prod_id, Main.class);
-		// PushService.setDefaultPushCallback(this, Main.class);
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -708,6 +703,7 @@ public class Detail_TV extends Activity {
 
 		aq.ajax(cb);
 	}
+
 
 	public void CallServiceResultSupportNum(String url, JSONObject json,
 			AjaxStatus status) {
@@ -763,7 +759,49 @@ public class Detail_TV extends Activity {
 		}
 		popupReportProblem();
 	}
+	 public void OnClickXiangkan(View v){ 
+	    	String url = Constant.BASE_URL + "program/favority";
 
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("prod_id", prod_id);
+
+			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+			cb.SetHeader(app.getHeaders());
+
+			cb.params(params).url(url).type(JSONObject.class)
+					.weakHandler(this, "CallServiceXiangkanResult");
+			aq.ajax(cb);
+
+	    }
+	    public void CallServiceXiangkanResult(String url, JSONObject json,
+				AjaxStatus status) {
+
+			if (json != null) {
+				try {
+					// woof is "00000",now "20024",by yyc
+					if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
+						m_FavorityNum++;
+						aq.id(R.id.button2).text(
+								"收藏(" + Integer.toString(m_FavorityNum) + ")");
+							aq.id(R.id.xiangkan_num).text(
+									"  (" + Integer.toString(m_FavorityNum) + ")");
+						app.MyToast(mContext, "操作成功");
+					} else
+						app.MyToast(this, "想看的影片已加入收藏列表");
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				// ajax error, show error code
+				if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+					app.MyToast(aq.getContext(),
+							getResources().getString(R.string.networknotwork));
+			}
+
+		
+			
+		}
 	public void OnClickPlay(View v) {
 		if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
 				.equalsIgnoreCase("1")) {
@@ -816,9 +854,6 @@ public class Detail_TV extends Activity {
 						Gravity.CENTER | Gravity.CENTER, 0, 40);
 				popup_player_select.update();
 			}
-		} else if (m_ReturnProgramView.tv.episodes[0].down_urls == null
-				|| m_ReturnProgramView.tv.episodes[0].down_urls[0].source == null) {
-			subscribeFav();
 		} else {
 			StartIntentToPlayer();
 		}

@@ -256,17 +256,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:padding="2dp" >
+                    android:padding="2dp" 
+                    android:orientation="vertical">
 
                     <Button
                         android:id="@+id/button1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/playmovie"
+                        android:onClick="OnClickPlay"
+                        />
+                    <Button
+                        android:id="@+id/xiangkan_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/xiangkan_background"
                         android:gravity="center_vertical"
-                        android:paddingLeft="75dip"
+                        android:drawableLeft="@drawable/xiangkan"
+                        android:text=" (999)"
+                        android:paddingLeft="10dp"
                         android:textColor="@android:color/white"
-                        android:onClick="OnClickPlay" />
+                        android:onClick="OnClickXiangkan"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <LinearLayout
