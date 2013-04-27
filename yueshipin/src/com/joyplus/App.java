@@ -88,7 +88,7 @@ public class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
+		Log.setLoggable(false);
 		File cacheDir = new File(Constant.PATH);
 		if (!cacheDir.exists())
 			cacheDir.mkdirs();
@@ -102,7 +102,7 @@ public class App extends Application {
 		Parse.initialize(this, Constant.Parse_AppId, Constant.Parse_ClientKey);
 
 		instance = this;
-
+		
 	}
 
 	/**
