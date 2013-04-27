@@ -121,7 +121,7 @@ public class Main extends TabActivity {
 			mianzeDialog.show();
 		}
 	}
-
+	
 	@Override
 	protected void onNewIntent(Intent intent) {
 		try {
@@ -243,7 +243,6 @@ public class Main extends TabActivity {
 
 		// 需要在退出程序时调用平台的destroy方法关闭SDK
 		DianJuPlatform.destroy(this);
-
 		if (aq != null)
 			aq.dismiss();
 		if (android.os.Build.VERSION.SDK_INT >= 14) {
@@ -255,6 +254,7 @@ public class Main extends TabActivity {
 		mHandler.removeCallbacks(mRunnable);
 		unregisterBinding();
 		super.onDestroy();
+		
 	}
 
 	@Override
@@ -421,7 +421,29 @@ public class Main extends TabActivity {
 		}
 		return super.dispatchKeyEvent(event);
 	}
-
+	
+//	class MyThread extends Thread{
+//		private Context context;
+//		public MyThread(Context context)
+//		{
+//			this.context = context;
+//		}
+//		@Override
+//		public void run() {
+//			// TODO Auto-generated method stub
+//			Intent service = new Intent(Main.this, FayeService.class);
+//			context.startService(service);
+//			check_binding(app.GetServiceData("Binding_TV_Channal"),
+//					app.GetServiceData("Binding_Userid"), app.getHeaders());
+//
+//			PushService.subscribe(context, "", Main.class);
+//			PushService.subscribe(context, "CHANNEL_ANDROID", Main.class);
+//			PushService.setDefaultPushCallback(context, Main.class);
+//			
+//		}
+//		
+//	}
+	
 	// 免责声明对话框
 
 	public class MianZeDialog extends Dialog {
