@@ -104,7 +104,7 @@ public class Detail_Show extends Activity {
 	Context mContext;
 	private String player_select;
 	private PopupWindow popup_player_select = null;
-	
+
 	private PopupWindow popup_report = null;
 	private PopupWindow popupReviewDetail = null;
 	private String invalid_type = null;
@@ -176,7 +176,7 @@ public class Detail_Show extends Activity {
 		if (app.GetServiceData("new_guider_3") == null) {
 			aq.id(R.id.new_guider_3).visible();
 		}
-		
+
 	}
 
 	public void OnClickNewGuider_3(View v) {
@@ -368,12 +368,10 @@ public class Detail_Show extends Activity {
 				aq.id(R.id.button1).background(R.drawable.xiangkanmovie);
 				aq.id(R.id.button1).text("(" + m_FavorityNum + ")");
 			}
-			if(cacheManager!=null&&cacheInfoTemp!=null)
-			{
-				
+			if (cacheManager != null && cacheInfoTemp != null) {
+
 				String temp = cacheInfoTemp.getComments();
-				if(temp!=null&&temp.toString().length()>10)
-				{
+				if (temp != null && temp.toString().length() > 10) {
 					ObjectMapper mapper = new ObjectMapper();
 					m_ReturnProgramReviews = null;
 					try {
@@ -390,19 +388,14 @@ public class Detail_Show extends Activity {
 						e.printStackTrace();
 					}
 					// 创建数据源对象
-					if(m_ReturnProgramReviews==null)
-					{
+					if (m_ReturnProgramReviews == null) {
 						GetReviews();
 					}
 					ShowComments();
-				}
-				else
-				{
+				} else {
 					GetReviews();
 				}
-			}
-			else
-			{
+			} else {
 				GetReviews();
 			}
 
@@ -418,9 +411,9 @@ public class Detail_Show extends Activity {
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-//		android.util.Log.i("yanyuchuang",status.getCode()+"");
+		// android.util.Log.i("yanyuchuang",status.getCode()+"");
 		// || json == null|| !json.has("show")
-		android.util.Log.i("JSONObject.AjaxStatus",status.getCode()+"");
+		android.util.Log.i("JSONObject.AjaxStatus", status.getCode() + "");
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -430,14 +423,13 @@ public class Detail_Show extends Activity {
 			}
 			return;
 		}
-		if(json == null|| !json.has("show"))
-		{
-//			aq.id(R.id.ProgressText).gone();
-//			app.MyToast(aq.getContext(),
-//					getResources().getString(R.string.networkispoor));
-//			if (cacheInfoTemp == null) {
-//				aq.id(R.id.none_net).visible();
-//			}
+		if (json == null || !json.has("show")) {
+			// aq.id(R.id.ProgressText).gone();
+			// app.MyToast(aq.getContext(),
+			// getResources().getString(R.string.networkispoor));
+			// if (cacheInfoTemp == null) {
+			// aq.id(R.id.none_net).visible();
+			// }
 			GetServiceData();
 			return;
 		}
@@ -525,7 +517,7 @@ public class Detail_Show extends Activity {
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-		cb.timeout(30*1000);
+		cb.timeout(30 * 1000);
 		cb.SetHeader(app.getHeaders());
 		if (cacheInfoTemp == null) {
 			aq.id(R.id.ProgressText).visible();
@@ -546,8 +538,11 @@ public class Detail_Show extends Activity {
 					m_FavorityNum++;
 					aq.id(R.id.button2).text(
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
-					aq.id(R.id.button1).text(
-							"(" + Integer.toString(m_FavorityNum) + ")");
+					if (m_ReturnProgramView.show.episodes[0].down_urls == null
+							|| m_ReturnProgramView.show.episodes[0].down_urls[0].source == null) {
+						aq.id(R.id.button1).text(
+								"(" + Integer.toString(m_FavorityNum) + ")");
+					}
 					app.MyToast(this, "操作成功!");
 				} else
 					app.MyToast(this, "已收藏!");
@@ -571,9 +566,9 @@ public class Detail_Show extends Activity {
 		subscribeFav();
 	}
 
-	private void subscribeFav(){
-//		PushService.subscribe(this, "CHANNEL_PROD_" + prod_id, Main.class);
-//		PushService.setDefaultPushCallback(this, Main.class);
+	private void subscribeFav() {
+		// PushService.subscribe(this, "CHANNEL_PROD_" + prod_id, Main.class);
+		// PushService.setDefaultPushCallback(this, Main.class);
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -587,6 +582,7 @@ public class Detail_Show extends Activity {
 
 		aq.ajax(cb);
 	}
+
 	public void CallServiceResultSupportNum(String url, JSONObject json,
 			AjaxStatus status) {
 
@@ -633,8 +629,7 @@ public class Detail_Show extends Activity {
 	}
 
 	public void OnClickReportProblem(View v) {
-		if(!app.isNetworkAvailable())
-		{
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
@@ -647,36 +642,33 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		
-		if(!app.isNetworkAvailable())
-		{
+
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
-		
-		if(player_select==null && m_ReturnProgramView.show.episodes.length <= 200)
-		{
+
+		if (player_select == null
+				&& m_ReturnProgramView.show.episodes.length <= 200) {
 			{
 				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-				final ViewGroup menuView = (ViewGroup) mLayoutInflater
-						.inflate(R.layout.player_select, null, true);
+				final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+						R.layout.player_select, null, true);
 				popup_player_select = new PopupWindow(menuView,
-						LayoutParams.WRAP_CONTENT,
-						LayoutParams.WRAP_CONTENT, true);
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+						true);
 				Button default_btn = (Button) menuView
 						.findViewById(R.id.neizhibtn);
-				default_btn
-						.setOnClickListener(new Button.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								// TODO Auto-generated method stub
-								player_select = "default";
-								app.SaveServiceData("player_select",
-										"default");
-								popup_player_select.dismiss();
-								StartIntentToPlayer();
-							}
-						});
+				default_btn.setOnClickListener(new Button.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						player_select = "default";
+						app.SaveServiceData("player_select", "default");
+						popup_player_select.dismiss();
+						StartIntentToPlayer();
+					}
+				});
 				Button third_btn = (Button) menuView
 						.findViewById(R.id.disanfangbtn);
 				third_btn.setOnClickListener(new Button.OnClickListener() {
@@ -685,31 +677,26 @@ public class Detail_Show extends Activity {
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						player_select = "third";
-						app.SaveServiceData("player_select","third");
+						app.SaveServiceData("player_select", "third");
 						popup_player_select.dismiss();
 						StartIntentToPlayer();
-						}
+					}
 				});
-				popup_player_select
-						.setBackgroundDrawable(new BitmapDrawable());
-				popup_player_select
-						.showAtLocation(Detail_Show.this
-								.findViewById(R.id.parent),
-								Gravity.CENTER | Gravity.CENTER, 0, 40);
+				popup_player_select.setBackgroundDrawable(new BitmapDrawable());
+				popup_player_select.showAtLocation(
+						Detail_Show.this.findViewById(R.id.parent),
+						Gravity.CENTER | Gravity.CENTER, 0, 40);
 				popup_player_select.update();
 			}
-		}
-		else if(m_ReturnProgramView.show.episodes[0].down_urls == null
-				|| m_ReturnProgramView.show.episodes[0].down_urls[0].source == null){
+		} else if (m_ReturnProgramView.show.episodes[0].down_urls == null
+				|| m_ReturnProgramView.show.episodes[0].down_urls[0].source == null) {
 			subscribeFav();
-		}
-		else{
+		} else {
 			StartIntentToPlayer();
 		}
 	}
-	
-	public void StartIntentToPlayer()
-	{
+
+	public void StartIntentToPlayer() {
 		app.checkUserSelect(Detail_Show.this);
 		if (app.use2G3G) {
 			// 综艺type为3 ，sbuname 为当前集数
@@ -735,21 +722,19 @@ public class Detail_Show extends Activity {
 					bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				if("third".equalsIgnoreCase(player_select)|| m_ReturnProgramView.show.episodes.length > 200)
-				{
+				if ("third".equalsIgnoreCase(player_select)
+						|| m_ReturnProgramView.show.episodes.length > 200) {
 					Intent it = new Intent(Intent.ACTION_VIEW);
 					Uri uri = Uri.parse(PROD_SOURCE);
 					it.setDataAndType(uri, "video/*");
 					startActivity(it);
-				}
-				else
-				{
+				} else {
 					startActivity(intent);
 				}
 			}
 		}
 	}
-	
+
 	// OnClickNext4
 	public void OnClickNext4(View v) {
 		String m_j = null;
@@ -830,13 +815,12 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		
-		if(!app.isNetworkAvailable())
-		{
+
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
-		
+
 		if (m_ReturnProgramView.show.episodes != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls != null
 				&& m_ReturnProgramView.show.episodes[index].video_urls[0].url != null)
@@ -872,29 +856,27 @@ public class Detail_Show extends Activity {
 				}
 			}
 		}
-		if(player_select==null && m_ReturnProgramView.show.episodes.length <= 200)
-		{
+		if (player_select == null
+				&& m_ReturnProgramView.show.episodes.length <= 200) {
 			{
 				LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-				final ViewGroup menuView = (ViewGroup) mLayoutInflater
-						.inflate(R.layout.player_select, null, true);
+				final ViewGroup menuView = (ViewGroup) mLayoutInflater.inflate(
+						R.layout.player_select, null, true);
 				popup_player_select = new PopupWindow(menuView,
-						LayoutParams.WRAP_CONTENT,
-						LayoutParams.WRAP_CONTENT, true);
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+						true);
 				Button default_btn = (Button) menuView
 						.findViewById(R.id.neizhibtn);
-				default_btn
-						.setOnClickListener(new Button.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								// TODO Auto-generated method stub
-								player_select = "default";
-								app.SaveServiceData("player_select",
-										"default");
-								popup_player_select.dismiss();
-								StartIntentToPlayerShow(index);
-							}
-						});
+				default_btn.setOnClickListener(new Button.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						player_select = "default";
+						app.SaveServiceData("player_select", "default");
+						popup_player_select.dismiss();
+						StartIntentToPlayerShow(index);
+					}
+				});
 				Button third_btn = (Button) menuView
 						.findViewById(R.id.disanfangbtn);
 				third_btn.setOnClickListener(new Button.OnClickListener() {
@@ -903,28 +885,23 @@ public class Detail_Show extends Activity {
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						player_select = "third";
-						app.SaveServiceData("player_select","third");
+						app.SaveServiceData("player_select", "third");
 						popup_player_select.dismiss();
 						StartIntentToPlayerShow(index);
-						}
+					}
 				});
-				popup_player_select
-						.setBackgroundDrawable(new BitmapDrawable());
-				popup_player_select
-						.showAtLocation(Detail_Show.this
-								.findViewById(R.id.parent),
-								Gravity.CENTER | Gravity.CENTER, 0, 40);
+				popup_player_select.setBackgroundDrawable(new BitmapDrawable());
+				popup_player_select.showAtLocation(
+						Detail_Show.this.findViewById(R.id.parent),
+						Gravity.CENTER | Gravity.CENTER, 0, 40);
 				popup_player_select.update();
 			}
-		}
-		else
-		{
+		} else {
 			StartIntentToPlayerShow(index);
 		}
 	}
-	
-	public void StartIntentToPlayerShow(int index)
-	{
+
+	public void StartIntentToPlayerShow(int index) {
 		app.checkUserSelect(Detail_Show.this);
 		if (app.use2G3G) {
 
@@ -963,21 +940,19 @@ public class Detail_Show extends Activity {
 					bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				if("third".equalsIgnoreCase(player_select)|| m_ReturnProgramView.show.episodes.length > 200)
-				{
+				if ("third".equalsIgnoreCase(player_select)
+						|| m_ReturnProgramView.show.episodes.length > 200) {
 					Intent it = new Intent(Intent.ACTION_VIEW);
 					Uri uri = Uri.parse(PROD_SOURCE);
 					it.setDataAndType(uri, "video/*");
 					startActivity(it);
-				}
-				else
-				{
+				} else {
 					startActivity(intent);
 				}
 			}
 		}
 	}
-	
+
 	public void videoSourceSort(int source_index) {
 		if (m_ReturnProgramView.show.episodes[source_index].down_urls != null) {
 			for (int j = 0; j < m_ReturnProgramView.show.episodes[source_index].down_urls.length; j++) {
@@ -1169,8 +1144,7 @@ public class Detail_Show extends Activity {
 	}
 
 	public void OnClickReviewComments(View v) {
-		if(popupReviewDetail!=null)
-		{
+		if (popupReviewDetail != null) {
 			popupReviewDetail.dismiss();
 		}
 		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -1221,8 +1195,7 @@ public class Detail_Show extends Activity {
 				m_ReturnProgramReviews = null;
 			m_ReturnProgramReviews = mapper.readValue(json.toString(),
 					ReturnProgramReviews.class);
-			if(json!=null&&cacheManager!=null)
-			{
+			if (json != null && cacheManager != null) {
 				cacheManager.saveVideoCacheComments(json.toString(), prod_id);
 			}
 			// 创建数据源对象
@@ -1394,8 +1367,7 @@ public class Detail_Show extends Activity {
 	// }
 
 	public void OnClickCacheDown(View v) {
-		if(!app.isNetworkAvailable())
-		{
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
@@ -1408,7 +1380,7 @@ public class Detail_Show extends Activity {
 		setContentView(R.layout.download_show);
 		download_focuse = this.getResources().getDrawable(
 				R.drawable.download_show2);
-		
+
 		LinearLayout linearbtn = (LinearLayout) findViewById(R.id.btnReturnDetail_Show);
 
 		linearbtn.setOnClickListener(new Button.OnClickListener() {

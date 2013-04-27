@@ -66,7 +66,7 @@ public class FayeClient implements Listener {
 	private static final String VALUE_CONN_TYPE = "websocket";
 
 	private static final long RECONNECT_WAIT = 10000;
-	private static final int MAX_CONNECTION_ATTEMPTS = 3;
+	private static final int MAX_CONNECTION_ATTEMPTS = 0;
 
 	private WebSocketClient mClient;
 	private boolean mConnected = false;
@@ -89,9 +89,9 @@ public class FayeClient implements Listener {
 
 			if (!mConnected) {
 
-				openWebSocketConnection();
 
 				if (mConnectionAttempts < MAX_CONNECTION_ATTEMPTS) {
+					openWebSocketConnection();
 					mConnectionAttempts++;
 					getHandler().postDelayed(this, RECONNECT_WAIT);
 				}

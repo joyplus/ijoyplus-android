@@ -157,7 +157,7 @@ public class Detail_TV extends Activity {
 		prod_name = intent.getStringExtra("prod_name");
 		if (intent.getStringExtra("prod_type") != null) {
 			prod_type = intent.getStringExtra("prod_type");
-		}else{
+		} else {
 			prod_type = "2";
 		}
 		if (prod_name != null)
@@ -549,7 +549,7 @@ public class Detail_TV extends Activity {
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		// android.util.Log.i("yanyuchuang",status.getCode()+"");
 		// ||json == null||!json.has("tv")
-		android.util.Log.i("JSONObject.AjaxStatus",status.getCode()+"");
+		android.util.Log.i("JSONObject.AjaxStatus", status.getCode() + "");
 		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
@@ -560,12 +560,12 @@ public class Detail_TV extends Activity {
 			return;
 		}
 		if (json == null || !json.has("tv")) {
-//			aq.id(R.id.ProgressText).gone();
-//			app.MyToast(aq.getContext(),
-//					getResources().getString(R.string.networkispoor));
-//			if (cacheInfoTemp == null) {
-//				aq.id(R.id.none_net).visible();
-//			}
+			// aq.id(R.id.ProgressText).gone();
+			// app.MyToast(aq.getContext(),
+			// getResources().getString(R.string.networkispoor));
+			// if (cacheInfoTemp == null) {
+			// aq.id(R.id.none_net).visible();
+			// }
 			GetServiceData();
 			return;
 		}
@@ -664,8 +664,11 @@ public class Detail_TV extends Activity {
 					m_FavorityNum++;
 					aq.id(R.id.button2).text(
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
-					aq.id(R.id.button1).text(
-							"(" + Integer.toString(m_FavorityNum) + ")");
+					if (m_ReturnProgramView.tv.episodes[0].down_urls == null
+							|| m_ReturnProgramView.tv.episodes[0].down_urls[0].source == null) {
+						aq.id(R.id.button1).text(
+								"(" + Integer.toString(m_FavorityNum) + ")");
+					}
 					app.MyToast(this, "操作成功!");
 				} else
 					app.MyToast(this, "已收藏!");
@@ -685,13 +688,13 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickFavorityNum(View v) {
-		
+
 		subscribeFav();
 	}
 
-	private void subscribeFav(){
-//		PushService.subscribe(this, "CHANNEL_PROD_" + prod_id, Main.class);
-//		PushService.setDefaultPushCallback(this, Main.class);
+	private void subscribeFav() {
+		// PushService.subscribe(this, "CHANNEL_PROD_" + prod_id, Main.class);
+		// PushService.setDefaultPushCallback(this, Main.class);
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -705,6 +708,7 @@ public class Detail_TV extends Activity {
 
 		aq.ajax(cb);
 	}
+
 	public void CallServiceResultSupportNum(String url, JSONObject json,
 			AjaxStatus status) {
 
@@ -753,8 +757,7 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickReportProblem(View v) {
-		if(!app.isNetworkAvailable())
-		{
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
@@ -767,13 +770,12 @@ public class Detail_TV extends Activity {
 			app.MyToast(this, "暂无播放链接!");
 			return;
 		}
-		
-		if(!app.isNetworkAvailable())
-		{
+
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
-		
+
 		if (player_select == null
 				&& m_ReturnProgramView.tv.episodes.length <= 200) {
 			{
@@ -814,11 +816,10 @@ public class Detail_TV extends Activity {
 						Gravity.CENTER | Gravity.CENTER, 0, 40);
 				popup_player_select.update();
 			}
-		} else if(m_ReturnProgramView.tv.episodes[0].down_urls == null
-				|| m_ReturnProgramView.tv.episodes[0].down_urls[0].source == null){
+		} else if (m_ReturnProgramView.tv.episodes[0].down_urls == null
+				|| m_ReturnProgramView.tv.episodes[0].down_urls[0].source == null) {
 			subscribeFav();
-		}
-		else{
+		} else {
 			StartIntentToPlayer();
 		}
 	}
@@ -1067,13 +1068,12 @@ public class Detail_TV extends Activity {
 	public void OnClickTVPlay(View v) {
 
 		final int index = Integer.parseInt(v.getTag().toString());
-		
-		if(!app.isNetworkAvailable())
-		{
+
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
-		
+
 		if (player_select == null
 				&& m_ReturnProgramView.tv.episodes.length <= 200) {
 			{
@@ -1584,15 +1584,13 @@ public class Detail_TV extends Activity {
 	}
 
 	public void OnClickCacheDown(View v) {
-		if(!app.isNetworkAvailable())
-		{
+		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
-		if(downloadpopup!=null)
-		{
-			downloadpopup.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
-					| Gravity.CENTER, 0, 78);
+		if (downloadpopup != null) {
+			downloadpopup.showAtLocation(findViewById(R.id.parent),
+					Gravity.CENTER | Gravity.CENTER, 0, 78);
 			downloadpopup.update();
 			return;
 		}
@@ -1773,7 +1771,8 @@ public class Detail_TV extends Activity {
 				((Button) v)
 						.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 				download_indexs.add(index);
-				android.util.Log.i("download_indexs",download_indexs.toString());
+				android.util.Log.i("download_indexs",
+						download_indexs.toString());
 			} else {
 				Toast.makeText(Detail_TV.this, "该视频不支持下载", Toast.LENGTH_SHORT)
 						.show();
@@ -1847,12 +1846,12 @@ public class Detail_TV extends Activity {
 					m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 				}
 			}
-			android.util.Log.i("download_indexs",download_indexs.toString());
+			android.util.Log.i("download_indexs", download_indexs.toString());
 			if (download_indexs.contains(Integer.parseInt(m_j))) {
-			m_button.setBackgroundDrawable(download_been);
-			m_button.setEnabled(false);
-			m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
-			m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+				m_button.setBackgroundDrawable(download_been);
+				m_button.setEnabled(false);
+				m_button.setTextColor(Color.WHITE);// 设置颜色和文字的位置
+				m_button.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
 			}
 			m_button.setVisibility(View.VISIBLE);
 		}

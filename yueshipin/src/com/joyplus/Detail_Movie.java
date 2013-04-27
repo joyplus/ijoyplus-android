@@ -587,8 +587,11 @@ public class Detail_Movie extends Activity {
 					m_FavorityNum++;
 					aq.id(R.id.button2).text(
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
-					aq.id(R.id.button1).text(
-							"(" + Integer.toString(m_FavorityNum) + ")");
+					if (m_ReturnProgramView.movie.episodes[0].down_urls == null
+							|| m_ReturnProgramView.movie.episodes[0].down_urls[0].source == null) {
+						aq.id(R.id.button1).text(
+								"(" + Integer.toString(m_FavorityNum) + ")");
+					}
 					// app.MyToast(this, "收藏成功!");
 					app.MyToast(mContext, "操作成功");
 					// subscribedToChannel();
@@ -612,9 +615,10 @@ public class Detail_Movie extends Activity {
 	}
 
 	private void subscribeFav() {
-//		PushService.subscribe(this, "CHANNEL_PROD_" + prod_id, Detail_Movie.class);
-//		PushService.setDefaultPushCallback(this, Main.class);
-//		parseconnect();
+		// PushService.subscribe(this, "CHANNEL_PROD_" + prod_id,
+		// Detail_Movie.class);
+		// PushService.setDefaultPushCallback(this, Main.class);
+		// parseconnect();
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -628,36 +632,37 @@ public class Detail_Movie extends Activity {
 		aq.ajax(cb);
 	}
 
-//	private void parseconnect() {
-//		ParseInstallation installtion = ParseInstallation.getCurrentInstallation();
-//		ArrayList array = (ArrayList) installtion.get("channels"); 
-//		installtion.put("channels", Arrays.asList("channels", "flying"));
-//		installtion.saveInBackground(new SaveCallback() {
-//			
-//			@Override
-//			public void done(ParseException arg0) {
-//				if(arg0 == null){
-//
-//				}
-//				
-//			}
-//		});
-//		ParseObject gameScore = new ParseObject("GameScore");
-//		gameScore.put("score", 1337);
-//		gameScore.put("playerName", "Sean Plott");
-//		gameScore.put("cheatMode", false);
-//		gameScore.saveInBackground(new SaveCallback() {
-//			
-//			@Override
-//			public void done(ParseException e) {
-//				if(e == null){
-//					
-//				}
-//				
-//			}
-//		});
-		
-//	}
+	// private void parseconnect() {
+	// ParseInstallation installtion =
+	// ParseInstallation.getCurrentInstallation();
+	// ArrayList array = (ArrayList) installtion.get("channels");
+	// installtion.put("channels", Arrays.asList("channels", "flying"));
+	// installtion.saveInBackground(new SaveCallback() {
+	//
+	// @Override
+	// public void done(ParseException arg0) {
+	// if(arg0 == null){
+	//
+	// }
+	//
+	// }
+	// });
+	// ParseObject gameScore = new ParseObject("GameScore");
+	// gameScore.put("score", 1337);
+	// gameScore.put("playerName", "Sean Plott");
+	// gameScore.put("cheatMode", false);
+	// gameScore.saveInBackground(new SaveCallback() {
+	//
+	// @Override
+	// public void done(ParseException e) {
+	// if(e == null){
+	//
+	// }
+	//
+	// }
+	// });
+
+	// }
 	public void OnClickCacheDown(View v) {
 		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");

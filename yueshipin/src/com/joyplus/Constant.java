@@ -35,7 +35,7 @@ IOS: ijoyplusios001bj
     public static final String TV_CHANNEL_URL = "http://comettest.joyplus.tv:8000/bindtv";
     public static final String CHECK_BINDING = "http://comettest.joyplus.tv:8000/api/check_binding";
     
-	public static boolean TestEnv = false;
+	public static boolean TestEnv = true;
 	public static final String BASE_URL = "http://apitest.yue001.com/joyplus-service/index.php/";
 	public static String DEFAULT_APPKEY = "ijoyplus_android_0001bj";
 	public static String APPKEY = "ijoyplus_android_0001bj";
