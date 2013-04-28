@@ -70,6 +70,7 @@ import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
+import com.parse.ParseInstallation;
 import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 
@@ -563,6 +564,12 @@ public class Detail_Show extends Activity {
 	}
 
 	public void OnClickFavorityNum(View v) {
+		ParseInstallation installation = ParseInstallation
+				.getCurrentInstallation();
+		installation.addAllUnique("channels",
+				Arrays.asList("CHANNEL_PROD_" + prod_id));
+		installation.saveInBackground();
+
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -577,7 +584,6 @@ public class Detail_Show extends Activity {
 		aq.ajax(cb);
 	}
 
-	
 	public void CallServiceResultSupportNum(String url, JSONObject json,
 			AjaxStatus status) {
 
@@ -630,49 +636,56 @@ public class Detail_Show extends Activity {
 		}
 		popupReportProblem();
 	}
-	 public void OnClickXiangkan(View v){ 
-	    	String url = Constant.BASE_URL + "program/favority";
 
-			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("prod_id", prod_id);
+	public void OnClickXiangkan(View v) {
+		ParseInstallation installation = ParseInstallation
+				.getCurrentInstallation();
+		installation.addAllUnique("channels",
+				Arrays.asList("CHANNEL_PROD_" + prod_id));
+		installation.saveInBackground();
 
-			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.SetHeader(app.getHeaders());
+		String url = Constant.BASE_URL + "program/favority";
 
-			cb.params(params).url(url).type(JSONObject.class)
-					.weakHandler(this, "CallServiceXiangkanResult");
-			aq.ajax(cb);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("prod_id", prod_id);
 
-	    }
-	    public void CallServiceXiangkanResult(String url, JSONObject json,
-				AjaxStatus status) {
+		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+		cb.SetHeader(app.getHeaders());
 
-			if (json != null) {
-				try {
-					// woof is "00000",now "20024",by yyc
-					if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
-						m_FavorityNum++;
-						aq.id(R.id.button2).text(
-								"收藏(" + Integer.toString(m_FavorityNum) + ")");
-							aq.id(R.id.xiangkan_num).text(
-									"  (" + Integer.toString(m_FavorityNum) + ")");
-						app.MyToast(mContext, "操作成功");
-					} else
-						app.MyToast(this, "想看的影片已加入收藏列表");
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} else {
-				// ajax error, show error code
-				if (status.getCode() == AjaxStatus.NETWORK_ERROR)
-					app.MyToast(aq.getContext(),
-							getResources().getString(R.string.networknotwork));
+		cb.params(params).url(url).type(JSONObject.class)
+				.weakHandler(this, "CallServiceXiangkanResult");
+		aq.ajax(cb);
+
+	}
+
+	public void CallServiceXiangkanResult(String url, JSONObject json,
+			AjaxStatus status) {
+
+		if (json != null) {
+			try {
+				// woof is "00000",now "20024",by yyc
+				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
+					m_FavorityNum++;
+					aq.id(R.id.button2).text(
+							"收藏(" + Integer.toString(m_FavorityNum) + ")");
+					aq.id(R.id.xiangkan_num).text(
+							"  (" + Integer.toString(m_FavorityNum) + ")");
+					app.MyToast(mContext, "操作成功");
+				} else
+					app.MyToast(this, "想看的影片已加入收藏列表");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-
-		
-			
+		} else {
+			// ajax error, show error code
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(aq.getContext(),
+						getResources().getString(R.string.networknotwork));
 		}
+
+	}
+
 	public void OnClickPlay(View v) {
 		if (MobclickAgent.getConfigParams(this, "playBtnSuppressed").trim()
 				.equalsIgnoreCase("1")) {
@@ -725,7 +738,7 @@ public class Detail_Show extends Activity {
 						Gravity.CENTER | Gravity.CENTER, 0, 40);
 				popup_player_select.update();
 			}
-		}else {
+		} else {
 			StartIntentToPlayer();
 		}
 	}

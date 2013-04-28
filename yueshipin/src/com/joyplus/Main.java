@@ -1,5 +1,6 @@
 package com.joyplus;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.bodong.dianju.sdk.DianJuPlatform;
 import com.joyplus.Dlna.DlnaSelectDevice;
 import com.joyplus.faye.FayeService;
+import com.parse.ParseInstallation;
 import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 
@@ -103,8 +105,8 @@ public class Main extends TabActivity {
 		//
 		// // }
 		//
-		PushService.subscribe(this, "", Main.class);
-		PushService.subscribe(this, "CHANNEL_ANDROID", Main.class);
+//		PushService.subscribe(this, "", Main.class);
+//		PushService.subscribe(this, "CHANNEL_ANDROID", Main.class);
 		PushService.setDefaultPushCallback(this, Main.class);
 		mHandler.postDelayed(mRunnable, 2000);
 		// new MyThread(Main.this).start();
@@ -377,6 +379,10 @@ public class Main extends TabActivity {
 
 	private final Runnable mRunnable = new Runnable() {
 		public void run() {
+			ParseInstallation installation = ParseInstallation
+					.getCurrentInstallation();
+			installation.addAllUnique("channels", Arrays.asList("", "CHANNEL_ANDROID"));
+			installation.saveInBackground();
 			if (app.GetServiceData("Binding_TV") != null) {
 				Intent service = new Intent(Main.this, FayeService.class);
 				startService(service);

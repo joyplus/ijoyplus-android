@@ -2,6 +2,7 @@ package com.joyplus;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 //import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab3Page2ListData;
 import com.joyplus.Service.Return.ReturnUserFavorities;
+import com.parse.ParseInstallation;
 import com.umeng.analytics.MobclickAgent;
 
 public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
@@ -320,6 +322,11 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 	}
 
 	private void Unfavority(String prod_id) {
+		ParseInstallation installation = ParseInstallation
+				.getCurrentInstallation();
+		installation.removeAll("channels", Arrays.asList("CHANNEL_PROD_"+prod_id));
+		installation.saveInBackground();
+		
 		String url = Constant.BASE_URL + "program/unfavority";
 
 		Map<String, Object> params = new HashMap<String, Object>();

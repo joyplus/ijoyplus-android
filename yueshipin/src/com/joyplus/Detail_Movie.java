@@ -61,6 +61,7 @@ import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadTask;
+import com.parse.ParseInstallation;
 import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 
@@ -610,6 +611,11 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void OnClickFavorityNum(View v) {
+		ParseInstallation installation = ParseInstallation
+				.getCurrentInstallation();
+		installation.addAllUnique("channels", Arrays.asList("CHANNEL_PROD_"+prod_id));
+		installation.saveInBackground();
+		
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -623,39 +629,6 @@ public class Detail_Movie extends Activity {
 		aq.ajax(cb);
 	}
 
-	
-
-	// private void parseconnect() {
-	// ParseInstallation installtion =
-	// ParseInstallation.getCurrentInstallation();
-	// ArrayList array = (ArrayList) installtion.get("channels");
-	// installtion.put("channels", Arrays.asList("channels", "flying"));
-	// installtion.saveInBackground(new SaveCallback() {
-	//
-	// @Override
-	// public void done(ParseException arg0) {
-	// if(arg0 == null){
-	//
-	// }
-	//
-	// }
-	// });
-	// ParseObject gameScore = new ParseObject("GameScore");
-	// gameScore.put("score", 1337);
-	// gameScore.put("playerName", "Sean Plott");
-	// gameScore.put("cheatMode", false);
-	// gameScore.saveInBackground(new SaveCallback() {
-	//
-	// @Override
-	// public void done(ParseException e) {
-	// if(e == null){
-	//
-	// }
-	//
-	// }
-	// });
-
-	// }
 	public void OnClickCacheDown(View v) {
 		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
@@ -760,6 +733,11 @@ public class Detail_Movie extends Activity {
 		 */
 	}
     public void OnClickXiangkan(View v){ 
+    	ParseInstallation installation = ParseInstallation
+				.getCurrentInstallation();
+		installation.addAllUnique("channels", Arrays.asList("CHANNEL_PROD_"+prod_id));
+		installation.saveInBackground();
+    	
     	String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
