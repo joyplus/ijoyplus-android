@@ -389,10 +389,6 @@ public class Main extends TabActivity {
 				check_binding(app.GetServiceData("Binding_TV_Channal"),
 						app.GetServiceData("Binding_Userid"), app.getHeaders());
 			}
-
-			// PushService.subscribe(Main.this, "", Main.class);
-			// PushService.subscribe(Main.this, "CHANNEL_ANDROID", Main.class);
-			// PushService.setDefaultPushCallback(Main.this, Main.class);
 		}
 	};
 
