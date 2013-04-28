@@ -151,8 +151,7 @@ public class Setting extends Activity {
 
 	@Override
 	public void onResume() {
-		super.onResume();
-		if (UMInfoAgent.isOauthed(mContext, sinaMedia))
+		if (app.GetServiceData("Sina_Access_Token") != null)
 			aq.id(R.id.checkBox1).getCheckBox().setChecked(true);
 		else
 			aq.id(R.id.checkBox1).getCheckBox().setChecked(false);
@@ -165,6 +164,7 @@ public class Setting extends Activity {
 		}
 		MobclickAgent.onEventBegin(mContext, SETTING);
 		MobclickAgent.onResume(this);
+		super.onResume();
 	}
 
 	@Override
@@ -303,7 +303,7 @@ public class Setting extends Activity {
 	}
 
 	public void OnClickSinaWeibo(View v) {
-		if (!UMInfoAgent.isOauthed(mContext, sinaMedia)) {
+		if (app.GetServiceData("Sina_Access_Token") == null) {
 			GotoSinaWeibo();
 		} else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -316,6 +316,7 @@ public class Setting extends Activity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
+									app.DeleteServiceData("Sina_Access_Token");
 									ReGenerateUuid();
 								}
 							})
@@ -405,6 +406,7 @@ public class Setting extends Activity {
 
 			@Override
 			public void onCancel(SHARE_MEDIA arg0) {
+				aq.id(R.id.checkBox1).getCheckBox().setChecked(false);
 				app.MyToast(getApplicationContext(), "绑定取消");
 			}
 
