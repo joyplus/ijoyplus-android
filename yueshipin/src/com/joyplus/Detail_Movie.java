@@ -762,7 +762,7 @@ public class Detail_Movie extends Activity {
 					aq.id(R.id.button2).text(
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
 						aq.id(R.id.xiangkan_num).text(
-								"(" + Integer.toString(m_FavorityNum) + ")");
+								"  (" + Integer.toString(m_FavorityNum) + ")");
 					app.MyToast(mContext, "操作成功");
 				} else
 					app.MyToast(this, "想看的影片已加入收藏列表");
