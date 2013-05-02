@@ -503,6 +503,9 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button1).gone();
 					aq.id(R.id.xiangkan_num).visible();
 					aq.id(R.id.xiangkan_num).text("  (" + m_FavorityNum + ")");
+					//#566
+					aq.id(R.id.report_button).background(R.drawable.report_focuse);
+					aq.id(R.id.report_button).clickable(false);
 				}
 				if (cacheManager != null && cacheInfoTemp != null) {
 

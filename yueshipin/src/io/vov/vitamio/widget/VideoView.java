@@ -934,7 +934,7 @@ public class VideoView extends SurfaceView implements
 		if (android.os.Build.VERSION.SDK_INT >= 14) {
 			if (mMyService != null) {
 				ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
-				if(mDmrCache.size()>=0)
+				if(mDmrCache.size()>0)//原来为大于等于0
 				{
 					app.DlnaDeviceFlag = true;
 				}

@@ -321,6 +321,9 @@ public class Detail_Movie extends Activity {
 				aq.id(R.id.button1).gone();
 				aq.id(R.id.xiangkan_num).visible();
 				aq.id(R.id.xiangkan_num).text("  (" + m_FavorityNum + ")");
+				//#566
+				aq.id(R.id.button11).background(R.drawable.report_focuse);
+				aq.id(R.id.button11).clickable(false);
 			}
 			if (Dao.getInstance(Detail_Movie.this).getInfosOfProd_id(prod_id)
 					.size() != 0) {
