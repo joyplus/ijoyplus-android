@@ -34,17 +34,18 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -53,6 +54,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.CurrentPlayData;
+import com.joyplus.Adapters.GalleryAdapter;
 import com.joyplus.Service.Return.ReturnProgramReviews;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
@@ -112,7 +114,10 @@ public class Detail_Movie extends Activity {
 	 */
 	private static String MOVIE_DETAIL = "电影详情";
 	Context mContext;
-
+	//视频源
+	private ArrayList<Integer> sourceImage;
+	private ArrayList<String> sourceText;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -149,8 +154,51 @@ public class Detail_Movie extends Activity {
 		mCurrentPlayData.prod_id = prod_id;
 		if (prod_id != null)
 			CheckSaveData();
-
+		
 		player_select = app.GetServiceData("player_select");
+		
+		init();
+		Gallery gallery=(Gallery)findViewById(R.id.gallery);
+        gallery.setAdapter(new GalleryAdapter(this,sourceImage,sourceText));
+        gallery.setSelection(1);
+//        gallery.setSpacing(40);//图标之间的距离
+        gallery.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				Toast.makeText(Detail_Movie.this, sourceText.get(position), Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+
+	private void init() {
+		// TODO Auto-generated method stub
+		sourceImage = new ArrayList<Integer>();
+		sourceText = new ArrayList<String>();
+		sourceImage.add(R.drawable.leshi);
+		sourceText.add("letv");
+		sourceImage.add(R.drawable.fengxing);
+		sourceText.add("fengxing");
+		sourceImage.add(R.drawable.qiyi);
+		sourceText.add("qiyi");
+		sourceImage.add(R.drawable.youku);
+		sourceText.add("youku");
+		sourceImage.add(R.drawable.xinlang);
+		sourceText.add("sinahd");
+		sourceImage.add(R.drawable.souhu);
+		sourceText.add("souhu");
+		sourceImage.add(R.drawable.s56);
+		sourceText.add("56");
+		sourceImage.add(R.drawable.qq);
+		sourceText.add("qq");
+		sourceImage.add(R.drawable.pptv);
+		sourceText.add("pptv");
+		sourceImage.add(R.drawable.pps);
+		sourceText.add("pps");
+		sourceImage.add(R.drawable.m1905);
+		sourceText.add("m1905");
 	}
 
 	public void OnClickTab1TopLeft(View v) {

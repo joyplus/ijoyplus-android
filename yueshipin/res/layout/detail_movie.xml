@@ -68,8 +68,8 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:singleLine="true"
-                android:textSize="20sp"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -256,27 +256,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:padding="2dp" 
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="2dp" >
 
                     <Button
                         android:id="@+id/button1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/playmovie"
-                        android:onClick="OnClickPlay"
-                        />
+                        android:onClick="OnClickPlay" />
+
                     <Button
                         android:id="@+id/xiangkan_num"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/xiangkan_background"
-                        android:gravity="center_vertical"
                         android:drawableLeft="@drawable/xiangkan"
-                        android:text=" (999)"
-                        android:paddingLeft="10dp"
-                        android:textColor="@android:color/white"
+                        android:gravity="center_vertical"
                         android:onClick="OnClickXiangkan"
+                        android:paddingLeft="10dp"
+                        android:text=" (999)"
+                        android:textColor="@android:color/white"
                         android:visibility="gone" />
                 </LinearLayout>
 
@@ -294,6 +294,12 @@
                         android:onClick="OnClickCacheDown" />
                 </LinearLayout>
             </LinearLayout>
+
+            <Gallery
+                android:id="@+id/gallery"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:spacing="40dp" />
 
             <LinearLayout
                 android:id="@+id/LinearLayoutJianjie"
@@ -456,7 +462,6 @@
                         android:maxLines="5"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
-                        
                         android:text="1234" />
 
                     <TextView
@@ -499,7 +504,6 @@
                         android:maxLines="5"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
-                     
                         android:text="1234" />
 
                     <TextView
@@ -542,7 +546,6 @@
                         android:maxLines="5"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
-                        
                         android:text="1234" />
 
                     <TextView
