@@ -299,7 +299,8 @@
                 android:id="@+id/gallery"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:spacing="40dp" />
+                android:spacing="40dp"
+                android:background="@drawable/source_bg" />
 
             <LinearLayout
                 android:id="@+id/LinearLayoutJianjie"

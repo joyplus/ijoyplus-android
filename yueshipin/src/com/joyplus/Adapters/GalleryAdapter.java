@@ -15,7 +15,6 @@ public class GalleryAdapter extends BaseAdapter {
 	private ArrayList<Integer> sourceImage;
 	private ArrayList<String> sourceText;
 	private Context mContext;
-
 	public GalleryAdapter(Context c) {
 		mContext = c;
 	}

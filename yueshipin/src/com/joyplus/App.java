@@ -61,6 +61,7 @@ public class App extends Application {
 	private ReturnProgramView m_ReturnProgramView = null;
 	private int number = 0;
 	public boolean DlnaDeviceFlag = false;
+	public String sourceUrl = null;
     
 	public ReturnProgramView get_ReturnProgramView() {
 		return m_ReturnProgramView;

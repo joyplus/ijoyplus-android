@@ -44,6 +44,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -59,6 +60,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.CurrentPlayData;
+import com.joyplus.Adapters.GalleryAdapter;
 import com.joyplus.Service.Return.ReturnProgramReviews;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
@@ -118,6 +120,11 @@ public class Detail_Show extends Activity {
 	CheckBox checkbox6;
 	CheckBox checkbox7;
 	EditText problem_edit;
+	
+	private Gallery gallery;
+	//视频源
+	private ArrayList<Integer> sourceImage;
+	private ArrayList<String> sourceText;
 
 	VideoCacheInfo cacheInfo;
 	VideoCacheInfo cacheInfoTemp;
@@ -170,6 +177,9 @@ public class Detail_Show extends Activity {
 
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
+		
+		gallery=(Gallery)findViewById(R.id.gallery);
+		
 		if (prod_id != null)
 			CheckSaveData();
 		player_select = app.GetServiceData("player_select");
@@ -179,7 +189,25 @@ public class Detail_Show extends Activity {
 		}
 
 	}
-
+	
+	/*
+	 * 显示当前有多少个源
+	 */
+	public void showSourceView()
+	{
+		gallery.setAdapter(new GalleryAdapter(this,sourceImage,sourceText));
+        gallery.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				app.sourceUrl = sourceText.get(position);
+//				String temp = selectUrls(sourceText.get(position));
+				Toast.makeText(Detail_Show.this, "", Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+	
 	public void OnClickNewGuider_3(View v) {
 		aq.id(R.id.new_guider_3).gone();
 		app.SaveServiceData("new_guider_3", "new_guider_3");
@@ -331,6 +359,9 @@ public class Detail_Show extends Activity {
 							.equalsIgnoreCase("1")) {
 				aq.id(R.id.LinearLayoutXGYD).gone();
 			}
+			InitSourceData();
+			showSourceView();
+			
 			if (m_ReturnProgramView.show.episodes != null
 					&& m_ReturnProgramView.show.episodes[0].video_urls != null
 					&& m_ReturnProgramView.show.episodes[0].video_urls[0].url != null)
@@ -409,7 +440,80 @@ public class Detail_Show extends Activity {
 		}
 
 	}
-
+	
+	/*
+	 * 对当前源数据进行填充
+	 */
+	public void InitSourceData()
+	{
+		sourceImage = new ArrayList<Integer>();
+		sourceText = new ArrayList<String>();
+//		for(int i = 0;i<m_ReturnProgramView.show.episodes.length;i++)
+//		{
+			if (m_ReturnProgramView.show.episodes[0].down_urls != null) {
+				for (int j = 0; j < m_ReturnProgramView.show.episodes[0].down_urls.length; j++) {
+					if(m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("wangpan"))
+					{
+						sourceImage.add(R.drawable.pptv);
+						sourceText.add("wangpan");
+					} else if(m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("le_tv_fee"))
+					{
+						sourceImage.add(R.drawable.leshi);
+						sourceText.add("le_tv_fee");
+					}
+					if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("letv")) {
+						sourceImage.add(R.drawable.leshi);
+						sourceText.add("letv");
+					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("fengxing")) {
+						sourceImage.add(R.drawable.fengxing);
+						sourceText.add("fengxing");
+					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("qiyi")) {
+						sourceImage.add(R.drawable.qiyi);
+						sourceText.add("qiyi");
+					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("youku")) {
+						sourceImage.add(R.drawable.youku);
+						sourceText.add("youku");
+					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("sinahd")) {
+						sourceImage.add(R.drawable.xinlang);
+						sourceText.add("sinahd");
+					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("sohu")) {
+						sourceImage.add(R.drawable.souhu);
+						sourceText.add("souhu");
+					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("56")) {
+						sourceImage.add(R.drawable.s56);
+						sourceText.add("56");
+					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("qq")) {
+						sourceImage.add(R.drawable.qq);
+						sourceText.add("qq");
+					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("pptv")) {
+						sourceImage.add(R.drawable.pptv);
+						sourceText.add("pptv");
+					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("pps"))
+					{
+						sourceImage.add(R.drawable.pps);
+						sourceText.add("pps");
+					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
+							.equalsIgnoreCase("m1905")) {
+						sourceImage.add(R.drawable.m1905);
+						sourceText.add("m1905");
+					}
+				}
+			}
+//		}
+	}
+	
 	public void OnClickImageView(View v) {
 
 	}

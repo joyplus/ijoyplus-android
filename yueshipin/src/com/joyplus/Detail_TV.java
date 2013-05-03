@@ -41,9 +41,11 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -51,6 +53,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -59,6 +62,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.CurrentPlayData;
+import com.joyplus.Adapters.GalleryAdapter;
 
 import com.joyplus.R.color;
 import com.joyplus.Service.Return.ReturnProgramComments;
@@ -113,6 +117,11 @@ public class Detail_TV extends Activity {
 	CheckBox checkbox6;
 	CheckBox checkbox7;
 	EditText problem_edit;
+	
+	private Gallery gallery;
+	//视频源
+	private ArrayList<Integer> sourceImage;
+	private ArrayList<String> sourceText;
 
 	private ReturnProgramReviews m_ReturnProgramReviews = null;
 	private ScrollView mScrollView;
@@ -197,7 +206,9 @@ public class Detail_TV extends Activity {
 		aq.id(R.id.textView9).gone();
 		aq.id(R.id.textView13).gone();
 		aq.id(R.id.scrollView1).gone();
-
+		
+		gallery=(Gallery)findViewById(R.id.gallery);
+		
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
 		InitTVButtom();
@@ -205,6 +216,25 @@ public class Detail_TV extends Activity {
 			aq.id(R.id.new_guider_3).visible();
 		}
 		player_select = app.GetServiceData("player_select");
+		
+	}
+	
+	/*
+	 * 
+	 */
+	public void showSourceView()
+	{
+		gallery.setAdapter(new GalleryAdapter(this,sourceImage,sourceText));
+        gallery.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				app.sourceUrl = sourceText.get(position);
+//				String temp = selectUrls(sourceText.get(position));
+				Toast.makeText(Detail_TV.this, "", Toast.LENGTH_SHORT).show();
+			}
+		});
 	}
 
 	public void OnClickNewGuider_3(View v) {
@@ -450,6 +480,8 @@ public class Detail_TV extends Activity {
 				}
 
 			}
+			InitSourceData();
+			showSourceView();
 			if (m_ReturnProgramView.tv.episodes != null
 					&& m_ReturnProgramView.tv.episodes[0].video_urls != null
 					&& m_ReturnProgramView.tv.episodes[0].video_urls[0].url != null)
@@ -1318,7 +1350,77 @@ public class Detail_TV extends Activity {
 			}
 		}
 	}
-
+	
+	/*
+	 * 填充片源
+	 */
+	public void InitSourceData()
+	{
+		sourceImage = new ArrayList<Integer>();
+		sourceText = new ArrayList<String>();
+		
+		if (m_ReturnProgramView.tv.episodes[0].down_urls != null) {
+			for (int j = 0; j < m_ReturnProgramView.tv.episodes[0].down_urls.length; j++) {
+				if(m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("wangpan"))
+				{
+					sourceImage.add(R.drawable.pptv);
+					sourceText.add("wangpan");
+				} else if(m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("le_tv_fee"))
+				{
+					sourceImage.add(R.drawable.leshi);
+					sourceText.add("le_tv_fee");
+				}
+				if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("letv")) {
+					sourceImage.add(R.drawable.leshi);
+					sourceText.add("letv");
+				} else if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("fengxing")) {
+					sourceImage.add(R.drawable.fengxing);
+					sourceText.add("fengxing");
+				} else if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("qiyi")) {
+					sourceImage.add(R.drawable.qiyi);
+					sourceText.add("qiyi");
+				} else if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("youku")) {
+					sourceImage.add(R.drawable.youku);
+					sourceText.add("youku");
+				} else if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("sinahd")) {
+					sourceImage.add(R.drawable.xinlang);
+					sourceText.add("sinahd");
+				} else if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("sohu")) {
+					sourceImage.add(R.drawable.souhu);
+					sourceText.add("souhu");
+				} else if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("56")) {
+					sourceImage.add(R.drawable.s56);
+					sourceText.add("56");
+				} else if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("qq")) {
+					sourceImage.add(R.drawable.qq);
+					sourceText.add("qq");
+				} else if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("pptv")) {
+					sourceImage.add(R.drawable.pptv);
+					sourceText.add("pptv");
+				} else if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("pps"))
+				{
+					sourceImage.add(R.drawable.pps);
+					sourceText.add("pps");
+				} else if (m_ReturnProgramView.tv.episodes[0].down_urls[j].source
+						.equalsIgnoreCase("m1905")) {
+					sourceImage.add(R.drawable.m1905);
+					sourceText.add("m1905");
+				}
+			}
+		}
+	}
 	// 将片源排序
 	@SuppressWarnings("rawtypes")
 	class EComparatorIndex implements Comparator {
