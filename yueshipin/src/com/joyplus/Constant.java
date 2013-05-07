@@ -68,8 +68,8 @@ IOS: ijoyplusios001bj
 	public static String Parse_ClientKey = "RZHrZVn6MK8VGZxfpeshrC2tpxpzzMOZjU0rSS6X";
 	
 	//Production Env
-//	public static String Parse_AppId = "UBgv7IjGR8i6AN0nS4diS48oQTk6YErFi3LrjK4P";
-//	public static String Parse_ClientKey = "Y2lKxqco7mN3qBmZ05S8jxSP8nhN92hSN4OHDZR8";
+//	public static String Parse_AppId = "0K2pHTrGpaX8PY0doDYwUKY4wPfs6IuexjaYzkQ2";
+//	public static String Parse_ClientKey = "csjlOxS0XrytgHTEibTdYEj4dyU2991uhSUTGwjJ";
 	
 	public final static int MSG_DMR_CHANGED = 0;
 	public final static int MSG_PUSH_LOCAL_FILE = 1;

@@ -10,7 +10,7 @@ import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 import java.io.IOException;
-import java.net.URI;
+//import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,13 +71,13 @@ import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
-import com.joyplus.Main.CheckBindDingReceiver;
+//import com.joyplus.Main.CheckBindDingReceiver;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
-import com.joyplus.faye.FayeClient;
-import com.joyplus.faye.FayeClient.FayeListener;
+//import com.joyplus.faye.FayeClient;
+//import com.joyplus.faye.FayeClient.FayeListener;
 import com.joyplus.faye.FayeService;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
@@ -772,32 +772,30 @@ public class VideoPlayerActivity extends Activity implements
 			if (m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls != null) {
 //				videoSourceSort(m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls);
 				for (int i = 0; i < m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls.length; i++) {
+					if(m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].source.equalsIgnoreCase(app.sourceUrl))
+					{
+						for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
+							if (PROD_SOURCE == null)
+								for (int ki = 0; ki < m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls.length; ki++) {
+									if (m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki].type
+											.equalsIgnoreCase(Constant.player_quality_index[qi])) {
+										ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki];
 
-					for (int qi = 0; qi < Constant.player_quality_index.length; qi++) {
-						if (PROD_SOURCE == null)
-							for (int ki = 0; ki < m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls.length; ki++) {
-								if (m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki].type
-										.equalsIgnoreCase(Constant.player_quality_index[qi])) {
-									ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki];
-
-									if (urls != null && urls.url != null
-											&& !IsPlaying) {
-										mCurrentPlayData.CurrentSource = i;
-										mCurrentPlayData.CurrentQuality = ki;
-										PROD_SOURCE = urls.url.trim();
-										HttpThreadPoolUtils
-												.execute(new HttpTread(
-														urls.url, "1", i, ki,
-														qi, PROD_SOURCE));
-										MobclickAgent.onEventBegin(mContext,
-												SHOW_PLAY);
+										if (urls != null && urls.url != null
+												&& !IsPlaying) {
+											mCurrentPlayData.CurrentSource = i;
+											mCurrentPlayData.CurrentQuality = ki;
+											PROD_SOURCE = urls.url.trim();
+											HttpThreadPoolUtils
+													.execute(new HttpTread(
+															urls.url, "1", i, ki,
+															qi, PROD_SOURCE));
+											MobclickAgent.onEventBegin(mContext,
+													SHOW_PLAY);
+										}
 									}
-									// if (PROD_SOURCE != null)
-									// break;
 								}
-							}
-						// if (PROD_SOURCE != null)
-						// break;
+						}
 					}
 				}
 			}

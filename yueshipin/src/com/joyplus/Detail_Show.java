@@ -25,6 +25,9 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import com.joyplus.widget.Log;
+
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -36,6 +39,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -73,7 +77,7 @@ import com.joyplus.download.DownloadTask;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
 import com.parse.ParseInstallation;
-import com.parse.PushService;
+//import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 
 public class Detail_Show extends Activity {
@@ -125,6 +129,7 @@ public class Detail_Show extends Activity {
 	//视频源
 	private ArrayList<Integer> sourceImage;
 	private ArrayList<String> sourceText;
+	private ArrayList<String> sourceTextView;
 
 	VideoCacheInfo cacheInfo;
 	VideoCacheInfo cacheInfoTemp;
@@ -193,17 +198,28 @@ public class Detail_Show extends Activity {
 	/*
 	 * 显示当前有多少个源
 	 */
-	public void showSourceView()
-	{
-		gallery.setAdapter(new GalleryAdapter(this,sourceImage,sourceText));
-        gallery.setOnItemClickListener(new OnItemClickListener() {
+	public void showSourceView() {
+		if(sourceImage.size() == 0)
+		{
+			gallery.setVisibility(View.GONE);
+			return;
+		}
+		MarginLayoutParams mlp = (MarginLayoutParams) gallery.getLayoutParams();
+		DisplayMetrics metrics = new DisplayMetrics();
+		Display display = getWindowManager().getDefaultDisplay();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		mlp.setMargins(-display.getWidth() + display.getWidth() / 3,
+				mlp.topMargin, mlp.rightMargin, mlp.bottomMargin);
+		gallery.setAdapter(new GalleryAdapter(this, sourceImage, sourceTextView));
+		gallery.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
 				app.sourceUrl = sourceText.get(position);
-//				String temp = selectUrls(sourceText.get(position));
-				Toast.makeText(Detail_Show.this, "", Toast.LENGTH_SHORT).show();
+				String temp = selectUrls(sourceText.get(position), 0);
+				Toast.makeText(Detail_Show.this, temp, Toast.LENGTH_SHORT)
+						.show();
 			}
 		});
 	}
@@ -371,6 +387,8 @@ public class Detail_Show extends Activity {
 					&& m_ReturnProgramView.show.episodes[0].down_urls[0].urls.length > 0
 					&& m_ReturnProgramView.show.episodes[0].down_urls[0].urls[0].url != null)
 				PROD_SOURCE = m_ReturnProgramView.show.episodes[0].down_urls[0].urls[0].url;
+			
+			app.sourceUrl =  m_ReturnProgramView.show.episodes[0].down_urls[0].source;//初始化时记录当前源
 
 			/*
 			 * 暂无下载按钮
@@ -442,12 +460,67 @@ public class Detail_Show extends Activity {
 	}
 	
 	/*
+	 * @author yyc
+	 * 获取某一集的地址
+	 */
+	public String selectUrls(String sourceUrl,int source_index)
+	{
+		PROD_SOURCE = null;
+		for (int j = 0; j < m_ReturnProgramView.show.episodes[source_index].down_urls.length; j++) {
+			if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase(sourceUrl))
+			{
+				for (int k = 0; k < m_ReturnProgramView.show.episodes[source_index].down_urls[j].urls.length; k++) {
+					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[source_index].down_urls[j].urls[k];
+					if (urls != null) {
+						/*
+						 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
+						 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
+						 */
+						if (urls.url != null
+								&& app.IfSupportFormat(urls.url)) {
+							if (PROD_SOURCE == null
+									&& !app.IfIncludeM3U(urls.url))
+								PROD_SOURCE = urls.url.trim();
+							if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase(
+											"mp4"))
+								PROD_SOURCE = urls.url.trim();
+							else if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase(
+											"flv"))
+								PROD_SOURCE = urls.url.trim();
+							else if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase(
+											"hd2"))
+								PROD_SOURCE = urls.url.trim();
+							else if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase(
+											"3gp"))
+								PROD_SOURCE = urls.url.trim();
+						}
+						if (DOWNLOAD_SOURCE == null && urls.file != null
+								&& app.IfSupportFormat(urls.url)
+								&& urls.file.trim().equalsIgnoreCase("mp4"))
+							DOWNLOAD_SOURCE = urls.url.trim();
+						if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
+							break;
+					}
+					if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
+						break;
+				}		
+			}
+		}
+		return PROD_SOURCE;
+	}
+	
+	/*
 	 * 对当前源数据进行填充
 	 */
 	public void InitSourceData()
 	{
 		sourceImage = new ArrayList<Integer>();
 		sourceText = new ArrayList<String>();
+		sourceTextView = new ArrayList<String>();
 //		for(int i = 0;i<m_ReturnProgramView.show.episodes.length;i++)
 //		{
 			if (m_ReturnProgramView.show.episodes[0].down_urls != null) {
@@ -457,57 +530,70 @@ public class Detail_Show extends Activity {
 					{
 						sourceImage.add(R.drawable.pptv);
 						sourceText.add("wangpan");
+						sourceTextView.add("网盘");
 					} else if(m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("le_tv_fee"))
 					{
 						sourceImage.add(R.drawable.leshi);
 						sourceText.add("le_tv_fee");
+						sourceTextView.add("乐视");
 					}
 					if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("letv")) {
 						sourceImage.add(R.drawable.leshi);
 						sourceText.add("letv");
+						sourceTextView.add("乐视");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("fengxing")) {
 						sourceImage.add(R.drawable.fengxing);
 						sourceText.add("fengxing");
+						sourceTextView.add("风行");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("qiyi")) {
 						sourceImage.add(R.drawable.qiyi);
 						sourceText.add("qiyi");
+						sourceTextView.add("奇艺");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("youku")) {
 						sourceImage.add(R.drawable.youku);
 						sourceText.add("youku");
+						sourceTextView.add("优酷");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("sinahd")) {
 						sourceImage.add(R.drawable.xinlang);
 						sourceText.add("sinahd");
+						sourceTextView.add("新浪");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("sohu")) {
 						sourceImage.add(R.drawable.souhu);
 						sourceText.add("souhu");
+						sourceTextView.add("搜狐");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("56")) {
 						sourceImage.add(R.drawable.s56);
 						sourceText.add("56");
+						sourceTextView.add("56");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("qq")) {
 						sourceImage.add(R.drawable.qq);
 						sourceText.add("qq");
+						sourceTextView.add("腾讯");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("pptv")) {
 						sourceImage.add(R.drawable.pptv);
 						sourceText.add("pptv");
+						sourceTextView.add("网络电视");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("pps"))
 					{
 						sourceImage.add(R.drawable.pps);
 						sourceText.add("pps");
+						sourceTextView.add("pps影音");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("m1905")) {
 						sourceImage.add(R.drawable.m1905);
 						sourceText.add("m1905");
+						sourceTextView.add("电影网");
 					}
 				}
 			}
@@ -856,6 +942,9 @@ public class Detail_Show extends Activity {
 			// 综艺type为3 ，sbuname 为当前集数
 			StatisticsUtils.StatisticsClicksShow(aq, app, prod_id, prod_name,
 					m_ReturnProgramView.show.episodes[0].name, 3);
+			
+			selectUrls(app.sourceUrl, 0);
+			
 			if (PROD_URI != null && PROD_URI.trim().length() > 0) {
 
 				SaveToServer(2, PROD_URI, 1);
@@ -974,42 +1063,44 @@ public class Detail_Show extends Activity {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
-
-		if (m_ReturnProgramView.show.episodes != null
-				&& m_ReturnProgramView.show.episodes[index].video_urls != null
-				&& m_ReturnProgramView.show.episodes[index].video_urls[0].url != null)
-			PROD_URI = m_ReturnProgramView.show.episodes[index].video_urls[0].url;
-		PROD_SOURCE = null;
-		if (m_ReturnProgramView.show.episodes[index].down_urls != null) {
-			for (int i = 0; i < m_ReturnProgramView.show.episodes[index].down_urls.length; i++) {
-				for (int k = 0; k < m_ReturnProgramView.show.episodes[index].down_urls[i].urls.length; k++) {
-					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[index].down_urls[i].urls[k];
-					if (urls != null) {
-						if (urls.url != null && app.IfSupportFormat(urls.url)) {
-							if (PROD_SOURCE == null
-									&& !app.IfIncludeM3U(urls.url))
-								PROD_SOURCE = urls.url.trim();
-							if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("mp4"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("flv"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("hd2"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase("3gp"))
-								PROD_SOURCE = urls.url.trim();
-						}
-						if (PROD_SOURCE != null)
-							break;
-					}
-					if (PROD_SOURCE != null)
-						break;
-				}
-			}
-		}
+		
+		selectUrls(app.sourceUrl, current_index);
+		
+//		if (m_ReturnProgramView.show.episodes != null
+//				&& m_ReturnProgramView.show.episodes[index].video_urls != null
+//				&& m_ReturnProgramView.show.episodes[index].video_urls[0].url != null)
+//			PROD_URI = m_ReturnProgramView.show.episodes[index].video_urls[0].url;
+//		PROD_SOURCE = null;
+//		if (m_ReturnProgramView.show.episodes[index].down_urls != null) {
+//			for (int i = 0; i < m_ReturnProgramView.show.episodes[index].down_urls.length; i++) {
+//				for (int k = 0; k < m_ReturnProgramView.show.episodes[index].down_urls[i].urls.length; k++) {
+//					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[index].down_urls[i].urls[k];
+//					if (urls != null) {
+//						if (urls.url != null && app.IfSupportFormat(urls.url)) {
+//							if (PROD_SOURCE == null
+//									&& !app.IfIncludeM3U(urls.url))
+//								PROD_SOURCE = urls.url.trim();
+//							if (PROD_SOURCE == null
+//									&& urls.type.trim().equalsIgnoreCase("mp4"))
+//								PROD_SOURCE = urls.url.trim();
+//							else if (PROD_SOURCE == null
+//									&& urls.type.trim().equalsIgnoreCase("flv"))
+//								PROD_SOURCE = urls.url.trim();
+//							else if (PROD_SOURCE == null
+//									&& urls.type.trim().equalsIgnoreCase("hd2"))
+//								PROD_SOURCE = urls.url.trim();
+//							else if (PROD_SOURCE == null
+//									&& urls.type.trim().equalsIgnoreCase("3gp"))
+//								PROD_SOURCE = urls.url.trim();
+//						}
+//						if (PROD_SOURCE != null)
+//							break;
+//					}
+//					if (PROD_SOURCE != null)
+//						break;
+//				}
+//			}
+//		}
 		if (player_select == null
 				&& m_ReturnProgramView.show.episodes.length <= 200) {
 			{
@@ -1053,6 +1144,7 @@ public class Detail_Show extends Activity {
 		} else {
 			StartIntentToPlayerShow(index);
 		}
+		
 	}
 
 	public void StartIntentToPlayerShow(int index) {

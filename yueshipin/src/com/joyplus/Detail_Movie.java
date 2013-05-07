@@ -3,7 +3,7 @@ package com.joyplus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+//import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +23,9 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import com.joyplus.widget.Log;
+
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,6 +33,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
@@ -118,6 +122,7 @@ public class Detail_Movie extends Activity {
 	//视频源
 	private ArrayList<Integer> sourceImage;
 	private ArrayList<String> sourceText;
+	private ArrayList<String> sourceTextView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -163,7 +168,21 @@ public class Detail_Movie extends Activity {
 	
 	public void showSourceView()
 	{
-		gallery.setAdapter(new GalleryAdapter(this,sourceImage,sourceText));
+	  if(sourceImage.size() == 0)
+	  {
+		  gallery.setVisibility(View.GONE);
+		  return;
+	  }
+      MarginLayoutParams mlp = (MarginLayoutParams) gallery.getLayoutParams();
+      DisplayMetrics metrics = new DisplayMetrics();
+      Display display = getWindowManager().getDefaultDisplay();
+      getWindowManager().getDefaultDisplay().getMetrics(metrics);
+      mlp.setMargins(-display.getWidth()+display.getWidth()/3, 
+                     mlp.topMargin, 
+                     mlp.rightMargin, 
+                     mlp.bottomMargin
+      );
+		gallery.setAdapter(new GalleryAdapter(this,sourceImage,sourceTextView));
         gallery.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -492,6 +511,7 @@ public class Detail_Movie extends Activity {
 		
 		sourceImage = new ArrayList<Integer>();
 		sourceText = new ArrayList<String>();
+		sourceTextView = new ArrayList<String>();
 		
 		if (m_ReturnProgramView.movie.episodes[source_index].down_urls != null) {
 			for (int j = 0; j < m_ReturnProgramView.movie.episodes[source_index].down_urls.length; j++) {
@@ -500,69 +520,82 @@ public class Detail_Movie extends Activity {
 				{
 					sourceImage.add(R.drawable.pptv);
 					sourceText.add("wangpan");
+					sourceTextView.add("网盘");
 				} else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("le_tv_fee"))
 				{
 					sourceImage.add(R.drawable.leshi);
 					sourceText.add("le_tv_fee");
+					sourceTextView.add("乐视");
 				}
 				if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("letv")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 0;
 					sourceImage.add(R.drawable.leshi);
 					sourceText.add("letv");
+					sourceTextView.add("乐视");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("fengxing")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 1;
 					sourceImage.add(R.drawable.fengxing);
 					sourceText.add("fengxing");
+					sourceTextView.add("风行");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("qiyi")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 2;
 					sourceImage.add(R.drawable.qiyi);
 					sourceText.add("qiyi");
+					sourceTextView.add("奇艺");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("youku")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 3;
 					
 					sourceImage.add(R.drawable.youku);
 					sourceText.add("youku");
+					sourceTextView.add("优酷");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("sinahd")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 4;
 					sourceImage.add(R.drawable.xinlang);
 					sourceText.add("sinahd");
+					sourceTextView.add("新浪");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("sohu")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 5;
 					sourceImage.add(R.drawable.souhu);
 					sourceText.add("souhu");
+					sourceTextView.add("搜狐");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("56")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 6;
 					sourceImage.add(R.drawable.s56);
 					sourceText.add("56");
+					sourceTextView.add("56");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("qq")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 7;
 					sourceImage.add(R.drawable.qq);
 					sourceText.add("qq");
+					sourceTextView.add("腾讯");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("pptv")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 8;
 					sourceImage.add(R.drawable.pptv);
 					sourceText.add("pptv");
+					sourceTextView.add("网络电视");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("pps"))
 				{
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 9;
 					sourceImage.add(R.drawable.pps);
 					sourceText.add("pps");
+					sourceTextView.add("pps影音");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("m1905")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 10;
 					sourceImage.add(R.drawable.m1905);
 					sourceText.add("m1905");
+					sourceTextView.add("电影网");
 				}
 			}
 //			if (m_ReturnProgramView.movie.episodes[source_index].down_urls.length > 1) {

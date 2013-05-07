@@ -288,7 +288,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:spacing="40dp"
-                android:background="@drawable/source_bg" />
+                android:background="@drawable/source_bg"
+                android:unselectedAlpha="0.4" />
             
             <LinearLayout
                 android:id="@+id/LinearLayoutXGYD"
