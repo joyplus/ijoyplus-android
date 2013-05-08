@@ -525,7 +525,7 @@ public class Detail_Show extends Activity {
 					{
 						sourceImage.add(R.drawable.pptv);
 						sourceText.add("wangpan");
-						sourceTextView.add("网络电视");
+						sourceTextView.add("pptv");
 					} else if(m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("le_tv_fee"))
 					{
@@ -577,13 +577,13 @@ public class Detail_Show extends Activity {
 							.equalsIgnoreCase("pptv")) {
 						sourceImage.add(R.drawable.pptv);
 						sourceText.add("pptv");
-						sourceTextView.add("网络电视");
+						sourceTextView.add("pptv");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("pps"))
 					{
 						sourceImage.add(R.drawable.pps);
 						sourceText.add("pps");
-						sourceTextView.add("pps影音");
+						sourceTextView.add("pps");
 					} else if (m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("m1905")) {
 						sourceImage.add(R.drawable.m1905);

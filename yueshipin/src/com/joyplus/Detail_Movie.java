@@ -507,7 +507,7 @@ public class Detail_Movie extends Activity {
 				{
 					sourceImage.add(R.drawable.pptv);
 					sourceText.add("wangpan");
-					sourceTextView.add("网络电视");
+					sourceTextView.add("pptv");
 				} else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("le_tv_fee"))
 				{
@@ -569,14 +569,14 @@ public class Detail_Movie extends Activity {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 8;
 					sourceImage.add(R.drawable.pptv);
 					sourceText.add("pptv");
-					sourceTextView.add("网络电视");
+					sourceTextView.add("pptv");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("pps"))
 				{
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 9;
 					sourceImage.add(R.drawable.pps);
 					sourceText.add("pps");
-					sourceTextView.add("pps影音");
+					sourceTextView.add("pps");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("m1905")) {
 //					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 10;
