@@ -23,9 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import com.joyplus.widget.Log;
-
-import android.util.DisplayMetrics;
-import android.view.Display;
+import com.joyplus.widget.MyGallery;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -33,7 +31,6 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
@@ -42,7 +39,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -103,7 +99,7 @@ public class Detail_Movie extends Activity {
 	CheckBox checkbox6;
 	CheckBox checkbox7;
 	EditText problem_edit;
-	private Gallery gallery;
+	private MyGallery gallery;
 	// 播放记录变量
 	public static int REQUESTPLAYTIME = 200;
 	public static int RETURN_CURRENT_TIME = 150;
@@ -159,7 +155,7 @@ public class Detail_Movie extends Activity {
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
 		
-		gallery=(Gallery)findViewById(R.id.gallery);
+		gallery=(MyGallery)findViewById(R.id.gallery);
 		
 		if (prod_id != null)
 			CheckSaveData();
@@ -173,15 +169,6 @@ public class Detail_Movie extends Activity {
 		  gallery.setVisibility(View.GONE);
 		  return;
 	  }
-      MarginLayoutParams mlp = (MarginLayoutParams) gallery.getLayoutParams();
-      DisplayMetrics metrics = new DisplayMetrics();
-      Display display = getWindowManager().getDefaultDisplay();
-      getWindowManager().getDefaultDisplay().getMetrics(metrics);
-      mlp.setMargins(-display.getWidth()+display.getWidth()/3, 
-                     mlp.topMargin, 
-                     mlp.rightMargin, 
-                     mlp.bottomMargin
-      );
 		gallery.setAdapter(new GalleryAdapter(this,sourceImage,sourceTextView));
         gallery.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -189,8 +176,8 @@ public class Detail_Movie extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				app.sourceUrl = sourceText.get(position);
-				String temp = selectUrls(sourceText.get(position));
-				Toast.makeText(Detail_Movie.this, temp, Toast.LENGTH_SHORT).show();
+//				String temp = selectUrls(sourceText.get(position));
+//				Toast.makeText(Detail_Movie.this, temp, Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
@@ -520,7 +507,7 @@ public class Detail_Movie extends Activity {
 				{
 					sourceImage.add(R.drawable.pptv);
 					sourceText.add("wangpan");
-					sourceTextView.add("网盘");
+					sourceTextView.add("网络电视");
 				} else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("le_tv_fee"))
 				{

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.FrameLayout.LayoutParams;
 
 public class GalleryAdapter extends BaseAdapter {
 	private ArrayList<Integer> sourceImage;
@@ -59,6 +60,8 @@ public class GalleryAdapter extends BaseAdapter {
 		}
 		holder.pic.setImageResource(sourceImage.get(position));
 		holder.text.setText(sourceText.get(position));
+		LayoutParams p = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+		convertView.setLayoutParams(p);
 		return convertView;
 	}
 

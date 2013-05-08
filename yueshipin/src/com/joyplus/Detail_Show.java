@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import com.joyplus.widget.Log;
+import com.joyplus.widget.MyGallery;
 
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -125,7 +126,7 @@ public class Detail_Show extends Activity {
 	CheckBox checkbox7;
 	EditText problem_edit;
 	
-	private Gallery gallery;
+	private MyGallery gallery;
 	//视频源
 	private ArrayList<Integer> sourceImage;
 	private ArrayList<String> sourceText;
@@ -183,7 +184,7 @@ public class Detail_Show extends Activity {
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
 		
-		gallery=(Gallery)findViewById(R.id.gallery);
+		gallery=(MyGallery)findViewById(R.id.gallery);
 		
 		if (prod_id != null)
 			CheckSaveData();
@@ -204,12 +205,6 @@ public class Detail_Show extends Activity {
 			gallery.setVisibility(View.GONE);
 			return;
 		}
-		MarginLayoutParams mlp = (MarginLayoutParams) gallery.getLayoutParams();
-		DisplayMetrics metrics = new DisplayMetrics();
-		Display display = getWindowManager().getDefaultDisplay();
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		mlp.setMargins(-display.getWidth() + display.getWidth() / 3,
-				mlp.topMargin, mlp.rightMargin, mlp.bottomMargin);
 		gallery.setAdapter(new GalleryAdapter(this, sourceImage, sourceTextView));
 		gallery.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -217,9 +212,9 @@ public class Detail_Show extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				app.sourceUrl = sourceText.get(position);
-				String temp = selectUrls(sourceText.get(position), 0);
-				Toast.makeText(Detail_Show.this, temp, Toast.LENGTH_SHORT)
-						.show();
+//				String temp = selectUrls(sourceText.get(position), 0);
+//				Toast.makeText(Detail_Show.this, temp, Toast.LENGTH_SHORT)
+//						.show();
 			}
 		});
 	}
@@ -530,7 +525,7 @@ public class Detail_Show extends Activity {
 					{
 						sourceImage.add(R.drawable.pptv);
 						sourceText.add("wangpan");
-						sourceTextView.add("网盘");
+						sourceTextView.add("网络电视");
 					} else if(m_ReturnProgramView.show.episodes[0].down_urls[j].source
 							.equalsIgnoreCase("le_tv_fee"))
 					{

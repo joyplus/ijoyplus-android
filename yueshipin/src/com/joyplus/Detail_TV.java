@@ -82,6 +82,7 @@ import com.joyplus.download.DownloadInfo;
 import com.joyplus.download.DownloadTask;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
+import com.joyplus.widget.MyGallery;
 import com.parse.ParseInstallation;
 //import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
@@ -122,7 +123,7 @@ public class Detail_TV extends Activity {
 	CheckBox checkbox7;
 	EditText problem_edit;
 	
-	private Gallery gallery;
+	private MyGallery gallery;
 	//视频源
 	private ArrayList<Integer> sourceImage;
 	private ArrayList<String> sourceText;
@@ -212,7 +213,7 @@ public class Detail_TV extends Activity {
 		aq.id(R.id.textView13).gone();
 		aq.id(R.id.scrollView1).gone();
 		
-		gallery=(Gallery)findViewById(R.id.gallery);
+		gallery=(MyGallery)findViewById(R.id.gallery);
 		
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
@@ -233,12 +234,6 @@ public class Detail_TV extends Activity {
 			gallery.setVisibility(View.GONE);
 			return;
 		}
-		MarginLayoutParams mlp = (MarginLayoutParams) gallery.getLayoutParams();
-		DisplayMetrics metrics = new DisplayMetrics();
-		Display display = getWindowManager().getDefaultDisplay();
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		mlp.setMargins(-display.getWidth() + display.getWidth() / 3,
-				mlp.topMargin, mlp.rightMargin, mlp.bottomMargin);
 		gallery.setAdapter(new GalleryAdapter(this, sourceImage, sourceTextView));
 		gallery.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -246,8 +241,8 @@ public class Detail_TV extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				app.sourceUrl = sourceText.get(position);
-				String temp = selectUrls(sourceText.get(position), position);
-				Toast.makeText(Detail_TV.this, temp, Toast.LENGTH_SHORT).show();
+//				String temp = selectUrls(sourceText.get(position), position);
+//				Toast.makeText(Detail_TV.this, temp, Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
@@ -1443,7 +1438,7 @@ public class Detail_TV extends Activity {
 				{
 					sourceImage.add(R.drawable.pptv);
 					sourceText.add("wangpan");
-					sourceTextView.add("网盘");
+					sourceTextView.add("网络电视");
 				} else if(m_ReturnProgramView.tv.episodes[0].down_urls[j].source
 						.equalsIgnoreCase("le_tv_fee"))
 				{
