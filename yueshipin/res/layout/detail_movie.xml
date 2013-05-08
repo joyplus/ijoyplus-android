@@ -299,7 +299,8 @@
                 android:id="@+id/gallery"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="#babababa"/>
+                android:background="@drawable/yuan_bg"
+                />
 
             <LinearLayout
                 android:id="@+id/LinearLayoutJianjie"

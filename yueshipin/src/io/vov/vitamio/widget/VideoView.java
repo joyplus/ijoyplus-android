@@ -947,11 +947,24 @@ public class VideoView extends SurfaceView implements
 			if (mMyService != null) {
 				ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
 				if (mDmrCache.size() >= 0) {
-					CharSequence[] items = new String[mDmrCache.size() + 1];
+					ArrayList<String> device = new ArrayList<String>();
+					for(int j = 0;j < mDmrCache.size(); j++)
+					{
+						if(device.contains( mDmrCache.get(j).friendlyName))
+						{
+							
+						}
+						else
+						{
+							device.add(mDmrCache.get(j).friendlyName);
+						}
+					}
+					
+					CharSequence[] items = new String[device.size() + 1];
 					items[0] = "我的设备";
-					for (int i = 0; i < mDmrCache.size(); i++)
-						items[i + 1] = mDmrCache.get(i).friendlyName;
-
+					for (int i = 0; i < device.size(); i++)
+						items[i + 1] = device.get(i);
+					
 					AlertDialog.Builder builder = new AlertDialog.Builder(
 							mContext);
 					builder.setTitle("请选择你的设备：");

@@ -1,7 +1,10 @@
 package com.joyplus.widget;
 
+import com.joyplus.R;
+
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -17,11 +20,13 @@ public class MyGallery extends HorizontalScrollView {
 	private BaseAdapter adapter;
 	private int selectedIndex;
 	private LinearLayout layout;
+	private Drawable drawable;
 	private View selectView;
 
 	public MyGallery(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		layout = new LinearLayout(context);
+		drawable = this.getResources().getDrawable(R.drawable.logo_bg);
 		this.setVerticalScrollBarEnabled(false); //禁用垂直滚动
 		this.setHorizontalScrollBarEnabled(false); //禁用水平滚动
 		// TODO Auto-generated constructor stub
@@ -30,6 +35,7 @@ public class MyGallery extends HorizontalScrollView {
 	public MyGallery(Context context) {
 		super(context);
 		layout = new LinearLayout(context);
+		drawable = this.getResources().getDrawable(R.drawable.logo_bg);
 		this.setVerticalScrollBarEnabled(false); //禁用垂直滚动
 		this.setHorizontalScrollBarEnabled(false); //禁用水平滚动
 		// TODO Auto-generated constructor stub
@@ -43,13 +49,12 @@ public class MyGallery extends HorizontalScrollView {
 			return;
 		}
 		for(int i=0;i<adapter.getCount();i++){  
-            View view=adapter.getView(i, null, this);  
+            View view =adapter.getView(i, null, this);
             final int index = i;
             if(i == 0)
             {
-            	selectView = view;
-            	selectView.setBackgroundColor(0x9a9a9a9a);
-//            	selectView.setBackgroundColor(Color.RED);
+            	selectView = view.findViewById(R.id.galllery_item);
+            	selectView.setBackgroundDrawable(drawable);
             }else {
             	view.setBackgroundColor(Color.TRANSPARENT);
 			}
@@ -59,9 +64,8 @@ public class MyGallery extends HorizontalScrollView {
                 	if(itmeClickListener!=null){ 
                 		selectView.setBackgroundColor(Color.TRANSPARENT);
                 		itmeClickListener.onItemClick(null, v, index, 0);
-                		v.setBackgroundColor(0x9a9a9a9a);
-//                		v.setBackgroundColor(Color.RED);
-                		selectView = v;
+                		v.findViewById(R.id.galllery_item).setBackgroundDrawable(drawable);
+                		selectView = v.findViewById(R.id.galllery_item);
                 	}
                 }  
             });  
