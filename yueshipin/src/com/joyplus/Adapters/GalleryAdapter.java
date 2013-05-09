@@ -60,7 +60,7 @@ public class GalleryAdapter extends BaseAdapter {
 		}
 		holder.pic.setImageResource(sourceImage.get(position));
 		holder.text.setText(sourceText.get(position));
-		LayoutParams p = new LayoutParams(100,LayoutParams.FILL_PARENT);
+		LayoutParams p = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.FILL_PARENT);
 		convertView.setLayoutParams(p);
 		return convertView;
 	}

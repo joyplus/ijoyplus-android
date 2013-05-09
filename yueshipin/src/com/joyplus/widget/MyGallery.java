@@ -21,12 +21,14 @@ public class MyGallery extends HorizontalScrollView {
 	private int selectedIndex;
 	private LinearLayout layout;
 	private Drawable drawable;
+	private Drawable drawable_t;
 	private View selectView;
 
 	public MyGallery(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		layout = new LinearLayout(context);
 		drawable = this.getResources().getDrawable(R.drawable.logo_bg);
+		drawable_t = this.getResources().getDrawable(R.drawable.logo_bg_s);
 		this.setVerticalScrollBarEnabled(false); //禁用垂直滚动
 		this.setHorizontalScrollBarEnabled(false); //禁用水平滚动
 		// TODO Auto-generated constructor stub
@@ -36,6 +38,7 @@ public class MyGallery extends HorizontalScrollView {
 		super(context);
 		layout = new LinearLayout(context);
 		drawable = this.getResources().getDrawable(R.drawable.logo_bg);
+		drawable_t = this.getResources().getDrawable(R.drawable.logo_bg_s);
 		this.setVerticalScrollBarEnabled(false); //禁用垂直滚动
 		this.setHorizontalScrollBarEnabled(false); //禁用水平滚动
 		// TODO Auto-generated constructor stub
@@ -56,13 +59,15 @@ public class MyGallery extends HorizontalScrollView {
             	selectView = view.findViewById(R.id.galllery_item);
             	selectView.setBackgroundDrawable(drawable);
             }else {
-            	view.setBackgroundColor(Color.TRANSPARENT);
+//            	view.setBackgroundColor(Color.TRANSPARENT);
+            	view.setBackgroundDrawable(drawable_t);
 			}
             view.setOnClickListener(new OnClickListener() {  
                 @Override  
                 public void onClick(View v) {    
                 	if(itmeClickListener!=null){ 
-                		selectView.setBackgroundColor(Color.TRANSPARENT);
+//                		selectView.setBackgroundColor(Color.TRANSPARENT);
+                		selectView.setBackgroundDrawable(drawable_t);
                 		itmeClickListener.onItemClick(null, v, index, 0);
                 		v.findViewById(R.id.galllery_item).setBackgroundDrawable(drawable);
                 		selectView = v.findViewById(R.id.galllery_item);
