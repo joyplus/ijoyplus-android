@@ -222,7 +222,6 @@ public class MediaController extends FrameLayout {
 	}
 
 	private void initFloatingWindow() {
-		android.util.Log.i("player_yy", "initFloatingWindow");
 		mWindow = new PopupWindow(mContext);
 		// mWindow.setFocusable(false);
 		mWindow.setFocusable(true);
@@ -645,6 +644,7 @@ public class MediaController extends FrameLayout {
 		}
 		if (PROD_SOURCE != null)
 			mPlayer.setContinueVideoPath(null, PROD_SOURCE, true);
+			
 	}
 
 	public void setDownloadRate(int rate) {
