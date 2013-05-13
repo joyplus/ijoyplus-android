@@ -433,11 +433,16 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.textView9).visible();
 
 				} else if ((m_ReturnProgramView.tv.episodes.length > 15)
-						&& (m_ReturnProgramView.tv.episodes.length - m <= 15)) {
+						&& (m_ReturnProgramView.tv.episodes.length - m <= 15) 
+						&& (m_ReturnProgramView.tv.episodes.length - m > 0)) {
 					aq.id(R.id.textView9)
 							.text(String.format("后%s集 >",
 									m_ReturnProgramView.tv.episodes.length - m));
 					aq.id(R.id.textView9).visible();
+				}
+				else
+				{
+					page_num--;
 				}
 
 				for (i = 0; i < m_ReturnProgramView.tv.episodes.length
@@ -1094,6 +1099,10 @@ public class Detail_TV extends Activity {
 		}
 		if ((page_num + 1) * 15 >= m_ReturnProgramView.tv.episodes.length) {
 			aq.id(R.id.textView9).gone();
+		}
+		if ((page_num + 1) * 15 >= m_ReturnProgramView.tv.episodes.length+15)
+		{
+			return;
 		}
 		aq.id(R.id.textView15).visible();
 		if (m_ReturnProgramView.tv.episodes != null) {
