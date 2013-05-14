@@ -1,5 +1,7 @@
 package com.joyplus;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,9 +12,11 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -66,7 +70,8 @@ public class Setting extends Activity {
 	public static final String DESCRIPTOR = "joyplus";
 	final SHARE_MEDIA sinaMedia = SHARE_MEDIA.SINA;
 	UMSocialService controller;
-
+	private ScrollView scrollView = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,7 +85,7 @@ public class Setting extends Activity {
 		ViewGroup fatherLayout = (ViewGroup) findViewById(R.id.ad);
 		InnerListView listView = (InnerListView) this.findViewById(R.id.list);
 		listView.setMaxHeight(400);
-		ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView1);
+		scrollView = (ScrollView) findViewById(R.id.scrollView1);
 		listView.setParentScrollView(scrollView);
 
 		// 赋值preloadDataService,添加newTips 回调
@@ -250,6 +255,7 @@ public class Setting extends Activity {
 			if (app.GetServiceData("player_select").equalsIgnoreCase("third")) {
 				app.SaveServiceData("player_select", "default");
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
+				ClearSettingDefault();
 			} else if (app.GetServiceData("player_select").equalsIgnoreCase(
 					"default")) {
 				app.SaveServiceData("player_select", "third");
@@ -259,12 +265,41 @@ public class Setting extends Activity {
 		if (app.GetServiceData("player_select") != null) {
 			if (app.GetServiceData("player_select").equalsIgnoreCase("third")) {
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(true);
+				ClearSettingDefault();
 			} else {
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
 			}
 		}
 	}
-
+	
+	public void ClearSettingDefault(){
+		ArrayList<Intent> alIntent = new ArrayList<Intent>();
+		Intent intent = new Intent("android.intent.action.VIEW");
+		intent.addCategory("android.intent.category.DEFAULT");
+		Uri data = Uri.fromFile(new File("/mnt/sdcard/"));
+		Intent intent1 = intent;
+		intent1.setType("video/*");
+		Intent intent2 = intent;
+		intent2.setDataAndType(data, "video/*");
+		alIntent.add(intent1);
+		alIntent.add(intent2);
+		for (int i = 0; i < alIntent.size(); i++) {
+			deleteSet(alIntent.get(i));
+		}
+	}
+	
+	public synchronized void deleteSet(Intent intent) {
+		PackageManager localPackageManager = getPackageManager();
+		String str1 = getClass().getPackage().getName();
+		String str2 = DefaultActivity.class.getName();
+		ComponentName localComponentName = new ComponentName(str1, str2);
+		localPackageManager
+				.setComponentEnabledSetting(localComponentName, 1, 1);
+		localPackageManager.resolveActivity(intent, 0);
+		localPackageManager
+				.setComponentEnabledSetting(localComponentName, 2, 1);
+	}
+	
 	public void OnClickClearMemery(View v) {
 		BitmapAjaxCallback.clearCache();
 		app.MyToast(this, "清除缓存成功");

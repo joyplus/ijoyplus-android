@@ -54,13 +54,15 @@
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+         >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:paddingTop="20dp" >
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -85,9 +87,10 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/setting_player"
                 android:gravity="center_vertical|right"
-                android:paddingTop="4dp" 
                 android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp">
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="9dp"
+                >
 
                 <CheckBox
                     android:id="@+id/checkBox2"

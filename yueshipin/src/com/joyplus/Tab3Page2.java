@@ -232,6 +232,7 @@ public class Tab3Page2 extends Activity implements OnTabActivityResultListener {
 					getResources().getString(R.string.networknotwork));
 			return;
 		}
+		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			if (isLastisNext == 1) {

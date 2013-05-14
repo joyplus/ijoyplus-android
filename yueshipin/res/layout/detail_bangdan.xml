@@ -11,7 +11,7 @@
 	    android:visibility="gone">
 	    
 	</LinearLayout>
-    <LinearLayout
+<LinearLayout
         android:id="@+id/LayoutTitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -42,15 +42,13 @@
 
             <TextView
                 android:id="@+id/textView2"
-                android:layout_width="200dp"
+                android:layout_width="190dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
                 android:ellipsize="end"
-                android:singleLine="true"
-                android:text="Large Text"
                 android:gravity="center"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -58,7 +56,14 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:paddingRight="6dp"
+            android:visibility="invisible" >
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/top_icon_share" />
         </LinearLayout>
     </LinearLayout>
 
