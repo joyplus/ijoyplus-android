@@ -176,8 +176,6 @@ public class Detail_Movie extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				app.sourceUrl = sourceText.get(position);
-//				String temp = selectUrls(sourceText.get(position));
-//				Toast.makeText(Detail_Movie.this, temp, Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
@@ -343,6 +341,13 @@ public class Detail_Movie extends Activity {
 						if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
 							break;
 					}
+				}
+			}
+			for(int k = 0; k <sourceText.size();k++)
+			{
+				if(sourceText.get(k).equalsIgnoreCase(app.sourceUrl)&&k!=0)
+				{
+					gallery.setSelect(k);
 				}
 			}
 			if (DOWNLOAD_SOURCE == null) {

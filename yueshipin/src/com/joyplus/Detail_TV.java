@@ -542,6 +542,14 @@ public class Detail_TV extends Activity {
 					}
 				}
 
+				for(int k = 0; k <sourceText.size();k++)
+				{
+					if(sourceText.get(k).equalsIgnoreCase(app.sourceUrl)&&k!=0)
+					{
+						gallery.setSelect(k);
+					}
+				}
+				
 				if (DOWNLOAD_SOURCE == null) {
 					aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
 					aq.id(R.id.button20).clickable(false);

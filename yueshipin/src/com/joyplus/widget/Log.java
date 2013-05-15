@@ -1,5 +1,7 @@
 package com.joyplus.widget;
 
+import com.joyplus.Constant;
+
 /**
  * @author yyc
  *
@@ -7,7 +9,7 @@ package com.joyplus.widget;
 
 public final class Log {
 	
-	private static boolean mbLoggable = true; 
+	private static boolean mbLoggable = Constant.TestLog; 
 	
 	public static void setLoggable(boolean bLoggable)
 	{

@@ -10,6 +10,7 @@ import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
 import java.io.IOException;
+import java.net.URI;
 //import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -292,7 +293,15 @@ public class VideoPlayerActivity extends Activity implements
 				// android.util.Log.i("player_yy",msg.what+"");
 				switch (msg.what) {
 				case VideoPlay:
-					videoplay(msg.obj.toString());
+					if (msg.obj.toString().contains("{now_date}")) {
+						long time = System.currentTimeMillis()/1000;
+						String msgUrl = msg.obj.toString().replace("{now_date}",
+								time+"");
+						videoplay(msgUrl);
+					}else
+					{
+						videoplay(msg.obj.toString());
+					}
 					break;
 				default:
 					android.util.Log.i("player_yy", "error");
@@ -682,7 +691,6 @@ public class VideoPlayerActivity extends Activity implements
 	}
 
 	private void GetRedirectURL() {
-		// android.util.Log.i("player_yy", "GetRedirectURL");
 		String PROD_SOURCE = null;
 		mCurrentPlayData.CurrentCategory = playProdType - 1;
 		switch (playProdType) {
@@ -691,6 +699,21 @@ public class VideoPlayerActivity extends Activity implements
 			 * @author yyc
 			 * 根据当前源进行选择地址把地址放到里面进行检测，这个很好做
 			 */
+			if(app.sourceUrl==null&&mPath!=null)
+			{
+				for(int i = 0;i<m_ReturnProgramView.movie.episodes[0].down_urls.length;i++)
+				{
+					for(int j = 0;j<m_ReturnProgramView.movie.episodes[0].down_urls[i].urls.length;j++)
+					{
+						if(m_ReturnProgramView.movie.episodes[0].down_urls[i].urls[j].url.equalsIgnoreCase(mPath))
+						{
+							app.sourceUrl = m_ReturnProgramView.movie.episodes[0].down_urls[i].source;
+						}
+						
+					}
+				}
+			}
+			
 			if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
 				// videoSourceSort(m_ReturnProgramView.movie.episodes[0].down_urls);
 				for (int i = 0; i < m_ReturnProgramView.movie.episodes[0].down_urls.length; i++) {
@@ -732,6 +755,21 @@ public class VideoPlayerActivity extends Activity implements
 		}
 			break;
 		case 2: {
+			if(app.sourceUrl==null&&mPath!=null)
+			{
+				for(int i = 0;i<m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls.length;i++)
+				{
+					for(int j = 0;j<m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls.length;j++)
+					{
+						if(m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[j].url.equalsIgnoreCase(mPath))
+						{
+							app.sourceUrl = m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].source;
+						}
+						
+					}
+				}
+			}
+			
 			if (m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls != null) {
 //				videoSourceSort(m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls);
 				
@@ -769,6 +807,21 @@ public class VideoPlayerActivity extends Activity implements
 		}
 			break;
 		case 3: {
+			if(app.sourceUrl==null&&mPath!=null)
+			{
+				for(int i = 0;i<m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls.length;i++)
+				{
+					for(int j = 0;j<m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls.length;j++)
+					{
+						if(m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[j].url.equalsIgnoreCase(mPath))
+						{
+							app.sourceUrl = m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].source;
+						}
+						
+					}
+				}
+			}
+			
 			if (m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls != null) {
 //				videoSourceSort(m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls);
 				for (int i = 0; i < m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls.length; i++) {
@@ -1092,7 +1145,8 @@ public class VideoPlayerActivity extends Activity implements
 
 			try {
 				URL url = new URL(srcUrl);
-				HttpGet mHttpGet = new HttpGet(url.toURI());
+				URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(),null);//处理特殊字符
+				HttpGet mHttpGet = new HttpGet(uri);
 				HttpResponse response = mAndroidHttpClient.execute(mHttpGet);
 
 				// 限定连接时间

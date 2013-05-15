@@ -89,6 +89,15 @@ public class MyGallery extends HorizontalScrollView {
 		return this.adapter;
 	}
 	
+	public void setSelect(int index)
+	{
+		selectView.setBackgroundDrawable(drawable_t);
+		View v = null;
+		v = layout.getChildAt(index);
+		selectView = v.findViewById(R.id.galllery_item);
+		selectView.setBackgroundDrawable(drawable);
+	}
+	
 //	public void setSelection(int index){
 //		this.selectedIndex = index-1; 
 //		layout.setVisibility(View.INVISIBLE);

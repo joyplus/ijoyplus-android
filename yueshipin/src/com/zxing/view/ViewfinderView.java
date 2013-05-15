@@ -139,7 +139,7 @@ public final class ViewfinderView extends View {
 			}
 			if (resultBitmap != null) {
 				paint.setAlpha(OPAQUE);
-				canvas.drawBitmap(resultBitmap, frame.left, bmpDTY, paint);//5
+				canvas.drawBitmap(resultBitmap, frame.left-30, bmpDTY, paint);//5
 			}
 		}
 		handler.postDelayed(runnable, 500);

@@ -384,7 +384,15 @@ public class Detail_Show extends Activity {
 				PROD_SOURCE = m_ReturnProgramView.show.episodes[0].down_urls[0].urls[0].url;
 			
 			app.sourceUrl =  m_ReturnProgramView.show.episodes[0].down_urls[0].source;//初始化时记录当前源
-
+			
+			for(int k = 0; k <sourceText.size();k++)
+			{
+				if(sourceText.get(k).equalsIgnoreCase(app.sourceUrl)&&k!=0)
+				{
+					gallery.setSelect(k);
+				}
+			}
+			
 			/*
 			 * 暂无下载按钮
 			 */

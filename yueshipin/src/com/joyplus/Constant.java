@@ -30,12 +30,16 @@ IOS: ijoyplusios001bj
 2：cms cms-test.yue001.com/manager/index.php
 
 	 */
-	 //测试环境    云端投放 
-    public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
+	/*
+	 * 程序配置，发布时两个boolean值为false
+	 */
+	public static boolean TestEnv = true;
+	public static boolean TestLog = true;
+	//测试环境    云端投放 
+	public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
     public static final String TV_CHANNEL_URL = "http://comettest.joyplus.tv:8000/bindtv";
     public static final String CHECK_BINDING = "http://comettest.joyplus.tv:8000/api/check_binding";
-    
-	public static boolean TestEnv = true;
+  
 	public static final String BASE_URL = "http://apitest.yue001.com/joyplus-service/index.php/";
 	public static String DEFAULT_APPKEY = "ijoyplus_android_0001bj";
 	public static String APPKEY = "ijoyplus_android_0001bj";

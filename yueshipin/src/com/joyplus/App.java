@@ -1,6 +1,7 @@
 package com.joyplus;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -472,7 +473,8 @@ public class App extends Application {
 
 		try {
 			URL url = new URL(srcUrl);
-			HttpGet mHttpGet = new HttpGet(url.toURI());
+			URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(),null);//处理特殊字符
+			HttpGet mHttpGet = new HttpGet(uri);
 			HttpResponse response = mAndroidHttpClient.execute(mHttpGet);
 
 			// 限定连接时间
