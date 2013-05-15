@@ -293,6 +293,7 @@ public class VideoPlayerActivity extends Activity implements
 				// android.util.Log.i("player_yy",msg.what+"");
 				switch (msg.what) {
 				case VideoPlay:
+					String temp = msg.obj.toString();
 					if (msg.obj.toString().contains("{now_date}")) {
 						long time = System.currentTimeMillis()/1000;
 						String msgUrl = msg.obj.toString().replace("{now_date}",
