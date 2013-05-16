@@ -3,6 +3,7 @@ package com.joyplus;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
@@ -32,6 +34,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.bodong.dianju.sdk.DianJuPlatform;
+import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.faye.FayeService;
 import com.joyplus.widget.InnerListView;
 import com.umeng.analytics.MobclickAgent;
@@ -71,6 +74,7 @@ public class Setting extends Activity {
 	final SHARE_MEDIA sinaMedia = SHARE_MEDIA.SINA;
 	UMSocialService controller;
 	private ScrollView scrollView = null;
+	private String defaultPlayerPackageName = null ;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -256,6 +260,7 @@ public class Setting extends Activity {
 				app.SaveServiceData("player_select", "default");
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
 				ClearSettingDefault();
+				//
 			} else if (app.GetServiceData("player_select").equalsIgnoreCase(
 					"default")) {
 				app.SaveServiceData("player_select", "third");
@@ -265,7 +270,6 @@ public class Setting extends Activity {
 		if (app.GetServiceData("player_select") != null) {
 			if (app.GetServiceData("player_select").equalsIgnoreCase("third")) {
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(true);
-				ClearSettingDefault();
 			} else {
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
 			}
@@ -273,31 +277,48 @@ public class Setting extends Activity {
 	}
 	
 	public void ClearSettingDefault(){
-		ArrayList<Intent> alIntent = new ArrayList<Intent>();
-		Intent intent = new Intent("android.intent.action.VIEW");
-		intent.addCategory("android.intent.category.DEFAULT");
-		Uri data = Uri.fromFile(new File("/mnt/sdcard/"));
-		Intent intent1 = intent;
-		intent1.setType("video/*");
-		Intent intent2 = intent;
-		intent2.setDataAndType(data, "video/*");
-		alIntent.add(intent1);
-		alIntent.add(intent2);
-		for (int i = 0; i < alIntent.size(); i++) {
-			deleteSet(alIntent.get(i));
+		final IntentFilter filter = new IntentFilter(Intent.ACTION_VIEW);
+		filter.addCategory(Intent.CATEGORY_DEFAULT);
+		List<IntentFilter> filters = new ArrayList<IntentFilter>();
+		filters.add(filter);
+		List<ComponentName> activities = new ArrayList<ComponentName>();
+		final PackageManager packageManager = (PackageManager) getPackageManager();
+		packageManager.getPreferredActivities(filters, activities, null);
+		for (ComponentName activity : activities) {
+			defaultPlayerPackageName = activity.getPackageName();
 		}
-	}
-	
-	public synchronized void deleteSet(Intent intent) {
-		PackageManager localPackageManager = getPackageManager();
-		String str1 = getClass().getPackage().getName();
-		String str2 = DefaultActivity.class.getName();
-		ComponentName localComponentName = new ComponentName(str1, str2);
-		localPackageManager
-				.setComponentEnabledSetting(localComponentName, 1, 1);
-		localPackageManager.resolveActivity(intent, 0);
-		localPackageManager
-				.setComponentEnabledSetting(localComponentName, 2, 1);
+		if(defaultPlayerPackageName ==null)
+		{
+			return;
+		}
+		else
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(getResources().getString(R.string.tishi));
+			builder.setMessage(
+					getResources().getString(R.string.shifouqingchumorenshipin))
+					.setPositiveButton(
+							getResources().getString(R.string.kaishiqingchu),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent localIntent = new Intent();
+									localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+									localIntent.setData(Uri.fromParts("package", defaultPlayerPackageName, null));
+									startActivity(localIntent);
+								}
+							})
+					.setNegativeButton(
+							getResources().getString(R.string.zanbuqingchu),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+								}
+							});
+			builder.show();
+		}
 	}
 	
 	public void OnClickClearMemery(View v) {

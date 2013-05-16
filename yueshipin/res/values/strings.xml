@@ -11,6 +11,9 @@
     <string name="shifoutuichubofang">确定要退出播放吗？</string>
     <string name="queding">确定</string>
     <string name="quxiao">取消</string>
+    <string name="shifouqingchumorenshipin">切回内置播放器的同时您需要清除系统默认播放器吗？</string>
+    <string name="kaishiqingchu">清除默认</string>
+    <string name="zanbuqingchu">暂不清除</string>
     <string name="settingexitsinaweibo">是否确认解除绑定？</string>
     <string name="tab1">悦单</string>
     <string name="tab2">V榜</string>
