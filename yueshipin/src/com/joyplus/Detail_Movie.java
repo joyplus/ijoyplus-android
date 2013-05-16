@@ -354,8 +354,13 @@ public class Detail_Movie extends Activity {
 				aq.id(R.id.button9).background(R.drawable.zan_wu_xia_zai);
 				aq.id(R.id.button9).clickable(false);
 			}
-			if (m_ReturnProgramView.movie.episodes[0].down_urls == null
-					|| m_ReturnProgramView.movie.episodes[0].down_urls[0].urls.length <=0) {
+			/*
+			 * 有一个院线的判断
+			 */
+			if ((m_ReturnProgramView.movie.episodes[0].down_urls == null
+					||m_ReturnProgramView.movie.episodes[0].down_urls.length <=0)
+					&&(m_ReturnProgramView.movie.episodes[0].video_urls == null
+					||m_ReturnProgramView.movie.episodes[0].video_urls.length <=0)){
 				aq.id(R.id.button1).gone();
 				aq.id(R.id.xiangkan_num).visible();
 				aq.id(R.id.xiangkan_num).text("  (" + m_FavorityNum + ")");
@@ -363,6 +368,8 @@ public class Detail_Movie extends Activity {
 				aq.id(R.id.button11).background(R.drawable.report_focuse);
 				aq.id(R.id.button11).clickable(false);
 			}
+			//
+			
 			if (Dao.getInstance(Detail_Movie.this).getInfosOfProd_id(prod_id)
 					.size() != 0) {
 				aq.id(R.id.button9).background(R.drawable.yi_huan_cun);
@@ -1014,7 +1021,7 @@ public class Detail_Movie extends Activity {
 						bundle.putLong("current_time", 0);
 					}
 					intent.putExtras(bundle);
-					if (player_select.equalsIgnoreCase("third")) {
+					if (player_select.equalsIgnoreCase("third")&&PROD_SOURCE!=null) {
 						Intent it = new Intent(Intent.ACTION_VIEW);
 						Uri uri = Uri.parse(PROD_SOURCE);
 						it.setDataAndType(uri, "video/*");

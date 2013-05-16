@@ -554,8 +554,10 @@ public class Detail_TV extends Activity {
 					aq.id(R.id.button20).background(R.drawable.zan_wu_xia_zai);
 					aq.id(R.id.button20).clickable(false);
 				}
-				if (m_ReturnProgramView.tv.episodes[0].down_urls == null
-						|| m_ReturnProgramView.tv.episodes[0].down_urls[0].urls.length <= 0) {
+				if ((m_ReturnProgramView.tv.episodes[0].down_urls == null
+						||m_ReturnProgramView.tv.episodes[0].down_urls.length <=0)
+						&&(m_ReturnProgramView.tv.episodes[0].video_urls == null
+						||m_ReturnProgramView.tv.episodes[0].video_urls.length <=0)){
 					aq.id(R.id.button1).gone();
 					aq.id(R.id.xiangkan_num).visible();
 					aq.id(R.id.xiangkan_num).text("  (" + m_FavorityNum + ")");
@@ -1076,8 +1078,9 @@ public class Detail_TV extends Activity {
 					bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				if ("third".equalsIgnoreCase(player_select)
-						|| m_ReturnProgramView.tv.episodes.length > 200) {
+				if (("third".equalsIgnoreCase(player_select)
+						|| m_ReturnProgramView.tv.episodes.length > 200)
+						&&PROD_SOURCE!=null){
 					Intent it = new Intent(Intent.ACTION_VIEW);
 					Uri uri = Uri.parse(PROD_SOURCE);
 					it.setDataAndType(uri, "video/*");
@@ -1382,8 +1385,9 @@ public class Detail_TV extends Activity {
 					bundle.putLong("current_time", current_time);
 				}
 				intent.putExtras(bundle);
-				if ("third".equalsIgnoreCase(player_select)
-						|| m_ReturnProgramView.tv.episodes.length > 200) {
+				if (("third".equalsIgnoreCase(player_select)
+						|| m_ReturnProgramView.tv.episodes.length > 200)
+						&&PROD_SOURCE!=null){
 					Intent it = new Intent(Intent.ACTION_VIEW);
 					Uri uri = Uri.parse(PROD_SOURCE);
 					it.setDataAndType(uri, "video/*");
