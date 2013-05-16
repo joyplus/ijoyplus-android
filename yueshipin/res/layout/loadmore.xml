@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="查看更多"
-        android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textColor="#444444"
+        android:textSize="18dip" />
 
     <LinearLayout
         android:id="@+id/loading_layout"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="加载中..."
-            android:textSize="18sp" />
+            android:textSize="18dip" />
     </LinearLayout>
 
 </RelativeLayout>
