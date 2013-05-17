@@ -16,19 +16,19 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.WindowManager;
 
-
 public class InitActivity extends Activity {
 	public static final String FROM_ME = "fromVitamioInitActivity";
 	public static final String EXTRA_MSG = "EXTRA_MSG";
 	public static final String EXTRA_FILE = "EXTRA_FILE";
 	private ProgressDialog mPD;
 	private UIHandler uiHandler;
+	private long WAIT_TIMES = 3000;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		
+
 		uiHandler = new UIHandler(this);
 
 		new AsyncTask<Object, Object, Boolean>() {
@@ -54,7 +54,7 @@ public class InitActivity extends Activity {
 
 		}.execute();
 	}
-	
+
 	private static class UIHandler extends Handler {
 		private WeakReference<Context> mContext;
 
@@ -68,7 +68,8 @@ public class InitActivity extends Activity {
 			case 0:
 				Intent src = ctx.getIntent();
 				Intent i = new Intent();
-				i.setClassName(src.getStringExtra("package"), src.getStringExtra("className"));
+				i.setClassName(src.getStringExtra("package"),
+						src.getStringExtra("className"));
 				i.setData(src.getData());
 				i.putExtras(src);
 				i.putExtra(FROM_ME, true);

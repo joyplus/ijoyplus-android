@@ -65,13 +65,13 @@ public class Search extends Activity implements
 	private EditText searchtext;
 	private SearchListAdapter SearchAdapter;
 	private Button removehistory;
-	
+
 	private static String SEARCH = "查询";
 	private static String SEARCH_LIST = "查询结果";
 	Context mContext;
 
 	private String[] st = null;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -79,11 +79,11 @@ public class Search extends Activity implements
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
-		searchtext = (EditText)findViewById(R.id.editText1);
-		
+		searchtext = (EditText) findViewById(R.id.editText1);
+
 		listHistory = (ListView) findViewById(R.id.listView2);
-		removehistory = (Button)findViewById(R.id.removehistory);
-		
+		removehistory = (Button) findViewById(R.id.removehistory);
+
 		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
@@ -96,7 +96,7 @@ public class Search extends Activity implements
 					getResources().getString(R.string.networknotwork));
 		}
 		searchtext.addTextChangedListener(mTextWatcher);
-		
+
 		showHistory();
 		listHistory.setOnItemClickListener(new OnItemClickListener() {
 
@@ -108,9 +108,8 @@ public class Search extends Activity implements
 				doSearch(content);
 			}
 		});
-		}
+	}
 
-	
 	private void showHistory() {
 		aq.id(R.id.listView1).gone();
 		aq.id(R.id.textViewNoResult).gone();
@@ -124,25 +123,24 @@ public class Search extends Activity implements
 		content = content.replaceAll("\\]", "");
 		st = content.split(",");
 		st = checkarray(st);
-		if(st !=null && !st[0].equalsIgnoreCase("")){
+		if (st != null && !st[0].equalsIgnoreCase("")) {
 			aq.id(R.id.removehistory).visible();
 		}
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.search_record, st);
-		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				R.layout.search_record, st);
+
 		listHistory.setAdapter(adapter);
-		
 
 	}
 
-	public String[] checkarray(String[] st){
+	public String[] checkarray(String[] st) {
 		Set<String> set = new TreeSet<String>();
-        for (int i = 0; i < st.length; i++)
-        {
-        	set.add(st[i].trim()); 
-        }
-        return (String[])set.toArray(new String[0]);
+		for (int i = 0; i < st.length; i++) {
+			set.add(st[i].trim());
+		}
+		return (String[]) set.toArray(new String[0]);
 	}
-	
+
 	public void OnClickAdd(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
 		SearchListData m_SearchListData = (SearchListData) ItemsListView
@@ -168,12 +166,11 @@ public class Search extends Activity implements
 		}
 	}
 
-	public void doSearch(String search_word){
+	public void doSearch(String search_word) {
 		aq.id(R.id.removehistory).gone();
 		aq.id(R.id.listView2).gone();
-		 //保存搜索记录到SharedPreferce
+		// 保存搜索记录到SharedPreferce
 		app.SaveSearchData(search_word, search_word);
-
 
 		// clear
 		if (dataStruct != null && dataStruct.size() > 0) {
@@ -188,6 +185,7 @@ public class Search extends Activity implements
 		imm.hideSoftInputFromWindow(searchtext.getWindowToken(), 0);
 		GetServiceData(search_word);
 	}
+
 	public void OnClickTab1TopRight(View v) {
 		Intent i = new Intent(this, Setting.class);
 		startActivity(i);
@@ -226,9 +224,9 @@ public class Search extends Activity implements
 	}
 
 	public void OnClickremoveHistory(View v) {
-		Dialog dialog = new AlertDialog.Builder(this).
-				setMessage("确定清除历史记录？").setPositiveButton("确定", new OnClickListener() {
-					
+		Dialog dialog = new AlertDialog.Builder(this).setMessage("确定清除历史记录？")
+				.setPositiveButton("确定", new OnClickListener() {
+
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						app.DeleteSearchData();
@@ -236,11 +234,11 @@ public class Search extends Activity implements
 						dialog.dismiss();
 					}
 				}).setNegativeButton("取消", new OnClickListener() {
-					
+
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
-						
+
 					}
 				}).create();
 		dialog.show();
@@ -258,7 +256,8 @@ public class Search extends Activity implements
 			aq.id(R.id.textViewNoResult).gone();
 
 		for (int i = 0; i < m_ReturnSearch.results.length; i++) {
-			if (Integer.parseInt(m_ReturnSearch.results[i].prod_type) < 4) {
+			// if (Integer.parseInt(m_ReturnSearch.results[i].prod_type) < 4) {
+			if (Integer.parseInt(m_ReturnSearch.results[i].prod_type) > 0) {
 				SearchListData m_SearchListData = new SearchListData();
 
 				m_SearchListData.Pic_ID = m_ReturnSearch.results[i].prod_id;
@@ -388,8 +387,6 @@ public class Search extends Activity implements
 		}
 		return SearchAdapter;
 	}
-	
-	
 
 	// listview的点击事件接口函数
 	@Override
@@ -420,6 +417,7 @@ public class Search extends Activity implements
 					Log.e(TAG, "Call Detail_Movie failed", ex);
 				}
 				break;
+			case 131:
 			case 2:
 				intent.setClass(this, Detail_TV.class);
 				intent.putExtra("prod_id", m_SearchListData.Pic_ID);
@@ -505,29 +503,31 @@ public class Search extends Activity implements
 			e.printStackTrace();
 		}
 	}
-  private  TextWatcher mTextWatcher = new TextWatcher() {
-	
-	@Override
-	public void onTextChanged(CharSequence s, int start, int before, int count) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count,
-			int after) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void afterTextChanged(Editable s) {
-		String value = searchtext.getText().toString().trim();
-		if(value == null || value.length() <=0 ){
-			showHistory();
+
+	private TextWatcher mTextWatcher = new TextWatcher() {
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+			// TODO Auto-generated method stub
+
 		}
-		
-	}
-};
-	
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			String value = searchtext.getText().toString().trim();
+			if (value == null || value.length() <= 0) {
+				showHistory();
+			}
+
+		}
+	};
+
 }

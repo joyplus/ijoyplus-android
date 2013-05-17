@@ -3,7 +3,7 @@ package com.joyplus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+//import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import com.joyplus.widget.Log;
+import com.joyplus.widget.MyGallery;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -34,8 +35,7 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -45,6 +45,7 @@ import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -53,6 +54,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.CurrentPlayData;
+import com.joyplus.Adapters.GalleryAdapter;
 import com.joyplus.Service.Return.ReturnProgramReviews;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
@@ -61,6 +63,7 @@ import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
 import com.joyplus.download.Dao;
 import com.joyplus.download.DownloadTask;
+import com.parse.ParseInstallation;
 import com.parse.PushService;
 import com.umeng.analytics.MobclickAgent;
 
@@ -96,6 +99,7 @@ public class Detail_Movie extends Activity {
 	CheckBox checkbox6;
 	CheckBox checkbox7;
 	EditText problem_edit;
+	private MyGallery gallery;
 	// 播放记录变量
 	public static int REQUESTPLAYTIME = 200;
 	public static int RETURN_CURRENT_TIME = 150;
@@ -111,7 +115,11 @@ public class Detail_Movie extends Activity {
 	 */
 	private static String MOVIE_DETAIL = "电影详情";
 	Context mContext;
-
+	//视频源
+	private ArrayList<Integer> sourceImage;
+	private ArrayList<String> sourceText;
+	private ArrayList<String> sourceTextView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -146,10 +154,30 @@ public class Detail_Movie extends Activity {
 		cacheInfo = new VideoCacheInfo();
 		mCurrentPlayData = new CurrentPlayData();
 		mCurrentPlayData.prod_id = prod_id;
+		
+		gallery=(MyGallery)findViewById(R.id.gallery);
+		
 		if (prod_id != null)
 			CheckSaveData();
-
 		player_select = app.GetServiceData("player_select");
+	}
+	
+	public void showSourceView()
+	{
+	  if(sourceImage.size() == 0)
+	  {
+		  gallery.setVisibility(View.GONE);
+		  return;
+	  }
+		gallery.setAdapter(new GalleryAdapter(this,sourceImage,sourceTextView));
+        gallery.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				app.sourceUrl = sourceText.get(position);
+			}
+		});
 	}
 
 	public void OnClickTab1TopLeft(View v) {
@@ -268,10 +296,13 @@ public class Detail_Movie extends Activity {
 					&& m_ReturnProgramView.movie.episodes[0].video_urls[0].url != null)
 				PROD_URI = m_ReturnProgramView.movie.episodes[0].video_urls[0].url;
 			videoSourceSort(0);
+			showSourceView();
 			if (m_ReturnProgramView.movie.episodes[0].down_urls != null) {
 				for (int i = 0; i < m_ReturnProgramView.movie.episodes[0].down_urls.length; i++) {
 					for (int k = 0; k < m_ReturnProgramView.movie.episodes[0].down_urls[i].urls.length; k++) {
 						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[0].down_urls[i].urls[k];
+						//标记当前来源
+						app.sourceUrl = m_ReturnProgramView.movie.episodes[0].down_urls[i].source;
 						if (urls != null) {
 							/*
 							 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
@@ -303,6 +334,7 @@ public class Detail_Movie extends Activity {
 									&& app.IfSupportFormat(urls.url)
 									&& urls.file.trim().equalsIgnoreCase("mp4"))
 								DOWNLOAD_SOURCE = urls.url.trim();
+							
 							if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
 								break;
 						}
@@ -311,16 +343,33 @@ public class Detail_Movie extends Activity {
 					}
 				}
 			}
+			for(int k = 0; k <sourceText.size();k++)
+			{
+				if(sourceText.get(k).equalsIgnoreCase(app.sourceUrl)&&k!=0)
+				{
+					gallery.setSelect(k);
+				}
+			}
 			if (DOWNLOAD_SOURCE == null) {
 				aq.id(R.id.button9).background(R.drawable.zan_wu_xia_zai);
 				aq.id(R.id.button9).clickable(false);
 			}
-			if (m_ReturnProgramView.movie.episodes[0].down_urls == null
-					|| m_ReturnProgramView.movie.episodes[0].down_urls[0].urls.length <=0) {
+			/*
+			 * 有一个院线的判断
+			 */
+			if ((m_ReturnProgramView.movie.episodes[0].down_urls == null
+					||m_ReturnProgramView.movie.episodes[0].down_urls.length <=0)
+					&&(m_ReturnProgramView.movie.episodes[0].video_urls == null
+					||m_ReturnProgramView.movie.episodes[0].video_urls.length <=0)){
 				aq.id(R.id.button1).gone();
 				aq.id(R.id.xiangkan_num).visible();
 				aq.id(R.id.xiangkan_num).text("  (" + m_FavorityNum + ")");
+				//#566
+				aq.id(R.id.button11).background(R.drawable.report_focuse);
+				aq.id(R.id.button11).clickable(false);
 			}
+			//
+			
 			if (Dao.getInstance(Detail_Movie.this).getInfosOfProd_id(prod_id)
 					.size() != 0) {
 				aq.id(R.id.button9).background(R.drawable.yi_huan_cun);
@@ -403,65 +452,174 @@ public class Detail_Movie extends Activity {
 		}
 
 	}
-
+	/*
+	 * @author yyc 
+	 * 根据当前来源获取视频地址
+	 */
+	public String selectUrls(String sourceUrl)
+	{
+		PROD_SOURCE = null;
+		for (int j = 0; j < m_ReturnProgramView.movie.episodes[0].down_urls.length; j++) {
+			if(m_ReturnProgramView.movie.episodes[0].down_urls[j].source.equalsIgnoreCase(sourceUrl))
+			{
+				for (int k = 0; k < m_ReturnProgramView.movie.episodes[0].down_urls[j].urls.length; k++) {
+					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[0].down_urls[j].urls[k];
+					if (urls != null) {
+						/*
+						 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
+						 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
+						 */
+						if (urls.url != null
+								&& app.IfSupportFormat(urls.url)) {
+							if (PROD_SOURCE == null
+									&& !app.IfIncludeM3U(urls.url))
+								PROD_SOURCE = urls.url.trim();
+							if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase(
+											"mp4"))
+								PROD_SOURCE = urls.url.trim();
+							else if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase(
+											"flv"))
+								PROD_SOURCE = urls.url.trim();
+							else if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase(
+											"hd2"))
+								PROD_SOURCE = urls.url.trim();
+							else if (PROD_SOURCE == null
+									&& urls.type.trim().equalsIgnoreCase(
+											"3gp"))
+								PROD_SOURCE = urls.url.trim();
+						}
+						if (DOWNLOAD_SOURCE == null && urls.file != null
+								&& app.IfSupportFormat(urls.url)
+								&& urls.file.trim().equalsIgnoreCase("mp4"))
+							DOWNLOAD_SOURCE = urls.url.trim();
+						if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
+							break;
+					}
+					if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
+						break;
+				}		
+			}
+		}
+		return PROD_SOURCE;
+	}
+	
 	public void videoSourceSort(int source_index) {
+		
+		sourceImage = new ArrayList<Integer>();
+		sourceText = new ArrayList<String>();
+		sourceTextView = new ArrayList<String>();
+		
 		if (m_ReturnProgramView.movie.episodes[source_index].down_urls != null) {
 			for (int j = 0; j < m_ReturnProgramView.movie.episodes[source_index].down_urls.length; j++) {
+				if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("wangpan"))
+				{
+					sourceImage.add(R.drawable.pptv);
+					sourceText.add("wangpan");
+					sourceTextView.add("pptv");
+				} else if(m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("le_tv_fee"))
+				{
+					sourceImage.add(R.drawable.leshi);
+					sourceText.add("le_tv_fee");
+					sourceTextView.add("乐视");
+				}
 				if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("letv")) {
-					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 0;
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 0;
+					sourceImage.add(R.drawable.leshi);
+					sourceText.add("letv");
+					sourceTextView.add("乐视");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("fengxing")) {
-					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 1;
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 1;
+					sourceImage.add(R.drawable.fengxing);
+					sourceText.add("fengxing");
+					sourceTextView.add("风行");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("qiyi")) {
-					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 2;
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 2;
+					sourceImage.add(R.drawable.qiyi);
+					sourceText.add("qiyi");
+					sourceTextView.add("奇艺");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("youku")) {
-					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 3;
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 3;
+					
+					sourceImage.add(R.drawable.youku);
+					sourceText.add("youku");
+					sourceTextView.add("优酷");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("sinahd")) {
-					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 4;
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 4;
+					sourceImage.add(R.drawable.xinlang);
+					sourceText.add("sinahd");
+					sourceTextView.add("新浪");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("sohu")) {
-					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 5;
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 5;
+					sourceImage.add(R.drawable.souhu);
+					sourceText.add("souhu");
+					sourceTextView.add("搜狐");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("56")) {
-					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 6;
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 6;
+					sourceImage.add(R.drawable.s56);
+					sourceText.add("56");
+					sourceTextView.add("56");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("qq")) {
-					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 7;
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 7;
+					sourceImage.add(R.drawable.qq);
+					sourceText.add("qq");
+					sourceTextView.add("腾讯");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("pptv")) {
-					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 8;
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 8;
+					sourceImage.add(R.drawable.pptv);
+					sourceText.add("pptv");
+					sourceTextView.add("pptv");
+				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
+						.equalsIgnoreCase("pps"))
+				{
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 9;
+					sourceImage.add(R.drawable.pps);
+					sourceText.add("pps");
+					sourceTextView.add("pps");
 				} else if (m_ReturnProgramView.movie.episodes[source_index].down_urls[j].source
 						.equalsIgnoreCase("m1905")) {
-					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 9;
+//					m_ReturnProgramView.movie.episodes[source_index].down_urls[j].index = 10;
+					sourceImage.add(R.drawable.m1905);
+					sourceText.add("m1905");
+					sourceTextView.add("电影网");
 				}
 			}
-			if (m_ReturnProgramView.movie.episodes[source_index].down_urls.length > 1) {
-				Arrays.sort(
-						m_ReturnProgramView.movie.episodes[source_index].down_urls,
-						new EComparatorIndex());
-			}
+//			if (m_ReturnProgramView.movie.episodes[source_index].down_urls.length > 1) {
+//				Arrays.sort(
+//						m_ReturnProgramView.movie.episodes[source_index].down_urls,
+//						new EComparatorIndex());
+//			}
 		}
 	}
 
 	// 将片源排序
-	class EComparatorIndex implements Comparator {
-
-		@Override
-		public int compare(Object first, Object second) {
-			// TODO Auto-generated method stub
-			int first_name = ((DOWN_URLS) first).index;
-			int second_name = ((DOWN_URLS) second).index;
-			if (first_name - second_name < 0) {
-				return -1;
-			} else {
-				return 1;
-			}
-		}
-	}
+//	class EComparatorIndex implements Comparator {
+//
+//		@Override
+//		public int compare(Object first, Object second) {
+//			// TODO Auto-generated method stub
+//			int first_name = ((DOWN_URLS) first).index;
+//			int second_name = ((DOWN_URLS) second).index;
+//			if (first_name - second_name < 0) {
+//				return -1;
+//			} else {
+//				return 1;
+//			}
+//		}
+//	}
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
@@ -540,14 +698,7 @@ public class Detail_Movie extends Activity {
 				aq.id(R.id.ProgressText).gone();
 				aq.id(R.id.scrollView1).visible();
 				GetServiceData();
-				// new Handler().postDelayed(new Runnable() {
-				// @Override
-				// public void run() {
-				// // execute the task
-				// GetServiceData();
-				// }
-				// }, 2000);
-
+				
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -610,6 +761,11 @@ public class Detail_Movie extends Activity {
 	}
 
 	public void OnClickFavorityNum(View v) {
+		ParseInstallation installation = ParseInstallation
+				.getCurrentInstallation();
+		installation.addAllUnique("channels", Arrays.asList("CHANNEL_PROD_"+prod_id));
+		installation.saveInBackground();
+		
 		String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -623,39 +779,6 @@ public class Detail_Movie extends Activity {
 		aq.ajax(cb);
 	}
 
-	
-
-	// private void parseconnect() {
-	// ParseInstallation installtion =
-	// ParseInstallation.getCurrentInstallation();
-	// ArrayList array = (ArrayList) installtion.get("channels");
-	// installtion.put("channels", Arrays.asList("channels", "flying"));
-	// installtion.saveInBackground(new SaveCallback() {
-	//
-	// @Override
-	// public void done(ParseException arg0) {
-	// if(arg0 == null){
-	//
-	// }
-	//
-	// }
-	// });
-	// ParseObject gameScore = new ParseObject("GameScore");
-	// gameScore.put("score", 1337);
-	// gameScore.put("playerName", "Sean Plott");
-	// gameScore.put("cheatMode", false);
-	// gameScore.saveInBackground(new SaveCallback() {
-	//
-	// @Override
-	// public void done(ParseException e) {
-	// if(e == null){
-	//
-	// }
-	//
-	// }
-	// });
-
-	// }
 	public void OnClickCacheDown(View v) {
 		if (!app.isNetworkAvailable()) {
 			app.MyToast(this, "您当前网络有问题!");
@@ -760,6 +883,11 @@ public class Detail_Movie extends Activity {
 		 */
 	}
     public void OnClickXiangkan(View v){ 
+    	ParseInstallation installation = ParseInstallation
+				.getCurrentInstallation();
+		installation.addAllUnique("channels", Arrays.asList("CHANNEL_PROD_"+prod_id));
+		installation.saveInBackground();
+    	
     	String url = Constant.BASE_URL + "program/favority";
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -784,7 +912,7 @@ public class Detail_Movie extends Activity {
 					aq.id(R.id.button2).text(
 							"收藏(" + Integer.toString(m_FavorityNum) + ")");
 						aq.id(R.id.xiangkan_num).text(
-								"(" + Integer.toString(m_FavorityNum) + ")");
+								"  (" + Integer.toString(m_FavorityNum) + ")");
 					app.MyToast(mContext, "操作成功");
 				} else
 					app.MyToast(this, "想看的影片已加入收藏列表");
@@ -893,7 +1021,7 @@ public class Detail_Movie extends Activity {
 						bundle.putLong("current_time", 0);
 					}
 					intent.putExtras(bundle);
-					if (player_select.equalsIgnoreCase("third")) {
+					if (player_select.equalsIgnoreCase("third")&&PROD_SOURCE!=null) {
 						Intent it = new Intent(Intent.ACTION_VIEW);
 						Uri uri = Uri.parse(PROD_SOURCE);
 						it.setDataAndType(uri, "video/*");

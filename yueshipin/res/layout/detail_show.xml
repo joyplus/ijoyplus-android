@@ -282,7 +282,13 @@
                         android:onClick="OnClickCacheDown" />
                 </LinearLayout>
             </LinearLayout>
-
+			
+              <com.joyplus.widget.MyGallery
+                android:id="@+id/gallery"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/yuan_bg"/>
+            
             <LinearLayout
                 android:id="@+id/LinearLayoutXGYD"
                 android:layout_width="match_parent"
@@ -339,7 +345,7 @@
                         android:id="@+id/linearLayout23"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_centerVertical="true"
+                        
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_toLeftOf="@+id/linearLayout22"

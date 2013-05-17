@@ -101,17 +101,48 @@ public final class ViewfinderView extends View {
 				paint.setAlpha(OPAQUE);
 				canvas.drawBitmap(resultBitmap, frame.left + 70, bmpDTY, paint);
 			}
-		} else if (width > 500) {
+		} else if (width >= 540 && width <640) {
 			if (bmpDTY == 0) {
 				bmpDTY = frame.top - 80;
 				maxDTY = frame.top + 220;
 			}
 			if (resultBitmap != null) {
 				paint.setAlpha(OPAQUE);
-				canvas.drawBitmap(resultBitmap, frame.left + 5, bmpDTY, paint);
+				canvas.drawBitmap(resultBitmap, frame.left + 90, bmpDTY, paint);//5
+			}
+		} else if (width >= 640 && width < 720)
+		{
+			if (bmpDTY == 0) {
+				bmpDTY = frame.top - 80;
+				maxDTY = frame.top + 220;
+			}
+			if (resultBitmap != null) {
+				paint.setAlpha(OPAQUE);
+				canvas.drawBitmap(resultBitmap, frame.left + 90, bmpDTY, paint);//5
 			}
 		}
-		handler.postDelayed(runnable, 500);
+		else if (width >= 720 && width < 1080)
+		{
+			if (bmpDTY == 0) {
+				bmpDTY = frame.top - 80;
+				maxDTY = frame.top + 220;
+			}
+			if (resultBitmap != null) {
+				paint.setAlpha(OPAQUE);
+				canvas.drawBitmap(resultBitmap, frame.left + 10, bmpDTY, paint);//5
+			}
+		} else if ( width >= 1080)
+		{
+			if (bmpDTY == 0) {
+				bmpDTY = frame.top - 200;
+				maxDTY = frame.top + 220;
+			}
+			if (resultBitmap != null) {
+				paint.setAlpha(OPAQUE);
+				canvas.drawBitmap(resultBitmap, frame.left-60, bmpDTY, paint);//5
+			}
+		}
+		handler.postDelayed(runnable, 50);
 	}
 
 	public void drawViewfinder() {
@@ -141,7 +172,7 @@ public final class ViewfinderView extends View {
 		@Override
 		public void run() {
 			if (bmpDTY != 0 && bmpDTY < maxDTY) {
-				bmpDTY += 10;
+				bmpDTY += 4;
 			} else if (bmpDTY == maxDTY) {
 				bmpDTY = 0;
 			}

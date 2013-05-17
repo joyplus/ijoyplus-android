@@ -57,8 +57,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="下拉可以刷新"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
+                android:textColor="#444444"
+                android:textSize="18dip" />
 
             <!-- 最近更新 -->
 
@@ -67,8 +67,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="上次更新"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textColor="#9f9f9f"
+        		android:textSize="13dip" />
         </LinearLayout>
 
         <View

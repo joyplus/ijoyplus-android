@@ -118,7 +118,7 @@
             android:secondaryProgress="0"
             android:thumb="@drawable/player_seekbar_thumb"
             android:thumbOffset="6dp" />
-
+			
         <TextView
             android:id="@+id/mediacontroller_time_total"
             android:layout_width="wrap_content"

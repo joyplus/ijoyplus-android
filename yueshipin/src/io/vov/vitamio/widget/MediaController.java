@@ -222,7 +222,6 @@ public class MediaController extends FrameLayout {
 	}
 
 	private void initFloatingWindow() {
-		android.util.Log.i("player_yy", "initFloatingWindow");
 		mWindow = new PopupWindow(mContext);
 		// mWindow.setFocusable(false);
 		mWindow.setFocusable(true);
@@ -645,6 +644,7 @@ public class MediaController extends FrameLayout {
 		}
 		if (PROD_SOURCE != null)
 			mPlayer.setContinueVideoPath(null, PROD_SOURCE, true);
+			
 	}
 
 	public void setDownloadRate(int rate) {
@@ -760,7 +760,8 @@ public class MediaController extends FrameLayout {
 					lv_radio1.setVisibility(View.VISIBLE);
 
 				if (m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
-						.equalsIgnoreCase("flv"))
+						.equalsIgnoreCase("flv")||m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("3gp"))
 					lv_radio0.setVisibility(View.VISIBLE);
 
 				if (m_ReturnProgramView.movie.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
@@ -775,7 +776,8 @@ public class MediaController extends FrameLayout {
 					lv_radio1.setVisibility(View.VISIBLE);
 
 				if (m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
-						.equalsIgnoreCase("flv"))
+						.equalsIgnoreCase("flv")||m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("3gp"))
 					lv_radio0.setVisibility(View.VISIBLE);
 
 				if (m_ReturnProgramView.tv.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
@@ -790,7 +792,8 @@ public class MediaController extends FrameLayout {
 					lv_radio1.setVisibility(View.VISIBLE);
 
 				if (m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
-						.equalsIgnoreCase("flv"))
+						.equalsIgnoreCase("flv")||m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type
+						.equalsIgnoreCase("3gp"))
 					lv_radio0.setVisibility(View.VISIBLE);
 
 				if (m_ReturnProgramView.show.episodes[CurrentIndex].down_urls[CurrentSource].urls[i].type

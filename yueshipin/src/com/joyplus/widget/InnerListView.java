@@ -46,6 +46,13 @@ public class InnerListView extends ListView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         System.out.println(getChildAt(0));
     }
+    
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    	// TODO Auto-generated method stub
+    	super.onSizeChanged(w, h, oldw, oldh);
+    	this.setFocusable(false);
+    }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
