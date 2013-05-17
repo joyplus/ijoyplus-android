@@ -1,6 +1,9 @@
 package com.joyplus;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,9 +13,12 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -28,6 +34,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 import com.bodong.dianju.sdk.DianJuPlatform;
+import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.faye.FayeService;
 import com.joyplus.widget.InnerListView;
 import com.umeng.analytics.MobclickAgent;
@@ -66,11 +73,15 @@ public class Setting extends Activity {
 	public static final String DESCRIPTOR = "joyplus";
 	final SHARE_MEDIA sinaMedia = SHARE_MEDIA.SINA;
 	UMSocialService controller;
-
+	private ScrollView scrollView = null;
+	private String defaultPlayerPackageName = null ;
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setting);
+//		com.umeng.socom.Log.LOG = true;
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		mContext = this;
@@ -80,7 +91,7 @@ public class Setting extends Activity {
 		ViewGroup fatherLayout = (ViewGroup) findViewById(R.id.ad);
 		InnerListView listView = (InnerListView) this.findViewById(R.id.list);
 		listView.setMaxHeight(400);
-		ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView1);
+		scrollView = (ScrollView) findViewById(R.id.scrollView1);
 		listView.setParentScrollView(scrollView);
 
 		// 赋值preloadDataService,添加newTips 回调
@@ -151,8 +162,7 @@ public class Setting extends Activity {
 
 	@Override
 	public void onResume() {
-		super.onResume();
-		if (UMInfoAgent.isOauthed(mContext, sinaMedia))
+		if (app.GetServiceData("Sina_Access_Token") != null)
 			aq.id(R.id.checkBox1).getCheckBox().setChecked(true);
 		else
 			aq.id(R.id.checkBox1).getCheckBox().setChecked(false);
@@ -165,6 +175,7 @@ public class Setting extends Activity {
 		}
 		MobclickAgent.onEventBegin(mContext, SETTING);
 		MobclickAgent.onResume(this);
+		super.onResume();
 	}
 
 	@Override
@@ -250,6 +261,8 @@ public class Setting extends Activity {
 			if (app.GetServiceData("player_select").equalsIgnoreCase("third")) {
 				app.SaveServiceData("player_select", "default");
 				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
+				ClearSettingDefault();
+				//
 			} else if (app.GetServiceData("player_select").equalsIgnoreCase(
 					"default")) {
 				app.SaveServiceData("player_select", "third");
@@ -264,7 +277,52 @@ public class Setting extends Activity {
 			}
 		}
 	}
-
+	
+	public void ClearSettingDefault(){
+		final IntentFilter filter = new IntentFilter(Intent.ACTION_VIEW);
+		filter.addCategory(Intent.CATEGORY_DEFAULT);
+		List<IntentFilter> filters = new ArrayList<IntentFilter>();
+		filters.add(filter);
+		List<ComponentName> activities = new ArrayList<ComponentName>();
+		final PackageManager packageManager = (PackageManager) getPackageManager();
+		packageManager.getPreferredActivities(filters, activities, null);
+		for (ComponentName activity : activities) {
+			defaultPlayerPackageName = activity.getPackageName();
+		}
+		if(defaultPlayerPackageName ==null)
+		{
+			return;
+		}
+		else
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(getResources().getString(R.string.tishi));
+			builder.setMessage(
+					getResources().getString(R.string.shifouqingchumorenshipin))
+					.setPositiveButton(
+							getResources().getString(R.string.kaishiqingchu),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent localIntent = new Intent();
+									localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+									localIntent.setData(Uri.fromParts("package", defaultPlayerPackageName, null));
+									startActivity(localIntent);
+								}
+							})
+					.setNegativeButton(
+							getResources().getString(R.string.zanbuqingchu),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+								}
+							});
+			builder.show();
+		}
+	}
+	
 	public void OnClickClearMemery(View v) {
 		BitmapAjaxCallback.clearCache();
 		app.MyToast(this, "清除缓存成功");
@@ -303,7 +361,7 @@ public class Setting extends Activity {
 	}
 
 	public void OnClickSinaWeibo(View v) {
-		if (!UMInfoAgent.isOauthed(mContext, sinaMedia)) {
+		if (app.GetServiceData("Sina_Access_Token") == null) {
 			GotoSinaWeibo();
 		} else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -316,6 +374,7 @@ public class Setting extends Activity {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
+									app.DeleteServiceData("Sina_Access_Token");
 									ReGenerateUuid();
 								}
 							})
@@ -405,6 +464,7 @@ public class Setting extends Activity {
 
 			@Override
 			public void onCancel(SHARE_MEDIA arg0) {
+				aq.id(R.id.checkBox1).getCheckBox().setChecked(false);
 				app.MyToast(getApplicationContext(), "绑定取消");
 			}
 

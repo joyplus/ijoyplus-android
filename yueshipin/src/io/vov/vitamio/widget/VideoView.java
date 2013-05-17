@@ -31,6 +31,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -130,7 +131,7 @@ public class VideoView extends SurfaceView implements
 		super(context, attrs, defStyle);
 		initVideoView(context);
 	}
-
+	
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		int width = getDefaultSize(mVideoWidth, widthMeasureSpec);
@@ -246,7 +247,7 @@ public class VideoView extends SurfaceView implements
 		Intent i = new Intent("com.android.music.musicservicecommand");
 		i.putExtra("command", "pause");
 		mContext.sendBroadcast(i);
-
+		
 		release(false);
 		try {
 			mDuration = -1;
@@ -343,7 +344,7 @@ public class VideoView extends SurfaceView implements
 			Log.d("onPrepared");
 			mCurrentState = STATE_PREPARED;
 			mTargetState = STATE_PLAYING;
-
+			
 			if (mOnPreparedListener != null)
 				mOnPreparedListener.onPrepared(mMediaPlayer);
 			if (mMediaController != null)
@@ -353,7 +354,7 @@ public class VideoView extends SurfaceView implements
 			mVideoAspectRatio = mp.getVideoAspectRatio();
 
 			long seekToPosition = mSeekWhenPrepared;
-
+			
 			if (seekToPosition != 0)
 				seekTo(seekToPosition);
 			if (mSeekTime != 0) {
@@ -366,11 +367,17 @@ public class VideoView extends SurfaceView implements
 						&& mSurfaceHeight == mVideoHeight) {
 					if (mTargetState == STATE_PLAYING) {
 						start();
-						if (mLayoutBG != null)
-							mLayoutBG.setVisibility(View.GONE);
-						if (mMediaController != null)
-							mMediaController.show();
-
+						new Handler().postDelayed(new Runnable() {
+							@Override
+							public void run() {
+								// execute the task
+								if(mLayoutBG != null)
+									mLayoutBG.setVisibility(View.GONE);
+								if (mMediaController != null)
+									mMediaController.show();
+							}
+						}, 2500);
+						
 					} else if (!isPlaying()
 							&& (seekToPosition != 0 || getCurrentPosition() > 0)) {
 						if (mMediaController != null)
@@ -934,7 +941,7 @@ public class VideoView extends SurfaceView implements
 		if (android.os.Build.VERSION.SDK_INT >= 14) {
 			if (mMyService != null) {
 				ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
-				if(mDmrCache.size()>=0)
+				if(mDmrCache.size()>0)//原来为大于等于0
 				{
 					app.DlnaDeviceFlag = true;
 				}
@@ -947,11 +954,24 @@ public class VideoView extends SurfaceView implements
 			if (mMyService != null) {
 				ArrayList<MediaRenderer> mDmrCache = mMyService.getDmrCache();
 				if (mDmrCache.size() >= 0) {
-					CharSequence[] items = new String[mDmrCache.size() + 1];
+					ArrayList<String> device = new ArrayList<String>();
+					for(int j = 0;j < mDmrCache.size(); j++)
+					{
+						if(device.contains( mDmrCache.get(j).friendlyName))
+						{
+							
+						}
+						else
+						{
+							device.add(mDmrCache.get(j).friendlyName);
+						}
+					}
+					
+					CharSequence[] items = new String[device.size() + 1];
 					items[0] = "我的设备";
-					for (int i = 0; i < mDmrCache.size(); i++)
-						items[i + 1] = mDmrCache.get(i).friendlyName;
-
+					for (int i = 0; i < device.size(); i++)
+						items[i + 1] = device.get(i);
+					
 					AlertDialog.Builder builder = new AlertDialog.Builder(
 							mContext);
 					builder.setTitle("请选择你的设备：");
@@ -1031,7 +1051,6 @@ public class VideoView extends SurfaceView implements
 			mLayoutBG.setVisibility(View.VISIBLE);
 		}
 		app.CheckUrlIsValidFromServer(path, "1");
-		// setVideoPath(path);
 		if (app.getURLPath() != null && app.getURLPath().length() > 0)
 			mPath = app.getURLPath();
 		else

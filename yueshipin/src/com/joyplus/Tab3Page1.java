@@ -152,6 +152,7 @@ public class Tab3Page1 extends Activity implements OnTabActivityResultListener {
 	}
 
 	public void OnClickContinue(int position) {
+		app.sourceUrl = null;
 		Tab3Page1ListData m_Tab3Page1ListData = (Tab3Page1ListData) ItemsListView
 				.getItemAtPosition(position);
 		tempPlayHistoryData = m_Tab3Page1ListData;

@@ -2,44 +2,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#47484B"
     android:gravity="center"
+    android:background="#fbfbfbfb"
     android:orientation="vertical" >
 
-            <TextView android:layout_height="wrap_content"
-                android:layout_width="fill_parent"
-                android:text="免责声明"
-                android:textSize="18sp"
-                android:textColor="#ffffff"
-                android:gravity="center"/>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@color/grey"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="免责声明"
+        android:textColor="#e4e4e4"
+        android:textSize="20dip" />
 
-            <ScrollView
-                android:layout_width="260dp"
-                android:layout_height="316dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp">
+    <ScrollView
+        android:layout_width="260dp"
+        android:layout_height="316dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+      	android:padding="15dp" >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="#ffffff"
-                    android:text="@string/mianze_words" />
-            </ScrollView>
-            <LinearLayout android:layout_width="match_parent"
-                          android:layout_height="wrap_content"
-                          android:paddingLeft="20dp"
-                          android:paddingRight="20dp">
-		<Button
-                android:id="@+id/btnyes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="接受"
-                android:textSize="20sp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:background="@drawable/black_shape"
-                 />
-		</LinearLayout>
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/mzsm"/>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:gravity="center_horizontal" >
+
+        <Button
+            android:id="@+id/btnyes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#E4E4E4"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="接受"
+            android:textSize="20dip" />
+    </LinearLayout>
+
 </LinearLayout>
