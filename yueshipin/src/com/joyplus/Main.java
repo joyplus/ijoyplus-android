@@ -26,11 +26,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import com.joyplus.widget.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TabHost;
@@ -58,7 +61,6 @@ public class Main extends TabActivity {
 
 	private Intent mTab1, mTab2, mTab3, mTab4;
 	private Map<String, String> headers;
-	private MianZeDialog mianzeDialog;
 	CheckBindDingReceiver bindingReceiver;
 	Context mContext;
 	Handler locationHandler;
@@ -117,10 +119,25 @@ public class Main extends TabActivity {
 		setupIntent();
 
 		if (app.GetServiceData("mianzeshengming") == null) {
-			mianzeDialog = new MianZeDialog(Main.this);
-			mianzeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-			mianzeDialog.setCanceledOnTouchOutside(false);
-			mianzeDialog.show();
+			final Dialog dialog = new AlertDialog.Builder(Main.this).create();
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.show();
+			LayoutInflater inflater = LayoutInflater.from(Main.this);
+			View view = inflater.inflate(R.layout.mianze_dialog, null);
+			Button buttonYes = (Button) view.findViewById(R.id.btnyes);
+			buttonYes.setOnClickListener(new Button.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					dialog.dismiss();
+					// 将内容保存在sharedPreference
+					app.SaveServiceData("mianzeshengming", "mianzeshengming");
+					if (app.GetServiceData("new_guider_1") == null) {
+						aq.id(R.id.new_guider_1).visible();
+					}
+				}
+			});
+			dialog.setContentView(view);
 		}
 	}
 
@@ -424,62 +441,6 @@ public class Main extends TabActivity {
 			}
 		}
 		return super.dispatchKeyEvent(event);
-	}
-
-	// class MyThread extends Thread{
-	// private Context context;
-	// public MyThread(Context context)
-	// {
-	// this.context = context;
-	// }
-	// @Override
-	// public void run() {
-	// // TODO Auto-generated method stub
-	// Intent service = new Intent(Main.this, FayeService.class);
-	// context.startService(service);
-	// check_binding(app.GetServiceData("Binding_TV_Channal"),
-	// app.GetServiceData("Binding_Userid"), app.getHeaders());
-	//
-	// PushService.subscribe(context, "", Main.class);
-	// PushService.subscribe(context, "CHANNEL_ANDROID", Main.class);
-	// PushService.setDefaultPushCallback(context, Main.class);
-	//
-	// }
-	//
-	// }
-
-	// 免责声明对话框
-
-	public class MianZeDialog extends Dialog {
-
-		public MianZeDialog(Context context) {
-			super(context);
-			// TODO Auto-generated constructor stub
-		}
-
-		protected void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			setContentView(R.layout.mianze_dialog);
-
-			Window mWindow = getWindow();
-			WindowManager.LayoutParams lp = mWindow.getAttributes();
-			lp.dimAmount = 0f;
-			mWindow.setAttributes(lp);
-
-			Button buttonYes = (Button) findViewById(R.id.btnyes);
-			buttonYes.setOnClickListener(new Button.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					dismiss();
-					// 将内容保存在sharedPreference
-					app.SaveServiceData("mianzeshengming", "mianzeshengming");
-					if (app.GetServiceData("new_guider_1") == null) {
-						aq.id(R.id.new_guider_1).visible();
-					}
-				}
-			});
-		}
 	}
 
 	/* 注册监听 */

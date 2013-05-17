@@ -134,15 +134,15 @@ public final class ViewfinderView extends View {
 		} else if ( width >= 1080)
 		{
 			if (bmpDTY == 0) {
-				bmpDTY = frame.top - 80;
+				bmpDTY = frame.top - 200;
 				maxDTY = frame.top + 220;
 			}
 			if (resultBitmap != null) {
 				paint.setAlpha(OPAQUE);
-				canvas.drawBitmap(resultBitmap, frame.left-70, bmpDTY, paint);//5
+				canvas.drawBitmap(resultBitmap, frame.left-60, bmpDTY, paint);//5
 			}
 		}
-		handler.postDelayed(runnable, 500);
+		handler.postDelayed(runnable, 50);
 	}
 
 	public void drawViewfinder() {
@@ -172,7 +172,7 @@ public final class ViewfinderView extends View {
 		@Override
 		public void run() {
 			if (bmpDTY != 0 && bmpDTY < maxDTY) {
-				bmpDTY += 10;
+				bmpDTY += 4;
 			} else if (bmpDTY == maxDTY) {
 				bmpDTY = 0;
 			}
