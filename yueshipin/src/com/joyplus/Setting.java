@@ -76,10 +76,12 @@ public class Setting extends Activity {
 	private ScrollView scrollView = null;
 	private String defaultPlayerPackageName = null ;
 	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setting);
+//		com.umeng.socom.Log.LOG = true;
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		mContext = this;
