@@ -1882,7 +1882,6 @@ public class Detail_TV extends Activity {
 		downloadpopup = new PopupWindow(menuView, LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT, true);
 		downloadpopup.setBackgroundDrawable(new BitmapDrawable());
-//		downloadpopup.setAnimationStyle(R.style.PopupAnimation);
 		downloadpopup.showAtLocation(findViewById(R.id.parent), Gravity.CENTER
 				| Gravity.CENTER, 0, 78);
 		downloadpopup.update();
