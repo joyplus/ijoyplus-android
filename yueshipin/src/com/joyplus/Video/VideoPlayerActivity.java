@@ -388,8 +388,6 @@ public class VideoPlayerActivity extends Activity implements
 
 			if (current_time > 0) {
 
-				if (playProdType != 1) {
-
 					if (playProdType == 2 || playProdType == 131) {
 						playrecordinfo.setProd_id(playProdId);
 						if (Constant.select_index > -1) {
@@ -422,7 +420,7 @@ public class VideoPlayerActivity extends Activity implements
 						}
 					}
 					play_current_time = current_time;
-				}
+					
 				mVideoView.pause();
 			}
 		}

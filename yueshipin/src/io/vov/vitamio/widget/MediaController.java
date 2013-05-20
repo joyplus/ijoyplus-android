@@ -1219,9 +1219,6 @@ public class MediaController extends FrameLayout {
 	private View.OnClickListener mReturnListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// if(DLNAMODE)
-			// DLNAMODE = false;
-			// else
 			VideoPlayerActivity.IsFinish = true;
 			mPlayer.OnComplete();
 		}

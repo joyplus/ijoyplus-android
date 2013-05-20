@@ -74,7 +74,7 @@ public class Tab1 extends Activity implements
 				// 当不滚动时
 				case OnScrollListener.SCROLL_STATE_IDLE:
 					// 判断滚动到底部
-					if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
+					if (view.getLastVisiblePosition() == (view.getCount() - 3)) {
 						isLastisNext++;
 						GetServiceData(isLastisNext);
 					}
