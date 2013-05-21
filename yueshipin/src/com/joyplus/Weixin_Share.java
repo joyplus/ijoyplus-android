@@ -17,45 +17,44 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TabHost;
 
-public class Tab3 extends TabActivity {
+public class Weixin_Share extends TabActivity {
 
 	private AQuery aq;
 	private App app;
-	private String TAB3_PAGE1 = "TAB3_PAGE1";
-	private String TAB3_PAGE2 = "TAB3_PAGE2";
-	private String TAB3_PAGE3 = "TAB3_PAGE3";
+	private String WX_PAGE1 = "WX_PAGE1";
+	private String WX_PAGE2 = "WX_PAGE2";
+	private String WX_PAGE3 = "WX_PAGE3";
 	private TabHost mTabHost;
 	private Intent mTab1, mTab2, mTab3;
-	private static String PERSONAL  = "个人主页";
+	private static String PERSONAL  = "微信分享";
 	Context mContext;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.tab3);
+		setContentView(R.layout.weixin_share);
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		mContext = this;
 		prepareIntent();
 		setupIntent();
-		CheckLogin();
 	}
 
 	private void prepareIntent() {
-		mTab1 = new Intent(this, Tab3Page1.class);
-		mTab2 = new Intent(this, Tab3Page2.class);
-		mTab3 = new Intent(this, Tab3Page3.class);
+		mTab1 = new Intent(this, WeixinPage1.class);
+		mTab2 = new Intent(this, WeixinPage2.class);
+		mTab3 = new Intent(this, WeixinPage3.class);
 	}
 
 	private void setupIntent() {
 		mTabHost = getTabHost();
-		mTabHost.addTab(buildTabSpec(TAB3_PAGE1,
+		mTabHost.addTab(buildTabSpec(WX_PAGE1,
 				getResources().getString(R.string.tab1),
 				R.drawable.tab1_yuedan, mTab1));
-		mTabHost.addTab(buildTabSpec(TAB3_PAGE2,
+		mTabHost.addTab(buildTabSpec(WX_PAGE2,
 				getResources().getString(R.string.tab2),
 				R.drawable.tab2_yuebang, mTab2));
-		mTabHost.addTab(buildTabSpec(TAB3_PAGE3,
+		mTabHost.addTab(buildTabSpec(WX_PAGE3,
 				getResources().getString(R.string.tab3), R.drawable.tab3_wode,
 				mTab3));
 		mTabHost.setCurrentTab(0);
@@ -68,13 +67,13 @@ public class Tab3 extends TabActivity {
 				// TODO Auto-generated method stub
 				switch (checkedId) {
 				case R.id.radio0:
-					mTabHost.setCurrentTabByTag(TAB3_PAGE1);
+					mTabHost.setCurrentTabByTag(WX_PAGE1);
 					break;
 				case R.id.radio1:
-					mTabHost.setCurrentTabByTag(TAB3_PAGE2);
+					mTabHost.setCurrentTabByTag(WX_PAGE2);
 					break;
 				case R.id.radio2:
-					mTabHost.setCurrentTabByTag(TAB3_PAGE3);
+					mTabHost.setCurrentTabByTag(WX_PAGE3);
 					break;
 
 				default:
@@ -103,7 +102,6 @@ public class Tab3 extends TabActivity {
 	public void onResume() {
 		super.onResume();
         MobclickAgent.onEventBegin(mContext, PERSONAL);
-        CheckLogin();
 	}
 
 	@Override
@@ -113,55 +111,17 @@ public class Tab3 extends TabActivity {
 	}
 
 	public void OnClickTab1TopLeft(View v) {
-//		Intent i = new Intent(this, Search.class);
-//		startActivity(i);
-		Intent i = new Intent(this, Weixin_Share.class);
-		startActivity(i);
-	}
-
-	public void OnClickTab1TopRight(View v) {
-		Intent i = new Intent(this, Setting.class);
-		startActivityForResult(i, 100);
-
-	}
-
-	public boolean CheckLogin() {
-		String UserInfo = null;
-		UserInfo = app.GetServiceData("UserInfo");
-		if (UserInfo != null) {
-			JSONObject json;
-			try {
-				json = new JSONObject(UserInfo);
-				if (json.getString("nickname").trim().length() > 0) {
-					aq.id(R.id.textView4).text(
-							json.getString("nickname").trim());
-					aq.id(R.id.textView5).gone();
-					String temp = json.getString("pic_url");
-					aq.id(R.id.imageView4).image(json.getString("pic_url").trim(), true, true, 0,
-							R.drawable.default_header);
-				} else {
-					aq.id(R.id.textView5)
-							.text(json.getString("user_id").trim());
-					aq.id(R.id.imageView4).image(
-							json.getString("pic_url").trim(), true, true, 0,
-							R.drawable.default_header);
-				}
-			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		return false;
+		Weixin_Share.this.finish();
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 		if (requestCode == 100 && resultCode == 0) {
-			CheckLogin();
+			
 		}
 		if (requestCode == 100 && resultCode == 101) {
-			CheckLogin();
+			
 		} else {
 			// 获取当前活动的Activity实例
 			Activity subActivity = getLocalActivityManager()
