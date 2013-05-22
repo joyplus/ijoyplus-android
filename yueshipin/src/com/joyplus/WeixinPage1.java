@@ -158,41 +158,15 @@ public class WeixinPage1 extends Activity implements
 		// .show();
 		Intent intent = new Intent();
 		// 1：电影，2：电视剧，3：综艺，4：视频  131:动漫
-		switch (Integer.valueOf(m_BangDanListData.prod_type)) {
-		case 1:
-			intent.setClass(this, Detail_Movie.class);
-			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
-			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
-			try {
-				startActivity(intent);
-			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG, "Call Detail_Movie failed", ex);
-			}
-			break;
-		case 131://动漫的type有可能是131
-		case 2://字段为电视剧
-			intent.setClass(this, Detail_TV.class);
-			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
-			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
-			intent.putExtra("prod_type", m_BangDanListData.prod_type);
-			try {
-				startActivity(intent);
-			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG, "Call Detail_TV failed", ex);
-			}
-			break;
-		case 3:
-			intent.setClass(this, Detail_Show.class);
-			intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
-			intent.putExtra("prod_name", m_BangDanListData.Pic_name);
-			try {
-				startActivity(intent);
-			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG, "Call Detail_Show failed", ex);
-			}
-			break;
+		
+		intent.setClass(this, Weixin_ShareVideo.class);
+		intent.putExtra("prod_id", m_BangDanListData.Pic_ID);
+		intent.putExtra("prod_name", m_BangDanListData.Pic_name);
+		try {
+			startActivity(intent);
+		} catch (ActivityNotFoundException ex) {
+			Log.e(TAG, "Call Detail_Movie failed", ex);
 		}
-
 	}
 
 	private void CheckSaveData() {

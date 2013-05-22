@@ -98,35 +98,7 @@ public class WeixinPage2 extends Activity implements OnTabActivityResultListener
 
 			}
 		});
-		ItemsListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				// TODO Auto-generated method stub
-				OnDeleteListItem(arg2);
-				return true;// 如果返回false那么onItemClick仍然会被调用
-			}
-		});
 		aq.id(R.id.Layout1).gone();
-	}
-
-	public void OnClickTab1TopLeft(View v) {
-		Intent i = new Intent(this, Search.class);
-		startActivity(i);
-
-	}
-
-	public void OnClickTab1TopRight(View v) {
-		Intent i = new Intent(this, Setting.class);
-		startActivity(i);
-
-	}
-
-	public void OnClickMore(View v) {
-		Intent i = new Intent(this, Tab3Page2_more.class);
-		startActivityForResult(i, 1);
-
 	}
 
 	@Override
@@ -215,13 +187,7 @@ public class WeixinPage2 extends Activity implements OnTabActivityResultListener
 	}
 
 	public void OnClickImageView(View v) {
-		/*
-		 * Intent intent = new Intent(this, BuChongGeRenZhiLiao.class);
-		 * intent.putExtra("prod_id", m_prod_id); intent.putExtra("prod_type",
-		 * m_prod_type); try { startActivity(intent); } catch
-		 * (ActivityNotFoundException ex) { Log.e(TAG,
-		 * "OnClickImageView failed", ex); }
-		 */
+		
 	}
 
 	// 初始化list数据函数
@@ -289,81 +255,6 @@ public class WeixinPage2 extends Activity implements OnTabActivityResultListener
 		}
 	}
 
-	private void OnDeleteListItem(final int item) {
-		final Tab3Page2ListData m_Tab3Page2ListData = (Tab3Page2ListData) ItemsListView
-				.getItemAtPosition(item);
-		String program_name = "你确定删除  " + m_Tab3Page2ListData.Pic_name + "  吗？";
-		AlertDialog.Builder builder = new AlertDialog.Builder(
-				WeixinPage2.this.getParent());
-		builder.setTitle("我的收藏").setMessage(program_name)
-				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dataStruct.remove(item);
-						Tab3Page2Adapter.notifyDataSetChanged();
-
-						ItemsListView.invalidate();
-
-						// if(m_ReturnUserFavorities.favorities.length > 3){
-						// GetServiceData();
-						// }
-						if (dataStruct.size() == 0) {
-							aq.id(R.id.imageNoitemBG).visible();
-							aq.id(R.id.Layout1).gone();
-							aq.id(R.id.Layout2).gone();
-						} else if (dataStruct.size() <= 3) {
-							aq.id(R.id.Layout2).gone();
-						}
-						// 删除数据
-						Unfavority(m_Tab3Page2ListData.Pic_ID);
-
-					}
-				}).setNegativeButton("取消", null).create();
-		builder.show();
-	}
-
-	private void Unfavority(String prod_id) {
-		ParseInstallation installation = ParseInstallation
-				.getCurrentInstallation();
-		installation.removeAll("channels", Arrays.asList("CHANNEL_PROD_"+prod_id));
-		installation.saveInBackground();
-		
-		String url = Constant.BASE_URL + "program/unfavority";
-
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("prod_id", prod_id);
-
-		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.SetHeader(app.getHeaders());
-
-		cb.params(params).url(url).type(JSONObject.class)
-				.weakHandler(this, "UnfavorityResult");
-
-		aq.ajax(cb);
-	}
-
-	public void UnfavorityResult(String url, JSONObject json, AjaxStatus status) {
-		if (json != null) {
-			try {
-				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
-					app.MyToast(this, "删除收藏成功!");
-					// GetServiceData(1);
-				} else
-					app.MyToast(this, "删除收藏失败!");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		} else {
-
-			// ajax error, show error code
-			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
-				app.MyToast(this,
-						getResources().getString(R.string.networknotwork));
-		}
-	}
-
 	// InitListData
 	public void GetServiceData(int index) {
 		String url = Constant.BASE_URL + "user/favorities" + "?page_num="
@@ -383,42 +274,15 @@ public class WeixinPage2 extends Activity implements OnTabActivityResultListener
 	private void GotoDetail(int item) {
 		Tab3Page2ListData m_Tab3Page2ListData = (Tab3Page2ListData) ItemsListView
 				.getItemAtPosition(item);
-		// System.out.println("Item clicked. Position:" + item);
-		// app.MyToast(this, m_Tab3Page2ListData.Pic_name, Toast.LENGTH_LONG)
-		// .show();
 		Intent intent = new Intent();
-		// 1：电影，2：电视剧，3：综艺，4：视频
-		switch (Integer.valueOf(m_Tab3Page2ListData.prod_type)) {
-		case 1:
-			intent.setClass(this, Detail_Movie.class);
-			intent.putExtra("prod_id", m_Tab3Page2ListData.Pic_ID);
-			intent.putExtra("prod_name", m_Tab3Page2ListData.Pic_name);
-			try {
-				startActivity(intent);
-			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG, "Call Detail_Movie failed", ex);
-			}
-			break;
-		case 2:
-			intent.setClass(this, Detail_TV.class);
-			intent.putExtra("prod_id", m_Tab3Page2ListData.Pic_ID);
-			intent.putExtra("prod_name", m_Tab3Page2ListData.Pic_name);
-			try {
-				startActivity(intent);
-			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG, "Call Detail_TV failed", ex);
-			}
-			break;
-		case 3:
-			intent.setClass(this, Detail_Show.class);
-			intent.putExtra("prod_id", m_Tab3Page2ListData.Pic_ID);
-			intent.putExtra("prod_name", m_Tab3Page2ListData.Pic_name);
-			try {
-				startActivity(intent);
-			} catch (ActivityNotFoundException ex) {
-				Log.e(TAG, "Call Detail_Show failed", ex);
-			}
-			break;
+
+		intent.setClass(this, Weixin_ShareVideo.class);
+		intent.putExtra("prod_id", m_Tab3Page2ListData.Pic_ID);
+		intent.putExtra("prod_name", m_Tab3Page2ListData.Pic_name);
+		try {
+			startActivity(intent);
+		} catch (ActivityNotFoundException ex) {
+			Log.e(TAG, "Call Detail_Movie failed", ex);
 		}
 	}
 
@@ -449,10 +313,7 @@ public class WeixinPage2 extends Activity implements OnTabActivityResultListener
 		// 获取显示当前的view
 		@Override
 		public View getView(int i, View view, ViewGroup viewgroup) {
-
-			// Integer integer = Integer.valueOf(i);
 			ViewHolder holder = null;
-
 			if (view == null) {
 
 				view = getLayoutInflater().inflate(
@@ -481,10 +342,6 @@ public class WeixinPage2 extends Activity implements OnTabActivityResultListener
 			aqlist.id(holder.mYear).text(m_Tab3Page2ListData.Text_Year);
 			aqlist.id(holder.mImageView).image(m_Tab3Page2ListData.Pic_url,
 					true, true);
-			// aqlist.id(holder.mImageView).image(m_Tab3Page2ListData.Pic_url,
-			// true, true, 0, 0, null, 0, 1.0f);
-
-			// aqlist.dismiss();
 			return view;
 		}
 	}

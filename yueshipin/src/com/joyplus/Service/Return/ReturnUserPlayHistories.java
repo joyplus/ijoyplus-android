@@ -15,6 +15,7 @@ import com.joyplus.Service.Return.ReturnUserFavorities.Favorities;
           "playback_time": 上次播放时间，单位：秒,
           "video_url": 视频地址,
           "duration": 视频时长， 单位：秒
+          "prod_pic_url": 视频的图片
       },
      .......
    ]
@@ -31,6 +32,7 @@ public class ReturnUserPlayHistories {
 		public String prod_id;
 		public String create_date;
 		public String play_type;
+		public String prod_pic_url;
 		public int playback_time;
 		public String video_url;
 		public int duration;

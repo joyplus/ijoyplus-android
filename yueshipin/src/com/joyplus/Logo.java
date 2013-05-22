@@ -20,10 +20,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-public class Logo extends Activity  implements IWXAPIEventHandler{
+public class Logo extends Activity{
 	private static final int TIMELINE_SUPPORTED_VERSION = 0x21020001;
 	// IWXAPI 微信实例
-    private IWXAPI api;
+//    private IWXAPI api;
 	
 	
 	/** Called when the activity is first created. */
@@ -36,8 +36,8 @@ public class Logo extends Activity  implements IWXAPIEventHandler{
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN); // 设置全屏显示
 		//微信实例
-		api = WXAPIFactory.createWXAPI(this, Constant.APP_ID, false);
-		api.handleIntent(getIntent(), this);
+//		api = WXAPIFactory.createWXAPI(this, Constant.APP_ID, false);
+//		api.handleIntent(getIntent(), this);
 		
 		final Intent intent = new Intent(Logo.this, Main.class);// AndroidMainScreen为主界面
 		Timer timer = new Timer();
@@ -68,54 +68,54 @@ public class Logo extends Activity  implements IWXAPIEventHandler{
 	 * @see android.app.Activity#onNewIntent(android.content.Intent)
 	 * 微信新的intent
 	 */
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		
-		setIntent(intent);
-        api.handleIntent(intent, this);
-	}
+//	@Override
+//	protected void onNewIntent(Intent intent) {
+//		super.onNewIntent(intent);
+//		
+//		setIntent(intent);
+//        api.handleIntent(intent, this);
+//	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see com.tencent.mm.sdk.openapi.IWXAPIEventHandler#onReq(com.tencent.mm.sdk.openapi.BaseReq)
 	 */
-	@Override
-	public void onReq(BaseReq arg0) {
-		// TODO Auto-generated method stub
-		switch (arg0.getType()) {
-		case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
-			goToGetMsg();		
-			break;
-		case ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX:
-			goToShowMsg((ShowMessageFromWX.Req) arg0);
-			Toast.makeText(Logo.this, "悦视频", Toast.LENGTH_SHORT).show();
-			break;
-		default:
-			break;
-		}
-	}
+//	@Override
+//	public void onReq(BaseReq arg0) {
+//		// TODO Auto-generated method stub
+//		switch (arg0.getType()) {
+//		case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
+//			goToGetMsg();		
+//			break;
+//		case ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX:
+//			goToShowMsg((ShowMessageFromWX.Req) arg0);
+//			Toast.makeText(Logo.this, "悦视频", Toast.LENGTH_SHORT).show();
+//			break;
+//		default:
+//			break;
+//		}
+//	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see com.tencent.mm.sdk.openapi.IWXAPIEventHandler#onResp(com.tencent.mm.sdk.openapi.BaseResp)
 	 */
-	@Override
-	public void onResp(BaseResp arg0) {
-		// TODO Auto-generated method stub
-		int result = 0;
-		
-		switch (arg0.errCode) {
-
-		}
-	}
+//	@Override
+//	public void onResp(BaseResp arg0) {
+//		// TODO Auto-generated method stub
+//		int result = 0;
+//		
+//		switch (arg0.errCode) {
+//
+//		}
+//	}
 	
-	private void goToGetMsg() {
-		Intent intent = new Intent(this, Weixin_Share.class);//显示你要显示的activity
-		intent.putExtras(getIntent());
-		startActivity(intent);
-		finish();
-	}
+//	private void goToGetMsg() {
+//		Intent intent = new Intent(this, Weixin_Share.class);//显示你要显示的activity
+//		intent.putExtras(getIntent());
+//		startActivity(intent);
+//		finish();
+//	}
 	
 	private void goToShowMsg(ShowMessageFromWX.Req showReq) {
 //		WXMediaMessage wxMsg = showReq.message;		
