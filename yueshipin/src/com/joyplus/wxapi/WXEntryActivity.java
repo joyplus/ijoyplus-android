@@ -111,12 +111,12 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
 		msg.append("\n");
 		msg.append("filePath: ");
 		msg.append(obj.filePath);
-		
-//		Intent intent = new Intent(this, ShowFromWXActivity.class);
-//		intent.putExtra(Constants.ShowMsgActivity.STitle, wxMsg.title);
-//		intent.putExtra(Constants.ShowMsgActivity.SMessage, msg.toString());
-//		intent.putExtra(Constants.ShowMsgActivity.BAThumbData, wxMsg.thumbData);
-//		startActivity(intent);
+		/*
+		 * 返回以后也返回这个界面表示该页面为默认页面
+		 */
+		Intent intent = new Intent(this, Weixin_Share.class);
+		intent.putExtras(getIntent());
+		startActivity(intent);
 		finish();
 	}
 }

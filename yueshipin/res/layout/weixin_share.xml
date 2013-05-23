@@ -39,7 +39,7 @@
         android:paddingTop="10dp" >
 
         <EditText
-            android:id="@+id/searchEditText1"
+            android:id="@+id/editText1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/sousuo_kuang_s"
@@ -51,10 +51,11 @@
         </EditText>
 
         <ImageButton
-            android:id="@+id/searchBtn"
+            android:id="@+id/Tab1TopRightImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingRight="3dp"
+            android:onClick="OnClickSearch"
             android:background="@drawable/sousuo" />
     </LinearLayout>
 
@@ -66,13 +67,13 @@
         android:layout_marginTop="100dp"
         android:orientation="vertical" >
 
-        <ProgressBar
+        <!-- <ProgressBar
             android:id="@+id/progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="12dp"
-            android:visibility="gone" />
+            android:visibility="gone" /> -->
 
         <TabHost
             android:id="@android:id/tabhost"
@@ -152,5 +153,59 @@
             </RelativeLayout>
         </TabHost>
     </LinearLayout>
+	 <RelativeLayout
+        android:id="@+id/LinearLayoutTabSearch"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingTop="50dp"
+        android:layout_below="@id/LayoutTitle"
+        android:orientation="vertical" >
 
+        <ProgressBar
+            android:id="@+id/progressSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:scaleType="centerInside"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textViewNoResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="80dp"
+            android:text="抱歉，没有找到相关结果！"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#444444"
+            android:visibility="gone" />
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#F2F2F2"
+            android:cacheColorHint="#F2F2F2"
+            android:descendantFocusability="blocksDescendants"
+            android:divider="@drawable/tab1_divider"
+            android:fadingEdge="none"
+            android:visibility="gone" >
+        </ListView>
+
+        <TextView
+            android:id="@+id/ProgressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progress"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="加载中..." 
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#444444"
+            android:visibility="gone" />
+    </RelativeLayout>
 </RelativeLayout>
