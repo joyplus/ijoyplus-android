@@ -281,7 +281,7 @@ public class WeixinPage1 extends Activity implements
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitBangDanData");
 		cb.SetHeader(app.getHeaders());
-		aq.ajax(cb);
+		aq.progress(R.id.progress).ajax(cb);//显示当前的进度
 	}
 	
 	// 初始化list数据函数

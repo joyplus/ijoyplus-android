@@ -113,9 +113,7 @@ public class Tab3 extends TabActivity {
 	}
 
 	public void OnClickTab1TopLeft(View v) {
-//		Intent i = new Intent(this, Search.class);
-//		startActivity(i);
-		Intent i = new Intent(this, Weixin_Share.class);
+		Intent i = new Intent(this, Search.class);
 		startActivity(i);
 	}
 
