@@ -24,7 +24,7 @@
         	android:focusableInTouchMode="true"
             android:textSize="20sp"
             android:singleLine="true"
-            android:maxEms = "6"
+            android:maxEms = "10"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white" />
 
@@ -221,10 +221,10 @@
         android:text="上次播放到 00:43:23"
         android:textColor="@color/grey"
         android:visibility="gone" />
-
+	<!-- 200dp -->
     <RelativeLayout
         android:id="@+id/relativeLayoutBottomRight"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -234,7 +234,7 @@
         android:visibility="gone" 
         >
 
-        <TextView
+   <!--      <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -243,11 +243,11 @@
             android:layout_marginLeft="9dp"
             android:layout_marginTop="9dp"
             android:text="请选择影片清晰度:"
-            android:textColor="@color/white" />
-
+            android:textColor="@color/white" /> -->
+		<!-- 192dp -->
         <RadioGroup
             android:id="@+id/radioGroup1"
-            android:layout_width="192dp"
+            android:layout_width="wrap_content"
             android:layout_height="57dp"
             android:layout_below="@+id/textView1"
             android:layout_marginLeft="4dp"
@@ -261,7 +261,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/player_b_puqing"
-            android:button="@null"
+            	android:button="@null"
                 android:checked="true"
                />
 
@@ -271,16 +271,16 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/player_b_gaoqing"
-            android:button="@null"
+            	android:button="@null"
                />
 
             <RadioButton
                 android:id="@+id/radio2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                  android:layout_weight="1"
+                android:layout_weight="1"
                 android:background="@drawable/player_b_chaoqing"
-            android:button="@null"
+            	android:button="@null"
                 />
         </RadioGroup>
     </RelativeLayout>

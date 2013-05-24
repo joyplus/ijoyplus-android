@@ -23,11 +23,14 @@ import com.umeng.analytics.MobclickAgent;
 
 import android.R.color;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -61,6 +64,7 @@ public class Weixin_Share extends TabActivity implements
 	private ListView ItemsListView;
 	private EditText searchtext;
 	private SearchListAdapter SearchAdapter;
+	private boolean pageFlag = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -83,11 +87,13 @@ public class Weixin_Share extends TabActivity implements
 				if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
 					searchtext.setFocusable(false);// EditText 失去焦点
 					LinearLayoutTab.setVisibility(View.VISIBLE);
+					pageFlag = true;
 
 				} else {
 					searchtext.setFocusable(true);
 					LinearLayoutTab.setVisibility(View.INVISIBLE);
 					ItemsListView.setVisibility(View.VISIBLE);
+					pageFlag = true;
 				}
 				return false;
 			}
@@ -356,9 +362,37 @@ public class Weixin_Share extends TabActivity implements
 	}
 
 	public void OnClickTab1TopLeft(View v) {
-		Weixin_Share.this.finish();
+		if(pageFlag)
+		{
+			ItemsListView.setVisibility(View.INVISIBLE);
+			LinearLayoutTab.setVisibility(View.VISIBLE);
+			pageFlag = false;
+		}else
+		{
+			Weixin_Share.this.finish();
+		}
 	}
-
+	
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+			if (event.getAction() == KeyEvent.ACTION_DOWN
+					&& event.getRepeatCount() == 0) {
+				if(pageFlag)
+				{
+					ItemsListView.setVisibility(View.INVISIBLE);
+					LinearLayoutTab.setVisibility(View.VISIBLE);
+					pageFlag = false;
+				}else
+				{
+					Weixin_Share.this.finish();
+				}
+				return true;
+			}
+		}
+		return super.dispatchKeyEvent(event);
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 

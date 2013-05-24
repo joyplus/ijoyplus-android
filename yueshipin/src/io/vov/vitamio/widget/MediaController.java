@@ -748,9 +748,10 @@ public class MediaController extends FrameLayout {
 
 	private void ShowQuality() {
 
-		lv_radio0.setVisibility(View.INVISIBLE);
-		lv_radio1.setVisibility(View.INVISIBLE);
-		lv_radio2.setVisibility(View.INVISIBLE);
+		lv_radio0.setVisibility(View.GONE);
+		lv_radio1.setVisibility(View.GONE);
+		lv_radio2.setVisibility(View.GONE);
+		
 
 		switch (CurrentCategory) {
 		case 0:

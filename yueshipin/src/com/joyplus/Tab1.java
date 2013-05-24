@@ -74,7 +74,9 @@ public class Tab1 extends Activity implements
 				// 当不滚动时
 				case OnScrollListener.SCROLL_STATE_IDLE:
 					// 判断滚动到底部
-					if (view.getLastVisiblePosition() == (view.getCount() - 3)) {
+					int i = view.getLastVisiblePosition();
+					int j = view.getCount();
+					if (view.getLastVisiblePosition() >= (view.getCount()-5)) {
 						isLastisNext++;
 						GetServiceData(isLastisNext);
 					}
@@ -380,8 +382,16 @@ public class Tab1 extends Activity implements
 	}
 
 	public void GetServiceData(int index) {
-		String url = Constant.BASE_URL + "tops" + "?page_num="
-				+ Integer.toString(index) + "&page_size=30";
+		String url = null;
+		if(index == 1)
+		{
+			url = Constant.BASE_URL + "tops" + "?page_num="
+					+ Integer.toString(index) + "&page_size=20";
+		} else{
+			url = Constant.BASE_URL + "tops" + "?page_num="
+					+ Integer.toString(index) + "&page_size=10";
+		}
+		
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
