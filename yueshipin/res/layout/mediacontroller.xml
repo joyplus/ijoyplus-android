@@ -247,13 +247,13 @@
 		<!-- 192dp -->
         <RadioGroup
             android:id="@+id/radioGroup1"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="57dp"
             android:layout_below="@+id/textView1"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/player_clarity_btn_bg"
-            android:orientation="horizontal" >
+            android:orientation="vertical" >
 
             <RadioButton
                 android:id="@+id/radio0"
