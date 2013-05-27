@@ -221,39 +221,31 @@
         android:text="上次播放到 00:43:23"
         android:textColor="@color/grey"
         android:visibility="gone" />
-	<!-- 200dp -->
+    
     <RelativeLayout
         android:id="@+id/relativeLayoutBottomRight"
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="41dp"
         android:layout_marginRight="14dp"
-        android:background="@drawable/player_clarity_bg" 
+        android:background="@drawable/player_clarity_bg"
         android:visibility="gone" 
         >
-
-   <!--      <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="9dp"
-            android:layout_marginTop="9dp"
-            android:text="请选择影片清晰度:"
-            android:textColor="@color/white" /> -->
-		<!-- 192dp -->
+       
+       
         <RadioGroup
             android:id="@+id/radioGroup1"
-            android:layout_width="100dp"
-            android:layout_height="57dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/textView1"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/player_clarity_btn_bg"
-            android:orientation="vertical" >
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical"
+            >
 
             <RadioButton
                 android:id="@+id/radio0"
@@ -280,8 +272,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/player_b_chaoqing"
-            	android:button="@null"
-                />
+                android:button="@null" />
+
         </RadioGroup>
     </RelativeLayout>
 
