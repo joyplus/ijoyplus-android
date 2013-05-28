@@ -486,7 +486,7 @@ public class VideoView extends SurfaceView implements
 			return true;
 		}
 	};
-
+	
 	private OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
 		@Override
 		public void onBufferingUpdate(MediaPlayer mp, int percent) {

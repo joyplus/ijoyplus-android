@@ -162,12 +162,10 @@ public class VideoPlayerActivity extends Activity implements
 				mMyService = ((DlnaSelectDevice.MyBinder) service).getService();
 				mVideoView.setServiceConnection(mMyService);
 			}
-
 		}
 
 		public void onServiceDisconnected(ComponentName name) {
 			// TODO Auto-generated method stub
-
 		}
 	};
 
@@ -274,8 +272,6 @@ public class VideoPlayerActivity extends Activity implements
 			bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 		}
 		checkBind = true;
-		//source_yy
-		String temp = app.sourceUrl;
 		
 		if (!URLUtil.isNetworkUrl(mPath)) {
 			aq.id(R.id.textViewRate).gone();
@@ -293,7 +289,6 @@ public class VideoPlayerActivity extends Activity implements
 				// android.util.Log.i("player_yy",msg.what+"");
 				switch (msg.what) {
 				case VideoPlay:
-					String temp = msg.obj.toString();
 					if (msg.obj.toString().contains("{now_date}")) {
 						long time = System.currentTimeMillis()/1000;
 						String msgUrl = msg.obj.toString().replace("{now_date}",
@@ -309,7 +304,19 @@ public class VideoPlayerActivity extends Activity implements
 				}
 			}
 		};
-
+		
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				// execute the task
+				if(IsPlaying == false)
+				{
+					//一直处于检测状态时
+					sendQuitMessage();
+					finish();
+				}	
+			}
+		}, 30000);
 	}
 
 	@SuppressLint("DefaultLocale")

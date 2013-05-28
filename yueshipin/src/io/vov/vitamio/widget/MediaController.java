@@ -1322,6 +1322,7 @@ public class MediaController extends FrameLayout {
 	}
 
 	private void updateTopRight() {
+		
 		if (mViewTopRight.getVisibility() == View.VISIBLE)
 			mViewTopRight.setVisibility(View.GONE);
 		else

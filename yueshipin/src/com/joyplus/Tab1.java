@@ -358,15 +358,18 @@ public class Tab1 extends Activity implements
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						dataStruct = null;
-						dataStruct = new ArrayList();
-						GetServiceData(isLastisNext);
-					}
-				}, 100000);
+				dataStruct = null;
+				dataStruct = new ArrayList();
+				GetServiceData(isLastisNext);
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						dataStruct = null;
+//						dataStruct = new ArrayList();
+//						GetServiceData(isLastisNext);
+//					}
+//				}, 5000);
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -27,14 +27,47 @@
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/top_icon_return" />
         </LinearLayout>
+
+       <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="悦视频"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:visibility="invisible"
+            android:orientation="horizontal"
+             >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/top_icon_return" />
+        </LinearLayout>
+    
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/LayoutTitle"
-        android:orientation="horizontal"
         android:gravity="center_horizontal"
+        android:orientation="horizontal"
         android:paddingBottom="10dp"
         android:paddingTop="10dp" >
 
@@ -46,7 +79,7 @@
             android:drawableLeft="@drawable/sousuo_kuang"
             android:hint=" 电影 / 电视剧 / 综艺"
             android:singleLine="true" >
-			
+
             <requestFocus />
         </EditText>
 
@@ -54,9 +87,9 @@
             android:id="@+id/Tab1TopRightImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="3dp"
+            android:background="@drawable/sousuo"
             android:onClick="OnClickSearch"
-            android:background="@drawable/sousuo" />
+            android:paddingRight="3dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -67,13 +100,15 @@
         android:layout_marginTop="100dp"
         android:orientation="vertical" >
 
-        <!-- <ProgressBar
+        <!--
+             <ProgressBar
             android:id="@+id/progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="12dp"
-            android:visibility="gone" /> -->
+            android:visibility="gone" />
+        -->
 
         <TabHost
             android:id="@android:id/tabhost"
@@ -153,13 +188,14 @@
             </RelativeLayout>
         </TabHost>
     </LinearLayout>
-	 <RelativeLayout
+
+    <RelativeLayout
         android:id="@+id/LinearLayoutTabSearch"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:paddingTop="50dp"
         android:layout_below="@id/LayoutTitle"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:paddingTop="50dp" >
 
         <ProgressBar
             android:id="@+id/progressSearch"
@@ -203,9 +239,10 @@
             android:layout_below="@+id/progress"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:text="加载中..." 
+            android:text="加载中..."
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#444444"
             android:visibility="gone" />
     </RelativeLayout>
+
 </RelativeLayout>

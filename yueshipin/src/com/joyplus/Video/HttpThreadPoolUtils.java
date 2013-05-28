@@ -21,7 +21,7 @@ public class HttpThreadPoolUtils {
 	}
 	private static int CORE_POOL_SIZE = 3;
 	private static int MAX_POOL_SIZE = 100;
-	private static int KEEP_ALIVE_TIME = 10000;
+	private static int KEEP_ALIVE_TIME = 20000;
 	private static BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<Runnable>(10);
 	private static ThreadFactory threadFactory = new ThreadFactory() {
 		private final AtomicInteger integer = new AtomicInteger();
@@ -41,6 +41,7 @@ public class HttpThreadPoolUtils {
 		httpthreadPool.execute(runnable);
 		
 	}
+	@SuppressWarnings("unused")
 	private synchronized static int getQueueSize(Queue queue)  
     {  
         return queue.size();  
