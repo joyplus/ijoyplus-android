@@ -11,7 +11,6 @@ import io.vov.vitamio.widget.VideoView;
 
 import java.io.IOException;
 import java.net.URI;
-//import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,13 +71,10 @@ import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
-//import com.joyplus.Main.CheckBindDingReceiver;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
-//import com.joyplus.faye.FayeClient;
-//import com.joyplus.faye.FayeClient.FayeListener;
 import com.joyplus.faye.FayeService;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
@@ -86,7 +82,7 @@ import com.umeng.analytics.MobclickAgent;
 import com.yixia.zi.utils.Log;
 
 public class VideoPlayerActivity extends Activity implements
-		OnCompletionListener {
+		OnCompletionListener{
 	private AQuery aq;
 	private App app;
 	private ReturnProgramView m_ReturnProgramView = null;
@@ -155,6 +151,7 @@ public class VideoPlayerActivity extends Activity implements
 	String tv_channel = null;
 	String prod_url = null;
 	YunduanReceiver bindingReceiver;
+	
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
@@ -634,7 +631,9 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		finish();
 	}
-
+	
+	
+	
 	public void GetServiceData() {
 		// android.util.Log.i("player_yy", "GetServiceData");
 		String url = Constant.BASE_URL + "program/view?prod_id=" + playProdId;
@@ -663,6 +662,9 @@ public class VideoPlayerActivity extends Activity implements
 					ReturnProgramView.class);
 			if (m_ReturnProgramView == null)
 				finish();
+			
+			app.listUrl.clear();
+			
 			GetRedirectURL();// 获取重定向的数据,source_yy
 			// 创建数据源对象
 		} catch (JsonParseException e) {
@@ -1076,7 +1078,6 @@ public class VideoPlayerActivity extends Activity implements
 
 		public HttpTread(String url, String sourceId, int CurrentSource,
 				int CurrentQuality, int ShowQuality, String pROD_SOURCE) {
-			// android.util.Log.i("player_yy", "HttpThreadPoolUtils.HttpTread");
 			this.CurrentSource = CurrentSource;
 			this.CurrentQuality = CurrentQuality;
 			this.ShowQuality = ShowQuality;
@@ -1085,8 +1086,6 @@ public class VideoPlayerActivity extends Activity implements
 
 		@Override
 		public void run() {
-			// android.util.Log.i("player_yy",
-			// "HttpThreadPoolUtils.run");//到了这个地方一次
 			if (IsPlaying)
 				return;
 			List<String> list = new ArrayList<String>();
@@ -1105,11 +1104,12 @@ public class VideoPlayerActivity extends Activity implements
 					mCurrentPlayData.CurrentSource = CurrentSource;
 					mCurrentPlayData.CurrentQuality = CurrentQuality;
 					mCurrentPlayData.ShowQuality = ShowQuality;
+					
+					app.listUrl.add(dstUrl);
+					
 					Message message = mvediohandler.obtainMessage(VideoPlay,
 							dstUrl);
 					mvediohandler.sendMessage(message);
-					// android.util.Log.i("player_yy",
-					// "HttpThreadPoolUtils.run2");
 				}
 			} catch (Exception e) {
 				if (BuildConfig.DEBUG)
@@ -1156,7 +1156,6 @@ public class VideoPlayerActivity extends Activity implements
 				HttpResponse response = mAndroidHttpClient.execute(mHttpGet);
 
 				// 限定连接时间
-
 				StatusLine statusLine = response.getStatusLine();
 				int status = statusLine.getStatusCode();
 

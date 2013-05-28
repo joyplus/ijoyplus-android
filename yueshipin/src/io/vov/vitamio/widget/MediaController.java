@@ -29,6 +29,7 @@ import com.joyplus.StatisticsUtils;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
+import com.joyplus.Video.HttpThreadPoolUtils;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.faye.FayeClient;
 import com.joyplus.faye.FayeService;
@@ -407,7 +408,8 @@ public class MediaController extends FrameLayout {
 
 		String PROD_SOURCE = null;
 		String title = null;
-
+		
+//		app.listUrl.clear();
 		switch (CurrentCategory) {
 		case 0:
 			break;
@@ -544,6 +546,7 @@ public class MediaController extends FrameLayout {
 			for (int k = 0; k < m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
 				CurrentQuality = k;
 				ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls[k];
+//				app.listUrl.add(CurrentURLS.url);
 				if (CurrentURLS != null
 						&& CurrentURLS.url != null
 						&& app.CheckUrlIsValidFromServer(
@@ -565,6 +568,7 @@ public class MediaController extends FrameLayout {
 			for (int k = 0; k < m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
 				CurrentQuality = k;
 				ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls[k];
+//				app.listUrl.add(CurrentURLS.url);
 				if (CurrentURLS != null
 						&& CurrentURLS.url != null
 						&& app.CheckUrlIsValidFromServer(
