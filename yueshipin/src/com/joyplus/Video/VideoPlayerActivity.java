@@ -59,6 +59,8 @@ import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -308,12 +310,13 @@ public class VideoPlayerActivity extends Activity implements
 				// execute the task
 				if(IsPlaying == false)
 				{
+					Toast.makeText(VideoPlayerActivity.this, "亲，地址失效，自动为您跳转到网页播放！", Toast.LENGTH_SHORT).show();
 					//一直处于检测状态时
 					sendQuitMessage();
 					finish();
 				}	
 			}
-		}, 30000);
+		}, 40000);
 	}
 
 	@SuppressLint("DefaultLocale")
