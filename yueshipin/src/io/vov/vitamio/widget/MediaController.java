@@ -270,7 +270,7 @@ public class MediaController extends FrameLayout {
 		mPauseButton = (ImageButton) v
 				.findViewById(R.id.mediacontroller_play_pause);
 		mDlnaButton = (ImageButton) v.findViewById(R.id.mediacontroller_dlna);
-		
+
 		if(app.DlnaDeviceFlag)
 		{
 			mDlnaButton.setVisibility(View.VISIBLE);	
@@ -408,7 +408,7 @@ public class MediaController extends FrameLayout {
 
 		String PROD_SOURCE = null;
 		String title = null;
-		
+
 //		app.listUrl.clear();
 		switch (CurrentCategory) {
 		case 0:
@@ -648,7 +648,7 @@ public class MediaController extends FrameLayout {
 		}
 		if (PROD_SOURCE != null)
 			mPlayer.setContinueVideoPath(null, PROD_SOURCE, true);
-			
+
 	}
 
 	public void setDownloadRate(int rate) {
@@ -755,7 +755,7 @@ public class MediaController extends FrameLayout {
 		lv_radio0.setVisibility(View.GONE);
 		lv_radio1.setVisibility(View.GONE);
 		lv_radio2.setVisibility(View.GONE);
-		
+
 
 		switch (CurrentCategory) {
 		case 0:
@@ -1185,7 +1185,7 @@ public class MediaController extends FrameLayout {
 			}
 			break;
 		}
-		
+
 
 		JSONObject json = new JSONObject();
 		try {
@@ -1209,7 +1209,7 @@ public class MediaController extends FrameLayout {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
     private void sendYunduanMessage(JSONObject json){
     	FayeService.SendMessageService(mContext, json, user_id);
@@ -1326,7 +1326,7 @@ public class MediaController extends FrameLayout {
 	}
 
 	private void updateTopRight() {
-		
+
 		if (mViewTopRight.getVisibility() == View.VISIBLE)
 			mViewTopRight.setVisibility(View.GONE);
 		else
@@ -1343,7 +1343,7 @@ public class MediaController extends FrameLayout {
 			mPauseButton.setBackgroundResource(R.drawable.player_pause);
 		else
 			mPauseButton.setBackgroundResource(R.drawable.player_play);
-		
+
 		if(app.DlnaDeviceFlag)
 		{
 			mDlnaButton.setVisibility(View.VISIBLE);	
@@ -1438,7 +1438,7 @@ public class MediaController extends FrameLayout {
 		public void onStopTrackingTouch(SeekBar bar) {
 			if (!mInstantSeeking) {
 				mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
-				
+
 				// mPlayer.pause();
 			}
 			if (mInfoView != null) {

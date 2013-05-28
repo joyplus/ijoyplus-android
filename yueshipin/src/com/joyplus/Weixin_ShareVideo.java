@@ -1,18 +1,10 @@
 package com.joyplus;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-//import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -20,34 +12,17 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
-import android.graphics.drawable.BitmapDrawable;
+
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
+
 import android.os.Bundle;
-import com.joyplus.widget.Log;
-import com.joyplus.widget.MyGallery;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
+
 import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -55,18 +30,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.joyplus.Adapters.CurrentPlayData;
-import com.joyplus.Adapters.GalleryAdapter;
-import com.joyplus.Service.Return.ReturnProgramReviews;
 import com.joyplus.Service.Return.ReturnProgramView;
-import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
-import com.joyplus.Video.VideoPlayerActivity;
-import com.joyplus.cache.VideoCacheInfo;
-import com.joyplus.cache.VideoCacheManager;
-import com.joyplus.download.Dao;
-import com.joyplus.download.DownloadTask;
-import com.parse.ParseInstallation;
-import com.parse.PushService;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
