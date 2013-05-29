@@ -599,15 +599,12 @@ public class MediaController extends FrameLayout {
 		CurrentSource = mCurrentPlayData.CurrentSource;
 		CurrentQuality = mCurrentPlayData.CurrentQuality;
 		ShowQuality = mCurrentPlayData.ShowQuality;
-
 	}
 
 	public void SelectQuality(int index) {
 		mPlayer.pause();
-
 		ShowQuality = index;
 		String PROD_SOURCE = null;
-
 		ReturnProgramView.DOWN_URLS.URLS CurrentURLS = null;
 		switch (CurrentCategory) {
 		case 0:
@@ -637,9 +634,7 @@ public class MediaController extends FrameLayout {
 					break;
 				}
 			}
-
 			break;
-
 		}
 
 		if (CurrentURLS != null && CurrentURLS.url != null) {
@@ -862,14 +857,6 @@ public class MediaController extends FrameLayout {
 		else if (Constant.player_quality_index[ShowQuality]
 				.equalsIgnoreCase("hd2"))
 			lv_radio2.setChecked(true);
-		// if (CurrentQuality == 3) {
-		// // if (lv_radio2.getVisibility() == View.VISIBLE)
-		// // lv_radio2.setChecked(true);
-		// // else if (lv_radio1.getVisibility() == View.VISIBLE)
-		// lv_radio0.setChecked(true);
-		// // else if (lv_radio0.getVisibility() == View.VISIBLE)
-		// // lv_radio0.setChecked(true);
-		// }
 	}
 
 	/**

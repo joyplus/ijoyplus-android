@@ -304,19 +304,19 @@ public class VideoPlayerActivity extends Activity implements
 			}
 		};
 		
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				// execute the task
-				if(IsPlaying == false)
-				{
-					Toast.makeText(VideoPlayerActivity.this, "亲，地址失效，自动为您跳转到网页播放！", Toast.LENGTH_SHORT).show();
-					//一直处于检测状态时
-					sendQuitMessage();
-					finish();
-				}	
-			}
-		}, 40000);
+//		new Handler().postDelayed(new Runnable() {
+//			@Override
+//			public void run() {
+//				// execute the task
+//				if(IsPlaying == false)
+//				{
+//					Toast.makeText(VideoPlayerActivity.this, "亲，地址失效，自动为您跳转到网页播放！", Toast.LENGTH_SHORT).show();
+//					//一直处于检测状态时
+//					sendQuitMessage();
+//					finish();
+//				}	
+//			}
+//		}, 40000);
 	}
 
 	@SuppressLint("DefaultLocale")
@@ -744,6 +744,7 @@ public class VideoPlayerActivity extends Activity implements
 											 * 
 											 * @"hd2" #define LIU_CHANG @"3gp"
 											 */
+											//app.CheckUrlIsValidFromServer(urls.url, "1")
 											if (urls != null && urls.url != null
 													&& !IsPlaying) {
 												PROD_SOURCE = urls.url.trim();
@@ -751,6 +752,9 @@ public class VideoPlayerActivity extends Activity implements
 														.execute(new HttpTread(
 																urls.url, "1", i,
 																ki, qi, PROD_SOURCE));
+//												Message message = mvediohandler.obtainMessage(VideoPlay,
+//														PROD_SOURCE);
+//												mvediohandler.sendMessage(message);
 												MobclickAgent.onEventBegin(
 														mContext, MOVIE_PLAY);
 											}
@@ -793,12 +797,15 @@ public class VideoPlayerActivity extends Activity implements
 									if (m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki].type
 											.equalsIgnoreCase(Constant.player_quality_index[qi])) {
 										ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki];
-
+										//&& app.CheckUrlIsValidFromServer(urls.url, "1")
 										if (urls != null && urls.url != null
 												&& !IsPlaying) {
 											mCurrentPlayData.CurrentSource = i;
 											mCurrentPlayData.CurrentQuality = ki;
 											PROD_SOURCE = urls.url.trim();
+//											Message message = mvediohandler.obtainMessage(VideoPlay,
+//													PROD_SOURCE);
+//											mvediohandler.sendMessage(message);
 											HttpThreadPoolUtils
 													.execute(new HttpTread(
 															urls.url, "1", i, ki,
@@ -844,12 +851,15 @@ public class VideoPlayerActivity extends Activity implements
 									if (m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki].type
 											.equalsIgnoreCase(Constant.player_quality_index[qi])) {
 										ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki];
-
+										//&& app.CheckUrlIsValidFromServer(urls.url, "1")
 										if (urls != null && urls.url != null
 												&& !IsPlaying) {
 											mCurrentPlayData.CurrentSource = i;
 											mCurrentPlayData.CurrentQuality = ki;
 											PROD_SOURCE = urls.url.trim();
+//											Message message = mvediohandler.obtainMessage(VideoPlay,
+//													PROD_SOURCE);
+//											mvediohandler.sendMessage(message);
 											HttpThreadPoolUtils
 													.execute(new HttpTread(
 															urls.url, "1", i, ki,

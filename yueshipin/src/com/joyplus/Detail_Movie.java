@@ -785,6 +785,8 @@ public class Detail_Movie extends Activity {
 		}
 		new MyThread(v,this,Detail_Movie.this,listUrl).start();
 		app.checkUserSelect(Detail_Movie.this);
+		aq.id(R.id.button9).background(R.drawable.yi_huan_cun);// 点击下载后直接把下载按钮的状态改变掉
+		aq.id(R.id.button9).clickable(false);
 	}
 	
 	class MyThread extends Thread {
@@ -828,8 +830,8 @@ public class Detail_Movie extends Activity {
 										DOWNLOAD_SOURCE, localfile);
 								downloadTask.execute(prod_id, download_index, DOWNLOAD_SOURCE,
 										urlposter, my_name, download_state);
-								aq.id(R.id.button9).background(R.drawable.yi_huan_cun);// 点击下载后直接把下载按钮的状态改变掉
-								aq.id(R.id.button9).clickable(false);
+//								aq.id(R.id.button9).background(R.drawable.yi_huan_cun);// 点击下载后直接把下载按钮的状态改变掉
+//								aq.id(R.id.button9).clickable(false);
 								Toast.makeText(Detail_Movie.this, "视频已加入下载队列",
 										Toast.LENGTH_SHORT).show(); 
 						}
