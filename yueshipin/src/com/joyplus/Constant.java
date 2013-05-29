@@ -11,8 +11,8 @@ public class Constant {
 	   //正式环境  云端投放
 //	   //正式环境  云端投放
 //	public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
-//  public static final String TV_CHANNEL_URL = "http://comet.joyplus.tv:8080/bindtv";
-//  public static final String CHECK_BINDING = "http://comet.joyplus.tv:8080/api/check_binding";
+//	public static final String TV_CHANNEL_URL = "http://comet.joyplus.tv:8080/bindtv";
+//	public static final String CHECK_BINDING = "http://comet.joyplus.tv:8080/api/check_binding";
 	  //正式产品Production Env
 //	public static String Parse_AppId = "0K2pHTrGpaX8PY0doDYwUKY4wPfs6IuexjaYzkQ2";
 //	public static String Parse_ClientKey = "csjlOxS0XrytgHTEibTdYEj4dyU2991uhSUTGwjJ";
