@@ -588,38 +588,6 @@ public class VideoPlayerActivity extends Activity implements
 		mOperationPercent.setLayoutParams(lp);
 	}
 
-	/**
-	 * 滑动改变亮度
-	 * 
-	 * @param percent
-	 */
-	// private void onBrightnessSlide(float percent) {
-	// if (mBrightness < 0) {
-	// mBrightness = getWindow().getAttributes().screenBrightness;
-	// if (mBrightness <= 0.00f)
-	// mBrightness = 0.50f;
-	// if (mBrightness < 0.01f)
-	// mBrightness = 0.01f;
-	//
-	// // 显示
-	// mOperationBg.setImageResource(R.drawable.video_brightness_bg);
-	// mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
-	// }
-	// WindowManager.LayoutParams lpa = getWindow().getAttributes();
-	// lpa.screenBrightness = mBrightness + percent;
-	// if (lpa.screenBrightness > 1.0f)
-	// lpa.screenBrightness = 1.0f;
-	// else if (lpa.screenBrightness < 0.01f)
-	// lpa.screenBrightness = 0.01f;
-	// getWindow().setAttributes(lpa);
-	//
-	// ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
-	// lp.width = (int)
-	// (findViewById(R.id.operation_full).getLayoutParams().width *
-	// lpa.screenBrightness);
-	// mOperationPercent.setLayoutParams(lp);
-	// }
-
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		if (mVideoView != null)
