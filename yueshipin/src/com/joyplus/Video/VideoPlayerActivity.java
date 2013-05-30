@@ -59,6 +59,7 @@ import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -303,19 +304,6 @@ public class VideoPlayerActivity extends Activity implements
 			}
 		};
 		
-//		new Handler().postDelayed(new Runnable() {
-//			@Override
-//			public void run() {
-//				// execute the task
-//				if(IsPlaying == false)
-//				{
-//					Toast.makeText(VideoPlayerActivity.this, "亲，地址失效，自动为您跳转到网页播放！", Toast.LENGTH_SHORT).show();
-//					//一直处于检测状态时
-//					sendQuitMessage();
-//					finish();
-//				}	
-//			}
-//		}, 40000);
 	}
 
 	@SuppressLint("DefaultLocale")
@@ -1074,8 +1062,8 @@ public class VideoPlayerActivity extends Activity implements
 				Log.i(TAG, "newATask--->>params : " + params[0] + params[1]);
 			try {
 				simulateFirfoxRequest(Constant.USER_AGENT_IOS, params, list);// 使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
-
-				dstUrl = list.get(list.size() - 1);
+				if(list.size()>0)//当只有一个地址，并且该地址在模拟检测无效时不加这个判断会出异常
+					dstUrl = list.get(list.size() - 1);
 				if (BuildConfig.DEBUG)
 					Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
 				list.clear();

@@ -44,6 +44,7 @@ import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
 import android.webkit.URLUtil;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Displays a video file. The VideoView class can load images from various
@@ -463,6 +464,23 @@ public class VideoView extends SurfaceView implements
 				{
 					setVideoPath(app.listUrl.get(0));
 					return true;
+				}else{
+					//每一个视频都没办法播放时将跳转到这个判断
+					mCurrentState = STATE_ERROR;
+					mTargetState = STATE_ERROR;
+					if (mMediaController != null)
+						mMediaController.hide();
+
+					if (mOnErrorListener != null) {
+						if (mOnErrorListener.onError(mMediaPlayer, framework_err,
+								impl_err))
+						{
+							OnComplete();
+							return true;
+						}
+							
+					}
+					
 				}
 			}else{
 				mCurrentState = STATE_ERROR;

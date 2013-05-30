@@ -126,30 +126,29 @@
                     android:id="@+id/button2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="128dp"
+                    android:layout_marginLeft="220dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/collecteviedo"
                     android:drawableLeft="@drawable/detail_movie_fa"
                     android:onClick="OnClickFavorityNum"
                     android:text="收藏" />
-
-                <Button
+				<Button
                     android:id="@+id/button3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="220dp"
+                    android:layout_marginLeft="128dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/pushviedo"
                     android:drawableLeft="@drawable/detail_movie_ding"
                     android:onClick="OnClickSupportNum"
                     android:text="顶" />
-
+				
                 <TextView
                     android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/button2"
+                    android:layout_below="@+id/button3"
                     android:layout_marginLeft="129dp"
                     android:layout_marginTop="14dp"
                     android:text="导演："
@@ -189,7 +188,7 @@
                     android:id="@+id/textView7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/button2"
+                    android:layout_below="@+id/button3"
                     android:layout_marginTop="14dp"
                     android:layout_toRightOf="@+id/textView1"
                     android:ellipsize="end"
