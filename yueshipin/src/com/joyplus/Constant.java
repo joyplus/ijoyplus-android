@@ -5,17 +5,17 @@ import android.os.Environment;
 public class Constant {
 
 	// 正式环境
-//	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
-//	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
-//	public static String APPKEY = "ijoyplus_android_0001";
+	public static final String BASE_URL = "http://api.joyplus.tv/joyplus-service/index.php/";
+	public static String DEFAULT_APPKEY = "ijoyplus_android_0001";
+	public static String APPKEY = "ijoyplus_android_0001";
 	   //正式环境  云端投放
 //	   //正式环境  云端投放
-//	public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
-//	public static final String TV_CHANNEL_URL = "http://comet.joyplus.tv:8080/bindtv";
-//	public static final String CHECK_BINDING = "http://comet.joyplus.tv:8080/api/check_binding";
+	public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
+	public static final String TV_CHANNEL_URL = "http://comet.joyplus.tv:8080/bindtv";
+	public static final String CHECK_BINDING = "http://comet.joyplus.tv:8080/api/check_binding";
 	  //正式产品Production Env
-//	public static String Parse_AppId = "0K2pHTrGpaX8PY0doDYwUKY4wPfs6IuexjaYzkQ2";
-//	public static String Parse_ClientKey = "csjlOxS0XrytgHTEibTdYEj4dyU2991uhSUTGwjJ";
+	public static String Parse_AppId = "0K2pHTrGpaX8PY0doDYwUKY4wPfs6IuexjaYzkQ2";
+	public static String Parse_ClientKey = "csjlOxS0XrytgHTEibTdYEj4dyU2991uhSUTGwjJ";
 	/*
 	 * test:
 	 * 新的测试环境：
@@ -36,19 +36,19 @@ IOS: ijoyplusios001bj
 	/*
 	 * 程序配置，发布时两个boolean值为false
 	 */
-	public static boolean TestEnv = true;
-	public static boolean TestLog = true;
+	public static boolean TestEnv = false;
+	public static boolean TestLog = false;
 	//测试环境    云端投放 
-	public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
-    public static final String TV_CHANNEL_URL = "http://comettest.joyplus.tv:8000/bindtv";
-    public static final String CHECK_BINDING = "http://comettest.joyplus.tv:8000/api/check_binding";
+//	public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
+//    public static final String TV_CHANNEL_URL = "http://comettest.joyplus.tv:8000/bindtv";
+//    public static final String CHECK_BINDING = "http://comettest.joyplus.tv:8000/api/check_binding";
   
-	public static final String BASE_URL = "http://apitest.yue001.com/joyplus-service/index.php/";
-	public static String DEFAULT_APPKEY = "ijoyplus_android_0001bj";
-	public static String APPKEY = "ijoyplus_android_0001bj";
+//	public static final String BASE_URL = "http://apitest.yue001.com/joyplus-service/index.php/";
+//	public static String DEFAULT_APPKEY = "ijoyplus_android_0001bj";
+//	public static String APPKEY = "ijoyplus_android_0001bj";
 	// 测试环境 消息推送
-	public static String Parse_AppId = "5FNbLx7dnRAx3knxV4rOdaLMRJMByqfKjWQRQakT";
-	public static String Parse_ClientKey = "RZHrZVn6MK8VGZxfpeshrC2tpxpzzMOZjU0rSS6X";
+//	public static String Parse_AppId = "5FNbLx7dnRAx3knxV4rOdaLMRJMByqfKjWQRQakT";
+//	public static String Parse_ClientKey = "RZHrZVn6MK8VGZxfpeshrC2tpxpzzMOZjU0rSS6X";
 
 	
 	
