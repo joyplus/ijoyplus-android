@@ -29,12 +29,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.RadioGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TabHost;
 import com.androidquery.AQuery;
@@ -77,6 +73,7 @@ public class Main extends TabActivity {
 		registerBinding();
 		app = (App) getApplicationContext();
 		aq = new AQuery(this);
+		
 		mContext = this;
 		headers = new HashMap<String, String>();
 		headers.put("User-Agent",

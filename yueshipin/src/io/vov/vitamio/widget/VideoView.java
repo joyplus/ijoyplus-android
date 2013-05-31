@@ -44,6 +44,7 @@ import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
 import android.webkit.URLUtil;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Displays a video file. The VideoView class can load images from various
@@ -111,6 +112,7 @@ public class VideoView extends SurfaceView implements
 	private View mLayoutBG;
 	private DlnaSelectDevice mMyService;
 	private AlertDialog alert = null;
+	private String VideoPath = null;
 
 	private long[] mRecordTime = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };// 创建一个长度为30的数组，数组初始值为0
@@ -212,6 +214,7 @@ public class VideoView extends SurfaceView implements
 	}
 
 	public void setVideoPath(String path) {
+		VideoPath = path;
 		Uri uri = Uri.parse(path);
 		setVideoURI(uri);
 	}
@@ -454,39 +457,81 @@ public class VideoView extends SurfaceView implements
 		@Override
 		public boolean onError(MediaPlayer mp, int framework_err, int impl_err) {
 			Log.d("Error: %d, %d", framework_err, impl_err);
-			mCurrentState = STATE_ERROR;
-			mTargetState = STATE_ERROR;
-			if (mMediaController != null)
-				mMediaController.hide();
-
-			if (mOnErrorListener != null) {
-				if (mOnErrorListener.onError(mMediaPlayer, framework_err,
-						impl_err))
+			if(app.listUrl.contains(VideoPath))
+			{
+				app.listUrl.remove(VideoPath);
+				if(app.listUrl.size()>0)
+				{
+					setVideoPath(app.listUrl.get(0));
 					return true;
-			}
+				}else{
+					//每一个视频都没办法播放时将跳转到这个判断
+					mCurrentState = STATE_ERROR;
+					mTargetState = STATE_ERROR;
+					if (mMediaController != null)
+						mMediaController.hide();
 
-			if (getWindowToken() != null) {
-				int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback
-						: R.string.addressnotwork;
+					if (mOnErrorListener != null) {
+						if (mOnErrorListener.onError(mMediaPlayer, framework_err,
+								impl_err))
+							return true;
+					}
 
-				new AlertDialog.Builder(mContext)
-						.setTitle(R.string.netstate)
-						.setMessage(message)
-						.setPositiveButton(R.string.queding,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int whichButton) {
-										OnComplete();
-										// if (mOnCompletionListener != null)
-										// mOnCompletionListener.onCompletion(mMediaPlayer);
-									}
-								}).setCancelable(false).show();
+					if (getWindowToken() != null) {
+						int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback
+								: R.string.addressnotwork;
+
+						new AlertDialog.Builder(mContext)
+								.setTitle(R.string.netstate)
+								.setMessage(message)
+								.setPositiveButton(R.string.queding,
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog,
+													int whichButton) {
+												OnComplete();
+												// if (mOnCompletionListener != null)
+												// mOnCompletionListener.onCompletion(mMediaPlayer);
+											}
+										}).setCancelable(false).show();
+					}
+				return true;	
+				}
+			}else{
+				mCurrentState = STATE_ERROR;
+				mTargetState = STATE_ERROR;
+				if (mMediaController != null)
+					mMediaController.hide();
+
+				if (mOnErrorListener != null) {
+					if (mOnErrorListener.onError(mMediaPlayer, framework_err,
+							impl_err))
+						return true;
+				}
+
+				if (getWindowToken() != null) {
+					int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback
+							: R.string.addressnotwork;
+
+					new AlertDialog.Builder(mContext)
+							.setTitle(R.string.netstate)
+							.setMessage(message)
+							.setPositiveButton(R.string.queding,
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog,
+												int whichButton) {
+											OnComplete();
+											// if (mOnCompletionListener != null)
+											// mOnCompletionListener.onCompletion(mMediaPlayer);
+										}
+									}).setCancelable(false).show();
+				}
 			}
 			return true;
 		}
 	};
-
+	
 	private OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
 		@Override
 		public void onBufferingUpdate(MediaPlayer mp, int percent) {

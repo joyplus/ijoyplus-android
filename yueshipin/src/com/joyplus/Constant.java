@@ -11,8 +11,8 @@ public class Constant {
 	   //正式环境  云端投放
 //	   //正式环境  云端投放
 //	public static final String TV_CHANNEL = "/screencast/CHANNEL_TV_";
-//  public static final String TV_CHANNEL_URL = "http://comet.joyplus.tv:8080/bindtv";
-//  public static final String CHECK_BINDING = "http://comet.joyplus.tv:8080/api/check_binding";
+//	public static final String TV_CHANNEL_URL = "http://comet.joyplus.tv:8080/bindtv";
+//	public static final String CHECK_BINDING = "http://comet.joyplus.tv:8080/api/check_binding";
 	  //正式产品Production Env
 //	public static String Parse_AppId = "0K2pHTrGpaX8PY0doDYwUKY4wPfs6IuexjaYzkQ2";
 //	public static String Parse_ClientKey = "csjlOxS0XrytgHTEibTdYEj4dyU2991uhSUTGwjJ";
@@ -52,6 +52,7 @@ IOS: ijoyplusios001bj
 
 	
 	
+
 	public static final String USER_AGENT_IOS = 
 			"Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7";
 	public static final String USER_AGENT_ANDROID = 
@@ -126,6 +127,11 @@ IOS: ijoyplusios001bj
 		"hd2","3gp","flv"};
 	// APP_ID 替换为你的应用从官方网站申请到的合法appId
     public static final String APP_ID = "wxc8ea1cbc355fe2d0";
+    public static class ShowMsgActivity {
+		public static final String STitle = "showmsg_title";
+		public static final String SMessage = "showmsg_message";
+		public static final String BAThumbData = "showmsg_thumb_data";
+	}
    
    
  

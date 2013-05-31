@@ -11,7 +11,6 @@ import io.vov.vitamio.widget.VideoView;
 
 import java.io.IOException;
 import java.net.URI;
-//import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +59,8 @@ import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -72,13 +73,10 @@ import com.joyplus.Constant;
 import com.joyplus.R;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Dlna.DlnaSelectDevice;
-//import com.joyplus.Main.CheckBindDingReceiver;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
 import com.joyplus.cache.VideoCacheInfo;
 import com.joyplus.cache.VideoCacheManager;
-//import com.joyplus.faye.FayeClient;
-//import com.joyplus.faye.FayeClient.FayeListener;
 import com.joyplus.faye.FayeService;
 import com.joyplus.playrecord.PlayRecordInfo;
 import com.joyplus.playrecord.PlayRecordManager;
@@ -86,7 +84,7 @@ import com.umeng.analytics.MobclickAgent;
 import com.yixia.zi.utils.Log;
 
 public class VideoPlayerActivity extends Activity implements
-		OnCompletionListener {
+		OnCompletionListener{
 	private AQuery aq;
 	private App app;
 	private ReturnProgramView m_ReturnProgramView = null;
@@ -155,6 +153,7 @@ public class VideoPlayerActivity extends Activity implements
 	String tv_channel = null;
 	String prod_url = null;
 	YunduanReceiver bindingReceiver;
+	
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
@@ -162,12 +161,10 @@ public class VideoPlayerActivity extends Activity implements
 				mMyService = ((DlnaSelectDevice.MyBinder) service).getService();
 				mVideoView.setServiceConnection(mMyService);
 			}
-
 		}
 
 		public void onServiceDisconnected(ComponentName name) {
 			// TODO Auto-generated method stub
-
 		}
 	};
 
@@ -274,8 +271,6 @@ public class VideoPlayerActivity extends Activity implements
 			bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 		}
 		checkBind = true;
-		//source_yy
-		String temp = app.sourceUrl;
 		
 		if (!URLUtil.isNetworkUrl(mPath)) {
 			aq.id(R.id.textViewRate).gone();
@@ -293,7 +288,6 @@ public class VideoPlayerActivity extends Activity implements
 				// android.util.Log.i("player_yy",msg.what+"");
 				switch (msg.what) {
 				case VideoPlay:
-					String temp = msg.obj.toString();
 					if (msg.obj.toString().contains("{now_date}")) {
 						long time = System.currentTimeMillis()/1000;
 						String msgUrl = msg.obj.toString().replace("{now_date}",
@@ -309,7 +303,7 @@ public class VideoPlayerActivity extends Activity implements
 				}
 			}
 		};
-
+		
 	}
 
 	@SuppressLint("DefaultLocale")
@@ -388,8 +382,6 @@ public class VideoPlayerActivity extends Activity implements
 
 			if (current_time > 0) {
 
-				if (playProdType != 1) {
-
 					if (playProdType == 2 || playProdType == 131) {
 						playrecordinfo.setProd_id(playProdId);
 						if (Constant.select_index > -1) {
@@ -422,7 +414,7 @@ public class VideoPlayerActivity extends Activity implements
 						}
 					}
 					play_current_time = current_time;
-				}
+					
 				mVideoView.pause();
 			}
 		}
@@ -583,38 +575,6 @@ public class VideoPlayerActivity extends Activity implements
 		mOperationPercent.setLayoutParams(lp);
 	}
 
-	/**
-	 * 滑动改变亮度
-	 * 
-	 * @param percent
-	 */
-	// private void onBrightnessSlide(float percent) {
-	// if (mBrightness < 0) {
-	// mBrightness = getWindow().getAttributes().screenBrightness;
-	// if (mBrightness <= 0.00f)
-	// mBrightness = 0.50f;
-	// if (mBrightness < 0.01f)
-	// mBrightness = 0.01f;
-	//
-	// // 显示
-	// mOperationBg.setImageResource(R.drawable.video_brightness_bg);
-	// mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
-	// }
-	// WindowManager.LayoutParams lpa = getWindow().getAttributes();
-	// lpa.screenBrightness = mBrightness + percent;
-	// if (lpa.screenBrightness > 1.0f)
-	// lpa.screenBrightness = 1.0f;
-	// else if (lpa.screenBrightness < 0.01f)
-	// lpa.screenBrightness = 0.01f;
-	// getWindow().setAttributes(lpa);
-	//
-	// ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
-	// lp.width = (int)
-	// (findViewById(R.id.operation_full).getLayoutParams().width *
-	// lpa.screenBrightness);
-	// mOperationPercent.setLayoutParams(lp);
-	// }
-
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		if (mVideoView != null)
@@ -629,7 +589,9 @@ public class VideoPlayerActivity extends Activity implements
 		MobclickAgent.onEventEnd(mContext, SHOW_PLAY);
 		finish();
 	}
-
+	
+	
+	
 	public void GetServiceData() {
 		// android.util.Log.i("player_yy", "GetServiceData");
 		String url = Constant.BASE_URL + "program/view?prod_id=" + playProdId;
@@ -658,6 +620,9 @@ public class VideoPlayerActivity extends Activity implements
 					ReturnProgramView.class);
 			if (m_ReturnProgramView == null)
 				finish();
+			
+			app.listUrl.clear();
+			
 			GetRedirectURL();// 获取重定向的数据,source_yy
 			// 创建数据源对象
 		} catch (JsonParseException e) {
@@ -734,6 +699,7 @@ public class VideoPlayerActivity extends Activity implements
 											 * 
 											 * @"hd2" #define LIU_CHANG @"3gp"
 											 */
+											//app.CheckUrlIsValidFromServer(urls.url, "1")
 											if (urls != null && urls.url != null
 													&& !IsPlaying) {
 												PROD_SOURCE = urls.url.trim();
@@ -741,6 +707,9 @@ public class VideoPlayerActivity extends Activity implements
 														.execute(new HttpTread(
 																urls.url, "1", i,
 																ki, qi, PROD_SOURCE));
+//												Message message = mvediohandler.obtainMessage(VideoPlay,
+//														PROD_SOURCE);
+//												mvediohandler.sendMessage(message);
 												MobclickAgent.onEventBegin(
 														mContext, MOVIE_PLAY);
 											}
@@ -783,12 +752,15 @@ public class VideoPlayerActivity extends Activity implements
 									if (m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki].type
 											.equalsIgnoreCase(Constant.player_quality_index[qi])) {
 										ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.tv.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki];
-
+										//&& app.CheckUrlIsValidFromServer(urls.url, "1")
 										if (urls != null && urls.url != null
 												&& !IsPlaying) {
 											mCurrentPlayData.CurrentSource = i;
 											mCurrentPlayData.CurrentQuality = ki;
 											PROD_SOURCE = urls.url.trim();
+//											Message message = mvediohandler.obtainMessage(VideoPlay,
+//													PROD_SOURCE);
+//											mvediohandler.sendMessage(message);
 											HttpThreadPoolUtils
 													.execute(new HttpTread(
 															urls.url, "1", i, ki,
@@ -834,12 +806,15 @@ public class VideoPlayerActivity extends Activity implements
 									if (m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki].type
 											.equalsIgnoreCase(Constant.player_quality_index[qi])) {
 										ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[mCurrentPlayData.CurrentIndex].down_urls[i].urls[ki];
-
+										//&& app.CheckUrlIsValidFromServer(urls.url, "1")
 										if (urls != null && urls.url != null
 												&& !IsPlaying) {
 											mCurrentPlayData.CurrentSource = i;
 											mCurrentPlayData.CurrentQuality = ki;
 											PROD_SOURCE = urls.url.trim();
+//											Message message = mvediohandler.obtainMessage(VideoPlay,
+//													PROD_SOURCE);
+//											mvediohandler.sendMessage(message);
 											HttpThreadPoolUtils
 													.execute(new HttpTread(
 															urls.url, "1", i, ki,
@@ -1071,7 +1046,6 @@ public class VideoPlayerActivity extends Activity implements
 
 		public HttpTread(String url, String sourceId, int CurrentSource,
 				int CurrentQuality, int ShowQuality, String pROD_SOURCE) {
-			// android.util.Log.i("player_yy", "HttpThreadPoolUtils.HttpTread");
 			this.CurrentSource = CurrentSource;
 			this.CurrentQuality = CurrentQuality;
 			this.ShowQuality = ShowQuality;
@@ -1080,8 +1054,6 @@ public class VideoPlayerActivity extends Activity implements
 
 		@Override
 		public void run() {
-			// android.util.Log.i("player_yy",
-			// "HttpThreadPoolUtils.run");//到了这个地方一次
 			if (IsPlaying)
 				return;
 			List<String> list = new ArrayList<String>();
@@ -1090,8 +1062,8 @@ public class VideoPlayerActivity extends Activity implements
 				Log.i(TAG, "newATask--->>params : " + params[0] + params[1]);
 			try {
 				simulateFirfoxRequest(Constant.USER_AGENT_IOS, params, list);// 使用递归，并把得到的链接放在集合中，取最后一次得到的链接即可
-
-				dstUrl = list.get(list.size() - 1);
+				if(list.size()>0)//当只有一个地址，并且该地址在模拟检测无效时不加这个判断会出异常
+					dstUrl = list.get(list.size() - 1);
 				if (BuildConfig.DEBUG)
 					Log.i(TAG, "AsyncTask----->>URL : " + dstUrl);
 				list.clear();
@@ -1100,11 +1072,12 @@ public class VideoPlayerActivity extends Activity implements
 					mCurrentPlayData.CurrentSource = CurrentSource;
 					mCurrentPlayData.CurrentQuality = CurrentQuality;
 					mCurrentPlayData.ShowQuality = ShowQuality;
+					
+					app.listUrl.add(dstUrl);
+					
 					Message message = mvediohandler.obtainMessage(VideoPlay,
 							dstUrl);
 					mvediohandler.sendMessage(message);
-					// android.util.Log.i("player_yy",
-					// "HttpThreadPoolUtils.run2");
 				}
 			} catch (Exception e) {
 				if (BuildConfig.DEBUG)
@@ -1151,7 +1124,6 @@ public class VideoPlayerActivity extends Activity implements
 				HttpResponse response = mAndroidHttpClient.execute(mHttpGet);
 
 				// 限定连接时间
-
 				StatusLine statusLine = response.getStatusLine();
 				int status = statusLine.getStatusCode();
 

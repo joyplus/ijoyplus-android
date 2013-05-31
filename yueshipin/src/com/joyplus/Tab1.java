@@ -74,7 +74,9 @@ public class Tab1 extends Activity implements
 				// 当不滚动时
 				case OnScrollListener.SCROLL_STATE_IDLE:
 					// 判断滚动到底部
-					if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
+					int i = view.getLastVisiblePosition();
+					int j = view.getCount();
+					if (view.getLastVisiblePosition() >= (view.getCount()-5)) {
 						isLastisNext++;
 						GetServiceData(isLastisNext);
 					}
@@ -356,15 +358,18 @@ public class Tab1 extends Activity implements
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						dataStruct = null;
-						dataStruct = new ArrayList();
-						GetServiceData(isLastisNext);
-					}
-				}, 100000);
+				dataStruct = null;
+				dataStruct = new ArrayList();
+				GetServiceData(isLastisNext);
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						dataStruct = null;
+//						dataStruct = new ArrayList();
+//						GetServiceData(isLastisNext);
+//					}
+//				}, 5000);
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -380,8 +385,16 @@ public class Tab1 extends Activity implements
 	}
 
 	public void GetServiceData(int index) {
-		String url = Constant.BASE_URL + "tops" + "?page_num="
-				+ Integer.toString(index) + "&page_size=30";
+		String url = null;
+		if(index == 1)
+		{
+			url = Constant.BASE_URL + "tops" + "?page_num="
+					+ Integer.toString(index) + "&page_size=20";
+		} else{
+			url = Constant.BASE_URL + "tops" + "?page_num="
+					+ Integer.toString(index) + "&page_size=10";
+		}
+		
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");

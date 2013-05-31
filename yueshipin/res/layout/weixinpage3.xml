@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F2F2F2"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageNoitemBG"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/tab3_page1_bg" 
+      android:visibility="gone"  />
+
+    <LinearLayout
+         android:id="@+id/Layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab3_p1_border"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fadingEdge="none"
+            android:cacheColorHint="#00000000"
+            android:divider="@drawable/tab3_page1_see_bg_fenge"
+            android:longClickable="true">
+        </ListView>
+    </LinearLayout>
+
+    <RelativeLayout
+         android:id="@+id/Layout2"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/tab3_p1_button"
+        android:onClick="OnClickMore"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="查看更多记录"
+            android:textColorHint="#808080"/>
+    </RelativeLayout>
+
+</LinearLayout>

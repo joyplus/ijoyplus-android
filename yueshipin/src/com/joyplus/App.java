@@ -64,6 +64,9 @@ public class App extends Application {
 	public boolean DlnaDeviceFlag = false;
 	public String sourceUrl = null;
     
+	//保存播放器检测过的有效地址
+	public List<String> listUrl = new ArrayList<String>();
+	
 	public ReturnProgramView get_ReturnProgramView() {
 		return m_ReturnProgramView;
 	}

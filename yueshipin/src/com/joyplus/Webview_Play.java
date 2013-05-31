@@ -170,6 +170,7 @@ public class Webview_Play extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+//		aq.id(R.id.LayoutTitle).gone();//将头弄掉
 		if (resultCode == FINISH_ACTTIVITY) {
 			Webview_Play.this.finish();
 		}

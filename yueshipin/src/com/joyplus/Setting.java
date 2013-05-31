@@ -356,10 +356,6 @@ public class Setting extends Activity {
 
 	}
 
-	public void GetServiceData() {
-
-	}
-
 	public void OnClickSinaWeibo(View v) {
 		if (app.GetServiceData("Sina_Access_Token") == null) {
 			GotoSinaWeibo();

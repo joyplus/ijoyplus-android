@@ -1,8 +1,11 @@
 package com.joyplus;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 //import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -459,48 +462,51 @@ public class Detail_Movie extends Activity {
 	public String selectUrls(String sourceUrl)
 	{
 		PROD_SOURCE = null;
-		for (int j = 0; j < m_ReturnProgramView.movie.episodes[0].down_urls.length; j++) {
-			if(m_ReturnProgramView.movie.episodes[0].down_urls[j].source.equalsIgnoreCase(sourceUrl))
-			{
-				for (int k = 0; k < m_ReturnProgramView.movie.episodes[0].down_urls[j].urls.length; k++) {
-					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[0].down_urls[j].urls[k];
-					if (urls != null) {
-						/*
-						 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
-						 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
-						 */
-						if (urls.url != null
-								&& app.IfSupportFormat(urls.url)) {
-							if (PROD_SOURCE == null
-									&& !app.IfIncludeM3U(urls.url))
-								PROD_SOURCE = urls.url.trim();
-							if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase(
-											"mp4"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase(
-											"flv"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase(
-											"hd2"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase(
-											"3gp"))
-								PROD_SOURCE = urls.url.trim();
+		if(m_ReturnProgramView.movie.episodes[0].down_urls!=null)
+		{
+			for (int j = 0; j < m_ReturnProgramView.movie.episodes[0].down_urls.length; j++) {
+				if(m_ReturnProgramView.movie.episodes[0].down_urls[j].source.equalsIgnoreCase(sourceUrl))
+				{
+					for (int k = 0; k < m_ReturnProgramView.movie.episodes[0].down_urls[j].urls.length; k++) {
+						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[0].down_urls[j].urls[k];
+						if (urls != null) {
+							/*
+							 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
+							 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
+							 */
+							if (urls.url != null
+									&& app.IfSupportFormat(urls.url)) {
+								if (PROD_SOURCE == null
+										&& !app.IfIncludeM3U(urls.url))
+									PROD_SOURCE = urls.url.trim();
+								if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"mp4"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"flv"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"hd2"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"3gp"))
+									PROD_SOURCE = urls.url.trim();
+							}
+							if (DOWNLOAD_SOURCE == null && urls.file != null
+									&& app.IfSupportFormat(urls.url)
+									&& urls.file.trim().equalsIgnoreCase("mp4"))
+								DOWNLOAD_SOURCE = urls.url.trim();
+							if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
+								break;
 						}
-						if (DOWNLOAD_SOURCE == null && urls.file != null
-								&& app.IfSupportFormat(urls.url)
-								&& urls.file.trim().equalsIgnoreCase("mp4"))
-							DOWNLOAD_SOURCE = urls.url.trim();
 						if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
 							break;
-					}
-					if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
-						break;
-				}		
+					}		
+				}
 			}
 		}
 		return PROD_SOURCE;
@@ -597,29 +603,9 @@ public class Detail_Movie extends Activity {
 					sourceTextView.add("电影网");
 				}
 			}
-//			if (m_ReturnProgramView.movie.episodes[source_index].down_urls.length > 1) {
-//				Arrays.sort(
-//						m_ReturnProgramView.movie.episodes[source_index].down_urls,
-//						new EComparatorIndex());
-//			}
 		}
 	}
 
-	// 将片源排序
-//	class EComparatorIndex implements Comparator {
-//
-//		@Override
-//		public int compare(Object first, Object second) {
-//			// TODO Auto-generated method stub
-//			int first_name = ((DOWN_URLS) first).index;
-//			int second_name = ((DOWN_URLS) second).index;
-//			if (first_name - second_name < 0) {
-//				return -1;
-//			} else {
-//				return 1;
-//			}
-//		}
-//	}
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
@@ -784,31 +770,89 @@ public class Detail_Movie extends Activity {
 			app.MyToast(this, "您当前网络有问题!");
 			return;
 		}
+		List<String> listUrl = new ArrayList<String>();
+		String temp = null;
+		for (int j = 0; j < m_ReturnProgramView.movie.episodes[0].down_urls.length; j++) {
+			for (int k = 0; k < m_ReturnProgramView.movie.episodes[0].down_urls[j].urls.length; k++) {
+				ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.movie.episodes[0].down_urls[j].urls[k];
+				if (urls != null) {
+					if (urls.file != null && app.IfSupportFormat(urls.url)
+							&& urls.file.trim().equalsIgnoreCase("mp4")) {
+						temp = urls.url.trim();
+						if (temp != null) {
+							listUrl.add(temp);
+						}
+					}
+				}
+			}
+		}
+		new MyThread(v,this,Detail_Movie.this,listUrl).start();
 		app.checkUserSelect(Detail_Movie.this);
-		if (app.use2G3G) {
-			if (DOWNLOAD_SOURCE != null) {
-				// String urlstr = DOWNLOAD_SOURCE;
-				String urlposter = m_ReturnProgramView.movie.poster;
-				String localfile = Constant.PATH_VIDEO + prod_id + "_"
-						+ download_index + ".mp4";
-				String my_name = m_ReturnProgramView.movie.name;
-				String download_state = "wait";
-				DownloadTask downloadTask = new DownloadTask(v, this,
-						Detail_Movie.this, prod_id, download_index,
-						DOWNLOAD_SOURCE, localfile);
-				downloadTask.execute(prod_id, download_index, DOWNLOAD_SOURCE,
-						urlposter, my_name, download_state);
-				aq.id(R.id.button9).background(R.drawable.yi_huan_cun);// 点击下载后直接把下载按钮的状态改变掉
-				aq.id(R.id.button9).clickable(false);
-				Toast.makeText(Detail_Movie.this, "视频已加入下载队列",
-						Toast.LENGTH_SHORT).show();
-			} else {
-				Toast.makeText(Detail_Movie.this, "该视频不支持下载",
-						Toast.LENGTH_SHORT).show();
+		aq.id(R.id.button9).background(R.drawable.yi_huan_cun);// 点击下载后直接把下载按钮的状态改变掉
+		aq.id(R.id.button9).clickable(false);
+	}
+	
+	class MyThread extends Thread {
+		private List<String> urlsCheck = new ArrayList<String>();
+		private View v = null;
+		private Context context = null;
+		private Activity activity = null;
+		public MyThread(View v,Activity activity,Context context,List<String> urls) {
+			this.v = v;
+			this.activity = activity;
+			this.context = context;
+			urlsCheck = urls;
+		}
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			for(int i = 0;i<urlsCheck.size();i++)
+			{
+				HttpURLConnection connection = null;
+				try {
+					URL url = new URL(urlsCheck.get(i));
+					connection = (HttpURLConnection) url
+							.openConnection();
+					connection.setConnectTimeout(5000);
+					connection.setRequestMethod("GET");
+					if((connection.getResponseCode()>=200&& connection.getResponseCode()<299)
+							&&!connection.getContentType().startsWith("txt")
+							&&connection.getContentLength()>100)
+					{
+						DOWNLOAD_SOURCE = urlsCheck.get(i);
+						if (app.use2G3G) {
+								// String urlstr = DOWNLOAD_SOURCE;
+								String urlposter = m_ReturnProgramView.movie.poster;
+								String localfile = Constant.PATH_VIDEO + prod_id + "_"
+										+ download_index + ".mp4";
+								String my_name = m_ReturnProgramView.movie.name;
+								String download_state = "wait";
+								DownloadTask downloadTask = new DownloadTask(v, activity,
+										context, prod_id, download_index,
+										DOWNLOAD_SOURCE, localfile);
+								downloadTask.execute(prod_id, download_index, DOWNLOAD_SOURCE,
+										urlposter, my_name, download_state);
+//								aq.id(R.id.button9).background(R.drawable.yi_huan_cun);// 点击下载后直接把下载按钮的状态改变掉
+//								aq.id(R.id.button9).clickable(false);
+								Toast.makeText(Detail_Movie.this, "视频已加入下载队列",
+										Toast.LENGTH_SHORT).show(); 
+						}
+						urlsCheck.clear();
+						break;
+					}
+					else
+					{
+						connection.disconnect();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					connection.disconnect();
+				}
 			}
 		}
 	}
-
+	
 	// 看服务列表到底是什么东西,为什么不行
 	public void OnClickReportProblem(View v) {
 		if (!app.isNetworkAvailable()) {

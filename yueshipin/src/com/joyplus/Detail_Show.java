@@ -383,7 +383,10 @@ public class Detail_Show extends Activity {
 					&& m_ReturnProgramView.show.episodes[0].down_urls[0].urls[0].url != null)
 				PROD_SOURCE = m_ReturnProgramView.show.episodes[0].down_urls[0].urls[0].url;
 			
-			app.sourceUrl =  m_ReturnProgramView.show.episodes[0].down_urls[0].source;//初始化时记录当前源
+			if(m_ReturnProgramView.show.episodes[0].down_urls!=null)
+				app.sourceUrl =  m_ReturnProgramView.show.episodes[0].down_urls[0].source;//初始化时记录当前源
+			else
+				app.sourceUrl =  m_ReturnProgramView.show.episodes[0].video_urls[0].source;//初始化时记录当前源
 			
 			for(int k = 0; k <sourceText.size();k++)
 			{
@@ -471,48 +474,51 @@ public class Detail_Show extends Activity {
 	public String selectUrls(String sourceUrl,int source_index)
 	{
 		PROD_SOURCE = null;
-		for (int j = 0; j < m_ReturnProgramView.show.episodes[source_index].down_urls.length; j++) {
-			if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase(sourceUrl))
-			{
-				for (int k = 0; k < m_ReturnProgramView.show.episodes[source_index].down_urls[j].urls.length; k++) {
-					ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[source_index].down_urls[j].urls[k];
-					if (urls != null) {
-						/*
-						 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
-						 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
-						 */
-						if (urls.url != null
-								&& app.IfSupportFormat(urls.url)) {
-							if (PROD_SOURCE == null
-									&& !app.IfIncludeM3U(urls.url))
-								PROD_SOURCE = urls.url.trim();
-							if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase(
-											"mp4"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase(
-											"flv"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase(
-											"hd2"))
-								PROD_SOURCE = urls.url.trim();
-							else if (PROD_SOURCE == null
-									&& urls.type.trim().equalsIgnoreCase(
-											"3gp"))
-								PROD_SOURCE = urls.url.trim();
+		if(m_ReturnProgramView.show.episodes[source_index].down_urls!=null)
+		{
+			for (int j = 0; j < m_ReturnProgramView.show.episodes[source_index].down_urls.length; j++) {
+				if(m_ReturnProgramView.show.episodes[source_index].down_urls[j].source.equalsIgnoreCase(sourceUrl))
+				{
+					for (int k = 0; k < m_ReturnProgramView.show.episodes[source_index].down_urls[j].urls.length; k++) {
+						ReturnProgramView.DOWN_URLS.URLS urls = m_ReturnProgramView.show.episodes[source_index].down_urls[j].urls[k];
+						if (urls != null) {
+							/*
+							 * #define GAO_QING @"mp4" #define BIAO_QING @"flv"
+							 * #define CHAO_QING @"hd2" #define LIU_CHANG @"3gp"
+							 */
+							if (urls.url != null
+									&& app.IfSupportFormat(urls.url)) {
+								if (PROD_SOURCE == null
+										&& !app.IfIncludeM3U(urls.url))
+									PROD_SOURCE = urls.url.trim();
+								if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"mp4"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"flv"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"hd2"))
+									PROD_SOURCE = urls.url.trim();
+								else if (PROD_SOURCE == null
+										&& urls.type.trim().equalsIgnoreCase(
+												"3gp"))
+									PROD_SOURCE = urls.url.trim();
+							}
+							if (DOWNLOAD_SOURCE == null && urls.file != null
+									&& app.IfSupportFormat(urls.url)
+									&& urls.file.trim().equalsIgnoreCase("mp4"))
+								DOWNLOAD_SOURCE = urls.url.trim();
+							if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
+								break;
 						}
-						if (DOWNLOAD_SOURCE == null && urls.file != null
-								&& app.IfSupportFormat(urls.url)
-								&& urls.file.trim().equalsIgnoreCase("mp4"))
-							DOWNLOAD_SOURCE = urls.url.trim();
 						if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
 							break;
-					}
-					if (PROD_SOURCE != null && DOWNLOAD_SOURCE != null)
-						break;
-				}		
+					}		
+				}
 			}
 		}
 		return PROD_SOURCE;

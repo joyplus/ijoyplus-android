@@ -29,6 +29,7 @@ import com.joyplus.StatisticsUtils;
 import com.joyplus.Adapters.CurrentPlayData;
 import com.joyplus.Service.Return.ReturnProgramView;
 import com.joyplus.Service.Return.ReturnProgramView.DOWN_URLS;
+import com.joyplus.Video.HttpThreadPoolUtils;
 import com.joyplus.Video.VideoPlayerActivity;
 import com.joyplus.faye.FayeClient;
 import com.joyplus.faye.FayeService;
@@ -269,7 +270,7 @@ public class MediaController extends FrameLayout {
 		mPauseButton = (ImageButton) v
 				.findViewById(R.id.mediacontroller_play_pause);
 		mDlnaButton = (ImageButton) v.findViewById(R.id.mediacontroller_dlna);
-		
+
 		if(app.DlnaDeviceFlag)
 		{
 			mDlnaButton.setVisibility(View.VISIBLE);	
@@ -408,6 +409,7 @@ public class MediaController extends FrameLayout {
 		String PROD_SOURCE = null;
 		String title = null;
 
+//		app.listUrl.clear();
 		switch (CurrentCategory) {
 		case 0:
 			break;
@@ -544,6 +546,7 @@ public class MediaController extends FrameLayout {
 			for (int k = 0; k < m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
 				CurrentQuality = k;
 				ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.tv.episodes[proi_index].down_urls[sourceIndex].urls[k];
+//				app.listUrl.add(CurrentURLS.url);
 				if (CurrentURLS != null
 						&& CurrentURLS.url != null
 						&& app.CheckUrlIsValidFromServer(
@@ -565,6 +568,7 @@ public class MediaController extends FrameLayout {
 			for (int k = 0; k < m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls.length; k++) {
 				CurrentQuality = k;
 				ReturnProgramView.DOWN_URLS.URLS CurrentURLS = m_ReturnProgramView.show.episodes[proi_index].down_urls[sourceIndex].urls[k];
+//				app.listUrl.add(CurrentURLS.url);
 				if (CurrentURLS != null
 						&& CurrentURLS.url != null
 						&& app.CheckUrlIsValidFromServer(
@@ -595,15 +599,12 @@ public class MediaController extends FrameLayout {
 		CurrentSource = mCurrentPlayData.CurrentSource;
 		CurrentQuality = mCurrentPlayData.CurrentQuality;
 		ShowQuality = mCurrentPlayData.ShowQuality;
-
 	}
 
 	public void SelectQuality(int index) {
 		mPlayer.pause();
-
 		ShowQuality = index;
 		String PROD_SOURCE = null;
-
 		ReturnProgramView.DOWN_URLS.URLS CurrentURLS = null;
 		switch (CurrentCategory) {
 		case 0:
@@ -633,9 +634,7 @@ public class MediaController extends FrameLayout {
 					break;
 				}
 			}
-
 			break;
-
 		}
 
 		if (CurrentURLS != null && CurrentURLS.url != null) {
@@ -644,7 +643,7 @@ public class MediaController extends FrameLayout {
 		}
 		if (PROD_SOURCE != null)
 			mPlayer.setContinueVideoPath(null, PROD_SOURCE, true);
-			
+
 	}
 
 	public void setDownloadRate(int rate) {
@@ -748,9 +747,10 @@ public class MediaController extends FrameLayout {
 
 	private void ShowQuality() {
 
-		lv_radio0.setVisibility(View.INVISIBLE);
-		lv_radio1.setVisibility(View.INVISIBLE);
-		lv_radio2.setVisibility(View.INVISIBLE);
+		lv_radio0.setVisibility(View.GONE);
+		lv_radio1.setVisibility(View.GONE);
+		lv_radio2.setVisibility(View.GONE);
+
 
 		switch (CurrentCategory) {
 		case 0:
@@ -857,14 +857,6 @@ public class MediaController extends FrameLayout {
 		else if (Constant.player_quality_index[ShowQuality]
 				.equalsIgnoreCase("hd2"))
 			lv_radio2.setChecked(true);
-		// if (CurrentQuality == 3) {
-		// // if (lv_radio2.getVisibility() == View.VISIBLE)
-		// // lv_radio2.setChecked(true);
-		// // else if (lv_radio1.getVisibility() == View.VISIBLE)
-		// lv_radio0.setChecked(true);
-		// // else if (lv_radio0.getVisibility() == View.VISIBLE)
-		// // lv_radio0.setChecked(true);
-		// }
 	}
 
 	/**
@@ -1180,7 +1172,7 @@ public class MediaController extends FrameLayout {
 			}
 			break;
 		}
-		
+
 
 		JSONObject json = new JSONObject();
 		try {
@@ -1204,7 +1196,7 @@ public class MediaController extends FrameLayout {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
     private void sendYunduanMessage(JSONObject json){
     	FayeService.SendMessageService(mContext, json, user_id);
@@ -1219,9 +1211,6 @@ public class MediaController extends FrameLayout {
 	private View.OnClickListener mReturnListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			// if(DLNAMODE)
-			// DLNAMODE = false;
-			// else
 			VideoPlayerActivity.IsFinish = true;
 			mPlayer.OnComplete();
 		}
@@ -1324,6 +1313,7 @@ public class MediaController extends FrameLayout {
 	}
 
 	private void updateTopRight() {
+
 		if (mViewTopRight.getVisibility() == View.VISIBLE)
 			mViewTopRight.setVisibility(View.GONE);
 		else
@@ -1340,7 +1330,7 @@ public class MediaController extends FrameLayout {
 			mPauseButton.setBackgroundResource(R.drawable.player_pause);
 		else
 			mPauseButton.setBackgroundResource(R.drawable.player_play);
-		
+
 		if(app.DlnaDeviceFlag)
 		{
 			mDlnaButton.setVisibility(View.VISIBLE);	
@@ -1435,7 +1425,7 @@ public class MediaController extends FrameLayout {
 		public void onStopTrackingTouch(SeekBar bar) {
 			if (!mInstantSeeking) {
 				mPlayer.seekTo((mDuration * bar.getProgress()) / 1000);
-				
+
 				// mPlayer.pause();
 			}
 			if (mInfoView != null) {
