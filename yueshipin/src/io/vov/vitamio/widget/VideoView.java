@@ -474,12 +474,28 @@ public class VideoView extends SurfaceView implements
 					if (mOnErrorListener != null) {
 						if (mOnErrorListener.onError(mMediaPlayer, framework_err,
 								impl_err))
-						{
-							OnComplete();
-						}
-							
+							return true;
 					}
-					return true;	
+
+					if (getWindowToken() != null) {
+						int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? R.string.VideoView_error_text_invalid_progressive_playback
+								: R.string.addressnotwork;
+
+						new AlertDialog.Builder(mContext)
+								.setTitle(R.string.netstate)
+								.setMessage(message)
+								.setPositiveButton(R.string.queding,
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog,
+													int whichButton) {
+												OnComplete();
+												// if (mOnCompletionListener != null)
+												// mOnCompletionListener.onCompletion(mMediaPlayer);
+											}
+										}).setCancelable(false).show();
+					}
+				return true;	
 				}
 			}else{
 				mCurrentState = STATE_ERROR;
