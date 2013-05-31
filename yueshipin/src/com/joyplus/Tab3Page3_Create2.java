@@ -12,10 +12,11 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -43,14 +44,15 @@ public class Tab3Page3_Create2 extends Activity {
 	private ArrayList dataStruct;
 	private ListView ItemsListView;
 	private BangDanListAdapter BangDanAdapter;
-
+	private static String CREATE_LIST_STEP2  = "创建悦单2";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab3page3_create2);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-
+        mContext = this;
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 
 		Intent intent = getIntent();
@@ -127,12 +129,14 @@ public class Tab3Page3_Create2 extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, CREATE_LIST_STEP2);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, CREATE_LIST_STEP2);
 		MobclickAgent.onPause(this);
 	}
 
@@ -181,12 +185,12 @@ public class Tab3Page3_Create2 extends Activity {
 		if (BangDanAdapter == null) {
 			ArrayList arraylist = dataStruct;
 			BangDanListAdapter listviewdetailadapter = new BangDanListAdapter(
-					this, arraylist);
+					Tab3Page3_Create2.this, arraylist);
 			BangDanAdapter = listviewdetailadapter;
 		} else {
 			ArrayList arraylist1 = dataStruct;
 			BangDanListAdapter listviewdetailadapter1 = new BangDanListAdapter(
-					this, arraylist1);
+					Tab3Page3_Create2.this, arraylist1);
 			BangDanAdapter = listviewdetailadapter1;
 		}
 		return BangDanAdapter;
@@ -199,10 +203,7 @@ public class Tab3Page3_Create2 extends Activity {
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		aq.ajax(cb);
 
@@ -326,10 +327,7 @@ public class Tab3Page3_Create2 extends Activity {
 		params.put("item_id", prod_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "DeleteVideoResult");

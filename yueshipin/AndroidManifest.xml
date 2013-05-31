@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.joyplus"
-    android:versionCode="9"
-    android:versionName="0.9.9alpha" >
+    android:versionCode="12"
+    android:versionName="1.0.2alpha" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="8"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.CAMERA" />
@@ -28,6 +28,7 @@
     <uses-permission android:name="android.permission.INTERNET" >
     </uses-permission>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name="com.joyplus.App"
@@ -37,8 +38,8 @@
         <activity
             android:name=".Main"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
-             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
@@ -56,7 +57,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <data
+                    android:host="ums.bz"
+                    android:path="/7J5Q4k/"
+                    android:port="80"
+                    android:scheme="http" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
         </activity>
+        
         <activity
             android:name=".Search"
             android:screenOrientation="portrait"
@@ -113,6 +127,11 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
+            android:name=".Tab2Page4"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
             android:name=".Tab3"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
@@ -123,27 +142,12 @@
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
-            android:name=".Tab3Page1_more"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
             android:name=".Tab3Page2"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
-            android:name=".Tab3Page2_more"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
             android:name=".Tab3Page3"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-        </activity>
-        <activity
-            android:name=".Tab3Page3_more"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
@@ -180,15 +184,13 @@
         <activity
             android:name="com.joyplus.Video_Cache"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-
         <activity
             android:name="com.joyplus.Video_Cache_Detail"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-
         <activity
             android:name="com.joyplus.weibo.net.WeiboDialog2"
             android:screenOrientation="portrait"
@@ -204,13 +206,10 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-         <activity
+        <activity
             android:name=".Video.VideoPlayerActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Video.InitActivity"
@@ -218,14 +217,55 @@
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        
-          <activity
+        <activity
             android:name=".Dlna.DlnaVideoPlay"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".MainTopRightDialog"
+            android:theme="@style/MyDialogStyleTop" >
+        </activity>
+        <activity
+            android:name=".Webview_Play"
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name=".Weixin_Share"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-        
-         <service android:name=".Dlna.DlnaSelectDevice" android:exported="true"></service> 
+        <activity
+            android:name=".WeixinPage1"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".WeixinPage2"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".WeixinPage3"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+		<activity 
+		    android:name=".Weixin_ShareVideo"
+		    android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" >
+		</activity>
+		<activity
+            android:name=".wxapi.WXEntryActivity"
+            android:label="@string/app_name"
+            android:exported="true"
+            android:launchMode="singleTop">
+        </activity>
+		
+        <service
+            android:name=".Dlna.DlnaSelectDevice"
+            android:exported="true" >
+        </service>
 
         <activity
             android:name="com.umeng.fb.ui.SendFeedback"
@@ -234,20 +274,97 @@
         <activity
             android:name="com.umeng.fb.ui.FeedbackConversation"
             android:configChanges="keyboard" />
+        <activity
+            android:name="com.zxing.activity.CaptureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name=".Before_Binding"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".Relieve_Binding"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
 
+        <receiver android:name="com.joyplus.faye.FayeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.joyplus.faye.FayeService" >
+        </service>
         <service
             android:name="com.umeng.common.net.DownloadingService"
             android:exported="true"
             android:process=":DownloadingService" >
         </service>
-         <service android:name="com.parse.PushService" />
+        <service android:name="com.parse.PushService" />
 
+        <activity
+            android:name="com.umeng.socialize.view.CommentActivity"
+            android:configChanges="orientation|keyboard"
+            android:theme="@style/Theme.UMDefault" >
+        </activity>
+        <activity
+            android:name="com.umeng.socialize.view.ShareActivity"
+            android:configChanges="orientation|keyboard"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@style/Theme.UMDialog"
+            android:windowSoftInputMode="stateVisible|adjustResize" >
+        </activity>
+        <activity
+            android:name="com.umeng.socialize.view.CommentDetail"
+            android:configChanges="orientation|keyboard"
+            android:noHistory="true"
+            android:theme="@style/Theme.UMDefault" >
+        </activity>
+        <activity
+            android:name="com.umeng.socialize.view.CommentDetailNoMap"
+            android:configChanges="orientation|keyboard"
+            android:noHistory="true"
+            android:theme="@style/Theme.UMDefault" >
+        </activity>
+        
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="50937e6c5270151fc8000003" >
         </meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="a002001" />
+            android:value="j001" />
+        <!-- www.tt.91.com -->
+        <meta-data
+            android:name="dianju-app-id"
+            android:value="317" />
+        <meta-data
+            android:name="dianju-app-key"
+            android:value="b80b64352940a7ec0c9f7082ab81d53e" />
+        <!-- 配置Receiver(必须) -->
+        <receiver android:name="com.bodong.dianju.sdk.receiver.AppStateReceiver" >
+            <intent-filter>
+                <action android:name="com.bodong.dianju.sdk.action.STATE_CHANGE" />
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        <!-- 配置全屏Activity(不需要全屏广告，则可不用配置) -->
+        <activity
+            android:name="com.bodong.dianju.sdk.DianJuFullscreen"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:theme="@android:style/Theme.Dialog" />
+        <!-- 配置广告墙Activity(不需要广告墙，则可不用配置) -->
+        <activity
+            android:name="com.bodong.dianju.sdk.DianJuActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden" />
     </application>
+
 </manifest>

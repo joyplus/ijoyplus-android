@@ -85,7 +85,19 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
     </style>
-
-    <color name="darker_transparent">#C1000000</color>
-
+    
+    <style name="AnimTop2" parent="@android:style/Animation">  
+    	<item name="android:windowEnterAnimation">@anim/push_top_in2</item>
+        <item name="android:windowExitAnimation">@anim/push_top_out2</item>
+	</style>
+    
+    <style name="MyDialogStyleTop" parent="android:Theme.Dialog" >
+        <item name="android:windowAnimationStyle">@style/AnimTop2</item>
+        <item name="android:windowFrame">@null</item><!--边框-->
+        <item name="android:windowIsFloating">true</item><!--是否浮现在activity之上-->
+        <item name="android:windowIsTranslucent">true</item><!--半透明-->
+        <item name="android:windowBackground">@android:color/transparent</item><!--背景透明-->
+        <item name="android:backgroundDimEnabled">false</item><!--模糊-->        
+     </style>
+    
 </resources>

@@ -3,6 +3,7 @@ package com.joyplus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -11,11 +12,12 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,6 +38,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab3Page3ListData;
 import com.joyplus.Service.Return.ReturnTops;
+import com.joyplus.Service.Return.ReturnUserPlayHistories;
 import com.umeng.analytics.MobclickAgent;
 
 public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
@@ -48,13 +51,15 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	private ListView ItemsListView;
 	private Tab3Page3ListAdapter Tab3Page3Adapter;
 	private int isLastisNext = 1;
-
+	private static String MY_TOP_LIST  = "我的悦单";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab3page3);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		aq.id(R.id.linearLayout1).gone();
 		aq.id(R.id.button2).gone();
 		// 获取listview对象
@@ -65,7 +70,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Goto_Tab3Page3_Create2(position);
-
 			}
 		});
 		ItemsListView.setOnScrollListener(new OnScrollListener() {
@@ -99,22 +103,16 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 				return true;// 如果返回false那么onItemClick仍然会被调用
 			}
 		});
-		dataStruct = new ArrayList();
-		Tab3Page3Adapter = new Tab3Page3ListAdapter();
-		ItemsListView.setAdapter(Tab3Page3Adapter);
-
 	}
 
 	public void OnClickTab1TopLeft(View v) {
 		Intent i = new Intent(this, Search.class);
 		startActivity(i);
-
 	}
 
 	public void OnClickTab1TopRight(View v) {
 		Intent i = new Intent(this, Setting.class);
 		startActivity(i);
-
 	}
 
 	@Override
@@ -127,16 +125,20 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (dataStruct != null && dataStruct.size() > 1)
-			dataStruct.clear();
-		isLastisNext = 1;
+		dataStruct = new ArrayList();
+		Tab3Page3Adapter = new Tab3Page3ListAdapter();
+		ItemsListView.setAdapter(Tab3Page3Adapter);
+		isLastisNext=1;
+		CheckSaveData();
 		GetServiceData(isLastisNext);
+		MobclickAgent.onEventBegin(mContext, MY_TOP_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, MY_TOP_LIST);
 		MobclickAgent.onPause(this);
 	}
 
@@ -147,12 +149,16 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 	public void GetVideoMovies() {
 		String m_j = null;
-
 		if (m_ReturnTops.tops == null)
 			return;
-
-		// if (m_ReturnTops.tops.length < 4)
-		// aq.id(R.id.button2).gone();
+		if(isLastisNext == 1)
+		{
+			for(int j = dataStruct.size()-1;j>-1;j--)
+			{
+				dataStruct.remove(j);
+			}
+			dataStruct.clear();
+		}
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 			Tab3Page3ListData m_Tab3Page3ListData = new Tab3Page3ListData();
 			m_Tab3Page3ListData.Pic_ID = m_ReturnTops.tops[i].id;
@@ -172,13 +178,14 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 							m_Tab3Page3ListData.Pic_list2 = m_j;
 							break;
 						}
-
 					}
-
 				}
-
 			}
-			dataStruct.add(m_Tab3Page3ListData);
+			if (dataStruct.contains(m_Tab3Page3ListData)) {
+
+			} else {
+				dataStruct.add(m_Tab3Page3ListData);
+			}
 		}
 		Tab3Page3Adapter.notifyDataSetChanged();
 		int m_num = dataStruct.size();
@@ -193,18 +200,13 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 	public void OnClickImageView(View v) {
 		/*
-		 * Intent intent = new Intent(this, BuChongGeRenZhiLiao.class);
-		 * intent.putExtra("prod_id", m_prod_id); intent.putExtra("prod_type",
-		 * m_prod_type); try { startActivity(intent); } catch
-		 * (ActivityNotFoundException ex) { Log.e(TAG,
-		 * "OnClickImageView failed", ex); }
+		 * 
 		 */
 	}
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR&&app.GetServiceData("user_tops33")==null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -212,9 +214,16 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
-			app.SaveServiceData("user_tops33", json.toString());
-
+			if(isLastisNext == 1)
+			{
+				m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
+				app.SaveServiceData("user_tops33", json.toString());
+			}
+			else if (isLastisNext > 1)
+			{
+				m_ReturnTops = null;
+				m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
+			}
 			// 创建数据源对象
 			GetVideoMovies();
 
@@ -228,7 +237,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	// listview的点击事件接口函数
@@ -239,38 +247,28 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 	// InitListData
 	public void GetServiceData(int index) {
 		String url = Constant.BASE_URL + "user/tops" + "?page_num="
-				+ Integer.toString(index) + "&page_size=20";
-		// String url = Constant.BASE_URL + "user/tops";
-
+				+ Integer.toString(index) + "&page_size=10";
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
-
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 		aq.ajax(cb);
 	}
 
+	/*
+	 * 从本地缓存取数据,然后从服务器抓数据下来
+	 */
 	private void CheckSaveData() {
 		String SaveData = null;
 		ObjectMapper mapper = new ObjectMapper();
 		SaveData = app.GetServiceData("user_tops33");
 		if (SaveData == null) {
-			GetServiceData(1);
+			isLastisNext = 1;
+			GetServiceData(isLastisNext);
 		} else {
 			try {
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						GetServiceData(1);
-					}
-				}, 10000);
-
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -289,14 +287,6 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 
 		Intent intent = new Intent(getParent(), Tab3Page3_Create1.class);
 		getParent().startActivityForResult(intent, 1);
-
-	}
-
-	public void OnClickMore(View v) {
-
-		Intent intent = new Intent(this, Tab3Page3_more.class);
-		getParent().startActivityForResult(intent, 2);
-
 	}
 
 	private void TopDel(String topic_id) {
@@ -306,14 +296,10 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 		params.put("topic_id", topic_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "TopDelResult");
-
 		aq.ajax(cb);
 	}
 
@@ -353,13 +339,8 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 						Tab3Page3Adapter.notifyDataSetChanged();
 
 						ItemsListView.invalidate();
-						// if(m_ReturnTops.tops.length > 3){
-						// GetServiceData();
-						// }
-
 						// 删除数据
 						TopDel(m_Tab3Page3ListData.Pic_ID);
-
 					}
 				}).setNegativeButton("取消", null).create();
 		builder.show();
@@ -433,16 +414,14 @@ public class Tab3Page3 extends Activity implements OnTabActivityResultListener {
 			aqlist.id(holder.mName1).text(m_Tab3Page3ListData.Pic_list1);
 			aqlist.id(holder.mImageView).image(m_Tab3Page3ListData.Pic_url,
 					true, true);
-			// aqlist.id(holder.mImageView).image(m_Tab3Page3ListData.Pic_url,
-			// true, true, 0, 0, null, 0, 1.0f);
-
-			// aqlist.dismiss();
 			return view;
 		}
 	}
 
 	@Override
 	public void onTabActivityResult(int requestCode, int resultCode, Intent data) {
+		/*
+		 * 
+		 */
 	}
-
 }

@@ -32,7 +32,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_weight="0.63"
+            android:layout_weight="0.37"
             android:gravity="center" 
             android:onClick="OnClickTab1TopLeft">
 
@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="5dp"
                 android:background="@drawable/tab1_l"
                 />
         </LinearLayout>
@@ -53,11 +53,14 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <ImageView
+            <TextView
                 android:id="@+id/imageView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/top_logo_1"/>
+                android:text="悦    单"
+                android:textStyle="bold"
+                android:textColor="#EAE7E0"
+                android:textSize="23sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -66,14 +69,14 @@
             android:layout_weight="0.37"
             android:gravity="center"
             android:orientation="horizontal"
-             android:onClick="OnClickDownloadTopRight">
+             android:onClick="OnClickSaoMiaoTopRight">
             
             <ImageView 
                 android:id="@+id/DownloadPage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/tab_rignt_download"
+                android:background="@drawable/saoyisao"
+                android:layout_marginRight="5dp"
                 android:layout_centerVertical="true"
                />
         </LinearLayout>
@@ -85,7 +88,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/LayoutTitle"
         android:orientation="vertical">
-
+       
         <ListView
             android:id="@+id/listView1"
             android:layout_width="wrap_content"
@@ -96,5 +99,4 @@
             android:divider="@drawable/tab1_divider">
         </ListView>
     </LinearLayout>
-
 </RelativeLayout>

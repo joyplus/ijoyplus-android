@@ -1,59 +1,160 @@
 package com.joyplus;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.umeng.analytics.MobclickAgent;
-import com.umeng.fb.NotificationType;
-import com.umeng.fb.UMFeedbackService;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.text.TextUtils;
+import com.joyplus.widget.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ScrollView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
-import com.joyplus.weibo.net.AccessToken;
-import com.joyplus.weibo.net.DialogError;
-import com.joyplus.weibo.net.Weibo;
-import com.joyplus.weibo.net.WeiboDialogListener;
-import com.joyplus.weibo.net.WeiboException;
+import com.bodong.dianju.sdk.DianJuPlatform;
+import com.joyplus.Video.VideoPlayerActivity;
+import com.joyplus.faye.FayeService;
+import com.joyplus.widget.InnerListView;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.NotificationType;
+import com.umeng.fb.UMFeedbackService;
+import com.umeng.socialize.bean.MultiStatus;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.bean.SocializeConfig;
+import com.umeng.socialize.bean.SocializeEntity;
+import com.umeng.socialize.controller.RequestType;
+import com.umeng.socialize.controller.UMInfoAgent;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.controller.listener.SocializeListeners.MulStatusListener;
+import com.umeng.socialize.controller.listener.SocializeListeners.SocializeClientListener;
+import com.umeng.socialize.controller.listener.SocializeListeners.UMAuthListener;
+import com.umeng.socialize.controller.listener.SocializeListeners.UMDataListener;
+import com.umeng.socialize.exception.SocializeException;
+import com.umeng.xp.common.ExchangeConstants;
+import com.umeng.xp.controller.ExchangeDataService;
+import com.umeng.xp.controller.XpListenersCenter.NTipsChangedListener;
+import com.umeng.xp.view.ExchangeViewManager;
 
 public class Setting extends Activity {
 	private App app;
 	private AQuery aq;
 	private String uid = null;
-	private String token = null;
-	private String expires_in = null;
 
+	// 应用推荐
+	public static ExchangeDataService preloadDataService;
+	private static String SETTING = "设置";
+	private static String RECOMMAND_APP = "精品推荐";
+	Context mContext;
+	protected String ue_screencast_unbinded = "解除绑定事件";
+
+	public static final String DESCRIPTOR = "joyplus";
+	final SHARE_MEDIA sinaMedia = SHARE_MEDIA.SINA;
+	UMSocialService controller;
+	private ScrollView scrollView = null;
+	private String defaultPlayerPackageName = null ;
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.setting);
+//		com.umeng.socom.Log.LOG = true;
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		UMFeedbackService.enableNewReplyNotification(this,
 				NotificationType.AlertDialog);
+//		 appRecommend();
+		ViewGroup fatherLayout = (ViewGroup) findViewById(R.id.ad);
+		InnerListView listView = (InnerListView) this.findViewById(R.id.list);
+		listView.setMaxHeight(400);
+		scrollView = (ScrollView) findViewById(R.id.scrollView1);
+		listView.setParentScrollView(scrollView);
+
+		// 赋值preloadDataService,添加newTips 回调
+		preloadDataService = new ExchangeDataService();
+		preloadDataService.preloadData(Setting.this,
+				new NTipsChangedListener() {
+					@Override
+					public void onChanged(int flag) {
+						// TextView view = (TextView)
+						// root.findViewById(R.id.umeng_example_xp_container_tips);
+						if (flag == -1) {
+							// 没有new广告
+						} else if (flag > 1) {
+							// 第一页new广告数量
+						} else if (flag == 0) {
+							// 第一页全部为new 广告
+						}
+					};
+				}, ExchangeConstants.type_container);
+		ExchangeDataService exchangeDataService = preloadDataService != null ? preloadDataService
+				: new ExchangeDataService("");
+		ExchangeViewManager exchangeViewManager = new ExchangeViewManager(this,
+				new ExchangeDataService());
+		exchangeViewManager.addView(fatherLayout, listView);
+		MobclickAgent.onEventBegin(mContext, RECOMMAND_APP);
+		aq.id(R.id.button7).gone();
+
+		controller = UMServiceFactory.getUMSocialService(DESCRIPTOR,
+				RequestType.SOCIAL);
+
+		// 关注我们
+		SocializeConfig config = new SocializeConfig();
+		// 添加关注对象
+		config.addFollow(SHARE_MEDIA.SINA, "3058636171");
+		// 添加follow 时的回调
+		config.setOauthDialogFollowListener(new MulStatusListener() {
+			@Override
+			public void onStart() {
+				Log.d("TestData", "Follow Start");
+			}
+
+			@Override
+			public void onComplete(MultiStatus multiStatus, int st,
+					SocializeEntity entity) {
+				if (st == 200) {// follow 成功
+					Map<String, Integer> allChildren = multiStatus
+							.getAllChildren();
+					Set<String> set = allChildren.keySet();
+					for (String fid : set)
+						Log.i("TestData", fid + "    " + allChildren.get(fid));
+				}
+			}
+		});
+
+		// 更新config
+		controller.setConfig(config);
 	}
 
 	@Override
 	protected void onDestroy() {
 		if (aq != null)
 			aq.dismiss();
-		if (expires_in != null) {
+		if (UMInfoAgent.isOauthed(mContext, sinaMedia)) {
 			setResult(101);
 		}
 		super.onDestroy();
@@ -61,17 +162,27 @@ public class Setting extends Activity {
 
 	@Override
 	public void onResume() {
-		super.onResume();
 		if (app.GetServiceData("Sina_Access_Token") != null)
 			aq.id(R.id.checkBox1).getCheckBox().setChecked(true);
 		else
 			aq.id(R.id.checkBox1).getCheckBox().setChecked(false);
+		if (app.GetServiceData("player_select") != null) {
+			if (app.GetServiceData("player_select").equalsIgnoreCase("third")) {
+				aq.id(R.id.checkBox2).getCheckBox().setChecked(true);
+			} else {
+				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
+			}
+		}
+		MobclickAgent.onEventBegin(mContext, SETTING);
 		MobclickAgent.onResume(this);
+		super.onResume();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, RECOMMAND_APP);
+		MobclickAgent.onEventEnd(mContext, SETTING);
 		MobclickAgent.onPause(this);
 	}
 
@@ -81,11 +192,16 @@ public class Setting extends Activity {
 	}
 
 	public void OnClickTab1TopRight(View v) {
-		if (expires_in != null) {
+		if (UMInfoAgent.isOauthed(mContext, sinaMedia)) {
 			setResult(101);
 		}
 		finish();
 
+	}
+
+	// 打开应用推荐
+	public void OnClickRecommend(View v) {
+		DianJuPlatform.openOfferWall(Setting.this);// 可以打开广告墙
 	}
 
 	public void OnClickMianZhe(View v) {
@@ -99,26 +215,20 @@ public class Setting extends Activity {
 	}
 
 	public void OnClickGuanzhu(View v) {
-		if (app.GetServiceData("Sina_Access_Token") != null) {
+		if (UMInfoAgent.isOauthed(mContext, sinaMedia)) {
+			String m_PostURL = "https://api.weibo.com/2/friendships/create.json";
 
-//			int uid = 3058636171;
-//			uid = Integer.parseInt(app.GetServiceData("Sina_Access_UID"));
-//			if (uid >0) {
-					String m_PostURL = "https://api.weibo.com/2/friendships/create.json";
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("access_token", app.GetServiceData("Sina_Access_Token"));
+			params.put("screen_name", "悦视频");
+			// save to local
+			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+			cb.header("User-Agent",
+					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
+			cb.params(params).url(m_PostURL).type(JSONObject.class)
+					.weakHandler(this, "GuanzhuResult");
+			aq.ajax(cb);
 
-					Map<String, Object> params = new HashMap<String, Object>();
-					params.put("access_token", app.GetServiceData("Sina_Access_Token"));
-//					params.put("uid","3058636171");
-					params.put("screen_name", "悦视频");
-					// save to local
-					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-					cb.header("User-Agent",
-							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-					cb.params(params).url(m_PostURL).type(JSONObject.class)
-							.weakHandler(this, "GuanzhuResult");
-					aq.ajax(cb);
-//			}
-		
 		} else {
 			String m_URI = "http://weibo.com/signup/signup.php?inviteCode=3058636171";
 			Intent intent = new Intent();
@@ -144,6 +254,75 @@ public class Setting extends Activity {
 		}
 	}
 
+	// 第三方播放器
+	public void OnClickSettingPlayer(View v) {
+
+		if (app.GetServiceData("player_select") != null) {
+			if (app.GetServiceData("player_select").equalsIgnoreCase("third")) {
+				app.SaveServiceData("player_select", "default");
+				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
+				ClearSettingDefault();
+				//
+			} else if (app.GetServiceData("player_select").equalsIgnoreCase(
+					"default")) {
+				app.SaveServiceData("player_select", "third");
+				aq.id(R.id.checkBox2).getCheckBox().setChecked(true);
+			}
+		}
+		if (app.GetServiceData("player_select") != null) {
+			if (app.GetServiceData("player_select").equalsIgnoreCase("third")) {
+				aq.id(R.id.checkBox2).getCheckBox().setChecked(true);
+			} else {
+				aq.id(R.id.checkBox2).getCheckBox().setChecked(false);
+			}
+		}
+	}
+	
+	public void ClearSettingDefault(){
+		final IntentFilter filter = new IntentFilter(Intent.ACTION_VIEW);
+		filter.addCategory(Intent.CATEGORY_DEFAULT);
+		List<IntentFilter> filters = new ArrayList<IntentFilter>();
+		filters.add(filter);
+		List<ComponentName> activities = new ArrayList<ComponentName>();
+		final PackageManager packageManager = (PackageManager) getPackageManager();
+		packageManager.getPreferredActivities(filters, activities, null);
+		for (ComponentName activity : activities) {
+			defaultPlayerPackageName = activity.getPackageName();
+		}
+		if(defaultPlayerPackageName ==null)
+		{
+			return;
+		}
+		else
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(getResources().getString(R.string.tishi));
+			builder.setMessage(
+					getResources().getString(R.string.shifouqingchumorenshipin))
+					.setPositiveButton(
+							getResources().getString(R.string.kaishiqingchu),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent localIntent = new Intent();
+									localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+									localIntent.setData(Uri.fromParts("package", defaultPlayerPackageName, null));
+									startActivity(localIntent);
+								}
+							})
+					.setNegativeButton(
+							getResources().getString(R.string.zanbuqingchu),
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+								}
+							});
+			builder.show();
+		}
+	}
+	
 	public void OnClickClearMemery(View v) {
 		BitmapAjaxCallback.clearCache();
 		app.MyToast(this, "清除缓存成功");
@@ -177,26 +356,9 @@ public class Setting extends Activity {
 
 	}
 
-	public void GetServiceData() {
-
-	}
-
 	public void OnClickSinaWeibo(View v) {
 		if (app.GetServiceData("Sina_Access_Token") == null) {
-			Weibo weibo = Weibo.getInstance();
-			weibo.setupConsumerConfig(Constant.SINA_CONSUMER_KEY,
-					Constant.SINA_CONSUMER_SECRET);
-			// Oauth2.0
-			// 隐式授权认证方式
-			// weibo.setRedirectUrl("http://www.sina.com");//
-			// 此处回调页内容应该替换为与appkey对应的应用回调页
-			// 对应的应用回调页可在开发者登陆新浪微博开发平台之后，
-			// 进入我的应用--应用详情--应用信息--高级信息--授权设置--应用回调页进行设置和查看，
-			// 应用回调页不可为空
-			// 新浪微博redirecturl改为：https://api.weibo.com/oauth2/default.html
-			// zenius2004@hotmail.com/yuebao
-			weibo.setRedirectUrl("https://api.weibo.com/oauth2/default.html");
-			weibo.authorize(this, new AuthDialogListener());
+			GotoSinaWeibo();
 		} else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(getResources().getString(R.string.tishi));
@@ -225,12 +387,186 @@ public class Setting extends Activity {
 
 		}
 	}
+
+	private void GotoSinaWeibo() {
+
+		controller.doOauthVerify(mContext, sinaMedia, new UMAuthListener() {
+			@Override
+			public void onError(SocializeException e, SHARE_MEDIA platform) {
+				app.MyToast(getApplicationContext(),
+						getResources().getString(R.string.networknotwork));
+			}
+
+			@Override
+			public void onComplete(Bundle value, SHARE_MEDIA platform) {
+				if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
+					uid = value.getString("uid");
+					BindWeibo();
+				} else {
+					app.MyToast(getApplicationContext(), getResources()
+							.getString(R.string.networknotwork));
+				}
+			}
+
+			// 绑定新浪微博
+			private void BindWeibo() {
+				String m_PostURL = Constant.BASE_URL
+						+ "account/validateThirdParty";
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("source_id", uid);
+				params.put("source_type", "1");
+				params.put("pre_user_id", app.UserID);
+				// save to local
+				AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+				cb.SetHeader(app.getHeaders());
+				cb.params(params).url(m_PostURL).type(JSONObject.class)
+						.weakHandler(this, "IsHasBindWeiboResult");
+				aq.ajax(cb);
+
+			}
+
+			@SuppressWarnings("unused")
+			public void IsHasBindWeiboResult(String url, JSONObject json,
+					AjaxStatus status) {
+				if (json != null) {
+					try {
+						if (json.has("user_id")) {
+							if (json.getString("user_id") != null) {
+								app.UserID = json.getString("user_id");
+								Map<String, String> headers = app.getHeaders();
+								headers.remove("user_id");
+								headers.put("user_id", app.UserID);
+								app.setHeaders(headers);
+								// 将这个UserID保存在本地
+								UploadSinaHeadAndScreen_nameUrl();
+							}
+						}
+						if (json.has("res_code")) {
+							if (json.getString("res_code") != null) {
+								UploadSinaHeadAndScreen_nameUrl();
+							}
+						}
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				} else {
+					// ajax error, show error code
+
+				}
+			}
+
+			@Override
+			public void onCancel(SHARE_MEDIA arg0) {
+				aq.id(R.id.checkBox1).getCheckBox().setChecked(false);
+				app.MyToast(getApplicationContext(), "绑定取消");
+			}
+
+			@Override
+			public void onStart(SHARE_MEDIA arg0) {
+			}
+
+		});
+	}
+
+	public void UploadSinaHeadAndScreen_nameUrl() {
+		controller.getPlatformInfo(mContext, sinaMedia, new UMDataListener() {
+
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onComplete(int status, Map<String, Object> info) {
+				if (status == 200 && info != null) {
+					app.SaveServiceData("Sina_Access_Token", info.get("access_token").toString());
+					String m_PostURL = Constant.BASE_URL
+							+ "account/bindAccount";
+					Map<String, Object> params = new HashMap<String, Object>();
+					params.put("source_id", info.get("uid").toString());
+					params.put("source_type", "1");
+					params.put("pic_url", info.get("profile_image_url")
+							.toString().trim());
+					params.put("nickname", info.get("screen_name").toString());
+					// save to local
+					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+					cb.SetHeader(app.getHeaders());
+					cb.params(params).url(m_PostURL).type(JSONObject.class)
+							.weakHandler(this, "AccountBindAccountResult");
+					aq.ajax(cb);
+
+				} else
+					Log.i("TestData", "发生错误：" + status);
+			}
+
+			@SuppressWarnings("unused")
+			public void AccountBindAccountResult(String url, JSONObject json,
+					AjaxStatus status) {
+				if (json != null) {
+					try {
+						if (json.getString("res_code").trim()
+								.equalsIgnoreCase("00000")) {
+							// reload the userinfo
+							String url2 = Constant.BASE_URL
+									+ "user/view?userid=" + app.UserID;
+							AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+							cb.url(url2)
+									.type(JSONObject.class)
+									.weakHandler(this,
+											"AccountBindAccountResult3");
+							cb.SetHeader(app.getHeaders());
+							aq.ajax(cb);
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				} else {
+					// ajax error, show error code
+					if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+						app.MyToast(getApplicationContext(), getResources()
+								.getString(R.string.networknotwork));
+				}
+			}
+
+			@SuppressWarnings("unused")
+			public void AccountBindAccountResult3(String url, JSONObject json,
+					AjaxStatus status) {
+
+				if (json != null) {
+					try {
+						if (json.getString("nickname").trim().length() > 0) {
+							app.SaveServiceData("UserInfo", json.toString());
+							app.MyToast(getApplicationContext(), "新浪微博已绑定");
+							if (app.GetServiceData("Binding_TV") != null) {
+								relieve_binding();
+							}
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+
+				} else {
+					if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+						app.MyToast(getApplicationContext(), getResources()
+								.getString(R.string.networknotwork));
+				}
+			}
+
+		});
+	}
+
 	protected void ReGenerateUuid() {
+		relieve_sina();
 		// TODO Auto-generated method stub
 		String macAddress = null;
 		WifiManager wifiMgr = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-		WifiInfo info = (null == wifiMgr ? null : wifiMgr
-				.getConnectionInfo());
+		WifiInfo info = (null == wifiMgr ? null : wifiMgr.getConnectionInfo());
 		if (info != null) {
 			macAddress = info.getMacAddress();
 			// 2. 通过调用 service account/generateUIID把UUID传递到服务器
@@ -241,9 +577,7 @@ public class Setting extends Activity {
 			params.put("device_type", "Android");
 
 			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
+			cb.SetHeader(app.getHeaders());
 
 			cb.params(params).url(url).type(JSONObject.class)
 					.weakHandler(this, "CallServiceResult");
@@ -251,11 +585,40 @@ public class Setting extends Activity {
 		}
 	}
 
+	// 解除授权
+	private void relieve_sina() {
+		controller.deleteOauth(mContext, sinaMedia,
+				new SocializeClientListener() {
+					@Override
+					public void onStart() {
+						Log.d("TestData",
+								"sina="
+										+ UMInfoAgent.isOauthed(mContext,
+												sinaMedia));
+
+					}
+
+					@Override
+					public void onComplete(int status, SocializeEntity entity) {
+						app.MyToast(mContext, "解除成功");
+						Log.i("TestData",
+								status
+										+ "sina="
+										+ UMInfoAgent.isOauthed(mContext,
+												sinaMedia));
+					}
+				});
+
+	}
+
 	public void CallServiceResult(String url, JSONObject json, AjaxStatus status) {
 		if (json != null) {
 			app.SaveServiceData("UserInfo", json.toString());
 			try {
-				app.UserID = json.getString("user_id").trim();
+				app.UserID = json.getString("user_id").trim();// 原来为user_id
+				if (app.GetServiceData("Binding_TV") != null) {
+					relieve_binding();
+				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -263,197 +626,38 @@ public class Setting extends Activity {
 
 		} else {
 			// ajax error, show error code
-			if (status.getCode() == AjaxStatus.NETWORK_ERROR) 
-			app.MyToast(aq.getContext(),
-					getResources().getString(R.string.networknotwork));
+			if (status.getCode() == AjaxStatus.NETWORK_ERROR)
+				app.MyToast(aq.getContext(),
+						getResources().getString(R.string.networknotwork));
 		}
 	}
-	
-	// 第三方新浪登录
-	class AuthDialogListener implements WeiboDialogListener {
 
-		@Override
-		public void onComplete(Bundle values) {
-			uid = values.getString("uid");
-			token = values.getString("access_token");
-			expires_in = values.getString("expires_in");
-			System.out.println("expires_in=====>" + expires_in);
-			AccessToken accessToken = new AccessToken(token,
-					Constant.SINA_CONSUMER_SECRET);
-			accessToken.setExpiresIn(expires_in);
-			Weibo.getInstance().setAccessToken(accessToken);
-			// save access_token
-			app.SaveServiceData("Sina_Access_Token", token);
-			app.SaveServiceData("Sina_Access_UID", uid);
-			/*
-			 * 判断当前的微博账户是否已经绑定
-			 */
-			IsBindWeibo();
-		}
-		
-		public void IsBindWeibo()
-		{
-			String m_PostURL = Constant.BASE_URL + "account/validateThirdParty";
+	public void relieve_binding() {
 
-			Map<String, Object> params = new HashMap<String, Object>();
-//			params.put("app_key",Constant.APPKEY);
-			params.put("source_id", uid);
-			params.put("source_type", "1");
-			params.put("pre_user_id", app.UserID);
-			// save to local
-			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
+		FayeService.FayeByService(mContext,
+				"/screencast/" + app.GetServiceData("Binding_TV_Channal"));
+		new Handler().postDelayed(new Runnable() {
 
-			cb.header("user_id", app.UserID);
-			cb.params(params).url(m_PostURL).type(JSONObject.class)
-					.weakHandler(this, "IsHasBindWeiboResult");
-			aq.ajax(cb);	
-		}
-		
-		public void IsHasBindWeiboResult(String url, JSONObject json,
-			AjaxStatus status)
-		{
-			if (json != null) {
+			@Override
+			public void run() {
 				try {
-					if(json.has("user_id"))
-					{
-						if(json.getString("user_id")!=null)
-						{
-							//app.DeleteServiceData("UserInfo");
-							app.UserID = json.getString("user_id");
-							
-							//将这个UserID保存在本地
-							//app.SaveServiceData("UserInfo", json.toString());
-							//app.MyToast(aq.getContext(),
-									//"账号登陆成功!");
-							UploadSinaHeadAndScreen_nameUrl(token, uid);
-						}
-					}
-					if(json.has("res_code"))
-					{
-						if(json.getString("res_code")!=null)
-						{
-							UploadSinaHeadAndScreen_nameUrl(token, uid);
-						}
-					}
-					
+					JSONObject et = new JSONObject();
+					et.put("user_id", app.GetServiceData("Binding_Userid"));
+					et.put("push_type", "33");
+					et.put("tv_channel",
+							app.GetServiceData("Binding_TV_Channal"));
+					FayeService.SendMessageService(mContext, et,
+							app.GetServiceData("Binding_Userid"));
+					app.DeleteServiceData("Binding_Userid");
+					app.DeleteServiceData("Binding_TV");
+					MobclickAgent.onEvent(mContext, ue_screencast_unbinded);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-			} else {
-				// ajax error, show error code
-				
-			}
-		}
-		
-		@Override
-		public void onError(DialogError e) {
-			app.MyToast(getApplicationContext(),
-					getResources().getString(R.string.networknotwork));
-		}
-
-		@Override
-		public void onCancel() {
-			app.MyToast(getApplicationContext(), "绑定取消");
-		}
-
-		@Override
-		public void onWeiboException(WeiboException e) {
-			app.MyToast(getApplicationContext(),
-					getResources().getString(R.string.networknotwork));
-		}
-	}
-
-	public boolean UploadSinaHeadAndScreen_nameUrl(String access_token,
-			String uid) {
-		String m_GetURL = "https://api.weibo.com/2/users/show.json?access_token="
-				+ access_token + "&uid=" + uid;
-
-		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.url(m_GetURL).type(JSONObject.class)
-				.weakHandler(this, "UploadSinaHeadAndScreen_nameUrlResult");
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		aq.ajax(cb);
-		return false;
-	}
-
-	public void UploadSinaHeadAndScreen_nameUrlResult(String url,
-			JSONObject json, AjaxStatus status) {
-		String head_url = json.optString("avatar_large");
-		String screen_name = json.optString("screen_name");
-		// normal
-		if (head_url != null && screen_name != null) {
-			String m_PostURL = Constant.BASE_URL + "account/bindAccount";
-
-			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("source_id", uid);
-			params.put("source_type", "1");
-			params.put("pic_url", head_url);
-			params.put("nickname", screen_name);
-
-			// save to local
-			AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-			cb.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-			cb.header("app_key", Constant.APPKEY);
-
-			cb.header("user_id", app.UserID);
-			cb.params(params).url(m_PostURL).type(JSONObject.class)
-					.weakHandler(this, "AccountBindAccountResult");
-			aq.ajax(cb);
-		}
-		// test
-	}
-
-	public void AccountBindAccountResult(String url, JSONObject json,
-			AjaxStatus status) {
-		if (json != null) {
-			try {
-				if (json.getString("res_code").trim().equalsIgnoreCase("00000")) {
-					// reload the userinfo
-					String url2 = Constant.BASE_URL + "user/view?userid="
-							+ app.UserID;
-					AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-					cb.url(url2).type(JSONObject.class)
-							.weakHandler(this, "AccountBindAccountResult3");
-					cb.header("User-Agent",
-							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-					cb.header("app_key", Constant.APPKEY);
-					aq.ajax(cb);
-				}
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 
-		} else {
-			// ajax error, show error code
-			if (status.getCode() == AjaxStatus.NETWORK_ERROR) 
-			app.MyToast(this, getResources().getString(R.string.networknotwork));
-		}
-	}
+		}, 500);
 
-	public void AccountBindAccountResult3(String url, JSONObject json,
-			AjaxStatus status) {
-
-		if (json != null) {
-			try {
-				if (json.getString("nickname").trim().length() > 0) {
-					app.SaveServiceData("UserInfo", json.toString());
-					app.MyToast(getApplicationContext(), "新浪微博已绑定");
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-
-		} else {
-			if (status.getCode() == AjaxStatus.NETWORK_ERROR) 
-			app.MyToast(this, getResources().getString(R.string.networknotwork));
-		}
 	}
 }

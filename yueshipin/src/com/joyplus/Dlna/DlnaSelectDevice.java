@@ -6,7 +6,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import com.dlcs.dlna.IMrcpListener;
 import com.dlcs.dlna.Mrcp;
 import com.dlcs.dlna.Stack;
@@ -56,7 +56,7 @@ public class DlnaSelectDevice extends Service implements IMrcpListener{
 			if(mClient != null)
 			mClient.get().onDmrChanged(mDmrCache);
 			
-			int ret = mMrcp.GetProtocolInfo(mediaRenderer.uuid, null);
+//			int ret = mMrcp.GetProtocolInfo(mediaRenderer.uuid, null);
 		} else {
 			// 不要重复添加已知的设备
 			for (int i = 0; i < mDmrCache.size(); i++) {
@@ -69,7 +69,7 @@ public class DlnaSelectDevice extends Service implements IMrcpListener{
 					if(mClient != null)
 					mClient.get().onDmrChanged(mDmrCache);
 
-					int ret = mMrcp.GetProtocolInfo(mediaRenderer.uuid, null);
+//					int ret = mMrcp.GetProtocolInfo(mediaRenderer.uuid, null);
 				}
 			}
 		}
@@ -303,20 +303,20 @@ public class DlnaSelectDevice extends Service implements IMrcpListener{
 	, int ticket, int errorCode/** <[in] action result errorCode */
 	, ResultOnGetProtocolInfo result/** <[in] get info data */
 	) {
-		if (errorCode == 0) {
-			Log.d(TAG, "GetProtocolInfo Success");
-			int size = result.sinkValues.length;
-			if (size > 0) {
-				Log.d(TAG, "Sink protocolInfo list:");
-				for (int i = 0; i < size; i++) {
-					Log.d(TAG, result.sinkValues[i]);
-				}
-			} else {
-				Log.d(TAG, "Sink protocolInfo list is none");
-			}
-		} else {
-			Log.e(TAG, "GetProtocolInfo Error, error code is " + errorCode);
-		}
+//		if (errorCode == 0) {
+//			Log.d(TAG, "GetProtocolInfo Success");
+//			int size = result.sinkValues.length;
+//			if (size > 0) {
+//				Log.d(TAG, "Sink protocolInfo list:");
+//				for (int i = 0; i < size; i++) {
+//					Log.d(TAG, result.sinkValues[i]);
+//				}
+//			} else {
+//				Log.d(TAG, "Sink protocolInfo list is none");
+//			}
+//		} else {
+//			Log.e(TAG, "GetProtocolInfo Error, error code is " + errorCode);
+//		}
 	}
 
 	@Override
@@ -344,6 +344,7 @@ public class DlnaSelectDevice extends Service implements IMrcpListener{
 
 	@Override
 	public void onDestroy() {
+		mClient = null;
 		mMrcp.Stop();
 		Stack.Finalize();
 		super.onDestroy();
@@ -359,6 +360,7 @@ public class DlnaSelectDevice extends Service implements IMrcpListener{
 	@Override
 	public boolean onUnbind(Intent intent) {
 		Log.e(TAG, "start onUnbind~~~");
+		mClient = null;
 		return super.onUnbind(intent);
 	}
 

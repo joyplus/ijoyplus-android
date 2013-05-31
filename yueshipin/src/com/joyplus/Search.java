@@ -5,26 +5,40 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.R.color;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
+import com.joyplus.widget.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
-
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -47,8 +61,17 @@ public class Search extends Activity implements
 	private String topic_id_ready_have = null;
 
 	private ArrayList dataStruct;
-	private ListView ItemsListView;
+	private ListView ItemsListView, listHistory;
+	private EditText searchtext;
 	private SearchListAdapter SearchAdapter;
+	private Button removehistory;
+
+	private static String SEARCH = "查询";
+	private static String SEARCH_LIST = "查询结果";
+	Context mContext;
+
+	private String[] st = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,19 +79,68 @@ public class Search extends Activity implements
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
+		searchtext = (EditText) findViewById(R.id.editText1);
 
+		listHistory = (ListView) findViewById(R.id.listView2);
+		removehistory = (Button) findViewById(R.id.removehistory);
+
+		mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		Intent intent = getIntent();
 		topic_id = intent.getStringExtra("topic_id");
 		type = intent.getStringExtra("type");
 		topic_id_ready_have = intent.getStringExtra("topic_id_ready_have");
-		if (app.isNetworkAvailable()==false) {
+		if (app.isNetworkAvailable() == false) {
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
 		}
+		searchtext.addTextChangedListener(mTextWatcher);
+
+		showHistory();
+		listHistory.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				String content = st[arg2].trim();
+				aq.id(R.id.editText1).text(content);
+				doSearch(content);
+			}
+		});
 	}
-	
+
+	private void showHistory() {
+		aq.id(R.id.listView1).gone();
+		aq.id(R.id.textViewNoResult).gone();
+		aq.id(R.id.ProgressText).gone();
+		aq.id(R.id.progress).gone();
+		aq.id(R.id.removehistory).gone();
+		aq.id(R.id.listView2).visible();
+
+		String content = app.GetSearchData();
+		content = content.replaceAll("\\[", "");
+		content = content.replaceAll("\\]", "");
+		st = content.split(",");
+		st = checkarray(st);
+		if (st != null && !st[0].equalsIgnoreCase("")) {
+			aq.id(R.id.removehistory).visible();
+		}
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				R.layout.search_record, st);
+
+		listHistory.setAdapter(adapter);
+
+	}
+
+	public String[] checkarray(String[] st) {
+		Set<String> set = new TreeSet<String>();
+		for (int i = 0; i < st.length; i++) {
+			set.add(st[i].trim());
+		}
+		return (String[]) set.toArray(new String[0]);
+	}
+
 	public void OnClickAdd(View v) {
 		int index = Integer.parseInt(v.getTag().toString());
 		SearchListData m_SearchListData = (SearchListData) ItemsListView
@@ -83,27 +155,35 @@ public class Search extends Activity implements
 	}
 
 	public void OnClickSearch(View v) {
-		String search_word =null;
-		if(aq.id(R.id.editText1).getText()!=null)
-		{
+		String search_word = null;
+		if (aq.id(R.id.editText1).getText() != null) {
 			search_word = aq.id(R.id.editText1).getText().toString().trim();
 		}
 		if (search_word.length() > 0) {
-			// clear
-			if (dataStruct != null && dataStruct.size() > 0) {
-				dataStruct.clear();
-				SearchAdapter.notifyDataSetChanged();
-				ItemsListView.invalidate();
-			}
-			aq.id(R.id.textViewNoResult).gone();
-			InputMethodManager imm = (InputMethodManager) this
-					.getSystemService(Context.INPUT_METHOD_SERVICE);
-			aq.id(R.id.editText1).getTextView().setCursorVisible(false);// 失去光标
-			imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-			GetServiceData(search_word);
+			doSearch(search_word);
 		} else {
 			app.MyToast(this, "请输入你要搜索的内容.");
 		}
+	}
+
+	public void doSearch(String search_word) {
+		aq.id(R.id.removehistory).gone();
+		aq.id(R.id.listView2).gone();
+		// 保存搜索记录到SharedPreferce
+		app.SaveSearchData(search_word, search_word);
+
+		// clear
+		if (dataStruct != null && dataStruct.size() > 0) {
+			dataStruct.clear();
+			SearchAdapter.notifyDataSetChanged();
+			ItemsListView.invalidate();
+		}
+		aq.id(R.id.textViewNoResult).gone();
+		InputMethodManager imm = (InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		aq.id(R.id.editText1).getTextView().setCursorVisible(false);// 失去光标
+		imm.hideSoftInputFromWindow(searchtext.getWindowToken(), 0);
+		GetServiceData(search_word);
 	}
 
 	public void OnClickTab1TopRight(View v) {
@@ -114,7 +194,6 @@ public class Search extends Activity implements
 
 	public void OnClickFinished(View v) {
 		finish();
-
 	}
 
 	@Override
@@ -127,18 +206,42 @@ public class Search extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, SEARCH);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, SEARCH_LIST);
+		MobclickAgent.onEventEnd(mContext, SEARCH);
 		MobclickAgent.onPause(this);
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
+	}
+
+	public void OnClickremoveHistory(View v) {
+		Dialog dialog = new AlertDialog.Builder(this).setMessage("确定清除历史记录？")
+				.setPositiveButton("确定", new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						app.DeleteSearchData();
+						showHistory();
+						dialog.dismiss();
+					}
+				}).setNegativeButton("取消", new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+
+					}
+				}).create();
+		dialog.show();
 	}
 
 	public void GetVideoMovies() {
@@ -153,7 +256,8 @@ public class Search extends Activity implements
 			aq.id(R.id.textViewNoResult).gone();
 
 		for (int i = 0; i < m_ReturnSearch.results.length; i++) {
-			if (Integer.parseInt(m_ReturnSearch.results[i].prod_type) < 4) {
+			// if (Integer.parseInt(m_ReturnSearch.results[i].prod_type) < 4) {
+			if (Integer.parseInt(m_ReturnSearch.results[i].prod_type) > 0) {
 				SearchListData m_SearchListData = new SearchListData();
 
 				m_SearchListData.Pic_ID = m_ReturnSearch.results[i].prod_id;
@@ -164,7 +268,9 @@ public class Search extends Activity implements
 					m_SearchListData.Is_Ready_Have = true;
 				} else
 					m_SearchListData.Is_Ready_Have = false;
-				m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url;
+				if (m_ReturnSearch.results[i].prod_pic_url != null) {
+					m_SearchListData.Pic_url = m_ReturnSearch.results[i].prod_pic_url;
+				}
 				m_SearchListData.Pic_name = m_ReturnSearch.results[i].prod_name;
 				m_SearchListData.prod_type = m_ReturnSearch.results[i].prod_type;
 				if (Integer.valueOf(m_ReturnSearch.results[i].prod_type) == 3) {
@@ -179,7 +285,6 @@ public class Search extends Activity implements
 				m_SearchListData.Text_Area = m_ReturnSearch.results[i].area;
 				m_SearchListData.Text_Ding = m_ReturnSearch.results[i].support_num;
 				m_SearchListData.Text_Score = m_ReturnSearch.results[i].score;
-
 				dataStruct.add(m_SearchListData);
 			}
 		}
@@ -205,15 +310,14 @@ public class Search extends Activity implements
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
 		aq.id(R.id.ProgressText).gone();
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
-			if(app.isNetworkAvailable())
-			{
+		aq.id(R.id.listView2).gone();
+		aq.id(R.id.removehistory).gone();
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
+			if (app.isNetworkAvailable()) {
 				aq.id(R.id.editText1).getTextView().setCursorVisible(true);
 				aq.id(R.id.listView1).gone();
 				aq.id(R.id.textViewNoResult).visible();
-			}
-			else
-			{
+			} else {
 				app.MyToast(aq.getContext(),
 						getResources().getString(R.string.networknotwork));
 				aq.id(R.id.editText1).getTextView().setCursorVisible(true);
@@ -230,9 +334,10 @@ public class Search extends Activity implements
 
 			aq.id(R.id.editText1).getTextView().setCursorVisible(true);
 			if (topic_id != null) {
-				aq.id(R.id.Tab1TopRightImage).background(R.drawable.tab3_p3_c2_top_right);
+				// aq.id(R.id.Tab1TopRightImage).background(R.drawable.tab3_p3_c2_top_right);
+				aq.id(R.id.Tab1TopRightImage).gone();
 				aq.id(R.id.editText1).gone();
-//				aq.id(R.id.Tab1TopRightImage2).visible();
+				aq.id(R.id.Tab1TopRightImage2).visible();
 				aq.id(R.id.imageView1).visible();
 			}
 		} catch (JsonParseException e) {
@@ -245,12 +350,12 @@ public class Search extends Activity implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	// 数据更新
 	public void NotifyDataAnalysisFinished() {
 		if (dataStruct != null && ItemsListView != null) {
+			MobclickAgent.onEventBegin(mContext, SEARCH_LIST);
 			SearchListAdapter listviewdetailadapter = getAdapter();
 			ItemsListView.setAdapter(listviewdetailadapter);
 		} else {
@@ -312,6 +417,7 @@ public class Search extends Activity implements
 					Log.e(TAG, "Call Detail_Movie failed", ex);
 				}
 				break;
+			case 131:
 			case 2:
 				intent.setClass(this, Detail_TV.class);
 				intent.putExtra("prod_id", m_SearchListData.Pic_ID);
@@ -345,8 +451,8 @@ public class Search extends Activity implements
 		/*
 		 * 搜索关键字如果有空格不会返回结果
 		 */
-		String url = Constant.BASE_URL + "search?keyword=" + URLEncoder.encode(search_word)
-				+ "&page_num=1&page_size=50";
+		String url = Constant.BASE_URL + "search?keyword="
+				+ URLEncoder.encode(search_word) + "&page_num=1&page_size=50";
 
 		Map<String, Object> params = new HashMap<String, Object>();
 		if (type != null && type.equalsIgnoreCase("tv")) {
@@ -355,10 +461,7 @@ public class Search extends Activity implements
 			params.put("type", 1);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "InitListData");
@@ -380,10 +483,7 @@ public class Search extends Activity implements
 		params.put("prod_id", prod_id);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "AddVideoResult");
@@ -403,4 +503,31 @@ public class Search extends Activity implements
 			e.printStackTrace();
 		}
 	}
+
+	private TextWatcher mTextWatcher = new TextWatcher() {
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			String value = searchtext.getText().toString().trim();
+			if (value == null || value.length() <= 0) {
+				showHistory();
+			}
+
+		}
+	};
+
 }

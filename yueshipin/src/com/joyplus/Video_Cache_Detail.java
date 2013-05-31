@@ -21,12 +21,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -52,7 +55,8 @@ public class Video_Cache_Detail extends Activity {
 	public List<DownloadInfo> data;
 	View tempview = null;
 	DownLoadAdapterDetail adapter = null;
-
+	private boolean isnotChecked = true;
+	private static String DOWNLOAD  = "缓存";
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -84,84 +88,107 @@ public class Video_Cache_Detail extends Activity {
 				tempview = view;
 				DownloadInfo info = data.get(position);
 				if (app.isNetworkAvailable()) {
-					if (info.getState().equalsIgnoreCase("downloading")) {
-						info.setState("stop");
+					if (info.getDownload_state()
+							.equalsIgnoreCase("downloading")) {
+						info.setDownload_state("pause");
 						Dao.getInstance(Video_Cache_Detail.this)
-								.updataInfoState(info.getState(),
-										info.getProdId(), info.getIndex());
+								.updataInfoState(info.getDownload_state(),
+										info.getProd_id(), info.getMy_index());
 						String localfile = Constant.PATH_VIDEO
-								+ info.getProdId() + "_" + info.getIndex()
+								+ info.getProd_id() + "_" + info.getMy_index()
 								+ ".mp4";
 						if (App.downloaders.get(localfile) != null) {
 							App.downloaders.get(localfile).pause();
 							autoDownloadFile();
 						}
-					} else if (info.getState().equalsIgnoreCase("wait")) {
+					} else if (info.getDownload_state()
+							.equalsIgnoreCase("wait")) {
 						if (Dao.getInstance(Video_Cache_Detail.this)
 								.isHasInforsDownloading("downloading")) {
+							info.setDownload_state("downloading");
+							Dao.getInstance(Video_Cache_Detail.this)
+									.updataInfoState(info.getDownload_state(),
+											info.getProd_id(),
+											info.getMy_index());// 更新为正在下载中
 							String localfile = Constant.PATH_VIDEO
-									+ info.getProdId() + "_" + info.getIndex()
-									+ ".mp4";
+									+ info.getProd_id() + "_"
+									+ info.getMy_index() + ".mp4";
 							// 点击后就开始下载这个item里面的内容
 							DownloadTask downloadtask = new DownloadTask(view,
-									activity, context, info.getProdId(), info
-											.getIndex(), info.getUrl(),
+									activity, context, info.getProd_id(), info
+											.getMy_index(), info.getUrl(),
 									localfile);
-							downloadtask.execute(info.getProdId(),
-									info.getIndex(), info.getUrl(),
-									info.getPoster(), info.getName(),
-									info.getState());
-							if (App.downloaders.get(localfile) != null) {
-								App.downloaders.get(localfile).reset();
-								App.downloaders.get(localfile).download();
-							}
+							downloadtask.execute(info.getProd_id(),
+									info.getMy_index(), info.getUrl(),
+									info.getUrlposter(), info.getMy_name(),
+									info.getDownload_state());
 						} else {
-							info.setState("stop");
+							info.setDownload_state("pause");
 							Dao.getInstance(Video_Cache_Detail.this)
-									.updataInfoState(info.getState(),
-											info.getProdId(), info.getIndex());
+									.updataInfoState(info.getDownload_state(),
+											info.getProd_id(),
+											info.getMy_index());
 						}
-					} else if (info.getState().equalsIgnoreCase("stop")) {
+					} else if (info.getDownload_state().equalsIgnoreCase(
+							"pause")) {
 						/*
 						 * 判断当前是否有下载,有下载则转为等待,没下载则直接为下载
 						 */
 						if (Dao.getInstance(Video_Cache_Detail.this)
 								.isHasInforsDownloading("downloading")) {
+							info.setDownload_state("downloading");
+							Dao.getInstance(Video_Cache_Detail.this)
+									.updataInfoState(info.getDownload_state(),
+											info.getProd_id(),
+											info.getMy_index());// 更新为正在下载中
 							String localfile = Constant.PATH_VIDEO
-									+ info.getProdId() + "_" + info.getIndex()
-									+ ".mp4";
+									+ info.getProd_id() + "_"
+									+ info.getMy_index() + ".mp4";
 							// 点击后就开始下载这个item里面的内容
 							DownloadTask downloadtask = new DownloadTask(view,
-									activity, context, info.getProdId(), info
-											.getIndex(), info.getUrl(),
+									activity, context, info.getProd_id(), info
+											.getMy_index(), info.getUrl(),
 									localfile);
-							downloadtask.execute(info.getProdId(),
-									info.getIndex(), info.getUrl(),
-									info.getPoster(), info.getName(),
-									info.getState());
+							downloadtask.execute(info.getProd_id(),
+									info.getMy_index(), info.getUrl(),
+									info.getUrlposter(), info.getMy_name(),
+									info.getDownload_state());
 						} else {
-							info.setState("wait");
+							info.setDownload_state("wait");
 							Dao.getInstance(Video_Cache_Detail.this)
-									.updataInfoState(info.getState(),
-											info.getProdId(), info.getIndex());
+									.updataInfoState(info.getDownload_state(),
+											info.getProd_id(),
+											info.getMy_index());
 						}
 					}
 				} else {
-					if(info.getCompeleteSize()<info.getFileSize())
-					{
+					if (info.getCompeleteSize() < info.getFileSize()) {
 						app.MyToast(Video_Cache_Detail.this, getResources()
 								.getString(R.string.networknotwork));
 					}
 				}
 				if (info.getCompeleteSize() == info.getFileSize()) {
 					// 打开播放界面
-					String localfile = Constant.PATH_VIDEO + info.getProdId()
-							+ "_" + info.getIndex() + ".mp4";
+					String localfile = Constant.PATH_VIDEO + info.getProd_id()
+							+ "_" + info.getMy_index() + ".mp4";
 					Intent intent = new Intent(Video_Cache_Detail.this,
 							VideoPlayerActivity.class);
-					intent.putExtra("path", localfile);
-					intent.putExtra("title", info.getProdId());
+					Bundle bundle = new Bundle();
+					bundle.putString("path", localfile);
+//					bundle.putString("path", info.getFilePath());
+					bundle.putString("title", info.getMy_name());
+					bundle.putString("prod_id", info.getProd_id());
+					bundle.putLong("current_time", 0);
 
+					if (info.getMy_index().contains("_tv")) {
+						bundle.putString("prod_type", "3");
+						bundle.putString("prod_subname", info.getMy_index());// ???
+					} else {
+						bundle.putString("prod_type", "2");
+						bundle.putString("prod_subname",
+								info.getMy_index()); // yu
+					}
+					intent.putExtras(bundle);
 					try {
 						startActivity(intent);
 					} catch (ActivityNotFoundException ex) {
@@ -183,14 +210,14 @@ public class Video_Cache_Detail extends Activity {
 		});
 		getSize();
 		for (int i = 0; i < data.size(); i++) {
-			String localfile = Constant.PATH_VIDEO + data.get(i).getProdId()
-					+ "_" + data.get(i).getIndex() + ".mp4";
+			String localfile = Constant.PATH_VIDEO + data.get(i).getProd_id()
+					+ "_" + data.get(i).getMy_index() + ".mp4";
 			if (App.downloaders.get(localfile) == null) {
 				Downloader downloader = new Downloader(data.get(i)
 						.getCompeleteSize(), data.get(i).getFileSize(), data
-						.get(i).getProdId(), data.get(i).getIndex(), data
-						.get(i).getUrl(), data.get(i).getPoster(), data.get(i)
-						.getName(), data.get(i).getState(),
+						.get(i).getProd_id(), data.get(i).getMy_index(), data
+						.get(i).getUrl(), data.get(i).getUrlposter(), data.get(
+						i).getMy_name(), data.get(i).getDownload_state(),
 						Video_Cache_Detail.this);
 				App.downloaders.put(localfile, downloader);
 			}
@@ -199,7 +226,8 @@ public class Video_Cache_Detail extends Activity {
 	}
 
 	public void OnDeleteGridViewItem(final int item) {
-		String program_name = "你确定删除影片:<<" + data.get(item).getName() + ">>吗？";// 最好加上名字
+		String program_name = "你确定删除影片:<<" + data.get(item).getMy_name()
+				+ ">>吗？";// 最好加上名字
 		AlertDialog.Builder builder = new AlertDialog.Builder(
 				Video_Cache_Detail.this);
 		builder.setTitle("下载记录").setMessage(program_name)
@@ -209,27 +237,24 @@ public class Video_Cache_Detail extends Activity {
 						// 删除数据库数据,从新显示
 						DownloadInfo info = data.get(item);
 						if (App.downloaders.get(Constant.PATH_VIDEO
-								+ info.getProdId() + "_" + info.getIndex()
+								+ info.getProd_id() + "_" + info.getMy_index()
 								+ ".mp4") != null) {
-							App.downloaders.get(
-									Constant.PATH_VIDEO + info.getProdId()
-											+ "_" + info.getIndex() + ".mp4")
+							App.downloaders
+									.get(Constant.PATH_VIDEO
+											+ info.getProd_id() + "_"
+											+ info.getMy_index() + ".mp4")
 									.pause();
 						}
 						Dao.getInstance(Video_Cache_Detail.this).delete(
-								info.getProdId(), info.getIndex());
-						data = Dao.getInstance(Video_Cache_Detail.this)
-								.getInfosOfProd_id(prod_id);
-						DownLoadAdapterDetail adapter = new DownLoadAdapterDetail(
-								Video_Cache_Detail.this, data);
-						gridView.setAdapter(adapter);
-						adapter.notifyDataSetChanged();
+								info.getProd_id(), info.getMy_index());
 						File file = new File(Constant.PATH_VIDEO
-								+ info.getProdId() + "_" + info.getIndex()
+								+ info.getProd_id() + "_" + info.getMy_index()
 								+ ".mp4");
+//						File file = new File(info.getFilePath());
 						if (file.exists()) {
 							file.delete();
 						}
+						showGridView();
 					}
 				}).setNegativeButton("取消", null).create();
 		builder.show();
@@ -239,9 +264,30 @@ public class Video_Cache_Detail extends Activity {
 		// TODO Auto-generated method stub
 		data = Dao.getInstance(Video_Cache_Detail.this).getInfosOfProd_id(
 				prod_id);
+//		if (isnotChecked) {
+//			for (int i = 0; i < data.size(); i++) {
+//				File file = new File(data.get(i).getFilePath());
+//				if (!file.exists()) {
+//					//直接删除更彻底
+//					Dao.getInstance(Video_Cache_Detail.this).updataInfoState("remove", data.get(i).getProd_id(),
+//							data.get(i).getMy_index());
+//				}
+//				else
+//				{
+//					if(data.get(i).getDownload_state().equalsIgnoreCase("remove"))
+//					{
+//						Dao.getInstance(Video_Cache_Detail.this).updataInfoState("pause", data.get(i).getProd_id(),
+//								data.get(i).getMy_index());
+//					}
+//				}
+//			}
+//			isnotChecked = false;
+//		}
 		adapter.refresh(data);
 		if (data.isEmpty()) {
 			aq.id(R.id.none_cache).visible();
+		}else{
+			aq.id(R.id.none_cache).gone();
 		}
 	}
 
@@ -266,7 +312,7 @@ public class Video_Cache_Detail extends Activity {
 			aq.id(R.id.SDcardTextView).text(Text);
 		} else if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_REMOVED)) {
-			Toast.makeText(Video_Cache_Detail.this, "没有sdCard",
+			Toast.makeText(Video_Cache_Detail.this, "未安装sdCard",
 					Toast.LENGTH_SHORT).show();
 		}
 	}
@@ -297,12 +343,14 @@ public class Video_Cache_Detail extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(context, DOWNLOAD);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(context, DOWNLOAD);
 		MobclickAgent.onPause(this);
 	}
 
@@ -323,29 +371,31 @@ public class Video_Cache_Detail extends Activity {
 			} else if (action.equals("completeDownload")) {
 				autoDownloadFile();
 			}
-
 		}
 	};
 
 	public void autoDownloadFile() {
 		if (Dao.getInstance(Video_Cache_Detail.this).isHasInforsDownloading(
 				"downloading")) {
-			for (int i = 0; i < data.size(); i++) {
-				if (data.get(i).getState().equalsIgnoreCase("wait")) {
-					DownloadInfo infos = data.get(i);
-					String localfile = Constant.PATH_VIDEO + infos.getProdId()
-							+ "_" + infos.getIndex() + ".mp4";
-					// 点击后就开始下载这个item里面的内容
-					DownloadTask downloadtask = new DownloadTask(tempview,
-							activity, context, infos.getProdId(),
-							infos.getIndex(), infos.getUrl(), localfile);
-					downloadtask.execute(infos.getProdId(), infos.getIndex(),
-							infos.getUrl(), infos.getPoster(), infos.getName(),
-							infos.getState());
-					break;
-				}
+
+			if (Dao.getInstance(Video_Cache_Detail.this)
+					.getOneStateInfo("wait") != null) {
+				DownloadInfo infos = Dao.getInstance(Video_Cache_Detail.this)
+						.getOneStateInfo("wait");
+				infos.setDownload_state("downloading");
+				Dao.getInstance(Video_Cache_Detail.this).updataInfoState(
+						infos.getDownload_state(), infos.getProd_id(),
+						infos.getMy_index());// 更新为正在下载中
+				String localfile = Constant.PATH_VIDEO + infos.getProd_id()
+						+ "_" + infos.getMy_index() + ".mp4";
+				// 点击后就开始下载这个item里面的内容
+				DownloadTask downloadtask = new DownloadTask(tempview,
+						activity, context, infos.getProd_id(),
+						infos.getMy_index(), infos.getUrl(), localfile);
+				downloadtask.execute(infos.getProd_id(), infos.getMy_index(),
+						infos.getUrl(), infos.getUrlposter(),
+						infos.getMy_name(), infos.getDownload_state());
 			}
 		}
 	}
-
 }

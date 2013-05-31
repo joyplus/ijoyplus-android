@@ -8,15 +8,15 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
-
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -26,42 +26,58 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab2Page1ListAdapter;
 import com.joyplus.Adapters.Tab2Page1ListData;
 import com.joyplus.Service.Return.ReturnTops;
+import com.joyplus.Tab2Page3.RefreshDataAsynTask;
+import com.joyplus.widget.MyListView;
 
 public class Tab2Page1 extends Activity implements
-		android.widget.AdapterView.OnItemClickListener {
+		android.widget.AdapterView.OnItemClickListener,MyListView.IOnRefreshListener {
 	private String TAG = "Tab2Page1";
 	private AQuery aq;
 	private App app;
 	private ReturnTops m_ReturnTops = null;
-
-	private int Fromepage;
 	private ArrayList dataStruct;
-	private ListView ItemsListView;
+	private MyListView ItemsListView;
 	private Tab2Page1ListAdapter Tab2Page1Adapter;
+	private static String POPULAR_TV_TOP_LIST = "电视剧悦榜";
+	private RefreshDataAsynTask mRefreshAsynTask;
 	
-
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab2page1);
 		app = (App) getApplication();
 		aq = new AQuery(this);
-		// 获取listview对象
-		ItemsListView = (ListView) findViewById(R.id.listView1);
-		// 设置listview的点击事件监听器
+		mContext = this;
+		ItemsListView = (MyListView) findViewById(R.id.listView1);
 		ItemsListView.setOnItemClickListener(this);
+		ItemsListView.setOnRefreshListener(this);
 		CheckSaveData();
 	}
+	
+	class RefreshDataAsynTask extends AsyncTask<Void , Void, Void>
+	{
 
-	public void OnClickTab1TopLeft(View v) {
-		Intent i = new Intent(this, Search.class);
-		startActivity(i);
-	}
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			GetServiceData();
+			return null;
+		}
 
-	public void OnClickTab1TopRight(View v) {
-		Intent i = new Intent(this, Setting.class);
-		startActivity(i);
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			ItemsListView.onRefreshComplete();
+		}
 	}
+	
+
 
 	@Override
 	protected void onDestroy() {
@@ -73,12 +89,14 @@ public class Tab2Page1 extends Activity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, POPULAR_TV_TOP_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, POPULAR_TV_TOP_LIST);
 		MobclickAgent.onPause(this);
 	}
 
@@ -136,18 +154,12 @@ public class Tab2Page1 extends Activity implements
 	}
 
 	public void OnClickImageView(View v) {
-		/*
-		 * Intent intent = new Intent(this, BuChongGeRenZhiLiao.class);
-		 * intent.putExtra("prod_id", m_prod_id); intent.putExtra("prod_type",
-		 * m_prod_type); try { startActivity(intent); } catch
-		 * (ActivityNotFoundException ex) { Log.e(TAG,
-		 * "OnClickImageView failed", ex); }
-		 */
+
 	}
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -158,7 +170,7 @@ public class Tab2Page1 extends Activity implements
 			m_ReturnTops = mapper.readValue(json.toString(), ReturnTops.class);
 			if (m_ReturnTops.tops.length > 0)
 				app.SaveServiceData("tv_tops", json.toString());
-			// 创建数据源对象
+			// 创建视频源
 			GetVideoMovies();
 			aq.id(R.id.ProgressText).gone();
 		} catch (JsonParseException e) {
@@ -239,7 +251,7 @@ public class Tab2Page1 extends Activity implements
 						// execute the task
 						GetServiceData();
 					}
-				}, 100000);
+				}, 2000);
 
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
@@ -262,13 +274,20 @@ public class Tab2Page1 extends Activity implements
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
+		if (app.GetServiceData("tv_tops") == null) {
+			aq.id(R.id.ProgressText).visible();
+			aq.progress(R.id.progress).ajax(cb);
+		} else {
+			aq.ajax(cb);
+		}
 
-		aq.id(R.id.ProgressText).visible();
-		aq.progress(R.id.progress).ajax(cb);
+	}
 
+	@Override
+	public void OnRefresh() {
+		// TODO Auto-generated method stub
+		mRefreshAsynTask = new RefreshDataAsynTask();
+		mRefreshAsynTask.execute();
 	}
 }

@@ -4,9 +4,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.androidquery.AQuery;
+import com.umeng.analytics.MobclickAgent;
 
 import android.app.Activity;
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +26,8 @@ public class Tab3 extends TabActivity {
 	private String TAB3_PAGE3 = "TAB3_PAGE3";
 	private TabHost mTabHost;
 	private Intent mTab1, mTab2, mTab3;
-
+	private static String PERSONAL  = "个人主页";
+	Context mContext;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,6 +35,7 @@ public class Tab3 extends TabActivity {
 		setContentView(R.layout.tab3);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		prepareIntent();
 		setupIntent();
 		CheckLogin();
@@ -98,18 +102,19 @@ public class Tab3 extends TabActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-
+        MobclickAgent.onEventBegin(mContext, PERSONAL);
+        CheckLogin();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, PERSONAL);
 	}
 
 	public void OnClickTab1TopLeft(View v) {
 		Intent i = new Intent(this, Search.class);
 		startActivity(i);
-
 	}
 
 	public void OnClickTab1TopRight(View v) {
@@ -117,6 +122,7 @@ public class Tab3 extends TabActivity {
 		startActivityForResult(i, 100);
 
 	}
+
 	public boolean CheckLogin() {
 		String UserInfo = null;
 		UserInfo = app.GetServiceData("UserInfo");
@@ -128,9 +134,8 @@ public class Tab3 extends TabActivity {
 					aq.id(R.id.textView4).text(
 							json.getString("nickname").trim());
 					aq.id(R.id.textView5).gone();
-					String temp = json.getString("pic_url").trim();
-					aq.id(R.id.imageView4).image(
-							json.getString("pic_url").trim(), true, true, 0,
+					String temp = json.getString("pic_url");
+					aq.id(R.id.imageView4).image(json.getString("pic_url").trim(), true, true, 0,
 							R.drawable.default_header);
 				} else {
 					aq.id(R.id.textView5)
@@ -149,12 +154,11 @@ public class Tab3 extends TabActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
-		if(requestCode == 100 && resultCode == 0)
-		{
+
+		if (requestCode == 100 && resultCode == 0) {
 			CheckLogin();
 		}
-		if (requestCode == 100 && resultCode == 101){
+		if (requestCode == 100 && resultCode == 101) {
 			CheckLogin();
 		} else {
 			// 获取当前活动的Activity实例

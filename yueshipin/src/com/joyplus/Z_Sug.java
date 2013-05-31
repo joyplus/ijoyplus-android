@@ -9,6 +9,7 @@ import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.NotificationType;
 import com.umeng.fb.UMFeedbackService;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -17,7 +18,8 @@ public class Z_Sug extends Activity {
 	/** Called when the activity is first created. */
 	private AQuery aq;
 	private App app;
-
+	private static String SUGGESTION   = "意见反馈";
+	Context mContext;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,6 +27,7 @@ public class Z_Sug extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);// 不显示标题
 		setContentView(R.layout.z_sug);
 		app = (App) getApplication();
+		mContext = this;
 		aq = new AQuery(this);
 		UMFeedbackService.enableNewReplyNotification(this,
 				NotificationType.AlertDialog);
@@ -49,10 +52,7 @@ public class Z_Sug extends Activity {
 		// params.put("content", content);
 		//
 		// AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		// cb.header("User-Agent",
-		// "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		// cb.header("app_key", Constant.APPKEY);
-		// cb.header("user_id", app.UserID);
+		// cb.SetHeader(app.getHeaders());
 		//
 		// cb.params(params).url(url).type(JSONObject.class)
 		// .weakHandler(this, "SugResult");
@@ -94,12 +94,14 @@ public class Z_Sug extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, SUGGESTION);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, SUGGESTION);
 		MobclickAgent.onPause(this);
 	}
 }

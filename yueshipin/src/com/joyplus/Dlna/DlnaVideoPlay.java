@@ -17,6 +17,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.androidquery.AQuery;
@@ -51,6 +52,9 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 	private boolean			mIsControllingDmr = false;
 	 private DlnaServiceConnection mServiceConnection = new DlnaServiceConnection();
 	 private DlnaSelectDevice  mMyService = null;
+		private final int		Media_Type_Image = 1;
+		private final int		Media_Type_Audio = 2;
+		private final int		Media_Type_Video = 3;
 
 	class DlnaServiceConnection implements ServiceConnection {
 
@@ -89,8 +93,9 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dlna_video_play);
-
+		setContentView(R.layout.dlna_video_play2);
+		//保持常亮
+		findViewById(R.id.layout).setKeepScreenOn(true);
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		isPlaying = false;
@@ -104,7 +109,7 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 		
 
 		aq.id(R.id.textView1).text(prod_name);
-		aq.id(R.id.imageButton2).background(R.drawable.music_play_pause);
+		aq.id(R.id.imageButton2).background(R.drawable.player_pause);
 		sb = (SeekBar) findViewById(R.id.seekBar1);
 		sb.setOnSeekBarChangeListener(sbLis);
 
@@ -150,7 +155,7 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 					/* To reduce the buffering time, stop monitoring */
 					StopMonitoring();
 				}
-//				aq.id(R.id.imageButton2).background(R.drawable.music_play_pause);
+//				aq.id(R.id.imageButton2).background(R.drawable.player_pause);
 
 			} else {
 				isPlaying = false;
@@ -158,7 +163,7 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 				mMrcp.MediaPause(mMediaRenderer.uuid, null);
 //				mIsControllingDmr = false;
 //				StopMonitoring();
-				aq.id(R.id.imageButton2).background(R.drawable.music_play_play);
+				aq.id(R.id.imageButton2).background(R.drawable.player_play);
 				
 			}
 		}
@@ -186,6 +191,8 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 //			mStackAgent.Destroy();
 //		}
 //		handler.removeCallbacks(updatesb);
+		mMyService.setServiceClient(null);
+      	mMyService = null;
    		unregisterReceiver(volumeReceiver);
    		unbindService(mServiceConnection);
 		super.onDestroy();
@@ -350,9 +357,9 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 				}
 				String state = data.getString(Constant.MSG_KEY_ID_STATE);
 				if(state.equalsIgnoreCase("PAUSED_PLAYBACK") || state.equalsIgnoreCase("STOPPED"))
-					aq.id(R.id.imageButton2).background(R.drawable.music_play_play);
+					aq.id(R.id.imageButton2).background(R.drawable.player_play);
 				if(state.equalsIgnoreCase("PLAYING"))
-					aq.id(R.id.imageButton2).background(R.drawable.music_play_pause);
+					aq.id(R.id.imageButton2).background(R.drawable.player_pause);
 //				mTextViewPlayState.setText(state);				
 				break;
 			}
@@ -448,8 +455,12 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 					if (isQuit) {
 							finish();
 							super.handleMessage(msg);
-					} else
-						PushUrl(mMediaRenderer.uuid, prod_url, null);
+					} else{
+						if(URLUtil.isNetworkUrl(prod_url))
+							PushUrl(mMediaRenderer.uuid, prod_url, null);
+						else 
+							PushLocalFile(mMediaRenderer.uuid, prod_url, null);
+					}
 
 				}
 				break;
@@ -569,40 +580,180 @@ public class DlnaVideoPlay extends Activity implements ServiceClient {
 		mHandler.sendMessage(msg);
 	}
 
-
+	public int PushLocalFile(String uuid, String filePath, int ticket[])
+	{
+		int ret = -1;
+		String uri = Util.EncodeUri(filePath);
+		MediaInfo mediaInfo = GetMediaInfoFromLocalFile(filePath, Media_Type_Video);
+		/*due to joy plus don't support video/mp2ts, 
+		 * if modifying the mime-type to video/vnd.dlna.mpeg-tts,
+		 * joy plus play the ts file correctly.*/
+		if (filePath.endsWith(".ts") || mediaInfo.mimeType == "video/mp2ts")
+		{
+			mediaInfo.mimeType = "video/vnd.dlna.mpeg-tts";
+		}
+		String metadata = Util.EncodeMetadata(uri, mediaInfo);
+		ret = mMrcp.SetAVTransportUri(uuid, uri, metadata, ticket);
+		return ret;
+	}
 	public int PushUrl( String uuid, String mUrl, int ticket[])
 	{
 		int ret = -1;
 
 		MediaInfo mediaInfo = GetMediaInfoFromUrl( prod_url, prod_name);
-		/*due to joy plus don't support video/mp2ts, 
-		 * if modifying the mime-type to video/vnd.dlna.mpeg-tts,
-		 * joy plus play the ts file correctly.*/
-		if (mUrl.endsWith(".ts") || mediaInfo.mimeType == "video/mp2ts")
-		{
-			mediaInfo.mimeType = "video/vnd.dlna.mpeg-tts";
-		}
+
 		String metadata = Util.EncodeMetadata(mUrl, mediaInfo);
 		ret = mMrcp.SetAVTransportUri(uuid, mUrl, metadata, ticket);
 		return ret;
 	}
+
 	public MediaInfo GetMediaInfoFromUrl(String mUrl, String title) {
 		MediaInfo mediaInfo = new MediaInfo();
-//
-//		media.url = "http://api.joyplus.tv/joyplus-service/video/t.m3u8";
-		mediaInfo.mimeType = "video/m3u8";
-		mediaInfo.title = title;
-		for (int i = 0; i < Constant.video_dont_support_extensions.length; i++) {
+		//
+		// media.url = "http://api.joyplus.tv/joyplus-service/video/t.m3u8";
+			mediaInfo.mimeType = "video/m3u8";
+			mediaInfo.title = title;
+			for (int i = 0; i < Constant.video_dont_support_extensions.length; i++) {
 
-			if (mUrl.trim().toLowerCase()
-					.contains(Constant.video_dont_support_extensions[i])) {
-				mediaInfo.mimeType = "video/"+Constant.video_dont_support_extensions[i].replace(".", "");
+				if (mUrl.trim().toLowerCase()
+						.contains(Constant.video_dont_support_extensions[i])) {
+					mediaInfo.mimeType = "video/"
+							+ Constant.video_dont_support_extensions[i]
+									.replace(".", "");
+				}
 			}
-		}
 
 		return mediaInfo;
 	}
+	private MediaInfo GetMediaInfoFromLocalFile(String filePath, int mediaType)
+	{
+		MediaInfo info = null;
+		Cursor cursor = null;
 	
+		if(mediaType == Media_Type_Image)
+		{
+			cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, "_data =? ", new String[]{filePath}, null);
+			if (cursor != null)
+			{
+				if (cursor.moveToFirst())
+				{
+					info = new MediaInfo();
+					int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.SIZE);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.size = cursor.getLong(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.MIME_TYPE);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.mimeType = cursor.getString(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.TITLE);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.title = cursor.getString(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATE_MODIFIED);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.date = cursor.getString(index);
+					}
+				}
+				cursor.close();
+				if(info != null)
+				{
+					return info;
+				}
+			}	
+		}
+		else if(mediaType == Media_Type_Audio)
+		{
+			cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, "_data =? ", new String[]{filePath}, null);
+			if (cursor != null)
+			{
+				if (cursor.moveToFirst())
+				{
+					info = new MediaInfo();
+					int index = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.SIZE);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.size = cursor.getLong(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.duration = cursor.getLong(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.MIME_TYPE);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.mimeType = cursor.getString(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.title = cursor.getString(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ARTIST);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.artist = cursor.getString(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATE_MODIFIED);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.date = cursor.getString(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.album = cursor.getString(index);
+					}
+				}
+				cursor.close();
+				if(info != null)
+				{
+					return info;
+				}
+			}
+		}
+		else if(mediaType == Media_Type_Video)
+		{
+			cursor = getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null, "_data =? ", new String[]{filePath}, null);
+			if (cursor != null)
+			{
+				if (cursor.moveToFirst())
+				{
+					info = new MediaInfo();
+					int index = cursor.getColumnIndex(MediaStore.Video.VideoColumns.SIZE);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.size = cursor.getLong(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.duration = cursor.getLong(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Video.VideoColumns.MIME_TYPE);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.mimeType = cursor.getString(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Video.VideoColumns.TITLE);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.title = cursor.getString(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Video.VideoColumns.ARTIST);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.artist = cursor.getString(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATE_MODIFIED);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.date = cursor.getString(index);
+					}
+					index = cursor.getColumnIndex(MediaStore.Video.VideoColumns.ALBUM);
+					if (index >= 0 && !(cursor.isBeforeFirst() || cursor.isAfterLast())) {
+						info.album = cursor.getString(index);
+					}
+				}
+				cursor.close();
+				if(info != null)
+				{
+					return info;
+				}
+			}		
+		}
+
+		return null;
+
+	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// add here.

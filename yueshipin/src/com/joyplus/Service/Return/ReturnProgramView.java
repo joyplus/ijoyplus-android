@@ -200,7 +200,7 @@ public class ReturnProgramView {
 	public TV tv;
 	public Show show;
 	public Movie movie;
-	public Video video;
+//	public Video video;
 	public TOPICS[] topics;
 	public COMMENTS[] comments;
 
@@ -269,6 +269,7 @@ public class ReturnProgramView {
 		public String id;
 		public String area;
 		public String total_comment_number;
+		public String douban_id;
 
 		public int current_play;
 
@@ -293,6 +294,7 @@ public class ReturnProgramView {
 		public String id;
 		public String area;
 		public String total_comment_number;
+		public String douban_id;
 
 		public EPISODES[] episodes;
 
@@ -315,24 +317,25 @@ public class ReturnProgramView {
 		public String id;
 		public String area;
 		public String total_comment_number;
+		public String douban_id;//加的豆瓣id
 
 		public EPISODES[] episodes;
 
 	}
 
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class Video {
-		public String name;
-		public String summary;
-		public String poster;
-		public String sources;
-		public String like_num;
-		public String watch_num;
-		public String favority_num;
-		public String score;
-
-		public VIDEO_URLS[] video_urls;
-		public DOWN_URLS[] down_urls;
-
-	}
+//	@JsonIgnoreProperties(ignoreUnknown = true)
+//	public static class Video {
+//		public String name;
+//		public String summary;
+//		public String poster;
+//		public String sources;
+//		public String like_num;
+//		public String watch_num;
+//		public String favority_num;
+//		public String score;
+//
+//		public VIDEO_URLS[] video_urls;
+//		public DOWN_URLS[] down_urls;
+//
+//	}
 }

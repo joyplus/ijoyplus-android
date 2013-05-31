@@ -65,7 +65,9 @@ private static final int MAX = 100;
 			holder.resourceImage = (ImageView)convertView.findViewById(R.id.movieImageview);
 			holder.resourceDownProgress =(ProgressBar)convertView.findViewById(R.id.downloadprogress);
 			holder.resourcePercentDown = (TextView)convertView.findViewById(R.id.precentDownload);
-			
+			holder.down_wait = (ImageView)convertView.findViewById(R.id.down_wait);
+			holder.down_pause = (ImageView)convertView.findViewById(R.id.down_pause);
+			holder.down_downing = (ImageView)convertView.findViewById(R.id.down_downing);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -76,39 +78,65 @@ private static final int MAX = 100;
 			DownloadInfo info = data.get(position);
 			long completesize = info.getCompeleteSize();
 			long filesize = info.getFileSize();
-			long percent =completesize*MAX/filesize;
-			String posterurl = info.getPoster();
-			if(info.getIndex().contains("_show"))
+			long percent = 0;
+			if(filesize != 0)
+			{
+				percent =completesize*MAX/filesize;
+			}
+			String posterurl = info.getUrlposter();
+			if(info.getMy_index().contains("_show"))
 			{
 				
-				holder.resourceDownloadName.setText(info.getName());
+				holder.resourceDownloadName.setText(info.getMy_name());
 				
 			}
 			else
 			{
-				holder.resourceDownloadName.setText("第"+info.getIndex()+"集");
+				holder.resourceDownloadName.setText("第"+info.getMy_index()+"集");
 			}
-			if(info.getState().equalsIgnoreCase("wait"))
+			if(info.getDownload_state().equalsIgnoreCase("wait"))
 			{
 				holder.resouceDownloadState.setText("等待下载");
+				aqtemp.id(R.id.down_wait).visible();
+				aqtemp.id(R.id.down_pause).gone();
+				aqtemp.id(R.id.down_downing).gone();
 			}
-			else if(info.getState().equalsIgnoreCase("downloading"))
+			else if(info.getDownload_state().equalsIgnoreCase("downloading"))
 			{
 				holder.resouceDownloadState.setText("正在下载");
+				aqtemp.id(R.id.down_wait).gone();
+				aqtemp.id(R.id.down_pause).gone();
+				aqtemp.id(R.id.down_downing).visible();
 			}
-			else if(info.getState().equalsIgnoreCase("stop"))
+			else if(info.getDownload_state().equalsIgnoreCase("pause"))
 			{
 				holder.resouceDownloadState.setText("暂停下载");
+				aqtemp.id(R.id.down_wait).gone();
+				aqtemp.id(R.id.down_pause).visible();
+				aqtemp.id(R.id.down_downing).gone();
 			}
 			holder.resourceDownProgress.setMax(MAX);
-			holder.resourceDownProgress.setSecondaryProgress((int) (completesize*MAX/filesize));
+			if(filesize == 0)
+			{
+				holder.resourceDownProgress.setSecondaryProgress(0);
+			}
+			else
+			{
+				holder.resourceDownProgress.setSecondaryProgress((int) (completesize*MAX/filesize));
+			}
 			holder.resourcePercentDown.setText((percent)+"%");
 			if(info.getCompeleteSize()==info.getFileSize())
 			{
-				holder.resouceDownloadState.setText("");
-				holder.resourcePercentDown.setText("");
-				aqtemp.id(R.id.downloadprogress).gone();
-				aqtemp.id(R.id.state_layer).gone();
+				if(info.getFileSize()>10)//过滤掉文件长度为零的情况
+				{
+					holder.resouceDownloadState.setText("");
+					holder.resourcePercentDown.setText("");
+					aqtemp.id(R.id.downloadprogress).gone();
+					aqtemp.id(R.id.state_layer).gone();
+					aqtemp.id(R.id.down_wait).gone();
+					aqtemp.id(R.id.down_pause).gone();
+					aqtemp.id(R.id.down_downing).gone();
+				}
 			}
 			aqtemp.id(R.id.movieImageview).image(posterurl,true,true);
 		}
@@ -126,5 +154,8 @@ private static final int MAX = 100;
 		public TextView resourcePercentDown;
 		public TextView resouceDownloadState;
 		public TextView resourceDownloadName;
+		public ImageView down_wait;
+		public ImageView down_pause;
+		public ImageView down_downing;
 	}	
 }

@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.umeng.analytics.MobclickAgent;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -25,12 +26,13 @@ public class Tab3Page3_Create1 extends Activity {
 	private String title = null;
 	private String content = null;
 	private String topic_id = null;
-
+	private static String CREATE_LIST_STEP1  = "创建悦单1";
+	Context mContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab3page3_create1);
-
+        mContext = this;
 		app = (App) getApplication();
 		aq = new AQuery(this);
 		RadioGroup radioGroup = (RadioGroup) this
@@ -74,12 +76,14 @@ public class Tab3Page3_Create1 extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, CREATE_LIST_STEP1);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, CREATE_LIST_STEP1);
 		MobclickAgent.onPause(this);
 	}
 
@@ -112,10 +116,7 @@ public class Tab3Page3_Create1 extends Activity {
 			params.put("type", 1);
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		cb.params(params).url(url).type(JSONObject.class)
 				.weakHandler(this, "AddBangDanResult");

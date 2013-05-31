@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#F2F2F2"
+    android:gravity="center_horizontal" >
+
+    <LinearLayout
+        android:id="@+id/LayoutTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/title_background" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:onClick="OnClickTab1TopLeft"
+            android:paddingLeft="6dp" >
+
+            <ImageView
+                android:id="@+id/Tab1TopLeftImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/top_icon_return" />
+        </LinearLayout>
+
+       <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="悦视频"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:visibility="invisible"
+            android:orientation="horizontal"
+             >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/top_icon_return" />
+        </LinearLayout>
+    
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/LayoutTitle"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" >
+
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sousuo_kuang_s"
+            android:drawableLeft="@drawable/sousuo_kuang"
+            android:hint=" 电影 / 电视剧 / 综艺"
+            android:singleLine="true" >
+
+            <requestFocus />
+        </EditText>
+		
+        <ImageButton
+            android:id="@+id/Tab1TopRightImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sousuo"
+            android:onClick="OnClickSearch"
+            android:layout_marginLeft="6dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutTab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="105dp"
+        android:orientation="vertical" >
+
+        <!--
+             <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="12dp"
+            android:visibility="gone" />
+        -->
+
+        <TabHost
+            android:id="@android:id/tabhost"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent" >
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="#F2F2F2"
+                android:orientation="vertical" >
+
+                <TabWidget
+                    android:id="@android:id/tabs"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:background="#E4E4E4" >
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:showDividers="middle" >
+
+                        <RadioButton
+                            android:id="@+id/radio0"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/wx_share_p1"
+                            android:button="@null"
+                            android:checked="true"
+                            android:gravity="center" />
+
+                        <RadioButton
+                            android:id="@+id/radio1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/wx_share_p2"
+                            android:button="@null"
+                            android:gravity="center" />
+
+                        <RadioButton
+                            android:id="@+id/radio2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/wx_share_p3"
+                            android:button="@null"
+                            android:gravity="center" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@android:id/tabcontent"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_alignLeft="@id/linearLayoutRadio"
+                    android:layout_alignRight="@id/linearLayoutRadio"
+                    android:layout_below="@id/linearLayoutRadio"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="14dp"
+                    android:layout_weight="1" >
+                </FrameLayout>
+            </RelativeLayout>
+        </TabHost>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/LinearLayoutTabSearch"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/LayoutTitle"
+        android:orientation="vertical"
+        android:paddingTop="50dp" >
+
+        <ProgressBar
+            android:id="@+id/progressSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:scaleType="centerInside"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textViewNoResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="80dp"
+            android:text="抱歉，没有找到相关结果！"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#444444"
+            android:visibility="gone" />
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#F2F2F2"
+            android:cacheColorHint="#F2F2F2"
+            android:descendantFocusability="blocksDescendants"
+            android:divider="@drawable/tab1_divider"
+            android:fadingEdge="none"
+            android:visibility="gone" >
+        </ListView>
+
+        <TextView
+            android:id="@+id/ProgressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progress"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="加载中..."
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#444444"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</RelativeLayout>

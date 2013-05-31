@@ -2,21 +2,21 @@ package com.joyplus;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import com.joyplus.widget.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.androidquery.AQuery;
@@ -28,13 +28,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joyplus.Adapters.Tab1ListAdapter;
 import com.joyplus.Adapters.Tab1ListData;
 import com.joyplus.Service.Return.ReturnTops;
-import com.joyplus.Dlna.DlnaSelectDevice;
 import com.parse.Parse;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
+import com.zxing.activity.CaptureActivity;
 
 public class Tab1 extends Activity implements
 		android.widget.AdapterView.OnItemClickListener {
+	private static final int Sao_Yi_Sao = 11;
 	private String TAG = "Tab1";
 	private AQuery aq;
 	private App app;
@@ -45,6 +46,8 @@ public class Tab1 extends Activity implements
 	private ListView ItemsListView;
 	private Tab1ListAdapter Tab1Adapter;
 	private int isLastisNext = 1;
+	private static String POPULAR_TOP_LIST = "悦单";
+	Context mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,19 +55,14 @@ public class Tab1 extends Activity implements
 		setContentView(R.layout.tab1);
 		app = (App) getApplication();
 		aq = new AQuery(this);
+		mContext = this;
 		dataStruct = new ArrayList();
-		
+
 		UmengUpdateAgent.setUpdateOnlyWifi(false);
 		UmengUpdateAgent.setOnDownloadListener(null);
 		UmengUpdateAgent.update(this);
-		
-		Intent i  = new Intent();
-		i.setClass(this, DlnaSelectDevice.class);
-		startService(i);
-//		Parse.initialize(this, "Your Application Id", "Your Client Key");
-		Parse.initialize(this, "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB", "YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl");
-		
-		
+//		Parse.initialize(this, "FtAzML5ln4zKkcL28zc9XR6kSlSGwXLdnsQ2WESB",
+//				"YzMYsyKNV7ibjZMfIDSGoV5zxsylV4evtO8x64tl");
 		// 获取listview对象
 		ItemsListView = (ListView) findViewById(R.id.listView1);
 		// 设置listview的点击事件监听器
@@ -76,7 +74,9 @@ public class Tab1 extends Activity implements
 				// 当不滚动时
 				case OnScrollListener.SCROLL_STATE_IDLE:
 					// 判断滚动到底部
-					if (view.getLastVisiblePosition() == (view.getCount() - 1)) {
+					int i = view.getLastVisiblePosition();
+					int j = view.getCount();
+					if (view.getLastVisiblePosition() >= (view.getCount()-5)) {
 						isLastisNext++;
 						GetServiceData(isLastisNext);
 					}
@@ -91,44 +91,70 @@ public class Tab1 extends Activity implements
 			}
 		});
 		CheckSaveData();
-		// MobclickAgent.setDebugMode(true);
+
 	}
 
 	public void OnClickTab1TopLeft(View v) {
-		
+
 		Intent i = new Intent(this, Search.class);
 		startActivity(i);
 	}
 
-	public void OnClickDownloadTopRight(View v) {
-		Intent intent = new Intent(this, Video_Cache.class);
-		startActivity(intent);
+	public void OnClickSaoMiaoTopRight(View v) {
+		if (app.GetServiceData("Binding_TV") != null) {
+			app.MyToast(this, "请先注销已绑定的悦视频TV版");
+			return;
+		}
+		Intent openCameraIntent = new Intent(Tab1.this, CaptureActivity.class);
+		startActivityForResult(openCameraIntent, Sao_Yi_Sao);
 	}
 
-	public void OnClickTab1TopRight(View v) {
-		Intent i = new Intent(this, Setting.class);
-		startActivity(i);
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		// 处理扫描结果（在界面上显示）
+		if (resultCode == Sao_Yi_Sao) {
+			Bundle bundle = data.getExtras();
+			String scanResult = bundle.getString("result"); // 扫描结果
+			if (scanResult.startsWith("joy")) {
+				scanResult = scanResult.replace("joy", "");
+				if (app.GetServiceData("Binding_TV_Channal") != null) {
+					String bindingchannel = app.GetServiceData(
+							"Binding_TV_Channal").replace("CHANNEL_TV_", "");
+					if (scanResult.equals(bindingchannel)
+							&& app.GetServiceData("Binding_TV") != null) {
+						app.MyToast(Tab1.this, "该设备已绑定");
+						return;
+					}
+				}
+				Intent intent = new Intent(this, Before_Binding.class);
+				intent.putExtra("SaoMiao_result", scanResult);
+				startActivity(intent);
+			}else{
+				app.MyToast(this, "请扫描悦视频TV版的\"我的悦视频\"中的二维码哦");
+			}
+		}
 	}
 
 	@Override
 	protected void onDestroy() {
 		if (aq != null)
 			aq.dismiss();
-		Intent i  = new Intent();
-		i.setClass(this, DlnaSelectDevice.class);
-		stopService(i);
 		super.onDestroy();
 	}
 
 	@Override
 	public void onResume() {
+
 		super.onResume();
+		MobclickAgent.onEventBegin(mContext, POPULAR_TOP_LIST);
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		MobclickAgent.onEventEnd(mContext, POPULAR_TOP_LIST);
 		MobclickAgent.onPause(this);
 	}
 
@@ -185,8 +211,10 @@ public class Tab1 extends Activity implements
 			}
 			return;
 
-		} else
+		} else {
 			NotifyDataAnalysisFinished();
+		}
+
 		for (int i = 0; i < m_ReturnTops.tops.length; i++) {
 			Tab1ListData m_Tab1ListData = new Tab1ListData();
 			m_Tab1ListData.Pic_ID = m_ReturnTops.tops[i].id;
@@ -241,8 +269,8 @@ public class Tab1 extends Activity implements
 
 	// 初始化list数据函数
 	public void InitListData(String url, JSONObject json, AjaxStatus status) {
-		
-		if (status.getCode() == AjaxStatus.NETWORK_ERROR)  {
+
+		if (status.getCode() == AjaxStatus.NETWORK_ERROR || json == null) {
 			aq.id(R.id.ProgressText).gone();
 			app.MyToast(aq.getContext(),
 					getResources().getString(R.string.networknotwork));
@@ -256,7 +284,6 @@ public class Tab1 extends Activity implements
 			if (m_ReturnTops.tops.length > 0)
 				app.SaveServiceData("tops" + Integer.toString(isLastisNext),
 						json.toString());
-
 			// 创建数据源对象
 			GetVideoMovies();
 			aq.id(R.id.ProgressText).gone();
@@ -286,13 +313,13 @@ public class Tab1 extends Activity implements
 	private Tab1ListAdapter getAdapter() {
 		if (Tab1Adapter == null) {
 			ArrayList arraylist = dataStruct;
-			Tab1ListAdapter listviewdetailadapter = new Tab1ListAdapter(this,
-					arraylist);
+			Tab1ListAdapter listviewdetailadapter = new Tab1ListAdapter(
+					Tab1.this, arraylist);
 			Tab1Adapter = listviewdetailadapter;
 		} else {
 			ArrayList arraylist1 = dataStruct;
-			Tab1ListAdapter listviewdetailadapter1 = new Tab1ListAdapter(this,
-					arraylist1);
+			Tab1ListAdapter listviewdetailadapter1 = new Tab1ListAdapter(
+					Tab1.this, arraylist1);
 			Tab1Adapter = listviewdetailadapter1;
 		}
 		return Tab1Adapter;
@@ -331,15 +358,18 @@ public class Tab1 extends Activity implements
 				m_ReturnTops = mapper.readValue(SaveData, ReturnTops.class);
 				// 创建数据源对象
 				GetVideoMovies();
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// execute the task
-						dataStruct = null;
-						dataStruct = new ArrayList();
-						GetServiceData(isLastisNext);
-					}
-				}, 100000);
+				dataStruct = null;
+				dataStruct = new ArrayList();
+				GetServiceData(isLastisNext);
+//				new Handler().postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						// execute the task
+//						dataStruct = null;
+//						dataStruct = new ArrayList();
+//						GetServiceData(isLastisNext);
+//					}
+//				}, 5000);
 			} catch (JsonParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -355,16 +385,21 @@ public class Tab1 extends Activity implements
 	}
 
 	public void GetServiceData(int index) {
-		String url = Constant.BASE_URL + "tops" + "?page_num="
-				+ Integer.toString(index) + "&page_size=30";
+		String url = null;
+		if(index == 1)
+		{
+			url = Constant.BASE_URL + "tops" + "?page_num="
+					+ Integer.toString(index) + "&page_size=20";
+		} else{
+			url = Constant.BASE_URL + "tops" + "?page_num="
+					+ Integer.toString(index) + "&page_size=10";
+		}
+		
 
 		AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 		cb.url(url).type(JSONObject.class).weakHandler(this, "InitListData");
 
-		cb.header("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0.2) Gecko/20100101 Firefox/6.0.2");
-		cb.header("app_key", Constant.APPKEY);
-		cb.header("user_id", app.UserID);
+		cb.SetHeader(app.getHeaders());
 
 		aq.id(R.id.ProgressText).visible();
 		aq.progress(R.id.progress).ajax(cb);

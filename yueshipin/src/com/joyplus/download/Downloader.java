@@ -7,24 +7,25 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.joyplus.App;
+//import com.joyplus.App;
 import com.joyplus.Constant;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+//import android.media.audiofx.BassBoost.Settings;
+import com.joyplus.widget.Log;
 
 public class Downloader {
 	private String urlstr;// 下载的地址
 	private String localfile;// 保存路径
-	private String prod_id;//视频id
-	private String my_index ;//视频二级id
-	private int compeleteSize;//下载了多少
-	private int threadcount = 1;// 线程数
+	private String prod_id;// 视频id
+	private String my_index;// 视频二级id
+	private int compeleteSize;// 下载了多少
 	private int fileSize;// 所要下载的文件的大小
-	private String urlposter;//下载文件的图片
-	private String my_name;//下载文件的名字
-	private String download_state;//下载文件的大小
+	private String urlposter;// 下载文件的图片
+	private String my_name;// 下载文件的名字
+	private String download_state;// 下载文件的大小
+	private String file_path;
 	private Context context;
 	private List<DownloadInfo> infos;// 存放下载信息类的集合
 	private static final int INIT = 1;// 定义三种下载的状态：初始化状态，正在下载状态，暂停状态
@@ -32,11 +33,10 @@ public class Downloader {
 	private static final int PAUSE = 3;
 	private static final int STOP = 4;
 	private int state = INIT;
-	private boolean flag = false;
 
-	public Downloader(int compeleteSize,int fileSize,String prod_id,String my_index,String urlstr,String urlposter,
-			String my_name,String download_state,
-			Context context) {
+	public Downloader(int compeleteSize, int fileSize, String prod_id,
+			String my_index, String urlstr, String urlposter, String my_name,
+			String download_state, Context context) {
 		this.compeleteSize = compeleteSize;
 		this.fileSize = fileSize;
 		this.prod_id = prod_id;
@@ -47,42 +47,48 @@ public class Downloader {
 		this.download_state = download_state;
 		this.context = context;
 	}
+
 	/**
 	 * 判断是否正在下载
 	 */
 	public boolean isdownloading() {
 		return state == DOWNLOADING;
 	}
-	
+
 	public DownloadInfo getDownloaderInfors() {
 		if (isFirst(prod_id)) {
-			Log.v("TAG", "isFirst");
+			Log.i("TAG", "isFirst");
 			init();
+//			file_path = localfile;
 			infos = new ArrayList<DownloadInfo>();
-			DownloadInfo info = new DownloadInfo(compeleteSize, fileSize, prod_id, my_index, urlstr,urlposter,my_name,download_state);
-	 		infos.add(info);
+			DownloadInfo info = new DownloadInfo(compeleteSize, fileSize,
+					prod_id, my_index, urlstr, urlposter, my_name,
+					download_state,file_path);
+			infos.add(info);
 			// 保存infos中的数据到数据库
 			Dao.getInstance(context).saveInfos(infos);
-			// 创建一个LoadInfo对象记载下载器的具体信息
 			return info;
 		} else {
-			// 得到数据库中已有的urlstr的下载器的具体信息,取出数据有问题
-			infos = Dao.getInstance(context).getInfos(prod_id,my_index);
-			Log.v("TAG", "not isFirst size=" + infos.size());
-			int size = 0;
+			// 得到数据库中已有的urlstr的下载器的具体信息
+			infos = Dao.getInstance(context).getInfos(prod_id, my_index);
+//			file_path = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
 			int compeleteSize = 0;
 			for (DownloadInfo info : infos) {
 				compeleteSize += info.getCompeleteSize();
-				fileSize = info.getFileSize();	
+				fileSize = info.getFileSize();
+				file_path = info.getFilePath();
 			}
-			return new DownloadInfo(compeleteSize,fileSize,prod_id,my_index,urlstr,urlposter,my_name,download_state);
+			return new DownloadInfo(compeleteSize, fileSize, prod_id, my_index,
+					urlstr, urlposter, my_name, download_state,file_path);
 		}
 	}
+
 	/**
 	 * 初始化
 	 */
 	private void init() {
-		localfile = Constant.PATH_VIDEO+prod_id+"_"+my_index+".mp4";
+		localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+//		file_path = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
 		try {
 			URL url = new URL(urlstr);
 			HttpURLConnection connection = (HttpURLConnection) url
@@ -93,6 +99,7 @@ public class Downloader {
 			connection.disconnect();
 			// 本地访问文件
 			RandomAccessFile accessFile = new RandomAccessFile(localfile, "rwd");
+//			RandomAccessFile accessFile = new RandomAccessFile(file_path, "rwd");
 			accessFile.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,7 +110,7 @@ public class Downloader {
 	 * 判断是否是第一次 下载
 	 */
 	private boolean isFirst(String prod_id) {
-		return Dao.getInstance(context).isHasInfors(prod_id,my_index);
+		return Dao.getInstance(context).isHasInfors(prod_id, my_index);
 	}
 
 	/**
@@ -111,18 +118,36 @@ public class Downloader {
 	 */
 	public void download() {
 		if (infos != null) {
-			if (state == DOWNLOADING)//设置flag变量,设置线程数量为1
+			if (state == DOWNLOADING)// 设置flag变量,设置线程数量为1
 				return;
-//			state = DOWNLOADING;
 			for (DownloadInfo info : infos) {
-				if(Dao.getInstance(context).isHasInforsDownloading("downloading"))
-				{
+				if (Dao.getInstance(context).isHasInforsDownloading(
+						"downloading")) {
 					state = DOWNLOADING;
-					info.setState("downloading");
-					Dao.getInstance(context).updataInfoState(info.getState(), info.getProdId(), info.getIndex());
-						new MyThread(info.getCompeleteSize(), info.getFileSize(),
-								info.getProdId(), info.getIndex(), info.getUrl(),
-								context).start();
+					info.setDownload_state("downloading");
+					Dao.getInstance(context).updataInfoState(
+							info.getDownload_state(), info.getProd_id(),
+							info.getMy_index());
+					new MyThread(info.getCompeleteSize(), info.getFileSize(),
+							info.getProd_id(), info.getMy_index(),
+							info.getUrl(), context).start();
+				} else {
+					DownloadInfo tempInfo = Dao.getInstance(context)
+							.getOneStateInfo("downloading");
+					if (tempInfo.getProd_id().equalsIgnoreCase(
+							info.getProd_id())
+							&& tempInfo.getMy_index().equalsIgnoreCase(
+									info.getMy_index())) {
+						state = DOWNLOADING;
+						info.setDownload_state("downloading");
+						Dao.getInstance(context).updataInfoState(
+								info.getDownload_state(), info.getProd_id(),
+								info.getMy_index());
+						new MyThread(info.getCompeleteSize(),
+								info.getFileSize(), info.getProd_id(),
+								info.getMy_index(), info.getUrl(), context)
+								.start();
+					}
 				}
 			}
 		}
@@ -136,11 +161,9 @@ public class Downloader {
 		private String urlstr;
 		private Context context;
 		long percent = 0;
-		
-		
+
 		public MyThread(int compeleteSize, int fileSize, String prod_id,
-				String my_index, String urlstr,Context context)
-		{
+				String my_index, String urlstr, Context context) {
 			this.compeleteSize = compeleteSize;
 			this.fileSize = fileSize;
 			this.prod_id = prod_id;
@@ -148,45 +171,53 @@ public class Downloader {
 			this.urlstr = urlstr;
 			this.context = context;
 		}
-		//localfile的值是什么呢
+
+		// localfile的值是什么呢
 		@Override
 		public void run() {
-			//标记此线程为true
-			localfile = Constant.PATH_VIDEO+prod_id+"_"+my_index+".mp4";
+			// 标记此线程为true
+			localfile = Constant.PATH_VIDEO + prod_id + "_" + my_index + ".mp4";
+			
 			HttpURLConnection connection = null;
 			RandomAccessFile randomAccessFile = null;
 			InputStream inputstream = null;
 			try {
 				URL url = new URL(urlstr);
 				connection = (HttpURLConnection) url.openConnection();
-				connection.setConnectTimeout(10000);
+				connection.setConnectTimeout(60*1000);
 				connection.setRequestMethod("GET");
 				// 设置范围，格式为Range：bytes x-y;
-				connection.setRequestProperty("Range", "bytes="
-						+ compeleteSize+ "-" + (fileSize-1));//后面的
+				connection.setRequestProperty("Range", "bytes=" + compeleteSize
+						+ "-" + (fileSize - 1));// 后面的
 				randomAccessFile = new RandomAccessFile(localfile, "rwd");
+//				randomAccessFile = new RandomAccessFile(file_path, "rwd");
 				randomAccessFile.seek(compeleteSize);
 				inputstream = connection.getInputStream();
 				// 将要下载的文件写到保存在保存路径下的文件
-				byte[] buffer = new byte[1024*50];
+				byte[] buffer = new byte[1024 * 50];
 				int length = -1;
 				while ((length = inputstream.read(buffer)) != -1) {
 					randomAccessFile.write(buffer, 0, length);
 					compeleteSize += length;
-					if(((long)compeleteSize*100/fileSize-percent) > 0.5)
-					{
-						percent = (long)compeleteSize*100/fileSize;
+					if (compeleteSize < fileSize / 1000) {
+						Intent intent = new Intent();
+						intent.setAction("UpdateProgressUI");
+						context.sendBroadcast(intent);
+					}
+					if (((long) compeleteSize * 100 / fileSize - percent) > 0.5) {
+						percent = (long) compeleteSize * 100 / fileSize;
 						// 更新数据库中的下载信息
-						Dao.getInstance(context).updataInfos(compeleteSize,prod_id,my_index);
+						Dao.getInstance(context).updataInfos(compeleteSize,
+								prod_id, my_index);
 						// 用广播将下载信息传给进度条，对进度条进行更新
 						Intent intent = new Intent();
 						intent.setAction("UpdateProgressUI");
-						context.sendBroadcast(intent);	
+						context.sendBroadcast(intent);
 					}
-					
-					if(compeleteSize == fileSize)
-					{
-						Dao.getInstance(context).updataInfoState("stop", prod_id, my_index);
+
+					if (compeleteSize == fileSize) {
+						Dao.getInstance(context).updataInfoState("pause",
+								prod_id, my_index);
 						state = STOP;
 						randomAccessFile.close();
 						Intent i = new Intent();
@@ -194,26 +225,29 @@ public class Downloader {
 						context.sendBroadcast(i);
 					}
 					if (state == PAUSE) {
-						//Dao.getInstance(context).updataInfoState("stop",prod_id,my_index);
+						Dao.getInstance(context).updataInfoState("pause",
+								prod_id, my_index);
 						return;
 					}
-					Log.i("Downloader:compeleteSize",Integer.toString(compeleteSize));
-					Log.i("Downloader:fileSize",Integer.toString(fileSize));
+					android.util.Log.i("Downloader:compeleteSize",Integer.toString(compeleteSize));
+					android.util.Log.i("Downloader:fileSize", Integer.toString(fileSize));
 				}
 			} catch (Exception e) {
 				state = STOP;
-				Dao.getInstance(context).updataInfoState("stop", prod_id, my_index);
+				Dao.getInstance(context).updataInfoState("pause", prod_id,
+						my_index);
 				e.printStackTrace();
-			}finally{
+			} finally {
 				state = STOP;
-				Dao.getInstance(context).updataInfoState("stop", prod_id, my_index);
+				Dao.getInstance(context).updataInfoState("pause", prod_id,
+						my_index);
 			}
 		}
 	}
 
 	// 删除数据库中urlstr对应的下载器信息
 	public void delete(String urlstr) {
-		Dao.getInstance(context).delete(prod_id,my_index);
+		Dao.getInstance(context).delete(prod_id, my_index);
 	}
 
 	// 设置暂停
@@ -225,9 +259,8 @@ public class Downloader {
 	public void reset() {
 		state = INIT;
 	}
-	
-	public int getstate()
-	{
+
+	public int getstate() {
 		return state;
 	}
 }
