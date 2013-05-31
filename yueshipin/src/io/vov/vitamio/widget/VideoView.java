@@ -476,11 +476,10 @@ public class VideoView extends SurfaceView implements
 								impl_err))
 						{
 							OnComplete();
-							return true;
 						}
 							
 					}
-					
+					return true;	
 				}
 			}else{
 				mCurrentState = STATE_ERROR;
