@@ -38,9 +38,11 @@ import com.umeng.analytics.MobclickAgent;
 import io.vov.utils.Log;
 import io.vov.utils.StringUtils;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -706,6 +708,33 @@ public class MediaController extends FrameLayout {
 		} else {
 			videosource.setBackgroundResource(R.drawable.logo_pptv);
 		}
+		
+		videosource.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				//点击logo跳网页
+				String url = null;
+				switch (CurrentCategory) {
+				case 0:
+					url = m_ReturnProgramView.movie.episodes[0].video_urls[0].url;
+					break;
+				case 1:
+					url = m_ReturnProgramView.tv.episodes[0].video_urls[0].url;
+					break;
+				case 2:
+					url = m_ReturnProgramView.show.episodes[0].video_urls[0].url;
+					break;
+				}
+				
+				if(url!=null){
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(Uri.parse(url));
+					mContext.startActivity(intent);
+				}
+			}
+		});
 	}
 
 	/**
