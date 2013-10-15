@@ -89,6 +89,7 @@ public class Main extends TabActivity {
 
 		headers.put("app_key", Constant.APPKEY);
 		headers.put("client", "android");
+		headers.put("versioncode", getVersionCode(this)+"");
 		app.setHeaders(headers);
 		if (android.os.Build.VERSION.SDK_INT >= 14) {
 			Intent intent = new Intent(Main.this, DlnaSelectDevice.class);
@@ -524,6 +525,18 @@ public class Main extends TabActivity {
 
 		} catch (JSONException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public int getVersionCode(Context context)//获取版本号(内部识别号)
+	{
+		try {
+			PackageInfo pi=context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+			return pi.versionCode;
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
 		}
 	}
 
